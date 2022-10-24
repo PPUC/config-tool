@@ -7,11 +7,14 @@ dependencies:
     - field.field.node.pwm_device.field_i_o_board
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
+    - field.field.node.pwm_device.field_pin
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
     - node.type.pwm_device
   module:
     - user
+_core:
+  default_config_hash: j75fRuUJkl1bpk_vr7D7tekYmOpUcA0-_onQZJ9CW84
 id: node.pwm_device.default
 targetEntityType: node
 bundle: pwm_device
@@ -50,6 +53,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 107
+    region: content
+  field_pin:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 110
     region: content
   field_power:
     type: number_integer

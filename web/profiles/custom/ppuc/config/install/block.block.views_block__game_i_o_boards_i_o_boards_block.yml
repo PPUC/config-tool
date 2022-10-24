@@ -1,0 +1,25 @@
+uuid: b0efc05b-8037-4938-a1f2-67a797b4f639
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.game_i_o_boards
+  module:
+    - views
+  theme:
+    - olivero
+id: views_block__game_i_o_boards_i_o_boards_block
+theme: olivero
+region: content_below
+weight: 0
+provider: null
+plugin: 'views_block:game_i_o_boards-i_o_boards_block'
+settings:
+  id: 'views_block:game_i_o_boards-i_o_boards_block'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility: {  }
