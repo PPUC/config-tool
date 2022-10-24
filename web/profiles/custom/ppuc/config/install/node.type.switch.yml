@@ -1,0 +1,17 @@
+uuid: ef7ee6a1-e0a5-406a-a838-9e13a7082f8c
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Switch
+type: switch
+description: Switch
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

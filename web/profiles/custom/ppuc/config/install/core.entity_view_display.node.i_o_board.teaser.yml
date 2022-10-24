@@ -1,0 +1,24 @@
+uuid: 2a72d468-1ced-400d-a95c-0c92f1d389b3
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.i_o_board.field_game
+    - field.field.node.i_o_board.field_number
+    - node.type.i_o_board
+  module:
+    - user
+id: node.i_o_board.teaser
+targetEntityType: node
+bundle: i_o_board
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_game: true
+  field_number: true

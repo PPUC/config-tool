@@ -17,13 +17,13 @@
     "require": {
         "php": "^8.1",
         "composer/installers": "^1.9",
+        "drupal/color_field": "^2.5",
         "drupal/core": "^9.4",
         "drupal/core-composer-scaffold": "^9.4",
         "drupal/core-project-message": "^9.4",
+        "drupal/default_content": "^2.0@alpha",
         "drush/drush": "^11.1",
         "roave/security-advisories": "dev-latest"
-    },
-    "require-dev": {
     },
     "conflict": {
         "drupal/drupal": "*"

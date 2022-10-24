@@ -1,0 +1,25 @@
+uuid: f526519a-ebcd-42d8-9861-343c1ec58a03
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_min_pulse_time
+    - node.type.pwm_device
+id: node.pwm_device.field_min_pulse_time
+field_name: field_min_pulse_time
+entity_type: node
+bundle: pwm_device
+label: 'Min Pulse Time'
+description: 'Minimum pulse time in milliseconds. 0 means no minimum pulse time, the CPU has full control.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

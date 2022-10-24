@@ -1,0 +1,20 @@
+uuid: 558534e3-72f3-4257-8f12-01b2081d61d2
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+id: taxonomy_term.field_ppuc_type
+field_name: field_ppuc_type
+entity_type: taxonomy_term
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

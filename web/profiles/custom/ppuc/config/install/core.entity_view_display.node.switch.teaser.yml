@@ -1,0 +1,26 @@
+uuid: ce62d2dc-d61b-4a4b-b596-a773112724e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.switch.field_i_o_board
+    - field.field.node.switch.field_number
+    - field.field.node.switch.field_pin
+    - node.type.switch
+  module:
+    - user
+id: node.switch.teaser
+targetEntityType: node
+bundle: switch
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_i_o_board: true
+  field_number: true
+  field_pin: true

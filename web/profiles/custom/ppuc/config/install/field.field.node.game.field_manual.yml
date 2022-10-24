@@ -1,0 +1,27 @@
+uuid: dbb5e0cf-5c01-4cef-b143-1f0e6d26b7aa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_manual
+    - node.type.game
+  module:
+    - file
+id: node.game.field_manual
+field_name: field_manual
+entity_type: node
+bundle: game
+label: Manual
+description: 'The game manual'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: manuals
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: false
+field_type: file

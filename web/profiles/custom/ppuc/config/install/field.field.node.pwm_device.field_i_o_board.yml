@@ -1,0 +1,29 @@
+uuid: 458db8b6-cac4-4817-a41f-dcfff3659f60
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_i_o_board
+    - node.type.i_o_board
+    - node.type.pwm_device
+id: node.pwm_device.field_i_o_board
+field_name: field_i_o_board
+entity_type: node
+bundle: pwm_device
+label: 'I/O Board'
+description: 'The I/O board the pwm device is attached to.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      i_o_board: i_o_board
+    sort:
+      field: field_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,25 @@
+uuid: 9fc94631-193f-4f76-8de7-d559749b9390
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_light_up
+    - node.type.addressable_leds
+id: node.addressable_leds.field_light_up
+field_name: field_light_up
+entity_type: node
+bundle: addressable_leds
+label: 'Light Up'
+description: 'Light up in milliseconds to imitate a real bulp.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

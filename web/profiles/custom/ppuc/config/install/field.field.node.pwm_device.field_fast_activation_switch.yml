@@ -1,0 +1,29 @@
+uuid: dbef370b-ee99-4537-a091-2065f4650dec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_fast_activation_switch
+    - node.type.pwm_device
+    - node.type.switch
+id: node.pwm_device.field_fast_activation_switch
+field_name: field_fast_activation_switch
+entity_type: node
+bundle: pwm_device
+label: 'Fast activation switch'
+description: 'A switch the PWM device should directly react to without waiting for the CPU. The fastest reaction is achieved if the PWM device and the switch are attached to the same I/O board. Otherwise the the fast activation happens when the I/O board gets polled for its switch states.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      switch: switch
+    sort:
+      field: field_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

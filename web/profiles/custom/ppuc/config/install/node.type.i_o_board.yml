@@ -1,0 +1,17 @@
+uuid: 397c0205-6df4-4eff-bcb3-152f206434ac
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'I/O Board'
+type: i_o_board
+description: 'I/O Board'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

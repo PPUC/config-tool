@@ -1,0 +1,25 @@
+uuid: ccadbfbf-8cdc-4659-a42d-8cfa15ee5582
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_max_pulse_time
+    - node.type.pwm_device
+id: node.pwm_device.field_max_pulse_time
+field_name: field_max_pulse_time
+entity_type: node
+bundle: pwm_device
+label: 'Max Pulse Time'
+description: 'Maximum pulse time of the PWM device in milliseconds. 0 means no maximum pulse time and full control by the CPU. If a positive value is provided, the device gets deactivated after this period regardless if the CPU already stopped that device.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

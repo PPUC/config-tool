@@ -1,0 +1,19 @@
+uuid: eac25104-19c2-469e-812f-42e5ef0ad936
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_fast_activation_switch
+field_name: field_fast_activation_switch
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

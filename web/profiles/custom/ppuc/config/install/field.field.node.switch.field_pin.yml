@@ -1,0 +1,23 @@
+uuid: 82ebb504-4fcb-4c4b-bf5b-efc57fb10060
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pin
+    - node.type.switch
+id: node.switch.field_pin
+field_name: field_pin
+entity_type: node
+bundle: switch
+label: Pin
+description: 'Thi pin of the I/O board the switch is attached to.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: 64
+  prefix: ''
+  suffix: ''
+field_type: integer
