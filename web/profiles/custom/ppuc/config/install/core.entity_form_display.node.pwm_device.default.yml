@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.pwm_device.field_fast_activation_switch
+    - field.field.node.pwm_device.field_hold_power
+    - field.field.node.pwm_device.field_hold_power_activation_time
     - field.field.node.pwm_device.field_i_o_board
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
@@ -20,9 +22,23 @@ mode: default
 content:
   field_fast_activation_switch:
     type: options_select
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_hold_power:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_hold_power_activation_time:
+    type: number
+    weight: 6
+    region: content
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_i_o_board:
     type: options_select
@@ -32,14 +48,14 @@ content:
     third_party_settings: {  }
   field_max_pulse_time:
     type: number
-    weight: 6
+    weight: 8
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_min_pulse_time:
     type: number
-    weight: 5
+    weight: 7
     region: content
     settings:
       placeholder: ''
@@ -66,7 +82,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 8
+    weight: 10
     region: content
     settings:
       display_label: true
