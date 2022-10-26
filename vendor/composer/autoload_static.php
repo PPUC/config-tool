@@ -45,6 +45,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
     );
 
     public static $prefixLengthsPsr4 = array (
+        'Z' => 
+        array (
+            'ZipStream\\' => 10,
+        ),
         'T' => 
         array (
             'Twig\\' => 5,
@@ -103,6 +107,7 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
         ),
         'M' => 
         array (
+            'MyCLabs\\Enum\\' => 13,
             'Masterminds\\' => 12,
         ),
         'L' => 
@@ -159,6 +164,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
     );
 
     public static $prefixDirsPsr4 = array (
+        'ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
+        ),
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
@@ -335,6 +344,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+        ),
+        'MyCLabs\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
         'Masterminds\\' => 
         array (
@@ -540,7 +553,7 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
+        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
         'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     );

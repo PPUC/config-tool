@@ -23,6 +23,7 @@
         "drupal/core-project-message": "^9.4",
         "drupal/default_content": "^2.0@alpha",
         "drush/drush": "^11.1",
+        "maennchen/zipstream-php": "^2.2.1",
         "roave/security-advisories": "dev-latest"
     },
     "conflict": {
@@ -112,23 +113,11 @@
     "scripts": {
         "post-install-cmd": [
             "if [ -x ./vendor/bin/cghooks ]; then cghooks update; fi",
-            "@composer drupal:scaffold",
-            "find web/modules/contrib -type d -execdir test -d {}/.git \\; -exec mv {}/.git {}/.git.bak \\;",
-            "find web/themes/contrib -type d -execdir test -d {}/.git \\; -exec mv {}/.git {}/.git.bak \\;"
+            "@composer drupal:scaffold"
         ],
         "post-update-cmd": [
             "if [ -x ./vendor/bin/cghooks ]; then  cghooks update; fi",
-            "@composer drupal:scaffold",
-            "find web/modules/contrib -type d -execdir test -d {}/.git \\; -exec mv {}/.git {}/.git.bak \\;",
-            "find web/themes/contrib -type d -execdir test -d {}/.git \\; -exec mv {}/.git {}/.git.bak \\;"
-        ],
-        "pre-install-cmd": [
-            "find web/modules/contrib -type d -execdir test -d {}/.git.bak \\; -exec mv {}/.git.bak {}/.git \\;",
-            "find web/themes/contrib -type d -execdir test -d {}/.git.bak \\; -exec mv {}/.git.bak {}/.git \\;"
-        ],
-        "pre-update-cmd": [
-            "find web/modules/contrib -type d -execdir test -d {}/.git.bak \\; -exec mv {}/.git.bak {}/.git \\;",
-            "find web/themes/contrib -type d -execdir test -d {}/.git.bak \\; -exec mv {}/.git.bak {}/.git \\;"
+            "@composer drupal:scaffold"
         ]
     }
 }
