@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'dd31f0f0d624b945cb3bd94c3da135119ab2fda9',
+        'reference' => '495053026b02f581f3ee05e86362376f0c778fc2',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -571,7 +571,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'dd31f0f0d624b945cb3bd94c3da135119ab2fda9',
+            'reference' => '495053026b02f581f3ee05e86362376f0c778fc2',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

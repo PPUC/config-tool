@@ -152,7 +152,7 @@ class Importer implements ImporterInterface {
   public function importContent($module) {
     $folder = \Drupal::service('extension.list.module')->getPath($module) . "/content";
 
-    return importContentFromFolder($folder);
+    return $this->importContentFromFolder($folder);
   }
 
   /**
