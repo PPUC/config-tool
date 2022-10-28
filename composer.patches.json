@@ -1,7 +1,7 @@
 {
   "patches": {
     "drupal/default_content": {
-      "3318062 - Allow import from folder": "https://www.drupal.org/files/issues/2022-10-28/3318062_0.patch"
+      "3318062 - Allow import from folder": "https://www.drupal.org/files/issues/2022-10-28/3318062_event.patch"
     }
   }
 }

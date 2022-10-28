@@ -22,11 +22,13 @@ interface ImporterInterface {
    * Imports default content from a given folder.
    *
    * @param string $folder
+   *   The folder to create the default content from.
+   * @param string $module
    *   The module to create the default content from.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   An array of created entities keyed by their UUIDs.
    */
-  public function importContentFromFolder($module);
+  public function importContentFromFolder($folder, $module = NULL);
 
 }

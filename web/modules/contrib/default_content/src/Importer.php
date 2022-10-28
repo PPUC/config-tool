@@ -152,13 +152,13 @@ class Importer implements ImporterInterface {
   public function importContent($module) {
     $folder = \Drupal::service('extension.list.module')->getPath($module) . "/content";
 
-    return $this->importContentFromFolder($folder);
+    return $this->importContentFromFolder($folder, $module);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function importContentFromFolder($folder) {
+  public function importContentFromFolder($folder, $module = NULL) {
     $created = [];
 
     if (file_exists($folder)) {
@@ -285,7 +285,7 @@ class Importer implements ImporterInterface {
           $created[$entity->uuid()] = $entity;
         }
       }
-      $this->eventDispatcher->dispatch(new ImportEvent($created, $module), DefaultContentEvents::IMPORT);
+      $this->eventDispatcher->dispatch(new ImportEvent($created, $module ?? $folder), DefaultContentEvents::IMPORT);
       $this->accountSwitcher->switchBack();
     }
     // Reset the tree.
