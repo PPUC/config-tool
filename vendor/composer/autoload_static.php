@@ -45,6 +45,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
     );
 
     public static $prefixLengthsPsr4 = array (
+        'c' => 
+        array (
+            'cweagans\\Composer\\' => 18,
+        ),
         'Z' => 
         array (
             'ZipStream\\' => 10,
@@ -164,6 +168,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
     );
 
     public static $prefixDirsPsr4 = array (
+        'cweagans\\Composer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
+        ),
         'ZipStream\\' => 
         array (
             0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',

@@ -150,8 +150,16 @@ class Importer implements ImporterInterface {
    * {@inheritdoc}
    */
   public function importContent($module) {
-    $created = [];
     $folder = \Drupal::service('extension.list.module')->getPath($module) . "/content";
+
+    return importContentFromFolder($folder);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importContentFromFolder($folder) {
+    $created = [];
 
     if (file_exists($folder)) {
       $root_user = $this->entityTypeManager->getStorage('user')->load(1);
