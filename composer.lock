@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ba6eb924a1600aea4fd0624c69bade9",
+    "content-hash": "4253f6e84a729e5dd6fc626374a2499b",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -357,16 +357,16 @@
         },
         {
             "name": "consolidation/annotated-command",
-            "version": "4.5.7",
+            "version": "4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/consolidation/annotated-command.git",
-                "reference": "3785525bfc40d8230452f4c07db8a7bf0530d8f3"
+                "reference": "ee63c57f929e7131c714783193512ea4f76de74c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/consolidation/annotated-command/zipball/3785525bfc40d8230452f4c07db8a7bf0530d8f3",
-                "reference": "3785525bfc40d8230452f4c07db8a7bf0530d8f3",
+                "url": "https://api.github.com/repos/consolidation/annotated-command/zipball/ee63c57f929e7131c714783193512ea4f76de74c",
+                "reference": "ee63c57f929e7131c714783193512ea4f76de74c",
                 "shasum": ""
             },
             "require": {
@@ -407,9 +407,9 @@
             "description": "Initialize Symfony Console commands from annotated command class methods.",
             "support": {
                 "issues": "https://github.com/consolidation/annotated-command/issues",
-                "source": "https://github.com/consolidation/annotated-command/tree/4.5.7"
+                "source": "https://github.com/consolidation/annotated-command/tree/4.6.0"
             },
-            "time": "2022-10-20T11:00:10+00:00"
+            "time": "2022-10-30T22:08:00+00:00"
         },
         {
             "name": "consolidation/config",
@@ -1254,68 +1254,6 @@
             "time": "2022-05-31T18:46:25+00:00"
         },
         {
-            "name": "drupal/better_normalizers",
-            "version": "1.0.0-beta5",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/better_normalizers.git",
-                "reference": "8.x-1.0-beta5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/better_normalizers-8.x-1.0-beta5.zip",
-                "reference": "8.x-1.0-beta5",
-                "shasum": "8f7df92397cafb464b0361eb4afa2e9c301fe466"
-            },
-            "require": {
-                "drupal/core": "^8.7.7 || ^9",
-                "drupal/hal": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.0-beta5",
-                    "datestamp": "1662971076",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Fritsch (chr.fritsch)",
-                    "homepage": "https://www.drupal.org/u/chrfritsch",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Andrey Postnikov (andypost)",
-                    "homepage": "https://www.drupal.org/u/andypost",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Sam Becker (Sam152)",
-                    "homepage": "https://www.drupal.org/u/sam152",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Lee Rowlands (larowlan)",
-                    "homepage": "https://www.drupal.org/u/larowlan",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "Improve the normalizers in core.",
-            "homepage": "https://www.drupal.org/project/better_normalizers",
-            "support": {
-                "source": "https://git.drupal.org/project/better_normalizers.git",
-                "issues": "https://www.drupal.org/project/issues/better_normalizers"
-            }
-        },
-        {
             "name": "drupal/color_field",
             "version": "2.5.0",
             "source": {
@@ -1707,247 +1645,6 @@
             "homepage": "https://www.drupal.org/project/default_content",
             "support": {
                 "source": "https://git.drupalcode.org/project/default_content"
-            }
-        },
-        {
-            "name": "drupal/file_entity",
-            "version": "2.0.0-beta9",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/file_entity.git",
-                "reference": "8.x-2.0-beta9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/file_entity-8.x-2.0-beta9.zip",
-                "reference": "8.x-2.0-beta9",
-                "shasum": "f75e45f4046904eb582979c701ffa0a2ccb988dc"
-            },
-            "require": {
-                "drupal/core": "^8.8 || ^9",
-                "drupal/token": "*"
-            },
-            "require-dev": {
-                "drupal/pathauto": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-2.0-beta9",
-                    "datestamp": "1625735670",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "aaron",
-                    "homepage": "https://www.drupal.org/user/33420"
-                },
-                {
-                    "name": "arthurf",
-                    "homepage": "https://www.drupal.org/user/27259"
-                },
-                {
-                    "name": "Berdir",
-                    "homepage": "https://www.drupal.org/user/214652"
-                },
-                {
-                    "name": "DamienMcKenna",
-                    "homepage": "https://www.drupal.org/user/108450"
-                },
-                {
-                    "name": "Dave Reid",
-                    "homepage": "https://www.drupal.org/user/53892"
-                },
-                {
-                    "name": "Devin Carlson",
-                    "homepage": "https://www.drupal.org/user/290182"
-                },
-                {
-                    "name": "Drupal media CI",
-                    "homepage": "https://www.drupal.org/user/3057985"
-                },
-                {
-                    "name": "Drupal Media Team",
-                    "homepage": "https://www.drupal.org/user/3260690"
-                },
-                {
-                    "name": "dsnopek",
-                    "homepage": "https://www.drupal.org/user/266527"
-                },
-                {
-                    "name": "dsutter",
-                    "homepage": "https://www.drupal.org/user/3357810"
-                },
-                {
-                    "name": "effulgentsia",
-                    "homepage": "https://www.drupal.org/user/78040"
-                },
-                {
-                    "name": "JacobSingh",
-                    "homepage": "https://www.drupal.org/user/68912"
-                },
-                {
-                    "name": "JeffM2001",
-                    "homepage": "https://www.drupal.org/user/262092"
-                },
-                {
-                    "name": "joseph.olstad",
-                    "homepage": "https://www.drupal.org/user/1321830"
-                },
-                {
-                    "name": "mpotter",
-                    "homepage": "https://www.drupal.org/user/616192"
-                },
-                {
-                    "name": "mxr576",
-                    "homepage": "https://www.drupal.org/user/315522"
-                },
-                {
-                    "name": "ParisLiakos",
-                    "homepage": "https://www.drupal.org/user/1011436"
-                },
-                {
-                    "name": "robeano",
-                    "homepage": "https://www.drupal.org/user/67660"
-                },
-                {
-                    "name": "slashrsm",
-                    "homepage": "https://www.drupal.org/user/744628"
-                },
-                {
-                    "name": "taran2L-1",
-                    "homepage": "https://www.drupal.org/user/364424"
-                }
-            ],
-            "description": "Extends Drupal file entities to be fieldable and viewable.",
-            "homepage": "https://www.drupal.org/project/file_entity",
-            "support": {
-                "source": "https://git.drupalcode.org/project/file_entity"
-            }
-        },
-        {
-            "name": "drupal/hal",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/hal.git",
-                "reference": "1.0.3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/hal-1.0.3.zip",
-                "reference": "1.0.3",
-                "shasum": "8e81b3b453ff63a281c1c470ff722f4af6206426"
-            },
-            "require": {
-                "drupal/core": "^9"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.3",
-                    "datestamp": "1664412481",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "bbrala",
-                    "homepage": "https://www.drupal.org/user/3366066"
-                },
-                {
-                    "name": "larowlan",
-                    "homepage": "https://www.drupal.org/user/395439"
-                }
-            ],
-            "description": "Hypermedia Application Language (HAL)",
-            "homepage": "https://www.drupal.org/project/hal",
-            "support": {
-                "source": "https://git.drupalcode.org/project/hal"
-            }
-        },
-        {
-            "name": "drupal/token",
-            "version": "1.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/token.git",
-                "reference": "8.x-1.11"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/token-8.x-1.11.zip",
-                "reference": "8.x-1.11",
-                "shasum": "da264b36d1f88eb0c74bf84e18e8789854f98400"
-            },
-            "require": {
-                "drupal/core": "^9.2 || ^10"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.11",
-                    "datestamp": "1659471813",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                },
-                "drush": {
-                    "services": {
-                        "drush.services.yml": "^9 || ^10"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Berdir",
-                    "homepage": "https://www.drupal.org/user/214652"
-                },
-                {
-                    "name": "Dave Reid",
-                    "homepage": "https://www.drupal.org/user/53892"
-                },
-                {
-                    "name": "eaton",
-                    "homepage": "https://www.drupal.org/user/16496"
-                },
-                {
-                    "name": "fago",
-                    "homepage": "https://www.drupal.org/user/16747"
-                },
-                {
-                    "name": "greggles",
-                    "homepage": "https://www.drupal.org/user/36762"
-                },
-                {
-                    "name": "mikeryan",
-                    "homepage": "https://www.drupal.org/user/4420"
-                }
-            ],
-            "description": "Provides a user interface for the Token API, some missing core tokens.",
-            "homepage": "https://www.drupal.org/project/token",
-            "support": {
-                "source": "https://git.drupalcode.org/project/token"
             }
         },
         {
@@ -4013,12 +3710,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4ca1da7f180e80b639f8f41d0da8be7f50715d47"
+                "reference": "cca41afdc42d1c011c063c5698d44a47d0df15b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4ca1da7f180e80b639f8f41d0da8be7f50715d47",
-                "reference": "4ca1da7f180e80b639f8f41d0da8be7f50715d47",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/cca41afdc42d1c011c063c5698d44a47d0df15b6",
+                "reference": "cca41afdc42d1c011c063c5698d44a47d0df15b6",
                 "shasum": ""
             },
             "conflict": {
@@ -4035,6 +3732,7 @@
                 "amphp/http-client": ">=4,<4.4",
                 "anchorcms/anchor-cms": "<=0.12.7",
                 "andreapollastri/cipi": "<=3.1.15",
+                "apereo/phpcas": "<1.6",
                 "api-platform/core": ">=2.2,<2.2.10|>=2.3,<2.3.6",
                 "appwrite/server-ce": "<0.11.1|>=0.12,<0.12.2",
                 "area17/twill": "<1.2.5|>=2,<2.5.3",
@@ -4302,7 +4000,7 @@
                 "phpwhois/phpwhois": "<=4.2.5",
                 "phpxmlrpc/extras": "<0.6.1",
                 "pimcore/data-hub": "<1.2.4",
-                "pimcore/pimcore": "<=10.5.6",
+                "pimcore/pimcore": "<10.5.9",
                 "pocketmine/bedrock-protocol": "<8.0.2",
                 "pocketmine/pocketmine-mp": "<4.7.2|>= 4.0.0-BETA5, < 4.4.2",
                 "pressbooks/pressbooks": "<5.18",
@@ -4316,6 +4014,7 @@
                 "prestashop/ps_facetedsearch": "<3.4.1",
                 "prestashop/ps_linklist": "<3.1",
                 "privatebin/privatebin": "<1.4",
+                "processwire/processwire": "<=3.0.200",
                 "propel/propel": ">=2-alpha.1,<=2-alpha.7",
                 "propel/propel1": ">=1,<=1.7.1",
                 "pterodactyl/panel": "<1.7",
@@ -4424,7 +4123,7 @@
                 "thelia/thelia": ">=2.1-beta.1,<2.1.3",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "thinkcmf/thinkcmf": "<=5.1.7",
-                "thorsten/phpmyfaq": "<=3.1.7",
+                "thorsten/phpmyfaq": "<3.1.8",
                 "tinymce/tinymce": "<5.10",
                 "titon/framework": ">=0,<9.9.99",
                 "topthink/framework": "<=6.0.13",
@@ -4537,7 +4236,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-27T19:05:37+00:00"
+            "time": "2022-11-01T22:05:19+00:00"
         },
         {
             "name": "stack/builder",
@@ -7515,9 +7214,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/better_normalizers": 10,
         "drupal/default_content": 15,
-        "drupal/file_entity": 10,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
