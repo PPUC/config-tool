@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: 2at5SWCyh4P-Itleb5LlhrafKYbkcru4tb_jcdR7HzU
 id: node.field_triplet_position
 field_name: field_triplet_position
 entity_type: node

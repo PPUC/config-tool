@@ -9,6 +9,8 @@ dependencies:
     - node.type.i_o_board
   module:
     - user
+_core:
+  default_config_hash: o2skzxRscJ9QyUE2RMGhoHtIQv3t_W8M01MRdGDWky8
 id: node.i_o_board.teaser
 targetEntityType: node
 bundle: i_o_board

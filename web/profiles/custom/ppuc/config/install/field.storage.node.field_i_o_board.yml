@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: F-DNAMTgAmfrSgAi8OQL35LGSGy6ljAem5CSge3u_Eo
 id: node.field_i_o_board
 field_name: field_i_o_board
 entity_type: node

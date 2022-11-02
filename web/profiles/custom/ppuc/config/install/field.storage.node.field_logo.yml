@@ -6,6 +6,8 @@ dependencies:
     - file
     - image
     - node
+_core:
+  default_config_hash: '-sz77QgDbcO81wjwYQCKA_um33SE2IYH1DyCs_hA-nE'
 id: node.field_logo
 field_name: field_logo
 entity_type: node

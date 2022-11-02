@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: BuTjdoGpKIGOEq0PDYT3xi125Ry0MmlY1wAOy7iU5uc
 id: node.field_light_up
 field_name: field_light_up
 entity_type: node

@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_pwm_type
     - node.type.pwm_device
     - taxonomy.vocabulary.pwm_device
+_core:
+  default_config_hash: lrIVpDv0Z8GJfSkczE2PcZcLmDpsj1hZCXOVOmuBxYs
 id: node.pwm_device.field_pwm_type
 field_name: field_pwm_type
 entity_type: node

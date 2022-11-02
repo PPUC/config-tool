@@ -8,6 +8,8 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
+_core:
+  default_config_hash: ZAI6k62B9cV3jOdSRN9EMOexJFWc0FiJNmpfeypK9f8
 name: Switch
 type: switch
 description: Switch

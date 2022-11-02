@@ -8,6 +8,8 @@ dependencies:
     - node.type.i_o_board
   module:
     - user
+_core:
+  default_config_hash: Wauxe-ijOENGC_x_HX6xE83u7M4RLD5vNCTS3qckXug
 id: node.i_o_board.default
 targetEntityType: node
 bundle: i_o_board

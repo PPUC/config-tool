@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: p8deEnkidphG4zd9f4Dfxk43sn5fUEhl5Q-l70I7M6o
 id: node.field_game
 field_name: field_game
 entity_type: node

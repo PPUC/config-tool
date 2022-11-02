@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: f2gSMeUNE76ERNS7gxjtX6nQy3M3Fkbh-NnODUDM1D0
 id: node.field_power
 field_name: field_power
 entity_type: node

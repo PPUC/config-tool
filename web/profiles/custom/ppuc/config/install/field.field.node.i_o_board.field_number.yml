@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_number
     - node.type.i_o_board
+_core:
+  default_config_hash: 7gYUqVcceYBUJDcPe4gX3sBEJb-DDM_KAdtZM0YuqAk
 id: node.i_o_board.field_number
 field_name: field_number
 entity_type: node

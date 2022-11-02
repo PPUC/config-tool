@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_after_glow
     - node.type.addressable_leds
+_core:
+  default_config_hash: M9DHZJDM1jP8lJTihUfssqoayIeV-9QhHRnGbo5Bhhc
 id: node.addressable_leds.field_after_glow
 field_name: field_after_glow
 entity_type: node

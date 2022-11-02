@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_led_type
     - node.type.addressable_leds
     - taxonomy.vocabulary.led_type
+_core:
+  default_config_hash: _rA9sp48oLEvgL2rq_0vLrwPPrQkygQLbT-MRc6lBOw
 id: node.addressable_leds.field_led_type
 field_name: field_led_type
 entity_type: node

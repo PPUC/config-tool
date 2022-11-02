@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_number
     - node.type.switch
+_core:
+  default_config_hash: eriUIf4fuM42fRVsFIZJZsE2sqA47QBz2Yq7sU_qLqI
 id: node.switch.field_number
 field_name: field_number
 entity_type: node

@@ -5,6 +5,8 @@ dependencies:
   module:
     - file
     - node
+_core:
+  default_config_hash: CJmFK19EZZaWFM4nBBV7l5oBly2fXS3_Gpwa_suuIMk
 id: node.field_manual
 field_name: field_manual
 entity_type: node

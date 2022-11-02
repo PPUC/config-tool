@@ -11,6 +11,8 @@ dependencies:
     - node.type.addressable_leds
   module:
     - user
+_core:
+  default_config_hash: 1wMvg6ASyRBP-oFckHNVx5_QjxNBnjeimHgOyK3WnCE
 id: node.addressable_leds.default
 targetEntityType: node
 bundle: addressable_leds

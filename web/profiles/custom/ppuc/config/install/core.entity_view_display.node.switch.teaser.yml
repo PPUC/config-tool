@@ -10,6 +10,8 @@ dependencies:
     - node.type.switch
   module:
     - user
+_core:
+  default_config_hash: LjiXa1rT7CJeyshNGT7HurGz7Q2TVsQ2hgFSi182YQo
 id: node.switch.teaser
 targetEntityType: node
 bundle: switch

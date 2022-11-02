@@ -1,0 +1,35 @@
+ppuc_games.zip:
+  path: '/node/{node}/zip'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::streamGameZip'
+    _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
+  requirements:
+    _permission: 'edit any game content'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+ppuc_games.import:
+  path: '/node/import-zip'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::importGameZip'
+    title: 'Import game zip'
+  requirements:
+    _permission: 'create game content'
+
+ppuc_games.yaml:
+  path: '/node/{node}/yaml'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::streamPinMameYaml'
+    _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: entity:node

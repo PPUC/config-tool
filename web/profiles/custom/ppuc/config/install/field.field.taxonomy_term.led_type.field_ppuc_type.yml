@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.taxonomy_term.field_ppuc_type
     - taxonomy.vocabulary.led_type
+_core:
+  default_config_hash: fVekJ759yAavuBHHnWnTsiueGCGyqnXQjV5ykVmqGG4
 id: taxonomy_term.led_type.field_ppuc_type
 field_name: field_ppuc_type
 entity_type: taxonomy_term

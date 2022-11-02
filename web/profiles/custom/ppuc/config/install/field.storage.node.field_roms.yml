@@ -5,6 +5,8 @@ dependencies:
   module:
     - file
     - node
+_core:
+  default_config_hash: OujacP7HQe8pEGK3M57QUI5e154o99x0UrCGl9Auk_A
 id: node.field_roms
 field_name: field_roms
 entity_type: node

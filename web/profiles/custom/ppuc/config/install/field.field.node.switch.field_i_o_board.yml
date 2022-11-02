@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_i_o_board
     - node.type.i_o_board
     - node.type.switch
+_core:
+  default_config_hash: L1Nv7dcGO-poeqjmkYIoR_pXEZ6fQwX6CY4GK6IwPX8
 id: node.switch.field_i_o_board
 field_name: field_i_o_board
 entity_type: node

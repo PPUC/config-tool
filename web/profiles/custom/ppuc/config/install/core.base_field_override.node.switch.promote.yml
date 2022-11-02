@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - node.type.switch
+_core:
+  default_config_hash: KJpD6CLYPRyjF55KQCLTqk-7wphDDG1bVQtoglNdT2A
 id: node.switch.promote
 field_name: promote
 entity_type: node

@@ -7,6 +7,8 @@ dependencies:
     - node.type.game
   module:
     - text
+_core:
+  default_config_hash: FyeXZj1pgbR4MfOfsVlqXTEnc1v8j9HLt1YXQj2fbuM
 id: node.game.body
 field_name: body
 entity_type: node

@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_pin
     - node.type.switch
+_core:
+  default_config_hash: yj2fz2D2JD0k5RY2h9Dq1aZvNIOoNGsA2hErOZAK3_g
 id: node.switch.field_pin
 field_name: field_pin
 entity_type: node

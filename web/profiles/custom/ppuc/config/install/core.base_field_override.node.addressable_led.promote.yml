@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - node.type.addressable_led
+_core:
+  default_config_hash: b_b1Acmqi37UKVmoo2B5qIEitTTCqkW9bQ_FUX3WrEw
 id: node.addressable_led.promote
 field_name: promote
 entity_type: node

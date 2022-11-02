@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: E3oP-I8DUv2medqep0a_JpDfE0s11dg6IpjDTcQ4MUk
 id: node.field_min_pulse_time
 field_name: field_min_pulse_time
 entity_type: node

@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: DFCd9BT2F4n2Qgu4ScMAgs6_OiqxZ0eyGc73VUULchE
 id: node.field_after_glow
 field_name: field_after_glow
 entity_type: node

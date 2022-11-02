@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_game
     - node.type.game
     - node.type.i_o_board
+_core:
+  default_config_hash: QE-HgozkSUeDYTLduu8E3AvJE7e8KrFt23qwu0SpD6s
 id: node.i_o_board.field_game
 field_name: field_game
 entity_type: node

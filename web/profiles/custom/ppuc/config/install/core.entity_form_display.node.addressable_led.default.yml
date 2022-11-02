@@ -5,8 +5,8 @@ dependencies:
   config:
     - field.field.node.addressable_led.field_brightness
     - field.field.node.addressable_led.field_color
-    - field.field.node.addressable_led.field_flasher_number
-    - field.field.node.addressable_led.field_lamp_number
+    - field.field.node.addressable_led.field_number
+    - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
     - field.field.node.addressable_led.field_triplet_position
@@ -22,47 +22,46 @@ mode: default
 content:
   field_brightness:
     type: number
-    weight: 2
+    weight: 3
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_color:
     type: color_field_widget_html5
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_flasher_number:
+  field_number:
     type: number
     weight: 7
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_lamp_number:
-    type: number
-    weight: 6
+  field_role:
+    type: options_select
+    weight: 1
     region: content
-    settings:
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_string:
     type: options_select
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_string_position:
     type: number
-    weight: 4
+    weight: 5
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_triplet_position:
     type: number
-    weight: 5
+    weight: 6
     region: content
     settings:
       placeholder: ''

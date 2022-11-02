@@ -1,0 +1,6 @@
+name: 'PPUC Games'
+type: module
+description: 'Pinball Power-Up Controller'
+core_version_requirement: ">=9.4"
+dependencies:
+  - default_content:default_content

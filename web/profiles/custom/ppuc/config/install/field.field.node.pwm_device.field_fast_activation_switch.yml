@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_fast_activation_switch
     - node.type.pwm_device
     - node.type.switch
+_core:
+  default_config_hash: '-N_FVVjc2lsxC915qw0H5cwITc_CxIW5xO1719TKP08'
 id: node.pwm_device.field_fast_activation_switch
 field_name: field_fast_activation_switch
 entity_type: node

@@ -1,0 +1,55 @@
+ppuc_games.add_game:
+  route_name: node.add
+  route_parameters:
+    node_type: 'game'
+  appears_on:
+    - view.frontpage.page_1
+  title: 'Add Game'
+
+ppuc_games.add_i_o_board:
+  route_name: node.add
+  route_parameters:
+    node_type: 'i_o_board'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add I/O Board'
+
+ppuc_games.add_dip_switch:
+  route_name: node.add
+  route_parameters:
+    node_type: 'dip_switch'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Dip Switch'
+
+ppuc_games.add_switch:
+  route_name: node.add
+  route_parameters:
+    node_type: 'switch'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Switch'
+
+ppuc_games.add_pwm_device:
+  route_name: node.add
+  route_parameters:
+    node_type: 'pwm_device'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add PWM Device'
+
+ppuc_games.add_addresable_leds:
+  route_name: node.add
+  route_parameters:
+    node_type: 'addressable_leds'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add LED String'
+
+ppuc_games.add_addresable_led:
+  route_name: node.add
+  route_parameters:
+    node_type: 'addressable_led'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add LED'

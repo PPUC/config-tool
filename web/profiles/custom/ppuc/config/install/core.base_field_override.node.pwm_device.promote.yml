@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - node.type.pwm_device
+_core:
+  default_config_hash: djtxD-4lZgedrBfwdP2OIDHlfbO4FbuwFUr3msRJGyQ
 id: node.pwm_device.promote
 field_name: promote
 entity_type: node

@@ -5,6 +5,8 @@ dependencies:
   module:
     - node
     - taxonomy
+_core:
+  default_config_hash: S00LoqBQUpLFserh1I3YOeyo-Tfh_JD1K2QF_9nX5VM
 id: node.field_pwm_type
 field_name: field_pwm_type
 entity_type: node

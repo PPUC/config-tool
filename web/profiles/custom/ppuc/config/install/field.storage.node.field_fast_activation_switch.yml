@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: _86Kkh-hSeE58xyfwQriu7Qze3PQWRACZ6z07xLheCY
 id: node.field_fast_activation_switch
 field_name: field_fast_activation_switch
 entity_type: node

@@ -1,0 +1,29 @@
+uuid: 9a94fc6d-48db-4bd1-ac89-8ff87ba84028
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game
+    - node.type.dip_switch
+    - node.type.game
+id: node.dip_switch.field_game
+field_name: field_game
+entity_type: node
+bundle: dip_switch
+label: Game
+description: 'Dip Switch and it stae.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      game: game
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

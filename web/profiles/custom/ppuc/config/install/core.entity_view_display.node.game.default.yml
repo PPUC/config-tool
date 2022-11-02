@@ -14,6 +14,8 @@ dependencies:
     - image
     - text
     - user
+_core:
+  default_config_hash: I2Ow9AMrs1G_h6_JNfxEhdWdpGE84B2rGsg3S8WKnkM
 id: node.game.default
 targetEntityType: node
 bundle: game
@@ -24,7 +26,7 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 2
+    weight: 1
     region: content
   field_logo:
     type: image
@@ -35,7 +37,7 @@ content:
       image_loading:
         attribute: lazy
     third_party_settings: {  }
-    weight: 1
+    weight: 0
     region: content
   field_manual:
     type: file_default
@@ -43,7 +45,7 @@ content:
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    weight: 4
+    weight: 3
     region: content
   field_roms:
     type: file_default
@@ -51,11 +53,7 @@ content:
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    weight: 3
+    weight: 2
     region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
-hidden: {  }
+hidden:
+  links: true

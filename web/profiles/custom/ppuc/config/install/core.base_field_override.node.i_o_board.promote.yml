@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - node.type.i_o_board
+_core:
+  default_config_hash: qY-CkiTF1NxT8g1_f6TjM-U-njaO_d906Ac4d-s7jHg
 id: node.i_o_board.promote
 field_name: promote
 entity_type: node

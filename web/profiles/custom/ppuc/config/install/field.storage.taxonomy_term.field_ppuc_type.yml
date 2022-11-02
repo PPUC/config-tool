@@ -4,6 +4,8 @@ status: true
 dependencies:
   module:
     - taxonomy
+_core:
+  default_config_hash: wUebgdXPJKPppabHxFkdklwh32vN_J28JjKzEw9m6As
 id: taxonomy_term.field_ppuc_type
 field_name: field_ppuc_type
 entity_type: taxonomy_term

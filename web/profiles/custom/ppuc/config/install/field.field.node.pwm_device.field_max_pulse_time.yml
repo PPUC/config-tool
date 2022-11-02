@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_max_pulse_time
     - node.type.pwm_device
+_core:
+  default_config_hash: 8SHypR4XbdVl3AisGDlur-U-bD-IWgCmV30zrQvOBdU
 id: node.pwm_device.field_max_pulse_time
 field_name: field_max_pulse_time
 entity_type: node

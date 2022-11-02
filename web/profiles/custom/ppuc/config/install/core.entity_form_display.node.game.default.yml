@@ -52,23 +52,16 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-  promote:
-    type: boolean_checkbox
-    weight: 5
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 7
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 6
+    weight: 5
     region: content
     settings:
       display_label: true
@@ -84,4 +77,5 @@ content:
 hidden:
   created: true
   path: true
+  promote: true
   uid: true

@@ -8,6 +8,8 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
+_core:
+  default_config_hash: 4cArPChcCN5qtr29YHnGG0m24ddry0kyLS9JPsl1NI0
 name: 'I/O Board'
 type: i_o_board
 description: 'I/O Board'

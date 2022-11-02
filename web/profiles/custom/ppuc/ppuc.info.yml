@@ -31,8 +31,8 @@ install:
   - automated_cron
   - default_content
   - color_field
+  - ppuc_games
 themes:
-  - olivero
   - claro
 default_content:
   taxonomy_term:
@@ -68,3 +68,7 @@ default_content:
     - e955b675-d747-49ef-9aa8-769d09780d32
     - f5254f34-96df-4c51-a3f2-d58a7233ae1e
     - f72c503f-19af-488e-8eb1-64f234854ea7
+    - 08c2b5ce-2209-4e13-89be-e95f2d4acdb4
+    - 380dd744-eef0-4bb8-9b62-d6d4ac2af2c6
+    - 5545fe5f-e4a0-489d-b200-4416807f17c9
+    - abf972eb-9d90-4c98-9d84-926854d07f73
