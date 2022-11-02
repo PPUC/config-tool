@@ -28,7 +28,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Game: I/O Boards'
+      title: 'I/O Boards'
       fields:
         status:
           id: status

@@ -6,6 +6,12 @@ ppuc_games.add_game:
     - view.frontpage.page_1
   title: 'Add Game'
 
+ppuc_games.import_game:
+  route_name: ppuc_games.import
+  appears_on:
+    - view.frontpage.page_1
+  title: 'Import Game'
+
 ppuc_games.add_i_o_board:
   route_name: node.add
   route_parameters:
