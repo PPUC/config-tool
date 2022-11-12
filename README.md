@@ -13,10 +13,11 @@ But these are the essential steps:
 ```sh
 brew install docker
 brew install colima
-brew install ddev
+brew install drud/ddev/ddev
+mkcert -install
 colima start --cpu 4 --memory 6 --disk 100 --dns=1.1.1.1
 ```
-When your computer restarts, you’ll need to `colima start` again.
+When your computer restarts, you’ll need to run `colima start` again.
 
 Now clone this project somewhere in your home directory.
 It is recommended to create a PPUC directory first where you can also clone other PPUC components.
