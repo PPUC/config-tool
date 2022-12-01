@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_game
     - node.type.dip_switch
     - node.type.game
+_core:
+  default_config_hash: Ghe-VW4FtRVwrFY_GB11611NL8v-cUvOv3G-vV2YOa0
 id: node.dip_switch.field_game
 field_name: field_game
 entity_type: node

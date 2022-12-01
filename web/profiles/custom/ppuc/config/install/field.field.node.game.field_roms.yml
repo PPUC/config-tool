@@ -8,7 +8,7 @@ dependencies:
   module:
     - file
 _core:
-  default_config_hash: syWhadwqiwKHQhsU5TcO_xIu6u-mGtOzhS2_2IW9gC4
+  default_config_hash: l4gW5nbs6igL_e-jO15NTZQChybpwQ-DaAGkBJNqI6I
 id: node.game.field_roms
 field_name: field_roms
 entity_type: node

@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_hold_power
     - node.type.pwm_device
+_core:
+  default_config_hash: Vn2NHvM-dRpCG2qlpP2BdEmm0iy2CHGNwdTV8w_Scf0
 id: node.pwm_device.field_hold_power
 field_name: field_hold_power
 entity_type: node

@@ -1,22 +1,24 @@
-uuid: 581486b8-52e1-4d8d-b448-1539a1b4a8ce
+uuid: e3ce22bc-32b8-412c-a9c8-4329a82755e4
 langcode: en
 status: true
 dependencies:
   config:
-    - views.view.dip_switches
+    - views.view.game_i_o_boards
   module:
     - node
     - views
   theme:
     - claro
-id: views_block__dip_switches_block_dip_switches_2
+_core:
+  default_config_hash: GJBk-lBFwDoPp60Lv3LN_yafOZKyV5qwhYXB07jVTac
+id: views_block__game_i_o_boards_i_o_boards_block
 theme: claro
 region: content
-weight: -2
+weight: -1
 provider: null
-plugin: 'views_block:dip_switches-block_dip_switches'
+plugin: 'views_block:game_i_o_boards-i_o_boards_block'
 settings:
-  id: 'views_block:dip_switches-block_dip_switches'
+  id: 'views_block:game_i_o_boards-i_o_boards_block'
   label: ''
   label_display: visible
   provider: views

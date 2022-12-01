@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_power
     - node.type.pwm_device
 _core:
-  default_config_hash: '-S6ifXpqlY_ivAuUAC5sxKB9dGjM_I9_J4qJd4YSKYA'
+  default_config_hash: v1V5Sxk1YTPpbvS39Oldea9X3sBwoCemxPDURikJpbs
 id: node.pwm_device.field_power
 field_name: field_power
 entity_type: node

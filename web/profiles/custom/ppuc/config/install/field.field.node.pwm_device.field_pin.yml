@@ -5,19 +5,21 @@ dependencies:
   config:
     - field.storage.node.field_pin
     - node.type.pwm_device
+_core:
+  default_config_hash: y-mItHrHBMrn_nc47IJ5NA7jLb-r3GQ2n2AqHnIoknc
 id: node.pwm_device.field_pin
 field_name: field_pin
 entity_type: node
 bundle: pwm_device
 label: Pin
-description: ''
+description: "Pin 0-7 for low power PWM.\r\nPin 19-24, 26-27 for high power PWM.\r\nPin 25 is reserved."
 required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  min: 1
-  max: 128
+  min: 0
+  max: 27
   prefix: ''
   suffix: ''
 field_type: integer

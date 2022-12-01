@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_hold_power_activation_time
     - node.type.pwm_device
+_core:
+  default_config_hash: N9wChJBM5_AAV9f83-F0dHJ3yvSO9zkpEWa9GeT0zos
 id: node.pwm_device.field_hold_power_activation_time
 field_name: field_hold_power_activation_time
 entity_type: node

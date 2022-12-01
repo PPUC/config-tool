@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_light_up
     - node.type.addressable_leds
 _core:
-  default_config_hash: x-o-iKsFUXBeHJ2XRdzxhK9pQwxlNUqsjXr_T9Hr4gU
+  default_config_hash: UCT2as0kP_Q3-hMQ6wiRfXCGsYtHicb_MTeO6m5Iw3g
 id: node.addressable_leds.field_light_up
 field_name: field_light_up
 entity_type: node

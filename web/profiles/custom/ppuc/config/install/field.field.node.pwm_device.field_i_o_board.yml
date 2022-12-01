@@ -7,7 +7,7 @@ dependencies:
     - node.type.i_o_board
     - node.type.pwm_device
 _core:
-  default_config_hash: 0XIkmYYeRQeC5sd-4vS6bjx8fezYn7Rk3yq-MC-24pQ
+  default_config_hash: 5Xtj9-xFqy26gH_yLEjxMrbCv7-tjkCREx18uYSAfAY
 id: node.pwm_device.field_i_o_board
 field_name: field_i_o_board
 entity_type: node

@@ -6,6 +6,8 @@ dependencies:
     - field.storage.node.field_role
     - node.type.addressable_led
     - taxonomy.vocabulary.led_role
+_core:
+  default_config_hash: BCb0tgwqI2600K3oIFLWR_QqeV9ietmondZLgMGiWYU
 id: node.addressable_led.field_role
 field_name: field_role
 entity_type: node

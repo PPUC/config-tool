@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_triplet_position
     - node.type.addressable_led
 _core:
-  default_config_hash: '-IE2LZeDZVlVrDGnKccJ4tqy9U2TegIHlz0CphcnpHc'
+  default_config_hash: UphFlr8tBGT6OELLQDXdyfvWzKKiKuEcpyhgxAogk3w
 id: node.addressable_led.field_triplet_position
 field_name: field_triplet_position
 entity_type: node

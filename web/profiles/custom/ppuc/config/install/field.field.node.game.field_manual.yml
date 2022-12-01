@@ -8,7 +8,7 @@ dependencies:
   module:
     - file
 _core:
-  default_config_hash: 28xctmfpkpRtgSMmb4oESWu6U5RiDzF4Y2ikitAFuao
+  default_config_hash: FfnauL_As4djbSBUnyOvy4Dngq6uhyMvAC9OnbsGUWE
 id: node.game.field_manual
 field_name: field_manual
 entity_type: node

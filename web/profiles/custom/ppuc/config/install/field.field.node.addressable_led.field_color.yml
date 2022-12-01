@@ -8,7 +8,7 @@ dependencies:
   module:
     - color_field
 _core:
-  default_config_hash: KA_3s9ZW_zbOvpDJspwFUMGPf3v2s1LEj4L-cMOcn38
+  default_config_hash: 08RRCoH_mA3p1VHzc13E5-6tiuWpVD7U8ru8qfdd9YE
 id: node.addressable_led.field_color
 field_name: field_color
 entity_type: node

@@ -7,7 +7,7 @@ dependencies:
     - node.type.addressable_leds
     - node.type.i_o_board
 _core:
-  default_config_hash: Og6Bdz3if4dl57faf0SIrkr1W4EoBOBBH_4OPsJAfwE
+  default_config_hash: H9okWeaF1k4XD0b26UDZETa18p97cMIK5l1gHVB_-n4
 id: node.addressable_leds.field_i_o_board
 field_name: field_i_o_board
 entity_type: node

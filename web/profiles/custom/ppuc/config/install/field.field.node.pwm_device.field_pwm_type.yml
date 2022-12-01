@@ -7,7 +7,7 @@ dependencies:
     - node.type.pwm_device
     - taxonomy.vocabulary.pwm_device
 _core:
-  default_config_hash: lrIVpDv0Z8GJfSkczE2PcZcLmDpsj1hZCXOVOmuBxYs
+  default_config_hash: DQJmNfpqe2uqq6M2G3jpKzClwjHBs0qreE0TzBJCWx0
 id: node.pwm_device.field_pwm_type
 field_name: field_pwm_type
 entity_type: node

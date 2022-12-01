@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_min_pulse_time
     - node.type.pwm_device
 _core:
-  default_config_hash: bsKnFtNqV_4S-MUAl1AIbX4Lw88ZJB7Sk_Hn8_4Hq2Q
+  default_config_hash: '-pFgt9RCrUR0Kjxd0vdVfa0NHomXRgLshxVwqV1_8Kc'
 id: node.pwm_device.field_min_pulse_time
 field_name: field_min_pulse_time
 entity_type: node

@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_string_position
     - node.type.addressable_led
 _core:
-  default_config_hash: mW8c4nEcYhghk-Zp0QznzbQUaYpiInnVndMSwGzvPrU
+  default_config_hash: njLfm_ej_yaccafcxr49jJSae3bZRg00iQC54x86ykw
 id: node.addressable_led.field_string_position
 field_name: field_string_position
 entity_type: node

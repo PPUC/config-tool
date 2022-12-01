@@ -29,3 +29,8 @@ git clone https://github.com/PPUC/config-tool.git
 cd config-tool
 ddev start
 ```
+
+```
+ddev ssh
+drush si ppuc --site-name="Pinball Power-Up Controller" --account-name=ppuc --account-pass=ppuc
+```

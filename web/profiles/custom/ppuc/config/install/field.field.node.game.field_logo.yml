@@ -8,7 +8,7 @@ dependencies:
   module:
     - image
 _core:
-  default_config_hash: kNEpSBM4ctV2Lm7hlrJZWpjsk_bIg8jo0yxQQvE8wPM
+  default_config_hash: GMo3oA74KIymime6AFOggIBYd-Tp0MMbpGm2p9TFQNk
 id: node.game.field_logo
 field_name: field_logo
 entity_type: node
