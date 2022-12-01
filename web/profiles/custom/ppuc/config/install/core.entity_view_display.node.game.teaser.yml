@@ -15,7 +15,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: diYdurxtshRrW7bHsGrx8GjaHSA6AVy864WC63VtsCQ
+  default_config_hash: yB1QwmTDu-3dq4gCZtWoQDMDKh68BhzJKEb31-0iFMM
 id: node.game.teaser
 targetEntityType: node
 bundle: game

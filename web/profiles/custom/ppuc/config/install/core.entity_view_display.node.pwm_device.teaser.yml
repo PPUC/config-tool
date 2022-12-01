@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.pwm_device.field_i_o_board
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
+    - field.field.node.pwm_device.field_number
     - field.field.node.pwm_device.field_pin
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
@@ -17,7 +18,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: UZWtnMBSxDHa9mG0d1n4DihNuTFRUzQw94YURiRyy4c
+  default_config_hash: kQNg0ZQiguEfGXdRftK-x0PZPHk9FMA2ERhzHheQxh8
 id: node.pwm_device.teaser
 targetEntityType: node
 bundle: pwm_device
@@ -35,6 +36,7 @@ hidden:
   field_i_o_board: true
   field_max_pulse_time: true
   field_min_pulse_time: true
+  field_number: true
   field_pin: true
   field_power: true
   field_pwm_type: true

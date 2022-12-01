@@ -7,6 +7,8 @@ dependencies:
     - field.field.node.dip_switch.field_number
     - field.field.node.dip_switch.field_status
     - node.type.dip_switch
+_core:
+  default_config_hash: 1KsOfmrGxzaIkql2Oel53prLnynZCtUp5V1o1MmrQCg
 id: node.dip_switch.default
 targetEntityType: node
 bundle: dip_switch

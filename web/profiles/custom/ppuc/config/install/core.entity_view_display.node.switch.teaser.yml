@@ -11,7 +11,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: LjiXa1rT7CJeyshNGT7HurGz7Q2TVsQ2hgFSi182YQo
+  default_config_hash: MjruCmT1AzzWWcc8jRpT6QI4H0vUHYh3nxsE-qgL4oE
 id: node.switch.teaser
 targetEntityType: node
 bundle: switch

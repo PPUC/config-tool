@@ -7,7 +7,7 @@ dependencies:
     - field.field.node.i_o_board.field_number
     - node.type.i_o_board
 _core:
-  default_config_hash: 6ooVJKL1ArwLjagzCkxWPvR72biYBZwgAMTwppOwmUY
+  default_config_hash: SLcWK5_YmTiSMmOxfE-AEdmUBEvCKshU48ODhOTiFQ8
 id: node.i_o_board.default
 targetEntityType: node
 bundle: i_o_board

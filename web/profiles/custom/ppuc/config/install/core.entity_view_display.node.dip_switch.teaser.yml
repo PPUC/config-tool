@@ -10,6 +10,8 @@ dependencies:
     - node.type.dip_switch
   module:
     - user
+_core:
+  default_config_hash: sytzWij1LPhdh8c2uCyO2G_Z6pieew8ehQHdb_3biU0
 id: node.dip_switch.teaser
 targetEntityType: node
 bundle: dip_switch

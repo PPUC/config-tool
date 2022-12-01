@@ -8,7 +8,7 @@ dependencies:
     - field.field.node.switch.field_pin
     - node.type.switch
 _core:
-  default_config_hash: k_JukQ5T9c0twxpVkCFV8Dz-tWPM7rraSwUfgyN3ySk
+  default_config_hash: s7vqIVZHoSYo7_pzrJsaha2sr1MnbNaCjFcrbWX-w94
 id: node.switch.default
 targetEntityType: node
 bundle: switch

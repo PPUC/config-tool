@@ -13,7 +13,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: kNG_DkJIfGlAfglHRZ1ikzgaakSsOtUVXx7kNMQG-hE
+  default_config_hash: kuRReiUNCeo9fohKwrKn9u751bSaDbawRMPNJFl-gJ0
 id: node.addressable_leds.teaser
 targetEntityType: node
 bundle: addressable_leds

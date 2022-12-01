@@ -14,7 +14,7 @@ dependencies:
     - image
     - text
 _core:
-  default_config_hash: w7eMotX8G3UmrNyG0k_H3JcbxwSDQKxOJsZmi1k0MQU
+  default_config_hash: XMdebs_caGKnS3mIrBvNxSpv_VJDUAWlyX_od1TeqEY
 id: node.game.default
 targetEntityType: node
 bundle: game

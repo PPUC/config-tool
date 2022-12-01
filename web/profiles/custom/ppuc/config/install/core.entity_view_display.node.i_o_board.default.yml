@@ -9,7 +9,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: Wauxe-ijOENGC_x_HX6xE83u7M4RLD5vNCTS3qckXug
+  default_config_hash: ZY-iBkiuulS-EF3ZBSs-eZBCgdkv8S5_9JC9rJWok1c
 id: node.i_o_board.default
 targetEntityType: node
 bundle: i_o_board

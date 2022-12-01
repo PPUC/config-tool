@@ -15,7 +15,7 @@ dependencies:
     - color_field
     - user
 _core:
-  default_config_hash: MvAZLrf8tGbI7PSaKW5wMZnuB2Mjc6tqROojllr7MLw
+  default_config_hash: Ca7ihWfoklkiNnIaluzqvMSUu65euSoM58oU6sGar_M
 id: node.addressable_led.default
 targetEntityType: node
 bundle: addressable_led

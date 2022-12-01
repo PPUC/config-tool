@@ -10,7 +10,7 @@ dependencies:
     - field.field.node.addressable_leds.field_pin
     - node.type.addressable_leds
 _core:
-  default_config_hash: 9aO8pHXkY99Sjo2l0Y73R4BbgnC7GRvhY3avxPtxzHo
+  default_config_hash: pmh6mx9cYi7stHGtL3U0KvDpmwwQ3BRRBgmxs5xaUzM
 id: node.addressable_leds.default
 targetEntityType: node
 bundle: addressable_leds
