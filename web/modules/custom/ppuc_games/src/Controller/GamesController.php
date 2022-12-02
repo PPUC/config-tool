@@ -113,7 +113,7 @@ class GamesController extends ControllerBase {
               'holdPowerActivationTime' => (int)($device->field_hold_power_activation_time->value),
               'minPulseTime' => (int)($device->field_min_pulse_time->value),
               'maxPulseTime' => (int)($device->field_max_pulse_time->value),
-              'fastFlipSwitch' => (int)($device->field_fast_activation_switch->entity->field_number->value ?? -1),
+              'fastFlipSwitch' => (int)($device->field_fast_activation_switch->entity->field_number->value ?? 0),
             ];
 
             break;
