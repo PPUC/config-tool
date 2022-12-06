@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_amount_leds
     - field.field.node.addressable_leds.field_i_o_board
     - field.field.node.addressable_leds.field_led_type
     - field.field.node.addressable_leds.field_light_up
@@ -18,6 +19,13 @@ mode: default
 content:
   field_after_glow:
     type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_amount_leds:
+    type: number
     weight: 4
     region: content
     settings:
@@ -25,33 +33,33 @@ content:
     third_party_settings: {  }
   field_i_o_board:
     type: options_select
-    weight: 2
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   field_led_type:
     type: options_select
-    weight: 1
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_light_up:
     type: number
-    weight: 5
+    weight: 6
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_pin:
     type: number
-    weight: 3
+    weight: 2
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true

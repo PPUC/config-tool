@@ -1,0 +1,20 @@
+uuid: 6a716ca8-6767-402a-8fd3-d865d396d246
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_amount_leds
+field_name: field_amount_leds
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

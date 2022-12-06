@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_amount_leds
     - field.field.node.addressable_leds.field_i_o_board
     - field.field.node.addressable_leds.field_led_type
     - field.field.node.addressable_leds.field_light_up
@@ -12,7 +13,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: QJ2dc8j31Ze9NBzAs3UKE7ymwUvbAiSTcUiFvdVrDSw
+  default_config_hash: U17MB6U1rQ6B7dZgt5dm5N7h7ub2ZZCgDULjz61yYTo
 id: node.addressable_leds.default
 targetEntityType: node
 bundle: addressable_leds
@@ -25,7 +26,16 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 105
+    weight: 5
+    region: content
+  field_amount_leds:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
     region: content
   field_i_o_board:
     type: entity_reference_label
@@ -33,7 +43,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 102
+    weight: 1
     region: content
   field_led_type:
     type: entity_reference_label
@@ -41,7 +51,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 104
+    weight: 3
     region: content
   field_light_up:
     type: number_integer
@@ -50,7 +60,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 106
+    weight: 6
     region: content
   field_pin:
     type: number_integer
@@ -59,11 +69,11 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 103
+    weight: 2
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 0
     region: content
 hidden: {  }

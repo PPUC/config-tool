@@ -1,0 +1,23 @@
+uuid: 300c02ea-bb6c-4094-840c-bf6c736741fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_amount_leds
+    - node.type.addressable_leds
+id: node.addressable_leds.field_amount_leds
+field_name: field_amount_leds
+entity_type: node
+bundle: addressable_leds
+label: 'Amount of LEDs'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

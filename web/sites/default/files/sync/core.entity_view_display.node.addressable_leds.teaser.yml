@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_amount_leds
     - field.field.node.addressable_leds.field_i_o_board
     - field.field.node.addressable_leds.field_led_type
     - field.field.node.addressable_leds.field_light_up
@@ -26,6 +27,7 @@ content:
     region: content
 hidden:
   field_after_glow: true
+  field_amount_leds: true
   field_i_o_board: true
   field_led_type: true
   field_light_up: true
