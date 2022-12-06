@@ -1,0 +1,27 @@
+uuid: e308afad-42a2-4059-beec-868eac86e984
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number
+    - node.type.i_o_board
+_core:
+  default_config_hash: 8nS_nGnLS_g6OXELo_QV8IEITgd_uP5vR1DOuGOIyPU
+id: node.i_o_board.field_number
+field_name: field_number
+entity_type: node
+bundle: i_o_board
+label: Number
+description: 'The I/O Board number (address). A maximum of 16 boards is supported per game, numbered from 0 to 15.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: 15
+  prefix: ''
+  suffix: ''
+field_type: integer

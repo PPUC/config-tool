@@ -1,0 +1,25 @@
+uuid: 026d074d-7cc2-48e7-a008-1b66e7384c4c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pin
+    - node.type.pwm_device
+_core:
+  default_config_hash: sxiD0ysia-PD-SAPXheMYBOG8i6oduio-Z94dhFo9LU
+id: node.pwm_device.field_pin
+field_name: field_pin
+entity_type: node
+bundle: pwm_device
+label: Pin
+description: "Pin 0-7 for low power PWM.\r\nPin 19-24, 26-27 for high power PWM.\r\nPin 25 is reserved."
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 27
+  prefix: ''
+  suffix: ''
+field_type: integer

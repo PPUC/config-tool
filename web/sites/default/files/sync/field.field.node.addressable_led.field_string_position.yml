@@ -1,0 +1,25 @@
+uuid: 44e3d6e9-afa7-49ba-89e7-0b1f5476a77c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_string_position
+    - node.type.addressable_led
+_core:
+  default_config_hash: ZVDzpQqANqH_dkuoDKHNKns8RhRQDnadeYdDlRKv7gA
+id: node.addressable_led.field_string_position
+field_name: field_string_position
+entity_type: node
+bundle: addressable_led
+label: 'String Position'
+description: 'The position in the string of addressable LEDs, starting with 0.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

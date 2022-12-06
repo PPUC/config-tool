@@ -1,0 +1,22 @@
+uuid: 65f15803-4505-445a-af32-36a1bae9ec79
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: nextYGT6h4KMHbw7d_LALxj53HgpiM7ODeQ5TqeQqGM
+id: node.field_power
+field_name: field_power
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

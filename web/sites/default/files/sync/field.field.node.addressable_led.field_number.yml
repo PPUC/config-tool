@@ -1,0 +1,25 @@
+uuid: 89a52da2-d8db-4e48-967a-355fd9ead8e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number
+    - node.type.addressable_led
+_core:
+  default_config_hash: 8-JOpblC4zTmRBXJi3du-e_bS4mbg2sVcvUdViJ3eqw
+id: node.addressable_led.field_number
+field_name: field_number
+entity_type: node
+bundle: addressable_led
+label: Number
+description: 'Lamp number, flasher number, GI string'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

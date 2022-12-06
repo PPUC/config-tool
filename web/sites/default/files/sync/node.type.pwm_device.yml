@@ -1,0 +1,19 @@
+uuid: 0a807f4d-3b42-4de9-933d-da6eaaa4e161
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+_core:
+  default_config_hash: 4p1kaNOh8Kascmrt9ic-wVVshNLdWrP3kcp8ZorEb5s
+name: 'PWM Device'
+type: pwm_device
+description: 'A PWM device like a coil or flasher.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

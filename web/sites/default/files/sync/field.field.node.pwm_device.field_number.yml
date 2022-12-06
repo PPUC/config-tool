@@ -1,0 +1,25 @@
+uuid: b84e8ff5-ce6c-4d59-b7d7-348a5bf433a7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number
+    - node.type.pwm_device
+_core:
+  default_config_hash: f1d_qFh2Q43ph2DuunOlW-01D1-yJ7RI81wvuYgV3ks
+id: node.pwm_device.field_number
+field_name: field_number
+entity_type: node
+bundle: pwm_device
+label: Number
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: 64
+  prefix: ''
+  suffix: ''
+field_type: integer

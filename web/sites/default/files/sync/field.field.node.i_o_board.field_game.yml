@@ -1,0 +1,31 @@
+uuid: 4a90fbdb-dfc7-495d-9b22-a58159c3835a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game
+    - node.type.game
+    - node.type.i_o_board
+_core:
+  default_config_hash: tuGnITB3bJg_PNHVB7Eq8uG1ZkEtktX_mkdPtVDx4WA
+id: node.i_o_board.field_game
+field_name: field_game
+entity_type: node
+bundle: i_o_board
+label: Game
+description: 'The game this board is attached to.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      game: game
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

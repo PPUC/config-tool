@@ -1,0 +1,72 @@
+uuid: e341c192-c8e9-455f-8167-fab72247d494
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_i_o_board
+    - field.field.node.addressable_leds.field_led_type
+    - field.field.node.addressable_leds.field_light_up
+    - field.field.node.addressable_leds.field_pin
+    - node.type.addressable_leds
+_core:
+  default_config_hash: bkBw9Li5poa6e9YJ5t_umXn_czPtlAEw80b38huQV9s
+id: node.addressable_leds.default
+targetEntityType: node
+bundle: addressable_leds
+mode: default
+content:
+  field_after_glow:
+    type: number
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_i_o_board:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_led_type:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_light_up:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pin:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

@@ -1,0 +1,25 @@
+uuid: 55824c36-2f69-4c2a-bca4-d683809e34b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hold_power_activation_time
+    - node.type.pwm_device
+_core:
+  default_config_hash: hoAoIbcByfBqTx4UdtvwTFgeI882BMt_e36-EJIKb84
+id: node.pwm_device.field_hold_power_activation_time
+field_name: field_hold_power_activation_time
+entity_type: node
+bundle: pwm_device
+label: 'Hold Power activation time'
+description: 'Time in microseconds after the PWM power will be reduced to hold power.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,0 +1,27 @@
+uuid: c5fffcab-2b02-4604-b8ce-051d05f45fc6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_color
+    - node.type.addressable_led
+  module:
+    - color_field
+_core:
+  default_config_hash: 7CeR5nZrnOZ8tT1614Tq-lP11ZAHFPJjx6OrlEmGFng
+id: node.addressable_led.field_color
+field_name: field_color
+entity_type: node
+bundle: addressable_led
+label: Color
+description: 'The default color when no effect is running an the LED is turned on by the CPU.'
+required: true
+translatable: false
+default_value:
+  -
+    color: FFFFFF
+    opacity: !!float 0
+default_value_callback: ''
+settings:
+  opacity: 0
+field_type: color_field_type

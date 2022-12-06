@@ -1,0 +1,69 @@
+uuid: 61ddfd36-bb33-4af4-a2bf-75a8da14f4b8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_i_o_board
+    - field.field.node.addressable_leds.field_led_type
+    - field.field.node.addressable_leds.field_light_up
+    - field.field.node.addressable_leds.field_pin
+    - node.type.addressable_leds
+  module:
+    - user
+_core:
+  default_config_hash: U17MB6U1rQ6B7dZgt5dm5N7h7ub2ZZCgDULjz61yYTo
+id: node.addressable_leds.default
+targetEntityType: node
+bundle: addressable_leds
+mode: default
+content:
+  field_after_glow:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_i_o_board:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_led_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_light_up:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_pin:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

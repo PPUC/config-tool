@@ -1,0 +1,19 @@
+uuid: 792c84d4-d2b0-4a5d-a93c-7d76dd5083ff
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+_core:
+  default_config_hash: B1gL76tfm1r0Z2b-ChVZZOo11syUVSrMrA6OXjFU6ho
+name: 'Addressable LED String'
+type: addressable_leds
+description: 'Addressable WS2812 LED string or compatible / extended types like SK6812.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

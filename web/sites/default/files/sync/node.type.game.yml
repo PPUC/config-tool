@@ -1,0 +1,20 @@
+uuid: 526cedb5-2e6c-4828-a8d7-15248a804fd7
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+_core:
+  default_config_hash: V1N7tg_rzW-levz_cMseUyv42PoIb2GY-DjrU6X1RW8
+name: Game
+type: game
+description: 'The game.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

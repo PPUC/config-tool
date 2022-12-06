@@ -1,0 +1,49 @@
+uuid: 81b18ff2-260d-4b84-afc9-0a4578575cc3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.i_o_board.field_game
+    - field.field.node.i_o_board.field_number
+    - node.type.i_o_board
+_core:
+  default_config_hash: '-LqMsIWe2IqH7pBB3Le-UbTMVdaBLvPrEQ48pNz5ODk'
+id: node.i_o_board.default
+targetEntityType: node
+bundle: i_o_board
+mode: default
+content:
+  field_game:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_number:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

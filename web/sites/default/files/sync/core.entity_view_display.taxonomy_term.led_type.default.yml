@@ -1,0 +1,33 @@
+uuid: a86f7447-e415-46d6-a6ae-b98fe681a17e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.led_type.field_ppuc_type
+    - taxonomy.vocabulary.led_type
+  module:
+    - text
+_core:
+  default_config_hash: vNP5u95568VNL4-nu03gVsAbtdzO-R3xZZUIu4Dkd1Y
+id: taxonomy_term.led_type.default
+targetEntityType: taxonomy_term
+bundle: led_type
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_ppuc_type:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

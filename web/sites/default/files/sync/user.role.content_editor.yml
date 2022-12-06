@@ -1,0 +1,73 @@
+uuid: fff85dbf-06dd-4424-a593-2baf920f99fe
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.addressable_leds
+    - node.type.game
+    - node.type.i_o_board
+    - node.type.pwm_device
+    - node.type.switch
+  module:
+    - contextual
+    - file
+    - node
+    - path
+    - system
+    - toolbar
+_core:
+  default_config_hash: GqA5coG05BbMDFMtrORjMqcdQMD5SY_0iLxd431amBc
+id: content_editor
+label: 'Content editor'
+weight: 2
+is_admin: false
+permissions:
+  - 'access administration pages'
+  - 'access content overview'
+  - 'access contextual links'
+  - 'access files overview'
+  - 'access toolbar'
+  - 'administer url aliases'
+  - 'create addressable_leds content'
+  - 'create game content'
+  - 'create i_o_board content'
+  - 'create pwm_device content'
+  - 'create switch content'
+  - 'create url aliases'
+  - 'delete addressable_leds revisions'
+  - 'delete any addressable_leds content'
+  - 'delete any i_o_board content'
+  - 'delete any pwm_device content'
+  - 'delete any switch content'
+  - 'delete i_o_board revisions'
+  - 'delete own addressable_leds content'
+  - 'delete own game content'
+  - 'delete own i_o_board content'
+  - 'delete own pwm_device content'
+  - 'delete own switch content'
+  - 'delete pwm_device revisions'
+  - 'delete switch revisions'
+  - 'edit any addressable_leds content'
+  - 'edit any game content'
+  - 'edit any i_o_board content'
+  - 'edit any pwm_device content'
+  - 'edit any switch content'
+  - 'edit own addressable_leds content'
+  - 'edit own game content'
+  - 'edit own i_o_board content'
+  - 'edit own pwm_device content'
+  - 'edit own switch content'
+  - 'revert addressable_leds revisions'
+  - 'revert all revisions'
+  - 'revert game revisions'
+  - 'revert i_o_board revisions'
+  - 'revert pwm_device revisions'
+  - 'revert switch revisions'
+  - 'view addressable_leds revisions'
+  - 'view all revisions'
+  - 'view game revisions'
+  - 'view i_o_board revisions'
+  - 'view own unpublished content'
+  - 'view pwm_device revisions'
+  - 'view switch revisions'
+  - 'view the administration theme'

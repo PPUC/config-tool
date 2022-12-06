@@ -1,0 +1,25 @@
+uuid: c26b649b-25e2-4e07-a2ff-0d747aba5e1c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_ppuc_type
+    - taxonomy.vocabulary.led_type
+_core:
+  default_config_hash: fYJHA4cPX6TAC2SfyJz0QqjpQEbxsCrlyatMuYgXnMo
+id: taxonomy_term.led_type.field_ppuc_type
+field_name: field_ppuc_type
+entity_type: taxonomy_term
+bundle: led_type
+label: 'PPUC type'
+description: 'The internal constant used by WS2812Serial or other libs.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,0 +1,31 @@
+uuid: 69f75c54-ebfb-476e-9f4e-6f409fb66527
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_i_o_board
+    - node.type.i_o_board
+    - node.type.switch
+_core:
+  default_config_hash: hqw0bfmCaVtSIgW2rRg9lVPAGxolw9DwurTpJL64ScE
+id: node.switch.field_i_o_board
+field_name: field_i_o_board
+entity_type: node
+bundle: switch
+label: 'I/O Board'
+description: 'Th I/O board the switch is attached to'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      i_o_board: i_o_board
+    sort:
+      field: field_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

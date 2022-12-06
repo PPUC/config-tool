@@ -1,0 +1,21 @@
+uuid: f512556c-f663-4a7e-a609-ce998b0795dd
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: e6_F9O4Fb8tWdeYuRU2sf3adySphDwYXwJKQoZQOBPg
+id: node.field_game
+field_name: field_game
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

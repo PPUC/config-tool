@@ -1,0 +1,90 @@
+uuid: 5647168a-6b1a-46f6-808f-41a08753c15e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.addressable_led.field_brightness
+    - field.field.node.addressable_led.field_color
+    - field.field.node.addressable_led.field_number
+    - field.field.node.addressable_led.field_role
+    - field.field.node.addressable_led.field_string
+    - field.field.node.addressable_led.field_string_position
+    - field.field.node.addressable_led.field_triplet_position
+    - node.type.addressable_led
+  module:
+    - color_field
+    - user
+_core:
+  default_config_hash: UjZ8dcxgLMAn8lp2bcXGD60nxs21TM__hQnDU1alFZM
+id: node.addressable_led.default
+targetEntityType: node
+bundle: addressable_led
+mode: default
+content:
+  field_brightness:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_color:
+    type: color_field_formatter_text
+    label: above
+    settings:
+      format: hex
+      opacity: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_number:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_role:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_string:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_string_position:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_triplet_position:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

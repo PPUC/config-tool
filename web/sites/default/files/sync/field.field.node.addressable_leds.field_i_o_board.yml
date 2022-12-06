@@ -1,0 +1,31 @@
+uuid: 64a92ffc-95be-48a1-b8c3-896ce8c6b24a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_i_o_board
+    - node.type.addressable_leds
+    - node.type.i_o_board
+_core:
+  default_config_hash: ppKA1tatNX1YA9CnCDGJcwPaHQ5cpz5O3oDlihRDj5I
+id: node.addressable_leds.field_i_o_board
+field_name: field_i_o_board
+entity_type: node
+bundle: addressable_leds
+label: 'I/O Board'
+description: 'The I/O board the LED stripe is attached to.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      i_o_board: i_o_board
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

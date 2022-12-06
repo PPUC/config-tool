@@ -1,0 +1,32 @@
+uuid: 5dee7f5d-0a7a-4145-bcbf-84119d420892
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.addressable_leds.field_after_glow
+    - field.field.node.addressable_leds.field_i_o_board
+    - field.field.node.addressable_leds.field_led_type
+    - field.field.node.addressable_leds.field_light_up
+    - field.field.node.addressable_leds.field_pin
+    - node.type.addressable_leds
+  module:
+    - user
+_core:
+  default_config_hash: M6DrNnUrgSp8dE0mcsEYhV_2rgZqPZtdPrSRmSVQ6hc
+id: node.addressable_leds.teaser
+targetEntityType: node
+bundle: addressable_leds
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_after_glow: true
+  field_i_o_board: true
+  field_led_type: true
+  field_light_up: true
+  field_pin: true

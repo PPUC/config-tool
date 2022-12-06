@@ -1,0 +1,25 @@
+uuid: 2f076f65-99bc-47ca-82fb-a48a5e16d7ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hold_power
+    - node.type.pwm_device
+_core:
+  default_config_hash: 5w38W2Oc5G6tTKgWMDRtCDVs_BpVI40_BzZmsBr5AW4
+id: node.pwm_device.field_hold_power
+field_name: field_hold_power
+entity_type: node
+bundle: pwm_device
+label: 'Hold Power'
+description: 'Reduced PWM power, for example to hold flippers in up position.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer

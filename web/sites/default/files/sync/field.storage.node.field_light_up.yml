@@ -1,0 +1,22 @@
+uuid: 15f06e98-7d95-450a-900e-39bd45b3101b
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: SWArpc_3yFRscGkV7lolzU11AEsuLKVzGaWZ_8Y4fDE
+id: node.field_light_up
+field_name: field_light_up
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

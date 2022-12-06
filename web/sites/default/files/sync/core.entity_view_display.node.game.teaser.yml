@@ -1,0 +1,46 @@
+uuid: 28e04724-09dd-4176-b4f1-a7f46c26dcea
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.game.body
+    - field.field.node.game.field_logo
+    - field.field.node.game.field_manual
+    - field.field.node.game.field_roms
+    - image.style.thumbnail
+    - node.type.game
+  module:
+    - image
+    - text
+    - user
+_core:
+  default_config_hash: vFmINDl1qWz4KPzQFa542Z8yy8zmzffxtWSbYxr6RB0
+id: node.game.teaser
+targetEntityType: node
+bundle: game
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_logo:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_manual: true
+  field_roms: true
+  links: true
