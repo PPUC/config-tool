@@ -53,6 +53,7 @@ ddev start
 Once ddev has been started you can also update to the latest version of the
 config-tool. Within `PPUC/config-tool` run
 ```
+ddev snapshot
 git pull
 ddev ssh
 ```
