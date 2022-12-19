@@ -28,13 +28,14 @@ other PPUC components.
 mkdir PPUC
 cd PPUC
 git clone https://github.com/PPUC/config-tool.git
-
 cd config-tool
 ddev start
 ```
 
 ```
 ddev ssh
+```
+```
 drush si ppuc --site-name="Pinball Power-Up Controller" --account-name=ppuc --account-pass=ppuc
 exit
 ```
@@ -54,6 +55,8 @@ config-tool. Within `PPUC/config-tool` run
 ```
 git pull
 ddev ssh
-drush deploy
+```
+```
+drush updb
 exit
 ```
