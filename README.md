@@ -51,7 +51,8 @@ ddev start
 ```
 
 Once ddev has been started you can also update to the latest version of the
-config-tool. Within `PPUC/config-tool` run
+config-tool. It is recommended to export your games before performing the update.
+Within `PPUC/config-tool` run
 ```
 ddev snapshot
 git pull
