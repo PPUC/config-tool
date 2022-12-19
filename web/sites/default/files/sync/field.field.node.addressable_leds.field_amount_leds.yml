@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_amount_leds
     - node.type.addressable_leds
+_core:
+  default_config_hash: 4f4UnMEWgS8GTTYL5gXm_vrU6KhVwJDc_5jAIx_ThRQ
 id: node.addressable_leds.field_amount_leds
 field_name: field_amount_leds
 entity_type: node
