@@ -23,6 +23,7 @@
         "drupal/core-composer-scaffold": "^9.5",
         "drupal/core-project-message": "^9.5",
         "drupal/default_content": "^2.0@alpha",
+        "drupal/quick_node_clone": "^1.15",
         "drush/drush": "^11.1",
         "maennchen/zipstream-php": "^2.2.1",
         "roave/security-advisories": "dev-latest"

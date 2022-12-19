@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'cc7ae331f64289cf8dc130195cc348d5f32d8cd6',
+        'reference' => 'acd942dca72fe8f5b857ebf9bd70fa77a098129d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -373,6 +373,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/quick_node_clone' => array(
+            'pretty_version' => '1.15.0',
+            'version' => '1.15.0.0',
+            'reference' => '8.x-1.15',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/quick_node_clone',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drush/drush' => array(
             'pretty_version' => '11.4.0',
             'version' => '11.4.0.0',
@@ -571,7 +580,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'cc7ae331f64289cf8dc130195cc348d5f32d8cd6',
+            'reference' => 'acd942dca72fe8f5b857ebf9bd70fa77a098129d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

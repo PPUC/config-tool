@@ -31,6 +31,7 @@ install:
   - automated_cron
   - default_content
   - color_field
+  - qucik_node_clone
   - ppuc_games
 themes:
   - claro

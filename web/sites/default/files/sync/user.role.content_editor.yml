@@ -13,6 +13,7 @@ dependencies:
     - file
     - node
     - path
+    - quick_node_clone
     - system
     - toolbar
 _core:
@@ -28,6 +29,12 @@ permissions:
   - 'access files overview'
   - 'access toolbar'
   - 'administer url aliases'
+  - 'clone addressable_led content'
+  - 'clone addressable_leds content'
+  - 'clone dip_switch content'
+  - 'clone i_o_board content'
+  - 'clone pwm_device content'
+  - 'clone switch content'
   - 'create addressable_leds content'
   - 'create game content'
   - 'create i_o_board content'

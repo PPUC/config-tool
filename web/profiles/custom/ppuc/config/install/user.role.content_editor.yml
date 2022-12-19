@@ -13,10 +13,11 @@ dependencies:
     - file
     - node
     - path
+    - quick_node_clone
     - system
     - toolbar
 _core:
-  default_config_hash: FpWJo63CLnXfgQn_47Z2X3DfwOHqa9wbyBc-ByTUfpM
+  default_config_hash: GqA5coG05BbMDFMtrORjMqcdQMD5SY_0iLxd431amBc
 id: content_editor
 label: 'Content editor'
 weight: 2
@@ -28,6 +29,12 @@ permissions:
   - 'access files overview'
   - 'access toolbar'
   - 'administer url aliases'
+  - 'clone addressable_led content'
+  - 'clone addressable_leds content'
+  - 'clone dip_switch content'
+  - 'clone i_o_board content'
+  - 'clone pwm_device content'
+  - 'clone switch content'
   - 'create addressable_leds content'
   - 'create game content'
   - 'create i_o_board content'
