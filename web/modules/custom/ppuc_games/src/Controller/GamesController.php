@@ -19,6 +19,20 @@ use ZipStream\ZipStream;
  */
 class GamesController extends ControllerBase {
 
+  public function sortEntitiesByNumberField($a, $b){
+    if ($a->field_number->value == $b->field_number->value) {
+      return 0;
+    }
+    return ($a->field_number->value > $b->field_number->value) ? 1 : -1;
+  }
+
+  public function sortArrayByNumberValues($a, $b){
+    if ($a['number'] == $b['number']) {
+      return 0;
+    }
+    return ($a['number'] > $b['number']) ? 1 : -1;
+  }
+
   /**
    * @return \Symfony\Component\HttpFoundation\Response
    *   The HTTP response object.
@@ -45,10 +59,11 @@ class GamesController extends ControllerBase {
       'status' => TRUE,
       $node->getEntityType()->getKey('bundle') => 'dip_switch',
     ]);
+    uasort($dip_switches, [$this, 'sortEntitiesByNumberField']);
 
     foreach ($dip_switches as $dip_switch) {
       $yaml['dipSwitches'][] = [
-        'description' => $dip_switch->label(),
+        'description' => trim($dip_switch->label()),
         'number' => (int)($dip_switch->field_number->value),
         'on' => (bool)($dip_switch->field_status->value),
       ];
@@ -59,6 +74,7 @@ class GamesController extends ControllerBase {
       'status' => TRUE,
       $node->getEntityType()->getKey('bundle') => 'i_o_board',
     ]);
+    uasort($i_o_boards, [$this, 'sortEntitiesByNumberField']);
 
     foreach ($i_o_boards as $i_o_board) {
       $i_o_board_number = (int)($i_o_board->field_number->value);
@@ -73,7 +89,7 @@ class GamesController extends ControllerBase {
         switch ($device->bundle()) {
           case 'switch':
             $yaml['switches'][] = [
-              'description' => 'dummy',
+              'description' => trim($device->label()),
               'number' => (int)($device->field_number->value),
               'board' => $i_o_board_number,
               'port' => (int)($device->field_pin->value),
@@ -103,7 +119,7 @@ class GamesController extends ControllerBase {
             }
 
             $yaml['pwmOutput'][] = [
-              'description' => $device->label(),
+              'description' => trim($device->label()),
               'type' => $type,
               'number' => (int)($device->field_number->value),
               'board' => $i_o_board_number,
@@ -130,6 +146,8 @@ class GamesController extends ControllerBase {
               'status' => TRUE,
               $node->getEntityType()->getKey('bundle') => 'addressable_led',
             ]);
+            uasort($addressable_leds, [$this, 'sortEntitiesByNumberField']);
+
             foreach ($addressable_leds as $addressable_led) {
               $role = '';
               switch ($addressable_led->field_role->entity->uuid()) {
@@ -150,7 +168,7 @@ class GamesController extends ControllerBase {
               }
 
               $leds[$role][] = [
-                'description' => $addressable_led->label(),
+                'description' => trim($addressable_led->label()),
                 'number' => (int)($addressable_led->field_number->value),
                 'ledNumber' => (int)($addressable_led->field_string_position->value),
                 'brightness' => (int)($addressable_led->field_brightness->value),
@@ -159,7 +177,7 @@ class GamesController extends ControllerBase {
             }
 
             $yaml['ledStripes'][] = [
-              'description' => $device->label(),
+              'description' => trim($device->label()),
               'board' => $i_o_board_number,
               'port' => (int)($device->field_pin->value),
               'ledType' => $device->field_led_type->entity->getName(),
@@ -171,8 +189,11 @@ class GamesController extends ControllerBase {
         }
       }
 
+      usort($yaml['switches'], [$this, 'sortArrayByNumberValues']);
+      usort($yaml['pwmOutput'], [$this, 'sortArrayByNumberValues']);
+
       $yaml['boards'][] = [
-        'description' => $i_o_board->label(),
+        'description' => trim($i_o_board->label()),
         'number' => $i_o_board_number,
         'pollEvents' => $poll_events,
       ];
