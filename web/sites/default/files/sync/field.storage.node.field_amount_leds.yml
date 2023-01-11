@@ -4,8 +4,6 @@ status: true
 dependencies:
   module:
     - node
-_core:
-  default_config_hash: yNN7UJyocgLc0Akgk_cztZcUTCFv4vCjjFS0vnz0Fa8
 id: node.field_amount_leds
 field_name: field_amount_leds
 entity_type: node
