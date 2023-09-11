@@ -11,7 +11,6 @@ use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 /**
@@ -213,9 +212,6 @@ class GamesController extends ControllerBase {
    * Streams a zip archive containing a complete Solr configuration.
    */
   public function streamGameZip(NodeInterface $node): Response {
-    $archive_options = new Archive();
-    $archive_options->setSendHttpHeaders(TRUE);
-    $archive_options->setEnableZip64(FALSE);
 
     try {
       @ob_clean();
@@ -223,7 +219,10 @@ class GamesController extends ControllerBase {
       // response. We have to disable this with a custom header.
       // @see https://github.com/maennchen/ZipStream-PHP/wiki/nginx
       header('X-Accel-Buffering: no');
-      $zip = new ZipStream($node->uuid() . '.zip', $archive_options);
+      $zip = new ZipStream(
+        enableZip64: false,
+        outputName: $node->uuid() . '.zip'
+      );
 
       /** @var ExporterInterface $exporter */
       $exporter = \Drupal::service('default_content.exporter');
