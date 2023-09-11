@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - filter.format.basic_html
     - node.type.addressable_leds
     - node.type.game
     - node.type.i_o_board
@@ -11,6 +12,7 @@ dependencies:
   module:
     - contextual
     - file
+    - filter
     - node
     - path
     - quick_node_clone
@@ -48,6 +50,7 @@ permissions:
   - 'delete any switch content'
   - 'delete i_o_board revisions'
   - 'delete own addressable_leds content'
+  - 'delete own files'
   - 'delete own game content'
   - 'delete own i_o_board content'
   - 'delete own pwm_device content'
@@ -70,6 +73,7 @@ permissions:
   - 'revert i_o_board revisions'
   - 'revert pwm_device revisions'
   - 'revert switch revisions'
+  - 'use text format basic_html'
   - 'view addressable_leds revisions'
   - 'view all revisions'
   - 'view game revisions'

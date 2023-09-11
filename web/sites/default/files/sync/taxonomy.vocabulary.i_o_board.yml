@@ -1,0 +1,8 @@
+uuid: 1e6724a2-e2f4-47cf-87ff-02c698bdfc9a
+langcode: en
+status: true
+dependencies: {  }
+name: 'I/O Board'
+vid: i_o_board
+description: 'I/O Board types'
+weight: 0

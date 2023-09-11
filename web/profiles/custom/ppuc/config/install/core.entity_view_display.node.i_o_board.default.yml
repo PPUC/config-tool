@@ -4,12 +4,13 @@ status: true
 dependencies:
   config:
     - field.field.node.i_o_board.field_game
+    - field.field.node.i_o_board.field_io_board_type
     - field.field.node.i_o_board.field_number
     - node.type.i_o_board
   module:
     - user
 _core:
-  default_config_hash: ZY-iBkiuulS-EF3ZBSs-eZBCgdkv8S5_9JC9rJWok1c
+  default_config_hash: VhAEZzteFzp34eu5u3JivbCWYSk-g8MlCNc3Vv-xIoo
 id: node.i_o_board.default
 targetEntityType: node
 bundle: i_o_board
@@ -22,6 +23,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 103
+    region: content
+  field_io_board_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
     region: content
   field_number:
     type: number_integer

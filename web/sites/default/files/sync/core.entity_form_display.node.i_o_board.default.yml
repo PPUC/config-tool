@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.i_o_board.field_game
+    - field.field.node.i_o_board.field_io_board_type
     - field.field.node.i_o_board.field_number
     - node.type.i_o_board
 _core:
@@ -19,6 +20,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_io_board_type:
+    type: options_buttons
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_number:
     type: number
     weight: 2
@@ -28,7 +35,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 3
+    weight: 4
     region: content
     settings:
       display_label: true

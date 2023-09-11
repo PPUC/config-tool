@@ -1,12 +1,12 @@
 name: PPUC
 type: profile
 description: "Pinball Power-Up Controller web frontend"
-core_version_requirement: ">=9"
+core_version_requirement: ">=10.1"
 install:
   - node
   - block
   - breakpoint
-  - ckeditor
+  - ckeditor5
   - config
   - contextual
   - menu_link_content

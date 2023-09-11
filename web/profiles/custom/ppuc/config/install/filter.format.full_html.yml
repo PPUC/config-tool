@@ -1,13 +1,14 @@
+uuid: f804dc5b-cdff-489c-8eb7-aaa76862c17b
 langcode: en
 status: true
 dependencies:
   module:
     - editor
+_core:
+  default_config_hash: WNeK5FbcY8pXgEpbD_KgRzlF1-5PL3BJXwqaBctPTqw
 name: 'Full HTML'
 format: full_html
 weight: 2
-roles:
-  - administrator
 filters:
   filter_align:
     id: filter_align
@@ -32,4 +33,10 @@ filters:
     provider: editor
     status: true
     weight: 11
+    settings: {  }
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
+    status: true
+    weight: 12
     settings: {  }

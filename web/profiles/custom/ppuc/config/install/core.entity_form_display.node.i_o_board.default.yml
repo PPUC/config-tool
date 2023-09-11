@@ -4,10 +4,11 @@ status: true
 dependencies:
   config:
     - field.field.node.i_o_board.field_game
+    - field.field.node.i_o_board.field_io_board_type
     - field.field.node.i_o_board.field_number
     - node.type.i_o_board
 _core:
-  default_config_hash: SLcWK5_YmTiSMmOxfE-AEdmUBEvCKshU48ODhOTiFQ8
+  default_config_hash: '-LqMsIWe2IqH7pBB3Le-UbTMVdaBLvPrEQ48pNz5ODk'
 id: node.i_o_board.default
 targetEntityType: node
 bundle: i_o_board
@@ -18,6 +19,16 @@ content:
     weight: 1
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_io_board_type:
+    type: entity_reference_autocomplete
+    weight: 26
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_number:
     type: number

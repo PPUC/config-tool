@@ -200,9 +200,15 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
   /**
    * A definite singular/plural name of the type.
    *
-   * Needed keys: "singular" and "plural".
+   * Needed keys: "singular" and "plural". Can also have key: "context".
+   * @code
+   * [
+   *    'singular' => '@count entity',
+   *    'plural' => '@count entities',
+   *    'context' => 'Entity context',
+   * ]
    *
-   * @var string|\Drupal\Core\StringTranslation\TranslatableMarkup
+   * @var string[]
    *
    * @see \Drupal\Core\Entity\EntityTypeInterface::getCountLabel()
    */
@@ -431,14 +437,6 @@ class EntityType extends PluginDefinition implements EntityTypeInterface {
    */
   public function entityClassImplements($interface) {
     return is_subclass_of($this->getClass(), $interface);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isSubclassOf($class) {
-    @trigger_error(__METHOD__ . '() is deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Entity\EntityTypeInterface::entityClassImplements() instead. See https://www.drupal.org/node/2842808', E_USER_DEPRECATED);
-    return $this->entityClassImplements($class);
   }
 
   /**

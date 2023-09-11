@@ -8,7 +8,7 @@ dependencies:
   module:
     - color_field
 _core:
-  default_config_hash: 08RRCoH_mA3p1VHzc13E5-6tiuWpVD7U8ru8qfdd9YE
+  default_config_hash: 7CeR5nZrnOZ8tT1614Tq-lP11ZAHFPJjx6OrlEmGFng
 id: node.addressable_led.field_color
 field_name: field_color
 entity_type: node
@@ -20,7 +20,7 @@ translatable: false
 default_value:
   -
     color: FFFFFF
-    opacity: !!float 0
+    opacity: 0.0
 default_value_callback: ''
 settings:
   opacity: 0
