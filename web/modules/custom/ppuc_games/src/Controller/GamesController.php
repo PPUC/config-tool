@@ -37,11 +37,13 @@ class GamesController extends ControllerBase {
    *   The HTTP response object.
    */
   public function streamPinMameYaml(NodeInterface $node): Response {
+    /** @var \Drupal\taxonomy\TermInterface $platform */
+    $platform = $node->field_platform->entity;
     $yaml = [
       'ppucVersion' => 1,
       'rom' => 'dummy',
-      'serialPort' => 'dummy',
-      'display' => 'dummy',
+      'serialPort' => $node->field_serial_port->value ?? 'dummy',
+      'platform' => $platform->getName(),
       'debug' => false,
       'boards' => [],
       'dipSwitches' => [],
@@ -77,6 +79,8 @@ class GamesController extends ControllerBase {
 
     foreach ($i_o_boards as $i_o_board) {
       $i_o_board_number = (int)($i_o_board->field_number->value);
+      $i_o_board_type = $i_o_board->field_io_board_type->entity;
+      $i_o_board_gpio_mapping =  unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
       $poll_events = FALSE;
 
       // Switches, PWM, LED strings.
@@ -91,7 +95,7 @@ class GamesController extends ControllerBase {
               'description' => trim($device->label()),
               'number' => (int)($device->field_number->value),
               'board' => $i_o_board_number,
-              'port' => (int)($device->field_pin->value),
+              'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
             ];
 
             $poll_events = TRUE;
@@ -122,7 +126,7 @@ class GamesController extends ControllerBase {
               'type' => $type,
               'number' => (int)($device->field_number->value),
               'board' => $i_o_board_number,
-              'port' => (int)($device->field_pin->value),
+              'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
               'power' => (int)($device->field_power->value),
               'holdPower' => (int)($device->field_hold_power->value),
               'holdPowerActivationTime' => (int)($device->field_hold_power_activation_time->value),
@@ -178,7 +182,7 @@ class GamesController extends ControllerBase {
             $yaml['ledStripes'][] = [
               'description' => trim($device->label()),
               'board' => $i_o_board_number,
-              'port' => (int)($device->field_pin->value),
+              'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
               'ledType' => $device->field_led_type->entity->getName(),
               'lightUp' => (int)($device->field_light_up->value),
               'afterGlow' => (int)($device->field_after_glow->value),

@@ -1,0 +1,8 @@
+uuid: dc556915-449a-44e8-8fe0-5b1ab9d1189d
+langcode: en
+status: true
+dependencies: {  }
+name: Platform
+vid: platform
+description: 'WPC, DE, SYS11, SAM, ...'
+weight: 0

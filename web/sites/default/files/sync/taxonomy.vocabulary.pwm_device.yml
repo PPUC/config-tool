@@ -6,5 +6,5 @@ _core:
   default_config_hash: ipVWg19GEBLQlfPDF8FI1A1PXPX_AKbQQfba7-ivLw4
 name: 'PWM Device'
 vid: pwm_device
-description: ''
+description: 'Coil, flasher, lamp'
 weight: 0

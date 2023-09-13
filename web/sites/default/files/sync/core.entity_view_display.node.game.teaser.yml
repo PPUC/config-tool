@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.game.body
     - field.field.node.game.field_logo
     - field.field.node.game.field_manual
+    - field.field.node.game.field_platform
     - field.field.node.game.field_roms
     - image.style.thumbnail
     - node.type.game
@@ -42,5 +43,6 @@ content:
     region: content
 hidden:
   field_manual: true
+  field_platform: true
   field_roms: true
   links: true

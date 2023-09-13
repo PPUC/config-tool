@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.game.body
     - field.field.node.game.field_logo
     - field.field.node.game.field_manual
+    - field.field.node.game.field_platform
     - field.field.node.game.field_roms
     - image.style.medium
     - node.type.game
@@ -46,6 +47,14 @@ content:
       use_description_as_link_text: true
     third_party_settings: {  }
     weight: 3
+    region: content
+  field_platform:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 4
     region: content
   field_roms:
     type: file_default

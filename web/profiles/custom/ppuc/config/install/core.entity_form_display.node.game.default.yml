@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.game.body
     - field.field.node.game.field_logo
     - field.field.node.game.field_manual
+    - field.field.node.game.field_platform
     - field.field.node.game.field_roms
     - image.style.thumbnail
     - node.type.game
@@ -14,7 +15,7 @@ dependencies:
     - image
     - text
 _core:
-  default_config_hash: XMdebs_caGKnS3mIrBvNxSpv_VJDUAWlyX_od1TeqEY
+  default_config_hash: k3RId3Jp-Yzte9vomGkgD2lUwxB8p-bVRyphMxAYYfw
 id: node.game.default
 targetEntityType: node
 bundle: game
@@ -40,28 +41,34 @@ content:
     third_party_settings: {  }
   field_manual:
     type: file_generic
-    weight: 4
+    weight: 5
     region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+  field_platform:
+    type: options_buttons
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_roms:
     type: file_generic
-    weight: 3
+    weight: 4
     region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true

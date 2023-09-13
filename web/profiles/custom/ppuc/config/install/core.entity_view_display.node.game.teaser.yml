@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.game.body
     - field.field.node.game.field_logo
     - field.field.node.game.field_manual
+    - field.field.node.game.field_platform
     - field.field.node.game.field_roms
     - image.style.thumbnail
     - node.type.game
@@ -15,7 +16,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: yB1QwmTDu-3dq4gCZtWoQDMDKh68BhzJKEb31-0iFMM
+  default_config_hash: vFmINDl1qWz4KPzQFa542Z8yy8zmzffxtWSbYxr6RB0
 id: node.game.teaser
 targetEntityType: node
 bundle: game
@@ -42,5 +43,6 @@ content:
     region: content
 hidden:
   field_manual: true
+  field_platform: true
   field_roms: true
   links: true
