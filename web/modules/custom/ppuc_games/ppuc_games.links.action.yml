@@ -36,6 +36,22 @@ ppuc_games.add_switch:
     - entity.node.canonical
   title: 'Add Switch'
 
+ppuc_games.add_switch_matrix:
+  route_name: node.add
+  route_parameters:
+    node_type: 'switch_matrix'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Switch Matrix'
+
+ppuc_games.add_switch_matrix_part:
+  route_name: node.add
+  route_parameters:
+    node_type: 'switch_matrix_column_row  '
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Switch Matrix Column/Row'
+
 ppuc_games.add_pwm_device:
   route_name: node.add
   route_parameters:

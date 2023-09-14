@@ -1,0 +1,8 @@
+uuid: 358151a6-33b3-46da-9197-f223af420124
+langcode: en
+status: true
+dependencies: {  }
+name: 'Matrix Part'
+vid: matrix_part
+description: 'Matrix column or row'
+weight: 0

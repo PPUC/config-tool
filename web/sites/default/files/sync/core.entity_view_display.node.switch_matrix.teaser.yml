@@ -1,0 +1,26 @@
+uuid: 26e46e12-70b8-4af2-b4b7-e879fde0e269
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.switch_matrix.field_active_low
+    - field.field.node.switch_matrix.field_i_o_board
+    - field.field.node.switch_matrix.field_pulse_time
+    - node.type.switch_matrix
+  module:
+    - user
+id: node.switch_matrix.teaser
+targetEntityType: node
+bundle: switch_matrix
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_active_low: true
+  field_i_o_board: true
+  field_pulse_time: true

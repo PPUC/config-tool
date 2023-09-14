@@ -18,9 +18,16 @@ use ZipStream\ZipStream;
  */
 class GamesController extends ControllerBase {
 
-  public function sortEntitiesByNumberField($a, $b){
+  public function sortEntitiesByNumberField($a, $b) {
     if ($a->field_number->value == $b->field_number->value) {
       return 0;
+    }
+    return ($a->field_number->value > $b->field_number->value) ? 1 : -1;
+  }
+
+  public function sortEntitiesByMatrixPartAndNumberField($a, $b) {
+    if ($a->field_matrix_part->target_id == $b->field_matrix_part->target_id) {
+      return $this->sortEntitiesByNumberField($a, $b);
     }
     return ($a->field_number->value > $b->field_number->value) ? 1 : -1;
   }
@@ -99,6 +106,49 @@ class GamesController extends ControllerBase {
             ];
 
             $poll_events = TRUE;
+
+            break;
+
+          case 'switch_matrix':
+            $switch_matrix = [
+              'columns' => [],
+              'rows' => [],
+            ];
+
+            $switch_matrix_parts = $storage->loadByProperties([
+              'field_switch_matrix' => $device->id(),
+              'status' => TRUE,
+              $node->getEntityType()->getKey('bundle') => 'switch_matrix_column_row',
+            ]);
+            uasort($switch_matrix_parts, [$this, 'sortEntitiesByMatrixPartAndNumberField']);
+
+            foreach ($switch_matrix_parts as $switch_matrix_part) {
+              $part = '';
+              switch ($switch_matrix_part->field_matrix_part->entity->uuid()) {
+                case '71d21092-dbdc-4741-9894-194b28fd5228':
+                  $part = 'columns';
+
+                  break;
+
+                case '1dc42e0d-2332-4623-a2f2-2d23b1fe9e08':
+                  $part = 'rows';
+
+                  break;
+              }
+
+              $switch_matrix[$part][] = [
+                'description' => trim($switch_matrix_part->label()),
+                'number' => (int)($switch_matrix_part->field_number->value),
+                'port' => $i_o_board_gpio_mapping[(int)($switch_matrix_part->field_pin->value)],
+              ];
+            }
+
+            $yaml['switchMatrix'] = [
+              'description' => trim($device->label()),
+              'board' => $i_o_board_number,
+              'activeLow' => (bool)($device->field_active_low->value),
+              'pulseTime' => (int)($device->field_pulse_time->value),
+            ] + $switch_matrix;
 
             break;
 

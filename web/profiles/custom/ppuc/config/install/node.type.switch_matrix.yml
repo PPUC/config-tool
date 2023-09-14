@@ -1,0 +1,17 @@
+uuid: d5962256-2741-4ad8-a029-dd4c903f6531
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Switch Matrix'
+type: switch_matrix
+description: 'Switch matrix'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

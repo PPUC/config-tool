@@ -1,0 +1,18 @@
+uuid: 23a8ebce-2084-47f0-add8-010b748aac1e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_active_low
+field_name: field_active_low
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,30 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: 1dc42e0d-2332-4623-a2f2-2d23b1fe9e08
+  bundle: matrix_part
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: Row
+  description:
+    -
+      value: '<p>Matrix row</p>'
+      format: basic_html
+  weight:
+    -
+      value: 0
+  parent:
+    -
+      target_id: 0
+  revision_translation_affected:
+    -
+      value: true
+  path:
+    -
+      alias: ''
+      langcode: en

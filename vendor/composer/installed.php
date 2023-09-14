@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c6b70da1d63e7971c7302675240530653a016b57',
+        'reference' => '5fb227e84990e6277d717e070c0286c14736284e',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -550,7 +550,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c6b70da1d63e7971c7302675240530653a016b57',
+            'reference' => '5fb227e84990e6277d717e070c0286c14736284e',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -677,7 +677,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '6cbe3472c940a80f587886423020673520d36a29',
+            'reference' => '0619000d51429baac52f0b24a90c44779a01e383',
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(

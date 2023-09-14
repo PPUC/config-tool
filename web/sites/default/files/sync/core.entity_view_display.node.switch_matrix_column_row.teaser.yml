@@ -1,0 +1,28 @@
+uuid: 8f1717f1-e1d4-4341-8489-ec4caa26a89a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.switch_matrix_column_row.field_matrix_part
+    - field.field.node.switch_matrix_column_row.field_number
+    - field.field.node.switch_matrix_column_row.field_pin
+    - field.field.node.switch_matrix_column_row.field_switch_matrix
+    - node.type.switch_matrix_column_row
+  module:
+    - user
+id: node.switch_matrix_column_row.teaser
+targetEntityType: node
+bundle: switch_matrix_column_row
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_matrix_part: true
+  field_number: true
+  field_pin: true
+  field_switch_matrix: true
