@@ -4,20 +4,3 @@
  * @file
  * Install, update and uninstall functions for the PPUC installation profile.
  */
-
-use Drupal\user\Entity\User;
-
-/**
- * Implements hook_install().
- *
- * Perform actions to set up the site for this profile.
- *
- * @see system_install()
- */
-function ppuc_install() {
-  // Assign user 1 the "administrator" role.
-  /** @var \Drupal\user\Entity\User $user */
-  $user = User::load(1);
-  $user->addRole('administrator');
-  $user->save();
-}
