@@ -1,0 +1,33 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: eb230001-3f6b-46a9-b6d3-114fa0aa8c55
+  bundle: i_o_board
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: Out_8x10
+  description:
+    -
+      value: '<p>Light Matrix Adapter<br><a href="https://github.com/PPUC/Hardware_Out_8x10">https://github.com/PPUC/Hardware_Out_8x10</a></p>'
+      format: basic_html
+  weight:
+    -
+      value: 0
+  parent:
+    -
+      target_id: 0
+  revision_translation_affected:
+    -
+      value: true
+  path:
+    -
+      alias: ''
+      langcode: en
+  field_gpio_mapping:
+    -
+      value: 'a:25:{i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:6;i:5;i:7;i:6;i:8;i:7;i:9;i:8;i:10;i:9;i:11;i:10;i:12;i:11;i:13;i:12;i:14;i:13;i:15;i:14;i:16;i:15;i:17;i:16;i:18;i:17;i:19;i:18;i:20;i:19;i:21;i:20;i:22;i:21;i:23;i:22;i:24;i:23;i:26;i:24;i:27;i:25;i:29;}'
