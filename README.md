@@ -35,6 +35,8 @@ git clone https://github.com/PPUC/config-tool.git
 cd config-tool
 ddev start
 ddev ssh
+```
+```shell
     drush site:install ppuc --site-name="Pinball Power-Up Controller" --account-name=admin --account-pass=admin --existing-config
     drush user:create ppuc --password='ppuc'
     drush user:role:add 'content_editor' ppuc
@@ -60,6 +62,8 @@ Within `PPUC/config-tool` run
 ddev snapshot
 git pull
 ddev ssh
+```
+```shell
     drush deploy
     exit
 ```
