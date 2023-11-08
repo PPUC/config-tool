@@ -35,9 +35,9 @@ git clone https://github.com/PPUC/config-tool.git
 cd config-tool
 ddev start
 ddev ssh
-    drush site:install ppuc --site-name="Pinball Power-Up Controller" --account-name=ppuc --account-pass=ppuc --existing-config
-    drush user:create admin --password='admin'
-    drush user:role:add 'administrator' admin
+    drush site:install ppuc --site-name="Pinball Power-Up Controller" --account-name=admin --account-pass=admin --existing-config
+    drush user:create ppuc --password='ppuc'
+    drush user:role:add 'content_editor' ppuc
     exit
 ```
 
@@ -60,7 +60,8 @@ Within `PPUC/config-tool` run
 ddev snapshot
 git pull
 ddev ssh
-    drush updb
-    drush cr
+    drush deploy
     exit
 ```
+
+TODO: import/update ppuc profile default content after drush deploy
