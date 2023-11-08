@@ -1,8 +1,0 @@
-uuid: e77d3d81-0a57-4fc2-9556-3b8bd8cf95e0
-langcode: en
-status: true
-dependencies: {  }
-name: 'LED role'
-vid: led_role
-description: 'Lamp, flasher, GI'
-weight: 0
