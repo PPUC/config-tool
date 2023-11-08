@@ -286,7 +286,7 @@ class GamesController extends ControllerBase {
 
       $gameExport = $exporter->exportContentWithReferences('node', $node->id());
       foreach ($gameExport as $entityType => $serializedEntities) {
-        if ($entityType !== 'user') {
+        if ($entityType !== 'user' && $entityType !== 'taxonomy_term') {
           foreach ($serializedEntities as $uuid => $serializedEntity) {
             $zip->addFile('content/' . $entityType . '/' . $uuid . '.yml', $serializedEntity);
             // For files, copy the file into the same folder.
