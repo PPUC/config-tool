@@ -1,6 +1,6 @@
 services:
   default_content.commands:
-    class: \Drupal\default_content\Commands\DefaultContentCommands
-    arguments: ['@default_content.exporter']
+    class: Drupal\default_content\Commands\DefaultContentCommands
+    arguments: ['@default_content.exporter', '@default_content.importer', '%container.modules%']
     tags:
       - { name: drush.command }

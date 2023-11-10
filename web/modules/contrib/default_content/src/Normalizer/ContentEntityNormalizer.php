@@ -150,7 +150,7 @@ class ContentEntityNormalizer implements ContentEntityNormalizerInterface {
   /**
    * {@inheritdoc}
    */
-  public function denormalize(array $data) {
+  public function denormalize(array $data, bool $update_existing = FALSE) {
     if (!isset($data['_meta']['entity_type'])) {
       throw new UnexpectedValueException('The entity type metadata must be specified.');
     }
@@ -178,18 +178,40 @@ class ContentEntityNormalizer implements ContentEntityNormalizerInterface {
       $values[$entity_type->getKey('langcode')] = $data['_meta']['default_langcode'];
     }
 
+    // Load the entity by UUID and check if it exists.
+    $existing = $this->entityTypeManager->getStorage($entity_type->id())->loadByProperties(['uuid' => $values['uuid']]);
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    $entity = $this->entityTypeManager->getStorage($entity_type->id())->create($values);
+    if (!empty($existing)) {
+      $entity = reset($existing);
+      if (!$update_existing) {
+        // Do not override the existing entity.
+        return $entity;
+      }
+      elseif (method_exists($entity, 'setNeedsSave')) {
+        // Ensure ERR entity will be saved.
+        // @todo Use instanceof EntityNeedSaveInterface once
+        // https://www.drupal.org/project/entity_reference_revisions/issues/3336752
+        // is fixed.
+        $entity->setNeedsSave(TRUE);
+      }
+    }
+    else {
+      $entity = $this->entityTypeManager->getStorage($entity_type->id())->create($values);
+      $entity->enforceIsNew(TRUE);
+    }
+
     foreach ($data['default'] as $field_name => $values) {
-      $this->setFieldValues($entity, $field_name, $values);
+      $this->setFieldValues($entity, $field_name, $values, $update_existing);
     }
 
     if (!empty($data['translations'])) {
       foreach ($data['translations'] as $langcode => $translation_data) {
         if ($this->languageManager->getLanguage($langcode)) {
-          $translation = $entity->addTranslation($langcode, $entity->toArray());
+          $translation = $entity->hasTranslation($langcode)
+            ? $entity->getTranslation($langcode)
+            : $entity->addTranslation($langcode, $entity->toArray());
           foreach ($translation_data as $field_name => $values) {
-            $this->setFieldValues($translation, $field_name, $values);
+            $this->setFieldValues($translation, $field_name, $values, $update_existing);
           }
         }
       }
@@ -211,8 +233,10 @@ class ContentEntityNormalizer implements ContentEntityNormalizerInterface {
    *   The name of the field.
    * @param array $values
    *   The normalized data for the field.
+   * @param bool $update_existing
+   *   Whether to update already existing entities with the imported values.
    */
-  protected function setFieldValues(ContentEntityInterface $entity, string $field_name, array $values) {
+  protected function setFieldValues(ContentEntityInterface $entity, string $field_name, array $values, bool $update_existing = FALSE) {
     if (!$entity->hasField($field_name)) {
       return;
     }
@@ -246,7 +270,7 @@ class ContentEntityNormalizer implements ContentEntityNormalizerInterface {
 
         if ($property instanceof EntityReference) {
           if (is_array($value)) {
-            $target_entity = $this->denormalize($value);
+            $target_entity = $this->denormalize($value, $update_existing);
           }
           else {
             $target_entity = $this->loadEntityDependency($value);

@@ -1,7 +1,8 @@
 name: 'Default content YAML tests'
 type: module
 hidden: TRUE
-description: 'Default content YAML tests'
+description: 'Contains updated default content.'
 package: Testing
 dependencies:
-  - default_content:default_content
+  - drupal:node
+  - drupal:taxonomy

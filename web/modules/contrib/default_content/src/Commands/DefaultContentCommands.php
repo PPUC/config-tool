@@ -2,13 +2,13 @@
 
 namespace Drupal\default_content\Commands;
 
+use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\default_content\ExporterInterface;
+use Drupal\default_content\ImporterInterface;
 use Drush\Commands\DrushCommands;
 
 /**
- * Class DefaultContentCommands.
- *
- * @package Drupal\default_content
+ * Provides Drush commands for 'Default content' module.
  */
 class DefaultContentCommands extends DrushCommands {
 
@@ -20,13 +20,34 @@ class DefaultContentCommands extends DrushCommands {
   protected $defaultContentExporter;
 
   /**
-   * SimplesitemapController constructor.
+   * The default content importer.
+   *
+   * @var \Drupal\default_content\ImporterInterface
+   */
+  protected $defaultContentImporter;
+
+  /**
+   * A full list of installed modules plus the active profile.
+   *
+   * @var string[]
+   */
+  protected $installedExtensions;
+
+  /**
+   * DefaultContentCommands constructor.
    *
    * @param \Drupal\default_content\ExporterInterface $default_content_exporter
    *   The default content exporter.
+   * @param \Drupal\default_content\ImporterInterface $default_content_importer
+   *   The default content importer.
+   * @param array[] $installed_modules
+   *   Installed modules list from the 'container.modules' container parameter.
    */
-  public function __construct(ExporterInterface $default_content_exporter) {
+  public function __construct(ExporterInterface $default_content_exporter, ImporterInterface $default_content_importer, array $installed_modules) {
+    parent::__construct();
     $this->defaultContentExporter = $default_content_exporter;
+    $this->defaultContentImporter = $default_content_importer;
+    $this->installedExtensions = array_keys($installed_modules);
   }
 
   /**
@@ -85,10 +106,73 @@ class DefaultContentCommands extends DrushCommands {
    * @aliases dcem
    */
   public function contentExportModule($module) {
-    $module_folder = \Drupal::moduleHandler()
-      ->getModule($module)
+    $this->checkExtensions([$module]);
+    $module_folder = \Drupal::service('extension.list.module')
+      ->get($module)
       ->getPath() . '/content';
     $this->defaultContentExporter->exportModuleContent($module, $module_folder);
+  }
+
+  /**
+   * Imports default content from installed modules or active profile.
+   *
+   * @param string[] $extensions
+   *   Space-delimited list of module which may contain also the active profile.
+   *
+   * @option update Overwrite existing entities with values from the default
+   *   content.
+   *
+   * @usage drush default-content:import
+   *   Imports default content from all installed modules, including the active
+   *   profile.
+   * @usage drush dcim my_module other_module custom_profile
+   *   Imports default content from <info>my_module</info>,
+   *   <info>other_module<info> modules and <info>custom_profile<info> active
+   *   profile. Does not overwrite content that was already imported before.
+   * @usage drush default-content:import my_module --update
+   *   Imports all default content from <info>my_module</info> module, including
+   *   content that has already been imported.
+   *
+   * @command default-content:import
+   * @aliases dcim
+   */
+  public function import(array $extensions, array $options = ['update' => FALSE]): void {
+    $count = 0;
+    $import_from_extensions = [];
+    foreach ($this->checkExtensions($extensions) as $extension) {
+      if ($extension_count = count($this->defaultContentImporter->importContent($extension, $options['update']))) {
+        $import_from_extensions[] = $extension;
+        $count += $extension_count;
+      }
+    }
+    if ($count) {
+      $this->logger()->notice(new PluralTranslatableMarkup($count, '1 entity imported from @modules', '@count entities imported from @modules', [
+        '@modules' => implode(', ', $import_from_extensions),
+      ]));
+      return;
+    }
+    $this->logger()->warning(dt('No content has been imported.'));
+  }
+
+  /**
+   * Checks and returns a list of extension given the user input.
+   *
+   * @param array $extensions
+   *   An array of modules and/or the active profile.
+   *
+   * @return array
+   *   A list of modules and/or the active profile.
+   */
+  protected function checkExtensions(array $extensions): array {
+    if (!$extensions) {
+      return $this->installedExtensions;
+    }
+
+    if ($invalid_extensions = array_diff($extensions, $this->installedExtensions)) {
+      throw new \InvalidArgumentException(sprintf('Invalid modules or profile passed: %s', implode(', ', $invalid_extensions)));
+    }
+
+    return $extensions;
   }
 
 }

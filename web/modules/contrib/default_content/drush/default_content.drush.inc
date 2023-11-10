@@ -97,8 +97,8 @@ function drush_default_content_export_references($entity_type_id, $entity_id = N
 function drush_default_content_export_module($module_name) {
   /** @var \Drupal\default_content\ExporterInterface $exporter */
   $exporter = \Drupal::service('default_content.exporter');
-  $module_folder = \Drupal::moduleHandler()
-    ->getModule($module_name)
+  $module_folder = \Drupal::service('extension.list.module')
+    ->get($module_name)
     ->getPath() . '/content';
   $exporter->exportModuleContent($module_name, $module_folder);
 }

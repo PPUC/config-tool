@@ -9,6 +9,7 @@
   },
   "require-dev": {
     "drupal/paragraphs": "^1",
+    "drush/drush": "^11",
     "drupal/hal": " ^9 || ^1 || ^2"
   },
   "extra": {

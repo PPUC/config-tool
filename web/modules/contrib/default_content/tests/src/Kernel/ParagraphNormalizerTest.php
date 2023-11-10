@@ -355,4 +355,61 @@ class ParagraphNormalizerTest extends KernelTestBase {
     $this->assertArrayNotHasKey('paragraph', $by_entity_type);
   }
 
+  /**
+   * Tests that we can control whether existing paragraphs are updated or not.
+   *
+   * @param bool $update_existing
+   *   Whether to update existing paragraphs.
+   *
+   * @dataProvider updateExistingParagraphsProvider
+   */
+  public function testUpdatingExistingParagraphs($update_existing): void {
+    // Create a pre-existing paragraph that references a node.
+    $referenced_node = Node::create([
+      'type' => 'page',
+      'title' => 'Referenced node',
+    ]);
+    $referenced_node->save();
+
+    $paragraph = Paragraph::create([
+      'type' => 'paragraph_type',
+      'field_node_reference' => $referenced_node,
+    ]);
+    $paragraph->save();
+
+    // Change the existing paragraph to reference a different node.
+    $different_node = Node::create([
+      'type' => 'page',
+      'title' => 'Different node',
+    ]);
+    $different_node->save();
+
+    $paragraph->set('field_node_reference', $different_node);
+
+    /** @var \Drupal\default_content\Normalizer\ContentEntityNormalizerInterface $normalizer */
+    $normalizer = \Drupal::service('default_content.content_entity_normalizer');
+    $normalized_paragraph = $normalizer->normalize($paragraph);
+    $recreated_paragraph = $normalizer->denormalize($normalized_paragraph, $update_existing);
+
+    // Regardless whether or not we are updating existing paragraphs, the
+    // paragraph is not new since it already exists in the database.
+    $this->assertFalse($recreated_paragraph->isNew());
+
+    // The node reference should only change if we allow to update existing]
+    // paragraphs.
+    $expected_reference = $update_existing ? $different_node->id() : $referenced_node->id();
+    $this->assertEquals($expected_reference, $recreated_paragraph->get('field_node_reference')->target_id);
+  }
+
+  /**
+   * Provides test data for ::testUpdatingExistingParagraphs().
+   *
+   * @return array
+   *   An array of test data for testing both states of the '$update_existing'
+   *   parameter.
+   */
+  public function updateExistingParagraphsProvider() {
+    return [[TRUE], [FALSE]];
+  }
+
 }

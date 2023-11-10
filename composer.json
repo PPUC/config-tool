@@ -22,7 +22,7 @@
         "drupal/core": "^10.1",
         "drupal/core-composer-scaffold": "^10.1",
         "drupal/core-project-message": "^10.1",
-        "drupal/default_content": "^2.0@alpha",
+        "drupal/default_content": "dev-2.0.x",
         "drupal/quick_node_clone": "^1.16",
         "drush/drush": "^11.1",
         "maennchen/zipstream-php": "^3.1",

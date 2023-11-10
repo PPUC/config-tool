@@ -4,6 +4,7 @@ namespace Drupal\Tests\default_content\Kernel;
 
 use Drupal\Core\Serialization\Yaml;
 use Drupal\file\Entity\File;
+use Drupal\file\FileInterface;
 use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -56,7 +57,7 @@ class ExporterIntegrationTest extends KernelTestBase {
       'taxonomy',
       'default_content',
     ]);
-    $this->exporter = \Drupal::service('default_content.exporter');
+    $exporter = \Drupal::service('default_content.exporter');
 
     $vocabulary = Vocabulary::create(['vid' => 'test']);
     $vocabulary->save();
@@ -66,12 +67,12 @@ class ExporterIntegrationTest extends KernelTestBase {
       'description' => [
         'value' => 'The description',
         'format' => 'plain_text',
-      ]
+      ],
     ]);
     $term->save();
     $term = Term::load($term->id());
 
-    $exported = $this->exporter->exportContent('taxonomy_term', $term->id());
+    $exported = $exporter->exportContent('taxonomy_term', $term->id());
     $exported_decoded = Yaml::decode($exported);
 
     // Assert the meta data and field values.
@@ -88,7 +89,7 @@ class ExporterIntegrationTest extends KernelTestBase {
       [
         'value' => 'The description',
         'format' => 'plain_text',
-      ]
+      ],
     ];
     $this->assertEquals($expected_description, $exported_decoded['default']['description']);
 
@@ -100,7 +101,7 @@ class ExporterIntegrationTest extends KernelTestBase {
     ]);
     $child_term->save();
     // Make sure parent relation is exported.
-    $exported = $this->exporter->exportContent('taxonomy_term', $child_term->id());
+    $exported = $exporter->exportContent('taxonomy_term', $child_term->id());
     $exported_decoded = Yaml::decode($exported);
     $this->assertEquals($term->uuid(), $exported_decoded['default']['parent'][0]['entity']);
     $this->assertEquals('taxonomy_term', $exported_decoded['_meta']['depends'][$term->uuid()]);
@@ -111,7 +112,7 @@ class ExporterIntegrationTest extends KernelTestBase {
    */
   public function testExportWithReferences() {
     \Drupal::service('module_installer')->install(['node', 'default_content']);
-    $this->exporter = \Drupal::service('default_content.exporter');
+    $exporter = \Drupal::service('default_content.exporter');
 
     $role = Role::create([
       'id' => 'example_role',
@@ -119,7 +120,11 @@ class ExporterIntegrationTest extends KernelTestBase {
     ]);
     $role->save();
 
-    $user = User::create(['name' => 'my username', 'uid' => 2, 'roles' => $role->id()]);
+    $user = User::create([
+      'name' => 'my username',
+      'uid' => 2,
+      'roles' => $role->id(),
+    ]);
     $user->save();
     // Reload the user to get the proper casted values from the DB.
     $user = User::load($user->id());
@@ -135,7 +140,8 @@ class ExporterIntegrationTest extends KernelTestBase {
     // Reload the node to get the proper casted values from the DB.
     $node = Node::load($node->id());
 
-    $exported_by_entity_type = $this->exporter->exportContentWithReferences('node', $node->id());
+    $exported_by_entity_type = $exporter
+      ->exportContentWithReferences('node', $node->id());
 
     // Ensure that the node type is not tryed to be exported.
     $this->assertEquals(array_keys($exported_by_entity_type), ['node', 'user']);
@@ -191,7 +197,8 @@ class ExporterIntegrationTest extends KernelTestBase {
     // Loop reference.
     $node1->{$field_name}->target_id = $node3->id();
     $node1->save();
-    $exported_by_entity_type = $this->exporter->exportContentWithReferences('node', $node3->id());
+    $exported_by_entity_type = $exporter
+      ->exportContentWithReferences('node', $node3->id());
     // Ensure all 3 nodes are exported.
     $this->assertEquals(3, count($exported_by_entity_type['node']));
   }
@@ -205,7 +212,6 @@ class ExporterIntegrationTest extends KernelTestBase {
       'default_content',
       'default_content_export_test',
     ]);
-    $this->exporter = \Drupal::service('default_content.exporter');
 
     $test_uuid = '0e45d92f-1919-47cd-8b60-964a8a761292';
     $node_type = NodeType::create(['type' => 'test']);
@@ -220,8 +226,8 @@ class ExporterIntegrationTest extends KernelTestBase {
       'type' => $node_type->id(),
       'title' => 'test node',
       'uid' => $user->id(),
+      'uuid' => $test_uuid,
     ]);
-    $node->uuid = $test_uuid;
     $node->save();
     /** @var \Drupal\node\NodeInterface $node */
     $node = Node::load($node->id());
@@ -229,7 +235,7 @@ class ExporterIntegrationTest extends KernelTestBase {
       '_meta' => [
         'version' => '1.0',
         'entity_type' => 'node',
-        'uuid' => '0e45d92f-1919-47cd-8b60-964a8a761292',
+        'uuid' => $test_uuid,
         'bundle' => 'test',
         'default_langcode' => 'en',
       ],
@@ -277,7 +283,8 @@ class ExporterIntegrationTest extends KernelTestBase {
       ],
     ];
 
-    $content = $this->exporter->exportModuleContent('default_content_export_test');
+    $content = \Drupal::service('default_content.exporter')
+      ->exportModuleContent('default_content_export_test');
     $this->assertEquals($expected_node, Yaml::decode($content['node'][$test_uuid]));
   }
 
@@ -291,13 +298,13 @@ class ExporterIntegrationTest extends KernelTestBase {
       'default_content_export_test',
     ]);
     \Drupal::service('router.builder')->rebuild();
-    $this->defaultContentManager = \Drupal::service('default_content.exporter');
 
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage(sprintf('Entity "%s" with UUID "%s" does not exist', 'node', '0e45d92f-1919-47cd-8b60-964a8a761292'));
 
     // Should throw an exception for missing uuid for the testing module.
-    $this->defaultContentManager->exportModuleContent('default_content_export_test');
+    \Drupal::service('default_content.exporter')
+      ->exportModuleContent('default_content_export_test');
   }
 
   /**
@@ -308,20 +315,19 @@ class ExporterIntegrationTest extends KernelTestBase {
       'default_content',
     ]);
 
-    $this->exporter = \Drupal::service('default_content.exporter');
-
     $test_files = $this->getTestFiles('image');
     $test_file = reset($test_files);
 
     /** @var \Drupal\file\FileInterface $file */
     $file = File::create([
       'uri' => $test_file->uri,
-      'status' => \Drupal\file\FileInterface::STATUS_PERMANENT,
+      'status' => FileInterface::STATUS_PERMANENT,
     ]);
     $file->save();
 
     $folder = 'temporary://default_content';
-    $exported_by_entity_type = $this->exporter->exportContentWithReferences('file', $file->id(), $folder);
+    $exported_by_entity_type = \Drupal::service('default_content.exporter')
+      ->exportContentWithReferences('file', $file->id(), $folder);
     $normalized_file = Yaml::decode($exported_by_entity_type['file'][$file->uuid()]);
 
     $expected = [

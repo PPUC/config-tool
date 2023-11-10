@@ -65,6 +65,8 @@ ddev ssh
 ```
 ```shell
     drush deploy
+    drush dcim ppuc --update
+    drush cr
     exit
 ```
 
