@@ -47,7 +47,7 @@ ppuc_games.add_switch_matrix:
 ppuc_games.add_switch_matrix_part:
   route_name: node.add
   route_parameters:
-    node_type: 'switch_matrix_column_row  '
+    node_type: 'switch_matrix_column_row'
   appears_on:
     - entity.node.canonical
   title: 'Add Switch Matrix Column/Row'
