@@ -234,6 +234,7 @@ class GamesController extends ControllerBase {
               'board' => $i_o_board_number,
               'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
               'ledType' => $device->field_led_type->entity->getName(),
+              'amount' => (int)($device->field_amount_leds->value),
               'lightUp' => (int)($device->field_light_up->value),
               'afterGlow' => (int)($device->field_after_glow->value),
             ] + $leds;
