@@ -25,6 +25,13 @@ colima start --cpu 4 --memory 6 --disk 100 --dns=1.1.1.1
 ```
 When your Mac restarts, you’ll need to run `colima start` again.
 
+For _Linux_ install docker according to https://ddev.readthedocs.io/en/stable/users/install/docker-installation/#linux
+Afterwards install DDEV:
+```shell
+brew install drud/ddev/ddev
+mkcert -install
+```
+
 Now clone this project somewhere in your home directory.
 It is recommended to create a PPUC directory first where you can also clone
 other PPUC components.
