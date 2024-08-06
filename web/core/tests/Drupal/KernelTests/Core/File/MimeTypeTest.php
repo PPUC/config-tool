@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\KernelTests\Core\File;
 
 /**
@@ -19,7 +21,7 @@ class MimeTypeTest extends FileTestBase {
   /**
    * Tests mapping of mimetypes from filenames.
    */
-  public function testFileMimeTypeDetection() {
+  public function testFileMimeTypeDetection(): void {
     $prefixes = ['public://', 'private://', 'temporary://', 'dummy-remote://'];
 
     $test_case = [
@@ -33,9 +35,9 @@ class MimeTypeTest extends FileTestBase {
       'pcf.z' => 'application/octet-stream',
       'jar' => 'application/octet-stream',
       'some.junk' => 'application/octet-stream',
-      'foo.file_test_1' => 'madeup/file_test_1',
-      'foo.file_test_2' => 'madeup/file_test_2',
-      'foo.doc' => 'madeup/doc',
+      'foo.file_test_1' => 'made_up/file_test_1',
+      'foo.file_test_2' => 'made_up/file_test_2',
+      'foo.doc' => 'made_up/doc',
       'test.ogg' => 'audio/ogg',
     ];
 

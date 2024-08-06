@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\toolbar\FunctionalJavascript;
 
 use Drupal\Component\Serialization\Json;
@@ -22,7 +24,7 @@ class ToolbarStoredStateTest extends WebDriverTestBase {
    */
   protected $defaultTheme = 'stark';
 
-  public function testToolbarStoredState() {
+  public function testToolbarStoredState(): void {
     $admin_user = $this->drupalCreateUser([
       'access toolbar',
       'administer site configuration',

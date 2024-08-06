@@ -6,3 +6,4 @@ name: Platform
 vid: platform
 description: 'WPC, DE, SYS11, SAM, ...'
 weight: 0
+new_revision: false

@@ -13,7 +13,7 @@ _core:
 name: 'Addressable LED String'
 type: addressable_leds
 description: 'Addressable WS2812 LED string or compatible / extended types like SK6812.'
-help: ''
+help: null
 new_revision: false
 preview_mode: 1
 display_submitted: false

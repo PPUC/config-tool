@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\rest\Kernel\Entity;
 
 use Drupal\KernelTests\Core\Config\ConfigEntityValidationTestBase;
@@ -21,6 +23,11 @@ class RestResourceConfigValidationTest extends ConfigEntityValidationTestBase {
   /**
    * {@inheritdoc}
    */
+  protected bool $hasLabel = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
 
@@ -31,6 +38,16 @@ class RestResourceConfigValidationTest extends ConfigEntityValidationTestBase {
       'configuration' => [],
     ]);
     $this->entity->save();
+  }
+
+  /**
+   * Tests that the resource plugin ID is validated.
+   */
+  public function testInvalidPluginId(): void {
+    $this->entity->set('plugin_id', 'non_existent');
+    $this->assertValidationErrors([
+      'plugin_id' => "The 'non_existent' plugin does not exist.",
+    ]);
   }
 
 }

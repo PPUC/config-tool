@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\views\Unit\EventSubscriber\RouteSubscriberTest.
- */
+declare(strict_types=1);
 
 namespace Drupal\Tests\views\Unit\EventSubscriber;
 
@@ -69,7 +66,7 @@ class RouteSubscriberTest extends UnitTestCase {
   /**
    * @covers ::routeRebuildFinished
    */
-  public function testRouteRebuildFinished() {
+  public function testRouteRebuildFinished(): void {
     [$display_1, $display_2] = $this->setupMocks();
 
     $display_1->expects($this->once())
@@ -92,7 +89,7 @@ class RouteSubscriberTest extends UnitTestCase {
    *
    * @see \Drupal\views\EventSubscriber\RouteSubscriber::onAlterRoutes()
    */
-  public function testOnAlterRoutes() {
+  public function testOnAlterRoutes(): void {
     $collection = new RouteCollection();
     // The first route will be overridden later.
     $collection->add('test_route', new Route('test_route', ['_controller' => 'Drupal\Tests\Core\Controller\TestController']));

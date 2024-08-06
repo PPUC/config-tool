@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\views\Unit\Plugin\pager\PagerPluginBaseTest.
- */
+declare(strict_types=1);
 
 namespace Drupal\Tests\views\Unit\Plugin\pager;
 
@@ -56,7 +53,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::getItemsPerPage()
    */
-  public function testGetItemsPerPage() {
+  public function testGetItemsPerPage(): void {
     $this->assertEquals(5, $this->pager->getItemsPerPage());
   }
 
@@ -65,7 +62,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::setItemsPerPage()
    */
-  public function testSetItemsPerPage() {
+  public function testSetItemsPerPage(): void {
     $this->pager->setItemsPerPage(6);
     $this->assertEquals(6, $this->pager->getItemsPerPage());
   }
@@ -75,7 +72,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::getOffset()
    */
-  public function testGetOffset() {
+  public function testGetOffset(): void {
     $this->assertEquals(1, $this->pager->getOffset());
   }
 
@@ -84,7 +81,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::setOffset()
    */
-  public function testSetOffset() {
+  public function testSetOffset(): void {
     $this->pager->setOffset(2);
     $this->assertEquals(2, $this->pager->getOffset());
   }
@@ -94,7 +91,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::getCurrentPage()
    */
-  public function testGetCurrentPage() {
+  public function testGetCurrentPage(): void {
     $this->assertEquals(1, $this->pager->getCurrentPage());
   }
 
@@ -103,7 +100,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::setCurrentPage()
    */
-  public function testSetCurrentPage() {
+  public function testSetCurrentPage(): void {
     $this->pager->setCurrentPage(2);
     $this->assertEquals(2, $this->pager->getCurrentPage());
 
@@ -120,7 +117,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::getTotalItems()
    */
-  public function testGetTotalItems() {
+  public function testGetTotalItems(): void {
     // Should return 0 by default.
     $this->assertEquals(0, $this->pager->getTotalItems());
 
@@ -133,7 +130,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::getPagerId()
    */
-  public function testGetPagerId() {
+  public function testGetPagerId(): void {
     // Should return 0 if 'id' is not set.
     $this->assertEquals(0, $this->pager->getPagerId());
 
@@ -147,7 +144,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::usePager()
    */
-  public function testUsePager() {
+  public function testUsePager(): void {
     $this->assertTrue($this->pager->usePager());
   }
 
@@ -156,7 +153,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::useCountQuery()
    */
-  public function testUseCountQuery() {
+  public function testUseCountQuery(): void {
     $this->assertTrue($this->pager->useCountQuery());
   }
 
@@ -165,7 +162,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::usedExposed()
    */
-  public function testUsesExposed() {
+  public function testUsesExposed(): void {
     $this->assertFalse($this->pager->usesExposed());
   }
 
@@ -176,7 +173,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::hasMoreRecords()
    */
-  public function testHasMoreRecords($items_per_page, $total_items, $current_page, $has_more_records) {
+  public function testHasMoreRecords($items_per_page, $total_items, $current_page, $has_more_records): void {
     $this->pager->setItemsPerPage($items_per_page);
     $this->pager->total_items = $total_items;
     $this->pager->setCurrentPage($current_page);
@@ -188,7 +185,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see self::testHasMoreRecords
    */
-  public function providerTestHasMoreRecords() {
+  public static function providerTestHasMoreRecords() {
     return [
       // No items per page, so there can't be more available records.
       [0, 0, 0, FALSE],
@@ -210,7 +207,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::executeCountQuery()
    */
-  public function testExecuteCountQueryWithoutOffset() {
+  public function testExecuteCountQueryWithoutOffset(): void {
     $statement = $this->createMock('\Drupal\Tests\views\Unit\Plugin\pager\TestStatementInterface');
 
     $statement->expects($this->once())
@@ -234,7 +231,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::executeCountQuery()
    */
-  public function testExecuteCountQueryWithOffset() {
+  public function testExecuteCountQueryWithOffset(): void {
     $statement = $this->createMock('\Drupal\Tests\views\Unit\Plugin\pager\TestStatementInterface');
 
     $statement->expects($this->once())
@@ -258,7 +255,7 @@ class PagerPluginBaseTest extends UnitTestCase {
    *
    * @see \Drupal\views\Plugin\views\pager\PagerPluginBase::executeCountQuery()
    */
-  public function testExecuteCountQueryWithOffsetLargerThanResult() {
+  public function testExecuteCountQueryWithOffsetLargerThanResult(): void {
     $statement = $this->createMock(TestStatementInterface::class);
 
     $statement->expects($this->once())

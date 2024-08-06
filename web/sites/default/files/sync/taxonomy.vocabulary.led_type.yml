@@ -8,3 +8,4 @@ name: 'LED Type'
 vid: led_type
 description: 'The addressable LED type'
 weight: 0
+new_revision: false

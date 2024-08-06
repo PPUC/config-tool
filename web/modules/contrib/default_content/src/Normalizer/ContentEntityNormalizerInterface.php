@@ -27,13 +27,10 @@ interface ContentEntityNormalizerInterface {
    *
    * @param array $data
    *   The normalized data.
-   * @param bool $update_existing
-   *   Whether to update an already existing entity with the imported values.
-   *   Defaults to FALSE.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
    *   The denormalized content entity.
    */
-  public function denormalize(array $data, bool $update_existing = FALSE);
+  public function denormalize(array $data);
 
 }

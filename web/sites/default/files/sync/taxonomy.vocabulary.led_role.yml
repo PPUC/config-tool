@@ -8,3 +8,4 @@ name: 'LED role'
 vid: led_role
 description: 'Lamp, flasher, GI'
 weight: 0
+new_revision: false

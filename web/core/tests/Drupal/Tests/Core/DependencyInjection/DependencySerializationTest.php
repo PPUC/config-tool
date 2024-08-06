@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\Core\DependencyInjection\DependencySerializationTest.
- */
+declare(strict_types=1);
 
 namespace Drupal\Tests\Core\DependencyInjection;
 
@@ -24,7 +21,7 @@ class DependencySerializationTest extends UnitTestCase {
    * @covers ::__sleep
    * @covers ::__wakeup
    */
-  public function testSerialization() {
+  public function testSerialization(): void {
     // Create a pseudo service and dependency injected object.
     $service = new \stdClass();
     $container = TestKernel::setContainerWithKernel();
@@ -83,7 +80,7 @@ class DependencySerializationTestDummy implements ContainerAwareInterface {
    * phpcs:ignore Drupal.Commenting.FunctionComment.VoidReturn
    * @return void
    */
-  public function setContainer(ContainerInterface $container = NULL) {
+  public function setContainer(?ContainerInterface $container = NULL) {
     $this->container = $container;
   }
 

@@ -77,7 +77,7 @@ function drush_default_content_export_references($entity_type_id, $entity_id = N
 
   $folder = drush_get_option('folder', '.');
   if (is_null($entity_id)) {
-    $entities = \Drupal::entityQuery($entity_type_id)->execute();
+    $entities = \Drupal::entityQuery($entity_type_id)->accessCheck(FALSE)->execute();
   }
   else {
     $entities = [$entity_id];

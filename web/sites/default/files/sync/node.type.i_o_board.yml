@@ -13,7 +13,7 @@ _core:
 name: 'I/O Board'
 type: i_o_board
 description: 'I/O Board'
-help: ''
+help: null
 new_revision: false
 preview_mode: 1
 display_submitted: false

@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\path\Functional;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Url;
+use Drupal\Tests\WaitTerminateTestTrait;
 
 /**
  * Tests modifying path aliases from the UI.
@@ -12,6 +15,8 @@ use Drupal\Core\Url;
  * @group path
  */
 class PathAliasTest extends PathTestBase {
+
+  use WaitTerminateTestTrait;
 
   /**
    * Modules to enable.
@@ -40,12 +45,17 @@ class PathAliasTest extends PathTestBase {
       'access content overview',
     ]);
     $this->drupalLogin($web_user);
+
+    // The \Drupal\path_alias\AliasWhitelist service performs cache clears after
+    // Drupal has flushed the response to the client. We use
+    // WaitTerminateTestTrait to wait for Drupal to do this before continuing.
+    $this->setWaitForTerminate();
   }
 
   /**
    * Tests the path cache.
    */
-  public function testPathCache() {
+  public function testPathCache(): void {
     // Create test node.
     $node1 = $this->drupalCreateNode();
 
@@ -79,7 +89,7 @@ class PathAliasTest extends PathTestBase {
   /**
    * Tests alias functionality through the admin interfaces.
    */
-  public function testAdminAlias() {
+  public function testAdminAlias(): void {
     // Create test node.
     $node1 = $this->drupalCreateNode();
 
@@ -248,7 +258,7 @@ class PathAliasTest extends PathTestBase {
   /**
    * Tests alias functionality through the node interfaces.
    */
-  public function testNodeAlias() {
+  public function testNodeAlias(): void {
     // Create test node.
     $node1 = $this->drupalCreateNode();
 
@@ -412,7 +422,7 @@ class PathAliasTest extends PathTestBase {
   /**
    * Tests that duplicate aliases fail validation.
    */
-  public function testDuplicateNodeAlias() {
+  public function testDuplicateNodeAlias(): void {
     // Create one node with a random alias.
     $node_one = $this->drupalCreateNode();
     $edit = [];

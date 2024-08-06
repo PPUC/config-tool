@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\KernelTests\Core\Theme\TwigMarkupInterfaceTest.
- */
+declare(strict_types=1);
 
 namespace Drupal\KernelTests\Core\Theme;
 
@@ -36,14 +33,14 @@ class TwigMarkupInterfaceTest extends KernelTestBase {
   /**
    * @dataProvider providerTestMarkupInterfaceEmpty
    */
-  public function testMarkupInterfaceEmpty($expected, $variable) {
+  public function testMarkupInterfaceEmpty($expected, $variable): void {
     $this->assertSame($expected, (string) $this->renderObjectWithTwig($variable));
   }
 
   /**
    * Provide test examples.
    */
-  public function providerTestMarkupInterfaceEmpty() {
+  public static function providerTestMarkupInterfaceEmpty() {
     return [
       // The first argument to \Drupal\Core\StringTranslation\TranslatableMarkup
       // is not supposed to be an empty string.
@@ -64,7 +61,7 @@ class TwigMarkupInterfaceTest extends KernelTestBase {
   /**
    * Tests behavior if a string is translated to become an empty string.
    */
-  public function testEmptyTranslation() {
+  public function testEmptyTranslation(): void {
     $settings = Settings::getAll();
     $settings['locale_custom_strings_en'] = ['' => ['test' => '']];
     // Recreate the settings static.

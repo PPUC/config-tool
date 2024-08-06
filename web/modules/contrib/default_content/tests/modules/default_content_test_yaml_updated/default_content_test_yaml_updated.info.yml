@@ -1,8 +1,0 @@
-name: 'Default content YAML tests'
-type: module
-hidden: TRUE
-description: 'Contains updated default content.'
-package: Testing
-dependencies:
-  - drupal:node
-  - drupal:taxonomy

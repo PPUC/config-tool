@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\views\FunctionalJavascript\Plugin;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
@@ -38,7 +40,7 @@ class BulkOperationsTest extends WebDriverTestBase {
     $this->drupalLogin($this->createUser(['bypass node access', 'administer nodes', 'access content overview']));
   }
 
-  public function testBulkOperations() {
+  public function testBulkOperations(): void {
     $node_1 = $this->drupalCreateNode([
       'type' => 'page',
       'title' => 'The first node',

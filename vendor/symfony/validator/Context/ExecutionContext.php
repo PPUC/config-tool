@@ -111,7 +111,7 @@ class ExecutionContext implements ExecutionContextInterface
     /**
      * @internal Called by {@link ExecutionContextFactory}. Should not be used in user code.
      */
-    public function __construct(ValidatorInterface $validator, mixed $root, TranslatorInterface $translator, string $translationDomain = null)
+    public function __construct(ValidatorInterface $validator, mixed $root, TranslatorInterface $translator, ?string $translationDomain = null)
     {
         $this->validator = $validator;
         $this->root = $root;
@@ -121,7 +121,7 @@ class ExecutionContext implements ExecutionContextInterface
         $this->cachedObjectsRefs = new \SplObjectStorage();
     }
 
-    public function setNode(mixed $value, ?object $object, MetadataInterface $metadata = null, string $propertyPath): void
+    public function setNode(mixed $value, ?object $object, ?MetadataInterface $metadata, string $propertyPath): void
     {
         $this->value = $value;
         $this->object = $object;
@@ -139,10 +139,10 @@ class ExecutionContext implements ExecutionContextInterface
         $this->constraint = $constraint;
     }
 
-    public function addViolation(string $message, array $parameters = []): void
+    public function addViolation(string|\Stringable $message, array $parameters = []): void
     {
         $this->violations->add(new ConstraintViolation(
-            false === $this->translationDomain ? strtr($message, $parameters) : $this->translator->trans($message, $parameters, $this->translationDomain),
+            $this->translator->trans($message, $parameters, $this->translationDomain),
             $message,
             $parameters,
             $this->root,
@@ -154,7 +154,7 @@ class ExecutionContext implements ExecutionContextInterface
         ));
     }
 
-    public function buildViolation(string $message, array $parameters = []): ConstraintViolationBuilderInterface
+    public function buildViolation(string|\Stringable $message, array $parameters = []): ConstraintViolationBuilderInterface
     {
         return new ConstraintViolationBuilder(
             $this->violations,

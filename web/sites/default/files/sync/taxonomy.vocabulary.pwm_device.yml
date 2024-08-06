@@ -8,3 +8,4 @@ name: 'PWM Device'
 vid: pwm_device
 description: 'Coil, flasher, lamp'
 weight: 0
+new_revision: false

@@ -52,6 +52,7 @@ function update_check_requirements() {
 
   // Check requirements of all loaded modules.
   $requirements = \Drupal::moduleHandler()->invokeAll('requirements', ['update']);
+  \Drupal::moduleHandler()->alter('requirements', $requirements);
   $requirements += update_system_schema_requirements();
   return $requirements;
 }
@@ -64,7 +65,7 @@ function update_check_requirements() {
  * system would detect and attempt to run all historical updates for a
  * module.
  *
- * @todo: remove in a major version after
+ * @todo remove in a major version after
  * https://www.drupal.org/project/drupal/issues/3130037 has been fixed.
  */
 function _update_fix_missing_schema() {
@@ -170,7 +171,7 @@ function update_do_one($module, $number, $dependency_map, &$context) {
       $ret['results']['query'] = $function($context['sandbox']);
       $ret['results']['success'] = TRUE;
     }
-    // @TODO We may want to do different error handling for different
+    // @todo We may want to do different error handling for different
     // exception types, but for now we'll just log the exception and
     // return the message for printing.
     // @see https://www.drupal.org/node/2564311
@@ -239,7 +240,7 @@ function update_invoke_post_update($function, &$context) {
         \Drupal::service('update.post_update_registry')->registerInvokedUpdates([$function]);
       }
     }
-    // @TODO We may want to do different error handling for different exception
+    // @todo We may want to do different error handling for different exception
     // types, but for now we'll just log the exception and return the message
     // for printing.
     // @see https://www.drupal.org/node/2564311

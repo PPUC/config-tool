@@ -179,17 +179,9 @@ class Importer implements ImporterInterface {
   /**
    * {@inheritdoc}
    */
-  public function importContent($module, bool $update_existing = FALSE) {
-    $folder = $this->extensionList->getPath($module) . "/content";
-
-    return $this->importContentFromFolder($folder, $module, $update_existing);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function importContentFromFolder($folder, $module = NULL, bool $update_existing = FALSE) {
+  public function importContent($module) {
     $created = [];
+    $folder = $this->extensionList->getPath($module) . "/content";
 
     if (file_exists($folder)) {
       $root_user = $this->entityTypeManager->getStorage('user')->load(1);
@@ -289,13 +281,10 @@ class Importer implements ImporterInterface {
             $entity = $this->serializer->deserialize($contents, $class, 'hal_json', ['request_method' => 'POST']);
           }
           else {
-            $entity = $this->contentEntityNormalizer->denormalize(Yaml::decode($contents), $update_existing);
+            $entity = $this->contentEntityNormalizer->denormalize(Yaml::decode($contents));
           }
 
-          if (!$entity->isNew() && !$update_existing) {
-            continue;
-          }
-
+          $entity->enforceIsNew(TRUE);
           // Ensure that the entity is not owned by the anonymous user.
           if ($entity instanceof EntityOwnerInterface && empty($entity->getOwnerId())) {
             $entity->setOwner($root_user);
@@ -318,7 +307,7 @@ class Importer implements ImporterInterface {
           $created[$entity->uuid()] = $entity;
         }
       }
-      $this->eventDispatcher->dispatch(new ImportEvent($created, $module ?? $folder), DefaultContentEvents::IMPORT);
+      $this->eventDispatcher->dispatch(new ImportEvent($created, $module), DefaultContentEvents::IMPORT);
       $this->accountSwitcher->switchBack();
     }
     // Reset the tree.
