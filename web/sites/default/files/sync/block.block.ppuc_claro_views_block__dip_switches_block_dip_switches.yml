@@ -1,0 +1,35 @@
+uuid: 64fd7f6b-52b8-4435-8c43-e160942dbd81
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.dip_switches
+  module:
+    - node
+    - views
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: oNHD8-X3dtsAyJaSQFEQB77M8L_kRtgiSvUByyE9BBQ
+id: ppuc_claro_views_block__dip_switches_block_dip_switches
+theme: ppuc_claro
+region: content
+weight: -4
+provider: null
+plugin: 'views_block:dip_switches-block_dip_switches'
+settings:
+  id: 'views_block:dip_switches-block_dip_switches'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      game: game

@@ -1,0 +1,25 @@
+uuid: a297eff1-1cee-4309-b584-bd6fc244eb98
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.game_assets
+  module:
+    - views
+  theme:
+    - ppuc_claro
+id: ppuc_claro_views_block__game_assets_block_rom
+theme: ppuc_claro
+region: sidebar
+weight: -4
+provider: null
+plugin: 'views_block:game_assets-block_rom'
+settings:
+  id: 'views_block:game_assets-block_rom'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility: {  }

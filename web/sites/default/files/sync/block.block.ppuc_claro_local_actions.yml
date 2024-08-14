@@ -1,0 +1,20 @@
+uuid: 45278c46-d1df-413f-b8f3-a39962c0da53
+langcode: en
+status: true
+dependencies:
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: Od69CbgKp5DJwdVRjspMn0EyZb9N1O9vUI3wn33Cetg
+id: ppuc_claro_local_actions
+theme: ppuc_claro
+region: content
+weight: -6
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }

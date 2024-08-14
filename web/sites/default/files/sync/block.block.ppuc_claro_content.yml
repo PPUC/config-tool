@@ -1,0 +1,22 @@
+uuid: 14cdad0e-34bc-4232-98ed-b850961f2c37
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: nC6lSwhD3aZcYbO7RQsujz-Bp_dGKt5ycVOgGOz3Gd0
+id: ppuc_claro_content
+theme: ppuc_claro
+region: content
+weight: -5
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  label_display: '0'
+  provider: system
+visibility: {  }

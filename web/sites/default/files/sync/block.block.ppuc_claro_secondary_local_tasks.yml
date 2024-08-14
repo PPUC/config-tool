@@ -1,0 +1,22 @@
+uuid: 693c18ce-4b7c-4782-90c6-07212aa875e7
+langcode: en
+status: true
+dependencies:
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: 3-z-yz5TobQxo6yAeIG_VNAofaLHgjrlorvzSr9zQx8
+id: ppuc_claro_secondary_local_tasks
+theme: ppuc_claro
+region: pre_content
+weight: -6
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Secondary tabs'
+  label_display: '0'
+  provider: core
+  primary: false
+  secondary: true
+visibility: {  }

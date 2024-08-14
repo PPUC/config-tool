@@ -11,8 +11,8 @@ id: node.switch.field_pin
 field_name: field_pin
 entity_type: node
 bundle: switch
-label: Pin
-description: 'Thi pin of the I/O board the switch is attached to.'
+label: Port
+description: 'The port of the I/O board the switch is attached to.'
 required: true
 translatable: false
 default_value: {  }

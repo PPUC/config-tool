@@ -50,4 +50,5 @@ module:
   ppuc: 1000
 theme:
   claro: 0
+  ppuc_claro: 0
 profile: ppuc

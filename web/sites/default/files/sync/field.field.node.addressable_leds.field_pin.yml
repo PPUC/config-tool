@@ -11,8 +11,8 @@ id: node.addressable_leds.field_pin
 field_name: field_pin
 entity_type: node
 bundle: addressable_leds
-label: Pin
-description: 'The pin'
+label: Port
+description: 'The port'
 required: false
 translatable: true
 default_value: {  }

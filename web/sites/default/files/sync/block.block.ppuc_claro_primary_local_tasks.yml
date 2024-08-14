@@ -1,0 +1,22 @@
+uuid: dbd8873f-53ae-41d2-89be-5155b79b4265
+langcode: en
+status: true
+dependencies:
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: ViFT9bQn9T8MPPxOZyE3-5PpdcsOz6QmjykNL2Z-RWo
+id: ppuc_claro_primary_local_tasks
+theme: ppuc_claro
+region: header
+weight: -4
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: 'Primary tabs'
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: false
+visibility: {  }

@@ -1,0 +1,25 @@
+uuid: b8d7410b-4028-44ca-93f0-39969b24d4ea
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.game_assets
+  module:
+    - views
+  theme:
+    - ppuc_claro
+id: ppuc_claro_views_block__game_assets_block_pwn_locations
+theme: ppuc_claro
+region: sidebar
+weight: 0
+provider: null
+plugin: 'views_block:game_assets-block_pwn_locations'
+settings:
+  id: 'views_block:game_assets-block_pwn_locations'
+  label: ''
+  label_display: '0'
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility: {  }

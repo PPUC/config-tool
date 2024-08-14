@@ -1,0 +1,12 @@
+.with-sidebar {
+  display: flex;
+}
+
+.page-content {
+  flex: 3;
+}
+
+.sidebar {
+  flex: 1;
+  padding-left: 20px;
+}

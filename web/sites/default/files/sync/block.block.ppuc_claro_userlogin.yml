@@ -1,0 +1,22 @@
+uuid: bd464a7b-b849-4f98-9a83-78ba7fb99a8c
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: lEVei5Cd3WBc5x7vT-NJDeYU75zQt8qRQyVV4vbzQuU
+id: ppuc_claro_userlogin
+theme: ppuc_claro
+region: sidebar
+weight: -7
+provider: null
+plugin: user_login_block
+settings:
+  id: user_login_block
+  label: 'User login'
+  label_display: visible
+  provider: user
+visibility: {  }

@@ -1,0 +1,29 @@
+uuid: d7210ad7-748e-46f9-b557-f3f4f4b96ec7
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: 9CFex3IGoVREk7UuvbeChIJj9_vHJWU29BstzP-QaiQ
+id: ppuc_claro_sitebranding
+theme: ppuc_claro
+region: sidebar
+weight: -8
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  label_display: '0'
+  provider: system
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'

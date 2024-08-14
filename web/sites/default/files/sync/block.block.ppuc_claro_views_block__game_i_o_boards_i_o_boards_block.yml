@@ -1,0 +1,35 @@
+uuid: de5ad392-4cc2-4c9c-9716-34b60bb973c8
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.game_i_o_boards
+  module:
+    - node
+    - views
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: rhM7MZYXQqP46g_vYsrWEKXeVO2Of3yWb3pP6q2oN1M
+id: ppuc_claro_views_block__game_i_o_boards_i_o_boards_block
+theme: ppuc_claro
+region: content
+weight: -3
+provider: null
+plugin: 'views_block:game_i_o_boards-i_o_boards_block'
+settings:
+  id: 'views_block:game_i_o_boards-i_o_boards_block'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      game: game

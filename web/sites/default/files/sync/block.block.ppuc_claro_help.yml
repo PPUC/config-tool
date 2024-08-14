@@ -1,0 +1,22 @@
+uuid: 7ff3a84c-ca3c-4235-b164-1348d4593fc1
+langcode: en
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: aKZbmXTBkIHeNHXNMg-oNUkO9nM99qgXhaBuoxfjYAc
+id: ppuc_claro_help
+theme: ppuc_claro
+region: help
+weight: -5
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

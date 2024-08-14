@@ -1,0 +1,20 @@
+uuid: 11e128e1-1f9c-4cee-a65a-0b98eb893326
+langcode: en
+status: true
+dependencies:
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: GBBy45cAxoXeBQpXjpbDvudhp4gL0NTcUHOEYKQvh58
+id: ppuc_claro_page_title
+theme: ppuc_claro
+region: header
+weight: -5
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility: {  }

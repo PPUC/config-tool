@@ -1,0 +1,25 @@
+uuid: ba474813-65f1-4c87-98ed-e8c90937d81a
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.game_assets
+  module:
+    - views
+  theme:
+    - ppuc_claro
+id: ppuc_claro_views_block__game_assets_block_switch_locations
+theme: ppuc_claro
+region: sidebar
+weight: -2
+provider: null
+plugin: 'views_block:game_assets-block_switch_locations'
+settings:
+  id: 'views_block:game_assets-block_switch_locations'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility: {  }

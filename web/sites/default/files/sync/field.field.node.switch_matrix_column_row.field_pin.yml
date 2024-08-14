@@ -9,8 +9,8 @@ id: node.switch_matrix_column_row.field_pin
 field_name: field_pin
 entity_type: node
 bundle: switch_matrix_column_row
-label: Pin
-description: 'The pin'
+label: Port
+description: 'The port'
 required: true
 translatable: false
 default_value: {  }

@@ -1,0 +1,22 @@
+uuid: 565e450b-becc-4b6e-bdde-0030d7d8a320
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - ppuc_claro
+_core:
+  default_config_hash: GG1KHHxPQ-U651uOwkliuLZwLyKqmRO-QOrwttbHbqU
+id: ppuc_claro_breadcrumbs
+theme: ppuc_claro
+region: breadcrumb
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility: {  }
