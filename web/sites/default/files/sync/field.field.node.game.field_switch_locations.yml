@@ -1,0 +1,29 @@
+uuid: 04619584-06b1-47aa-a0e3-55461c0588dd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_switch_locations
+    - media.type.switch_locations
+    - node.type.game
+id: node.game.field_switch_locations
+field_name: field_switch_locations
+entity_type: node
+bundle: game
+label: 'Switch Locations'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      switch_locations: switch_locations
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

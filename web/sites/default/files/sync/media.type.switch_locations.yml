@@ -1,0 +1,13 @@
+uuid: fb58230e-1864-4af6-b458-4dc7955dce0d
+langcode: en
+status: true
+dependencies: {  }
+id: switch_locations
+label: 'Switch Locations'
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image_2
+field_map: {  }

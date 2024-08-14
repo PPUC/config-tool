@@ -1,0 +1,13 @@
+uuid: 76bd1f2e-18c8-4f65-8f5f-2d4b5f3853be
+langcode: en
+status: true
+dependencies: {  }
+id: translite
+label: Translite
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image
+field_map: {  }

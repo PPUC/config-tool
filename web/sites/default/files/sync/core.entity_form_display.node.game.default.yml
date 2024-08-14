@@ -4,15 +4,16 @@ status: true
 dependencies:
   config:
     - field.field.node.game.body
-    - field.field.node.game.field_logo
+    - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
     - field.field.node.game.field_platform
-    - field.field.node.game.field_roms
-    - image.style.thumbnail
+    - field.field.node.game.field_rom
+    - field.field.node.game.field_solenoid_locations
+    - field.field.node.game.field_switch_locations
+    - field.field.node.game.field_translite
     - node.type.game
   module:
-    - file
-    - image
+    - media_library
     - text
 _core:
   default_config_hash: k3RId3Jp-Yzte9vomGkgD2lUwxB8p-bVRyphMxAYYfw
@@ -31,20 +32,19 @@ content:
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-  field_logo:
-    type: image_image
-    weight: 1
+  field_lamp_locations:
+    type: media_library_widget
+    weight: 29
     region: content
     settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+      media_types: {  }
     third_party_settings: {  }
   field_manual:
-    type: file_generic
-    weight: 5
+    type: media_library_widget
+    weight: 28
     region: content
     settings:
-      progress_indicator: throbber
+      media_types: {  }
     third_party_settings: {  }
   field_platform:
     type: options_buttons
@@ -52,12 +52,33 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_roms:
-    type: file_generic
-    weight: 4
+  field_rom:
+    type: media_library_widget
+    weight: 27
     region: content
     settings:
-      progress_indicator: throbber
+      media_types: {  }
+    third_party_settings: {  }
+  field_solenoid_locations:
+    type: media_library_widget
+    weight: 31
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_switch_locations:
+    type: media_library_widget
+    weight: 30
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_translite:
+    type: media_library_widget
+    weight: 26
+    region: content
+    settings:
+      media_types: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

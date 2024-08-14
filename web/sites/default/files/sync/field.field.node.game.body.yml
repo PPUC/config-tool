@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.body
+    - filter.format.basic_html
     - node.type.game
   module:
     - text
@@ -13,14 +14,15 @@ id: node.game.body
 field_name: body
 entity_type: node
 bundle: game
-label: Body
+label: Description
 description: ''
 required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  display_summary: true
+  display_summary: false
   required_summary: false
-  allowed_formats: {  }
+  allowed_formats:
+    - basic_html
 field_type: text_with_summary

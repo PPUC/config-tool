@@ -1,0 +1,27 @@
+uuid: 2dd233ce-dd0f-4050-a51a-d5d6ab4624f2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_1
+    - media.type.rom
+  module:
+    - file
+id: media.rom.field_media_file_1
+field_name: field_media_file_1
+entity_type: media
+bundle: rom
+label: ROM
+description: ROM
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: roms
+  file_extensions: zip
+  max_filesize: ''
+  description_field: true
+field_type: file

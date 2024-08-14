@@ -1,0 +1,27 @@
+uuid: 80b5c246-91d2-4649-8e55-fb39f1ac5424
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file
+    - media.type.manual
+  module:
+    - file
+id: media.manual.field_media_file
+field_name: field_media_file
+entity_type: media
+bundle: manual
+label: File
+description: 'Manual, schematics, part lists, ...'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: manuals
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: true
+field_type: file

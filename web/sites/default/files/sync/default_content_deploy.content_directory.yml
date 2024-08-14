@@ -1,0 +1,10 @@
+content_directory: sites/default/files/default_content
+skip_computed_fields: true
+text_dependencies: false
+skip_entity_types:
+  - block_content
+  - file
+  - menu_link_content
+  - node
+  - path_alias
+batch_ttl: 14400

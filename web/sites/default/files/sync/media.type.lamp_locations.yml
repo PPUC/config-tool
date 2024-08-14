@@ -1,0 +1,13 @@
+uuid: e04e32f3-2278-49ed-9eb7-7e4fe8ca6326
+langcode: en
+status: true
+dependencies: {  }
+id: lamp_locations
+label: 'Lamp Locations'
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image_1
+field_map: {  }

@@ -3,20 +3,44 @@
 namespace Drupal\ppuc_games\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\File\Event\FileUploadSanitizeNameEvent;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
-use Drupal\default_content\ExporterInterface;
-use Drupal\file\FileInterface;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use ZipStream\ZipStream;
 
 /**
  * ConfigDownloadController.
  */
-class GamesController extends ControllerBase {
+class GamesController extends ControllerBase  {
+
+  /**
+   * The File system.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
+   * DownloadController constructor.
+   *
+   * @param \Drupal\Core\File\FileSystemInterface $file_system
+   *   The File system.
+   */
+  public function __construct(FileSystemInterface $file_system) {
+    $this->fileSystem = $file_system;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('file_system')
+    );
+  }
 
   public function sortEntitiesByNumberField($a, $b) {
     if ($a->field_number->value == $b->field_number->value) {
@@ -40,10 +64,15 @@ class GamesController extends ControllerBase {
   }
 
   /**
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   The HTTP response object.
+   * @param \Drupal\node\NodeInterface $node
+   * @param array $objects
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface[]
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function streamPinMameYaml(NodeInterface $node): Response {
+  protected function buildYaml(NodeInterface $node, array &$objects): array {
     /** @var \Drupal\taxonomy\TermInterface $platform */
     $platform = $node->field_platform->entity;
     $yaml = [
@@ -70,6 +99,7 @@ class GamesController extends ControllerBase {
     uasort($dip_switches, [$this, 'sortEntitiesByNumberField']);
 
     foreach ($dip_switches as $dip_switch) {
+      $objects[] = $dip_switch;
       $yaml['dipSwitches'][] = [
         'description' => trim($dip_switch->label()),
         'number' => (int)($dip_switch->field_number->value),
@@ -85,9 +115,10 @@ class GamesController extends ControllerBase {
     uasort($i_o_boards, [$this, 'sortEntitiesByNumberField']);
 
     foreach ($i_o_boards as $i_o_board) {
+      $objects[] = $i_o_board;
       $i_o_board_number = (int)($i_o_board->field_number->value);
       $i_o_board_type = $i_o_board->field_io_board_type->entity;
-      $i_o_board_gpio_mapping =  unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
+      $i_o_board_gpio_mapping = unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
       $poll_events = FALSE;
 
       // Switches, PWM, LED strings.
@@ -96,6 +127,7 @@ class GamesController extends ControllerBase {
         'status' => TRUE,
       ]);
       foreach ($devices as $device) {
+        $objects[] = $device;
         switch ($device->bundle()) {
           case 'switch':
             $yaml['switches'][] = [
@@ -123,6 +155,7 @@ class GamesController extends ControllerBase {
             uasort($switch_matrix_parts, [$this, 'sortEntitiesByMatrixPartAndNumberField']);
 
             foreach ($switch_matrix_parts as $switch_matrix_part) {
+              $objects[] = $switch_matrix_part;
               $part = '';
               switch ($switch_matrix_part->field_matrix_part->entity->uuid()) {
                 case '71d21092-dbdc-4741-9894-194b28fd5228':
@@ -144,11 +177,11 @@ class GamesController extends ControllerBase {
             }
 
             $yaml['switchMatrix'] = [
-              'description' => trim($device->label()),
-              'board' => $i_o_board_number,
-              'activeLow' => (bool)($device->field_active_low->value),
-              'pulseTime' => (int)($device->field_pulse_time->value),
-            ] + $switch_matrix;
+                'description' => trim($device->label()),
+                'board' => $i_o_board_number,
+                'activeLow' => (bool)($device->field_active_low->value),
+                'pulseTime' => (int)($device->field_pulse_time->value),
+              ] + $switch_matrix;
 
             break;
 
@@ -202,6 +235,7 @@ class GamesController extends ControllerBase {
             uasort($addressable_leds, [$this, 'sortEntitiesByNumberField']);
 
             foreach ($addressable_leds as $addressable_led) {
+              $objects[] = $addressable_led;
               $role = '';
               switch ($addressable_led->field_role->entity->uuid()) {
                 case '380dd744-eef0-4bb8-9b62-d6d4ac2af2c6':
@@ -230,14 +264,14 @@ class GamesController extends ControllerBase {
             }
 
             $yaml['ledStripes'][] = [
-              'description' => trim($device->label()),
-              'board' => $i_o_board_number,
-              'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
-              'ledType' => $device->field_led_type->entity->getName(),
-              'amount' => (int)($device->field_amount_leds->value),
-              'lightUp' => (int)($device->field_light_up->value),
-              'afterGlow' => (int)($device->field_after_glow->value),
-            ] + $leds;
+                'description' => trim($device->label()),
+                'board' => $i_o_board_number,
+                'port' => $i_o_board_gpio_mapping[(int)($device->field_pin->value)],
+                'ledType' => $device->field_led_type->entity->getName(),
+                'amount' => (int)($device->field_amount_leds->value),
+                'lightUp' => (int)($device->field_light_up->value),
+                'afterGlow' => (int)($device->field_after_glow->value),
+              ] + $leds;
 
             break;
         }
@@ -253,87 +287,54 @@ class GamesController extends ControllerBase {
       ];
     }
 
+    return $yaml;
+  }
+
+  /**
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   The HTTP response object.
+   */
+  public function streamPinMameYaml(NodeInterface $node): Response {
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.yml', 'yml');
+    \Drupal::service('event_dispatcher')->dispatch($event);
+    $sanitized_filename = $event->getFilename();
+
+    $objects = [];
+
     return new Response(
-      Yaml::encode($yaml),
+      Yaml::encode($this->buildYaml($node, $objects)),
       200,
       [
         'Content-Type' => 'application/yaml',
-        'Content-Disposition' => 'attachment; filename=game.yml',
+        'Content-Disposition' => 'attachment; filename=' . $sanitized_filename,
       ]
     );
   }
 
   /**
-   * Streams a zip archive containing a complete Solr configuration.
+   * Streams a tar.gz archive containing a complete game configuration.
    */
   public function streamGameZip(NodeInterface $node): Response {
+    /** @var \Drupal\default_content_deploy\Exporter $exporter */
+    $exporter = \Drupal::service('default_content_deploy.exporter');
+    $exporter->setFolder($this->fileSystem->getTempDirectory() . '/dcd/content');
+    $exporter->setSkipEntityTypeIds(['user', 'taxonomy_term']);
+    $exporter->setForceUpdate(TRUE);
+    $exporter->exportEntity($node, TRUE);
+    $exporter->setForceUpdate(FALSE);
 
-    try {
-      @ob_clean();
-      // If you are using nginx as a webserver, it will try to buffer the
-      // response. We have to disable this with a custom header.
-      // @see https://github.com/maennchen/ZipStream-PHP/wiki/nginx
-      header('X-Accel-Buffering: no');
-      $zip = new ZipStream(
-        enableZip64: false,
-        outputName: $node->uuid() . '.zip'
-      );
-
-      /** @var ExporterInterface $exporter */
-      $exporter = \Drupal::service('default_content.exporter');
-      /** @var EntityRepositoryInterface $repository */
-      $repository = \Drupal::service('entity.repository');
-      $nodePath = 'content/node/';
-
-      $gameExport = $exporter->exportContentWithReferences('node', $node->id());
-      foreach ($gameExport as $entityType => $serializedEntities) {
-        if ($entityType !== 'user' && $entityType !== 'taxonomy_term') {
-          foreach ($serializedEntities as $uuid => $serializedEntity) {
-            $zip->addFile('content/' . $entityType . '/' . $uuid . '.yml', $serializedEntity);
-            // For files, copy the file into the same folder.
-            $entity = $repository->loadEntityByUuid($entityType, $uuid);
-            if ($entity instanceof FileInterface) {
-              $zip->addFileFromPath('content/' . $entityType . '/' . $entity->getFilename(), $entity->getFileUri());
-            }
-          }
-        }
-      }
-
-      $storage = $this->entityTypeManager()->getStorage($node->getEntityTypeId());
-      $i_o_boards_and_dip_switches = $storage->loadByProperties([
-        'field_game' => $node->id(),
-      ]);
-
-      foreach ($i_o_boards_and_dip_switches as $i_o_board_or_dip_switch) {
-        $zip->addFile($nodePath . $i_o_board_or_dip_switch->uuid() . '.yml', $exporter->exportContent('node', $i_o_board_or_dip_switch->id()));
-
-        // Switches, PWM, LED strings.
-        $devices = $storage->loadByProperties([
-          'field_i_o_board' => $i_o_board_or_dip_switch->id(),
-        ]);
-        foreach ($devices as $device) {
-          $zip->addFile($nodePath . $device->uuid() . '.yml', $exporter->exportContent('node', $device->id()));
-
-          $leds = $storage->loadByProperties([
-            'field_string' => $device->id(),
-          ]);
-
-          foreach ($leds as $led) {
-            $zip->addFile($nodePath . $led->uuid() . '.yml', $exporter->exportContent('node', $led->id()));
-          }
-        }
-      }
-
-      $zip->finish();
-      @ob_end_flush();
-      exit();
-    }
-    catch (\Exception $e) {
-      watchdog_exception('ppuc', $e);
-      $this->messenger()->addError($this->t('An error occurred during the creation of the game zip. Look at the logs for details.'));
+    $objects = [];
+    $this->buildYaml($node, $objects);
+    foreach ($objects as $object) {
+      $exporter->exportEntity($object);
     }
 
-    return new RedirectResponse($node->toUrl('canonical')->toString());
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.tar.gz', '.tar.gz');
+    \Drupal::service('event_dispatcher')->dispatch($event);
+    $sanitized_filename = $event->getFilename();
+
+    // Redirect for download archive file.
+    return $this->redirect('default_content_deploy.export.download', ['file_name' => $sanitized_filename]);
   }
 
   public function importGameZip() {
@@ -343,4 +344,5 @@ class GamesController extends ControllerBase {
   public function title(NodeInterface $node) {
     return $node->getTitle();
   }
+
 }

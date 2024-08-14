@@ -1,7 +1,7 @@
 ppuc_games.zip:
   route_name: ppuc_games.zip
   base_route: entity.node.canonical
-  title: 'Export as zip'
+  title: 'Export'
 
 ppuc_games.yaml:
   route_name: ppuc_games.yaml

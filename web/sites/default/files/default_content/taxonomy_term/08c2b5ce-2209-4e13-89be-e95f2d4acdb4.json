@@ -1,0 +1,81 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/34?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_device"
+        },
+        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 34
+        }
+    ],
+    "uuid": [
+        {
+            "value": "08c2b5ce-2209-4e13-89be-e95f2d4acdb4"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "pwm_device"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-08-06T09:48:24+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Lamp",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2024-08-06T09:48:24+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ]
+}

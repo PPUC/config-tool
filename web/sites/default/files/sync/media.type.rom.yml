@@ -1,0 +1,14 @@
+uuid: 7223520e-13ef-4dfe-9293-e77c3119b6fb
+langcode: en
+status: true
+dependencies: {  }
+id: rom
+label: ROM
+description: ''
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file_1
+field_map:
+  name: name

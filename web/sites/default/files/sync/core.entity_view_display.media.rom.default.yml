@@ -1,0 +1,27 @@
+uuid: 0fcff548-dd55-4e85-bb1c-010abe1e172f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.rom.field_media_file_1
+    - media.type.rom
+  module:
+    - file
+id: media.rom.default
+targetEntityType: media
+bundle: rom
+mode: default
+content:
+  field_media_file_1:
+    type: file_default
+    label: visually_hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

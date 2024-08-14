@@ -1,0 +1,32 @@
+uuid: d46131ba-af83-47dc-b451-6e19adc40052
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.switch_locations.field_media_image_2
+    - image.style.medium
+    - media.type.switch_locations
+  module:
+    - image
+id: media.switch_locations.media_library
+targetEntityType: media
+bundle: switch_locations
+mode: media_library
+content:
+  thumbnail:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  field_media_image_2: true
+  name: true
+  uid: true

@@ -1,0 +1,32 @@
+uuid: 209f557b-f101-47b0-a876-c665c25b14d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.rom.field_media_file_1
+    - image.style.medium
+    - media.type.rom
+  module:
+    - image
+id: media.rom.media_library
+targetEntityType: media
+bundle: rom
+mode: media_library
+content:
+  thumbnail:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  field_media_file_1: true
+  name: true
+  uid: true

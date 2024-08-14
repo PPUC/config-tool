@@ -1,0 +1,31 @@
+uuid: f2a19722-b6f2-4d2f-922f-aac03af8236e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.translite.field_media_image
+    - image.style.large
+    - media.type.translite
+  module:
+    - image
+id: media.translite.default
+targetEntityType: media
+bundle: translite
+mode: default
+content:
+  field_media_image:
+    type: image
+    label: visually_hidden
+    settings:
+      image_link: ''
+      image_style: large
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

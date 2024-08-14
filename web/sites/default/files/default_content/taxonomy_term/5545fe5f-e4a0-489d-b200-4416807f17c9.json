@@ -1,0 +1,89 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/18?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_role"
+        },
+        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 18
+        }
+    ],
+    "uuid": [
+        {
+            "value": "5545fe5f-e4a0-489d-b200-4416807f17c9"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "led_role"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-08-06T09:48:24+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Flasher",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Flasher<\/p>\r\n",
+            "format": "basic_html",
+            "processed": "<p>Flasher<\/p>",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2024-08-06T09:48:24+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ]
+}

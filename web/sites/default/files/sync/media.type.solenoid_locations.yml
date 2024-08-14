@@ -1,0 +1,13 @@
+uuid: 87ab8024-77d2-4b94-ab0e-0ea63a3e40d5
+langcode: en
+status: true
+dependencies: {  }
+id: solenoid_locations
+label: 'Solenoid Locations'
+description: ''
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image_3
+field_map: {  }

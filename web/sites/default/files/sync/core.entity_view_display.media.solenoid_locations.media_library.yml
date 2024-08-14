@@ -1,0 +1,32 @@
+uuid: 67401c65-0dcf-41a2-90a0-3df32d519b1c
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
+    - field.field.media.solenoid_locations.field_media_image_3
+    - image.style.medium
+    - media.type.solenoid_locations
+  module:
+    - image
+id: media.solenoid_locations.media_library
+targetEntityType: media
+bundle: solenoid_locations
+mode: media_library
+content:
+  thumbnail:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  field_media_image_3: true
+  name: true
+  uid: true

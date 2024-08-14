@@ -14,11 +14,12 @@ dependencies:
     - node.type.switch_matrix
     - node.type.switch_matrix_column_row
   module:
+    - default_content_deploy
     - file
     - filter
     - help
+    - media
     - node
-    - path
     - quick_node_clone
     - system
     - toolbar
@@ -34,7 +35,6 @@ permissions:
   - 'access files overview'
   - 'access help pages'
   - 'access toolbar'
-  - 'administer url aliases'
   - 'clone addressable_led content'
   - 'clone addressable_leds content'
   - 'clone dip_switch content'
@@ -49,11 +49,12 @@ permissions:
   - 'create dip_switch content'
   - 'create game content'
   - 'create i_o_board content'
+  - 'create media'
   - 'create pwm_device content'
   - 'create switch content'
   - 'create switch_matrix content'
   - 'create switch_matrix_column_row content'
-  - 'create url aliases'
+  - 'default content deploy export'
   - 'delete addressable_led revisions'
   - 'delete addressable_leds revisions'
   - 'delete any addressable_led content'
@@ -61,6 +62,7 @@ permissions:
   - 'delete any dip_switch content'
   - 'delete any game content'
   - 'delete any i_o_board content'
+  - 'delete any media'
   - 'delete any pwm_device content'
   - 'delete any switch content'
   - 'delete any switch_matrix content'
@@ -68,6 +70,7 @@ permissions:
   - 'delete dip_switch revisions'
   - 'delete game revisions'
   - 'delete i_o_board revisions'
+  - 'delete media'
   - 'delete own addressable_led content'
   - 'delete own addressable_leds content'
   - 'delete own dip_switch content'
@@ -110,14 +113,18 @@ permissions:
   - 'revert switch revisions'
   - 'revert switch_matrix revisions'
   - 'revert switch_matrix_column_row revisions'
+  - 'update any media'
+  - 'update media'
   - 'use text format basic_html'
   - 'view addressable_led revisions'
   - 'view addressable_leds revisions'
+  - 'view all media revisions'
   - 'view all revisions'
   - 'view dip_switch revisions'
   - 'view game revisions'
   - 'view i_o_board revisions'
   - 'view own unpublished content'
+  - 'view own unpublished media'
   - 'view pwm_device revisions'
   - 'view switch revisions'
   - 'view switch_matrix revisions'

@@ -1,0 +1,13 @@
+uuid: 0bb44da5-d40e-4dca-9f77-01ced53fca2d
+langcode: en
+status: true
+dependencies: {  }
+id: manual
+label: Manual
+description: ''
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file
+field_map: {  }
