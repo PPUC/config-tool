@@ -1,0 +1,15 @@
+<?php
+
+use Drupal\ppuc_games\Form\PpucNodeForm;
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function ppuc_games_entity_type_alter(array &$entity_types) {
+  // Check if the 'node' entity type is present.
+  if (isset($entity_types['node'])) {
+    // Override the form class for the default form operations.
+    $entity_types['node']->setFormClass('default', PpucNodeForm::class);
+    $entity_types['node']->setFormClass('edit', PpucNodeForm::class);
+  }
+}

@@ -12,7 +12,7 @@ field_name: field_pin
 entity_type: node
 bundle: pwm_device
 label: Port
-description: Theport.
+description: 'The port.'
 required: true
 translatable: true
 default_value: {  }

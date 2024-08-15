@@ -1,0 +1,6 @@
+services:
+  ppuc_games.response_subscriber:
+    class: Drupal\ppuc_games\EventSubscriber\RequestEventSubscriber
+    arguments: ['@current_route_match']
+    tags:
+      - { name: event_subscriber }

@@ -10,3 +10,23 @@
   flex: 1;
   padding-left: 20px;
 }
+
+header {
+  background-image: url('/profiles/custom/ppuc/images/ppuc.png');
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-size: auto 80%;
+}
+
+.content-header {
+  background-color: yellow;
+}
+
+.button--primary {
+  background-color: #0f0f0f;
+}
+
+.button--primary:hover {
+  color: #0f0f0f;
+  background-color: yellow;
+}
