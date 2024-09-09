@@ -1,12 +1,12 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/7?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/7?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/i_o_board"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/i_o_board"
         },
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/i_o_board\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/i_o_board\/parent": [
             null
         ]
     },
@@ -63,7 +63,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/i_o_board\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/i_o_board\/parent": [
             null
         ]
     },
@@ -90,5 +90,8 @@
         {
             "value": "a:25:{i:1;i:12;i:2;i:11;i:3;i:10;i:4;i:9;i:5;i:8;i:6;i:7;i:7;i:6;i:8;i:5;i:9;i:4;i:10;i:3;i:11;i:24;i:12;i:23;i:13;i:22;i:14;i:21;i:15;i:20;i:16;i:19;i:17;i:18;i:18;i:17;i:19;i:26;i:20;i:26;i:21;i:15;i:22;i:14;i:23;i:13;i:24;i:16;i:25;i:29;}"
         }
-    ]
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1725918422
+    }
 }

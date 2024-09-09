@@ -1,12 +1,12 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/14?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/14?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/matrix_part"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/matrix_part"
         },
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
             null
         ]
     },
@@ -63,7 +63,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
             null
         ]
     },
@@ -85,5 +85,8 @@
             "value": true,
             "lang": "en"
         }
-    ]
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1725918422
+    }
 }

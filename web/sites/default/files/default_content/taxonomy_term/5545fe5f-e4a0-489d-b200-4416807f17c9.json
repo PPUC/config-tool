@@ -1,12 +1,12 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/18?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/18?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_role"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_role"
         },
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
             null
         ]
     },
@@ -63,7 +63,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
             null
         ]
     },
@@ -85,5 +85,8 @@
             "value": true,
             "lang": "en"
         }
-    ]
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1725918422
+    }
 }

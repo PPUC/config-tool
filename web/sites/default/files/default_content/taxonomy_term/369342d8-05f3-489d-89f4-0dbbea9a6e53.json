@@ -1,12 +1,12 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/40?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/40?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_type"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_type"
         },
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
             null
         ]
     },
@@ -55,7 +55,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
             null
         ]
     },
@@ -82,5 +82,8 @@
         {
             "value": 8
         }
-    ]
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1725918422
+    }
 }

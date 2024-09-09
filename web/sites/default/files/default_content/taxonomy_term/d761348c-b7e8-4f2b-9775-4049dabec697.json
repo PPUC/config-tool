@@ -1,23 +1,23 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/2?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/44?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_type"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/platform"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/platform\/parent": [
             null
         ]
     },
     "tid": [
         {
-            "value": 2
+            "value": 44
         }
     ],
     "uuid": [
         {
-            "value": "18600d4c-4b61-4b73-b720-e64bd81572bd"
+            "value": "d761348c-b7e8-4f2b-9775-4049dabec697"
         }
     ],
     "langcode": [
@@ -28,12 +28,12 @@
     ],
     "vid": [
         {
-            "target_id": "led_type"
+            "target_id": "platform"
         }
     ],
     "revision_created": [
         {
-            "value": "2024-08-06T09:48:24+00:00",
+            "value": "2024-09-09T21:41:19+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -45,7 +45,15 @@
     ],
     "name": [
         {
-            "value": "WS2812_BGR",
+            "value": "SYS6",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Williams System 6<\/p>",
+            "format": "basic_html",
+            "processed": "<p>Williams System 6<\/p>",
             "lang": "en"
         }
     ],
@@ -55,13 +63,13 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/platform\/parent": [
             null
         ]
     },
     "changed": [
         {
-            "value": "2024-08-06T09:48:24+00:00",
+            "value": "2024-09-09T21:41:19+00:00",
             "lang": "en",
             "format": "Y-m-d\\TH:i:sP"
         }
@@ -76,11 +84,6 @@
         {
             "value": true,
             "lang": "en"
-        }
-    ],
-    "field_ppuc_type": [
-        {
-            "value": 5
         }
     ],
     "_dcd_metadata": {

@@ -1,12 +1,12 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/taxonomy\/term\/20?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/20?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/ppuc-config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_device"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_device"
         },
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
             null
         ]
     },
@@ -63,7 +63,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/ppuc-config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
             null
         ]
     },
@@ -85,5 +85,8 @@
             "value": true,
             "lang": "en"
         }
-    ]
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1725918422
+    }
 }
