@@ -1,0 +1,32 @@
+default_content_deploy.common_settings:
+  type: config_entity
+  mapping:
+    content_directory:
+      type: string
+      label: 'Content directory'
+    text_dependencies:
+      type: boolean
+      label: 'Export processed text dependencies'
+    skip_entity_types:
+      type: sequence
+      label: 'Skip entity types to be exported indirectly by reference or in site export'
+      orderby: key
+      sequence:
+        type: string
+        label: 'The entity types to skip'
+    batch_ttl:
+      type: integer
+      label: 'TTL for batch items until the garbage collection for orphaned items removes them'
+
+default_content_deploy.settings:
+  type: default_content_deploy.common_settings
+  mapping:
+    skip_computed_fields:
+      type: boolean
+      label: 'Skip computed fields'
+    skip_processed_values:
+      type: boolean
+      label: 'Skip processed values'
+    batch_ttl:
+      type: integer
+      label: 'TTL for batch items until the garbage collection for orphaned items removes them'

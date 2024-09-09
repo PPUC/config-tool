@@ -1,0 +1,214 @@
+<?php
+
+/**
+ * @file
+ * Implement hooks.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\default_content_deploy\Form\SettingsForm;
+use Drupal\search_api\IndexInterface;
+use Laminas\Stdlib\ArrayUtils;
+
+/**
+ * Implements hook_entity_insert().
+ *
+ * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityInsert()
+ */
+function search_api_default_content_deploy_entity_insert(EntityInterface $entity) {
+  \Drupal::getContainer()
+    ->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
+    ->entityInsert($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ *
+ * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityUpdate()
+ */
+function search_api_default_content_deploy_entity_update(EntityInterface $entity) {
+  \Drupal::getContainer()
+    ->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
+    ->entityUpdate($entity);
+}
+
+/**
+ * Implements hook_entity_delete().
+ *
+ * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityDelete()
+ */
+function search_api_default_content_deploy_entity_delete(EntityInterface $entity) {
+  // Call this hook on behalf of the Content Entity datasource.
+  \Drupal::getContainer()->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
+    ->entityDelete($entity);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for type "search_api_index".
+ *
+ * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::indexUpdate()
+ */
+function search_api_default_content_deploy_search_api_index_update(IndexInterface $index) {
+  \Drupal::getContainer()->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
+    ->indexUpdate($index);
+}
+
+
+/**
+ * Get the default third party settings of an index for DCD.
+ *
+ * @return array
+ *   Third party settings array.
+ */
+function search_api_default_content_deploy_default_index_third_party_settings() {
+  return [
+    'content_directory' => '',
+    'export_referenced_entities' => FALSE,
+    'text_dependencies' => FALSE,
+    'skip_entity_types' => [],
+    'link_domain' => '',
+    'delete_single_file_allowed' => FALSE,
+    'move_deleted_single_file' => FALSE,
+    'delete_all_files_allowed' => FALSE,
+  ];
+}
+
+/**
+ * Merges the default third party settings to those of an index for DCD.
+ *
+ * @param array $third_party_settings
+ *   Third party settings array.
+ *
+ * @return array
+ *   Third party settings array.
+ */
+function search_api_default_content_deploy_merge_default_index_third_party_settings(array $third_party_settings) {
+  return ArrayUtils::merge(search_api_default_content_deploy_default_index_third_party_settings(), $third_party_settings, TRUE);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function search_api_default_content_deploy_form_search_api_index_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We need to restrict by form ID here because this function is also called
+  // via hook_form_BASE_FORM_ID_alter (which is wrong, e.g. in the case of the
+  // form ID search_api_field_config).
+  if (in_array($form_id, ['search_api_index_form', 'search_api_index_edit_form'])) {
+    $settings = [];
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $form_state->getFormObject();
+    /** @var \Drupal\search_api\IndexInterface $index */
+    $index = $form_object->getEntity();
+    if (!$index->isNew()) {
+      $settings = $index->getThirdPartySettings('search_api_default_content_deploy');
+    }
+    $settings = search_api_default_content_deploy_merge_default_index_third_party_settings($settings);
+
+    $form['third_party_settings']['search_api_default_content_deploy'] = [
+      '#tree' => TRUE,
+      '#type' => 'details',
+      '#title' => t('Default Content Deploy specific index options'),
+      '#collapsed' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="server"]' => _search_api_default_content_deploy_visibility(),
+        ],
+      ],
+    ];
+
+    $form['third_party_settings']['search_api_default_content_deploy']['export_referenced_entities'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Export referenced entities'),
+      '#default_value' => $settings['export_referenced_entities'],
+      '#description' => t('If checked, references entities will be exported as well if their type is not skipped below.'),
+    ];
+
+    $form['third_party_settings']['search_api_default_content_deploy']['link_domain'] = [
+      '#type' => 'textfield',
+      '#title' => t('HAL Link Domain'),
+      '#default_value' => $settings['link_domain'],
+      '#description' => t('The base URI like "https://my.site.dev".'),
+    ];
+
+    $form['third_party_settings']['search_api_default_content_deploy']['delete_single_file_allowed'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Allow deletion of single files'),
+      '#default_value' => $settings['delete_single_file_allowed'],
+      '#description' => t('If checked, deleted entities will be removed from the export folder.'),
+    ];
+
+    $form['third_party_settings']['search_api_default_content_deploy']['move_deleted_single_file'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Move single deleted files'),
+      '#default_value' => $settings['move_deleted_single_file'],
+      '#description' => t('If checked, deleted entities will be moved into the "_deleted" sub_folder of the export folder.'),
+    ];
+
+    $form['third_party_settings']['search_api_default_content_deploy']['delete_all_files_allowed'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Allow deletion of all files'),
+      '#default_value' => $settings['delete_all_files_allowed'],
+      '#description' => t('If checked, the export folder will be deleted recursively if this index will be deleted.'),
+    ];
+
+    $settingsForm = SettingsForm::create(\Drupal::getContainer());
+
+    $form['third_party_settings']['search_api_default_content_deploy'] = $settingsForm->getCommonFormElements(
+      $form['third_party_settings']['search_api_default_content_deploy'],
+      $settings
+    );
+  }
+}
+
+/**
+ * Get all Search API servers that use a DCD backend.
+ *
+ * @param bool $only_active
+ *   Whether to only return active servers or all.
+ *
+ * @return \Drupal\search_api\ServerInterface[]
+ *   The servers.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\search_api\SearchApiException
+ */
+function search_api_default_content_deploy_get_servers($only_active = TRUE) {
+  $storage = \Drupal::entityTypeManager()->getStorage('search_api_server');
+  /** @var \Drupal\search_api\ServerInterface[] $servers */
+  $servers = $only_active ? $storage->loadByProperties(['status' => TRUE]) :
+    $storage->loadMultiple();
+  foreach ($servers as $server) {
+    if (
+      $server->hasValidBackend() &&
+      $server->getBackend() instanceof \Drupal\search_api_default_content_deploy\Plugin\search_api\backend\DefaultContentDeployBackend
+    ) {
+      $servers[$server->id()] = $server;
+    }
+  }
+  return $servers;
+}
+
+/**
+ * Returns visibility state status values.
+ *
+ * @return array
+ *   Options array.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\search_api\SearchApiException
+ *
+ * @see \search_api_solr_form_search_api_index_form_alter
+ */
+function _search_api_default_content_deploy_visibility() {
+  $valid_option = [];
+  $servers = search_api_default_content_deploy_get_servers(FALSE);
+  foreach ($servers as $server) {
+    $valid_option[] = [
+      'value' => $server->id(),
+    ];
+  }
+  return $valid_option;
+}

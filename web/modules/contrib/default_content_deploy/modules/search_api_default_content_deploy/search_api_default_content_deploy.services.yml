@@ -1,0 +1,9 @@
+services:
+  search_api_default_content_deploy.default_content_deploy_event_subscriber:
+    class: Drupal\search_api_default_content_deploy\EventSubscriber\DefaultContentDeployEventSubscriber
+    tags:
+      - {name: event_subscriber}
+
+  search_api_default_content_deploy.dcd_entity_datasource.tracking_manager:
+    class: Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager
+    arguments: ['@entity_type.manager', '@language_manager', '@search_api.task_manager']

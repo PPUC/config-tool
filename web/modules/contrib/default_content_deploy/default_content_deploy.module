@@ -1,0 +1,14 @@
+<?php
+
+use Drupal\default_content_deploy\Form\SettingsForm;
+use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
+
+/**
+ * Implements hook_cron().
+ */
+function default_content_deploy_cron() {
+  $config = \Drupal::config(SettingsForm::CONFIG);
+  $queue = new DefaultContentDeployBatch('default_content_deploy', \Drupal::database());
+  $queue->setTtl((int) ($config->get('batch_ttl') ?? 14400));
+  $queue->garbageCollection();
+}

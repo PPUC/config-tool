@@ -1,0 +1,17 @@
+"plugin.plugin_configuration.search_api_datasource.dcd_entity:*":
+  type: plugin.plugin_configuration.search_api_datasource.entity:*
+
+search_api.index.*.third_party.search_api_default_content_deploy:
+  type: default_content_deploy.common_settings
+  link_domain:
+    type: string
+    label: 'Domain of the relation'
+  delete_single_file_allowed:
+    type: boolean
+    label: 'Deleted entities will be removed from the export folder'
+  move_deleted_single_file:
+    type: boolean
+    label: 'Deleted entities will be removed from the export folder'
+  delete_all_files_allowed:
+    type: boolean
+    label: 'The export folder will be deleted recursively if this index will be deleted'

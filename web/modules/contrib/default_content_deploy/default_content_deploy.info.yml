@@ -1,0 +1,8 @@
+name: 'Default Content Deploy'
+type: module
+description: 'Default content deploy solution for Drupal. Export and import content continuously.'
+package: Web services
+core_version_requirement: ^10.3 || ^11.0
+dependencies:
+  - hal:hal
+configure: default_content_deploy.import
