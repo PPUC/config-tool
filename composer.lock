@@ -1519,7 +1519,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/default_content_deploy.git",
-                "reference": "34fd24308e3766da3462917b778b80627f028e9e"
+                "reference": "3a5ea9682cef8db88a9b1c60a6037824fdbee1c3"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
@@ -1539,8 +1539,8 @@
                     "dev-2.1.x": "2.1.x-dev"
                 },
                 "drupal": {
-                    "version": "2.1.0-beta3+22-dev",
-                    "datestamp": "1725961155",
+                    "version": "2.1.0-beta3+24-dev",
+                    "datestamp": "1725983836",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."
@@ -3466,12 +3466,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "883f97eeb8484a500893e4508f60da3086c69ead"
+                "reference": "a5d021c0575e9f748977c883fc90600be2ca9b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/883f97eeb8484a500893e4508f60da3086c69ead",
-                "reference": "883f97eeb8484a500893e4508f60da3086c69ead",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a5d021c0575e9f748977c883fc90600be2ca9b59",
+                "reference": "a5d021c0575e9f748977c883fc90600be2ca9b59",
                 "shasum": ""
             },
             "conflict": {
@@ -3583,6 +3583,7 @@
                 "croogo/croogo": "<4",
                 "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
+                "damienharper/auditor-bundle": "<6",
                 "dapphp/securimage": "<3.6.6",
                 "darylldoyle/safe-svg": "<1.9.10",
                 "datadog/dd-trace": ">=0.30,<0.30.2",
@@ -4279,7 +4280,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T23:04:55+00:00"
+            "time": "2024-09-10T16:05:07+00:00"
         },
         {
             "name": "rogervila/array-diff-multidimensional",

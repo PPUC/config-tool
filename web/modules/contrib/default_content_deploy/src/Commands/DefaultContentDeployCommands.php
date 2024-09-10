@@ -311,7 +311,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function contentDeployImport(array $options = ['force-override' => FALSE, 'folder' => self::OPT, 'preserve-ids' => FALSE]): void {
+  public function contentDeployImport(array $options = ['force-override' => FALSE, 'folder' => self::OPT, 'preserve-ids' => FALSE, 'incremental' => FALSE]): void {
     $this->importer->setVerbose($this->output()->isVerbose());
 
     // Perform read only update.
@@ -322,6 +322,8 @@ class DefaultContentDeployCommands extends DrushCommands {
     }
 
     $this->importer->setPreserveIds($options['preserve-ids']);
+
+    $this->importer->setIncremental($options['incremental']);
 
     $this->importer->prepareForImport();
 

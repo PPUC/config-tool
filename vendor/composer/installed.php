@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'aaf7f4838b93853b026feb335f73fd4952f916f1',
+        'reference' => '6f54351ab1bb7517349b9b3b97ed7f11f1db54bb',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -355,7 +355,7 @@
         'drupal/default_content_deploy' => array(
             'pretty_version' => 'dev-2.1.x',
             'version' => 'dev-2.1.x',
-            'reference' => '34fd24308e3766da3462917b778b80627f028e9e',
+            'reference' => '3a5ea9682cef8db88a9b1c60a6037824fdbee1c3',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/default_content_deploy',
             'aliases' => array(
@@ -552,7 +552,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'aaf7f4838b93853b026feb335f73fd4952f916f1',
+            'reference' => '6f54351ab1bb7517349b9b3b97ed7f11f1db54bb',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -679,7 +679,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '883f97eeb8484a500893e4508f60da3086c69ead',
+            'reference' => 'a5d021c0575e9f748977c883fc90600be2ca9b59',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(

@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\default_content_deploy\Event\PreSaveEntityEvent;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
@@ -86,6 +87,13 @@ class Importer {
   protected $preserveIds = FALSE;
 
   /**
+   * Incremental import.
+   *
+   * @var bool
+   */
+  protected $incremental = FALSE;
+
+  /**
    * The Entity repository manager.
    *
    * @var \Drupal\Core\Entity\EntityRepositoryInterface
@@ -154,6 +162,13 @@ class Importer {
   protected $metadataService;
 
   /**
+   * The state.
+   *
+   * @var \Drupal\Core\State\StateInterface
+   */
+  protected $state;
+
+  /**
    * @var bool
    */
   protected $verbose = FALSE;
@@ -181,8 +196,10 @@ class Importer {
    *   The event dispatcher.
    * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
    *   The metadata service.
+   * @param \Drupal\Core\State\StateInterface $state
+   *    The state.
    */
-  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, Exporter $exporter, Connection $database, ContainerAwareEventDispatcher $event_dispatcher, DefaultContentDeployMetadataService $metadata_service) {
+  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, Exporter $exporter, Connection $database, ContainerAwareEventDispatcher $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
     $this->serializer = $serializer;
     $this->entityTypeManager = $entity_type_manager;
     $this->linkManager = $link_manager;
@@ -194,6 +211,7 @@ class Importer {
     $this->database = $database;
     $this->eventDispatcher = $event_dispatcher;
     $this->metadataService = $metadata_service;
+    $this->state = $state;
   }
 
   /**
@@ -241,6 +259,10 @@ class Importer {
 
   public function setPreserveIds(bool $preserve) {
     $this->preserveIds = $preserve;
+  }
+
+  public function setIncremental(bool $incremental) {
+    $this->incremental = $incremental;
   }
 
   /**
@@ -341,6 +363,8 @@ class Importer {
       'skipCorrection' => [],
       'verbose' => $this->verbose,
       'preserveIds' => $this->preserveIds,
+      'incremental' => $this->incremental,
+      'state_key' => 'dcd.last_import.' . md5($this->getFolder()),
     ];
 
     $operations[] = [
@@ -372,6 +396,7 @@ class Importer {
     $batch_definition = [
       'title' => $this->t('Importing Content'),
       'operations' => $operations,
+      'finished' => [static::class, 'importFinished'],
       'progressive' => TRUE,
       'queue' => [
         'class' => DefaultContentDeployBatch::class,
@@ -387,6 +412,7 @@ class Importer {
     if (empty($context['results']['start'])) {
       $context['results']['start'] = microtime(TRUE);
     }
+    $context['results']['max_export_timestamp'] = 0;
     $context['results'] = array_merge($context['results'], $vars);
   }
 
@@ -414,6 +440,7 @@ class Importer {
   protected function processFile($file, $current, $total, $correction, &$context): void {
     $this->verbose = &$context['results']['verbose'];
     $this->preserveIds = &$context['results']['preserveIds'];
+    $this->incremental = &$context['results']['incremental'];
 
     if ($correction && array_key_exists($file->uuid, $context['results']['skipCorrection'] ?? [])) {
       if ($this->verbose) {
@@ -439,11 +466,37 @@ class Importer {
       $this->metadataService->reset();
       $is_new = FALSE;
       $this->decodeFile($file);
+      $last_import_timestamp = (int) $this->state->get($context['results']['state_key'], 0);
+      $export_timestamp = $this->metadataService->getExportTimestamp($file->uuid);
 
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
+      $entity_type_definition = $this->entityTypeManager->getDefinition($file->entity_type_id);
+      $table = $entity_type_definition->getBaseTable();
+      $uuid_column = $entity_type_definition->getKey('uuid');
 
-      if ($entity) {
+      if (\Drupal::database()->select($table, 'e')
+        ->fields('e', [$uuid_column])
+        ->condition($uuid_column, $file->uuid)
+        ->range(0, 1)
+        ->execute()
+        ->fetchField()
+      ) {
+        if ($this->incremental && $export_timestamp && $last_import_timestamp > $export_timestamp) {
+          if ($this->verbose) {
+            $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_uuid, file is already imported', [
+              '@current' => $current,
+              '@total' => $total,
+              '@time' => $this->getElapsedTime($context['results']['start']),
+              '@entity_type' => $file->entity_type_id,
+              '@entity_uuid' => $file->uuid,
+            ]);
+          }
+          $context['results']['skipCorrection'][$file->uuid] = TRUE;
+
+          return;
+        }
+
+        /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+        $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
         // Replace entity ID.
         $file->data[$file->key_id][0]['value'] = $entity->id();
 
@@ -474,6 +527,9 @@ class Importer {
                   ]);
                 }
                 $context['results']['skipCorrection'][$file->uuid] = TRUE;
+                if ($export_timestamp > $context['results']['max_export_timestamp']) {
+                  $context['results']['max_export_timestamp'] = $export_timestamp;
+                }
 
                 return;
               }
@@ -495,8 +551,10 @@ class Importer {
                   '@entity_id' => $entity->id(),
                 ]);
               }
-
               $context['results']['skipCorrection'][$file->uuid] = TRUE;
+              if ($export_timestamp > $context['results']['max_export_timestamp']) {
+                $context['results']['max_export_timestamp'] = $export_timestamp;
+              }
 
               return;
             }
@@ -520,11 +578,13 @@ class Importer {
               '@current' => $current,
               '@total' => $total,
               '@time' => $this->getElapsedTime($context['results']['start']),
-              '@entity_type' => $entity->getEntityTypeId(),
-              '@entity_id' => $entity->id(),
+              '@entity_type' => $file->entity_type_id,
+              '@entity_id' => $file->data[$file->key_id][0]['value'],
             ]);
-
             $context['results']['skipCorrection'][$file->uuid] = TRUE;
+            if ($export_timestamp > $context['results']['max_export_timestamp']) {
+              $context['results']['max_export_timestamp'] = $export_timestamp;
+            }
 
             return;
           }
@@ -583,6 +643,10 @@ class Importer {
           '@entity_id' => $entity->id(),
         ]);
       }
+      if ($export_timestamp > $context['results']['max_export_timestamp']) {
+        $context['results']['max_export_timestamp'] = $export_timestamp;
+      }
+
     }
     catch (\Exception $e) {
       $context['message'] = $this->t('@current of @total (@time), error on importing @entity_type @uuid: @message', [
@@ -683,12 +747,19 @@ class Importer {
    * @param $file
    */
   protected function addToImport($file) {
-    if ($file->entity_type_id === 'path_alias') {
-      $this->pathAliasesToImport[$file->uuid] = $file;
-    }
-    else {
-      $this->dataToImport[$file->uuid] = $file;
-      $this->dataToCorrect[$file->uuid] = $file;
+    switch ($file->entity_type_id) {
+      case 'path_alias':
+        $this->pathAliasesToImport[$file->uuid] = $file;
+        break;
+
+      case 'file':
+        $this->dataToImport[$file->uuid] = $file;
+        break;
+
+      default:
+        $this->dataToImport[$file->uuid] = $file;
+        $this->dataToCorrect[$file->uuid] = $file;
+        break;
     }
   }
 
@@ -741,6 +812,28 @@ class Importer {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Callback function to handle batch processing completion.
+   *
+   * @param bool $success
+   *   Indicates whether the batch processing was successful.
+   */
+  public static function importFinished($success, $results, $operations): void {
+    if ($success) {
+      // Batch processing completed successfully.
+      \Drupal::messenger()->addMessage(t('Batch import completed successfully.'));
+
+      if ($results['max_export_timestamp'] > ((int) \Drupal::state()->get($results['state_key'], 0))) {
+        \Drupal::state()
+          ->set($results['state_key'], $results['max_export_timestamp']);
+      }
+    }
+    else {
+      // Batch processing encountered an error.
+      \Drupal::messenger()->addMessage(t('An error occurred during the batch export process.'), 'error');
     }
   }
 
