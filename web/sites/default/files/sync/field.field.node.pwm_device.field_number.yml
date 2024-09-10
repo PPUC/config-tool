@@ -12,14 +12,14 @@ field_name: field_number
 entity_type: node
 bundle: pwm_device
 label: Number
-description: ''
+description: "The number of the coil according to the manual.\r\nFor custom coils, use numbers greater than 100."
 required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
   min: 1
-  max: 64
+  max: 255
   prefix: ''
   suffix: ''
 field_type: integer

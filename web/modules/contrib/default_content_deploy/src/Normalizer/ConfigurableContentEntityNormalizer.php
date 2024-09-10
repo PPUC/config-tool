@@ -128,8 +128,9 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
       foreach ($data['_dcd_metadata']['uuids'] ?? [] as $entity_type_id => $ids) {
         foreach ($ids as $id => $uuid) {
           try {
-            /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
-            $storage = $this->entityTypeManager->getStorage($entity_type_id);
+            // Load the storage to get an exception, if the entity type doesn't
+            // exist. Otherwise, the entity repository will simply return FALSE.
+            $this->entityTypeManager->getStorage($entity_type_id);
             if ($entity = $this->entityRepository->loadEntityByUuid($entity_type_id, $uuid)) {
               if (((int) $id) !== ((int) $entity->id())) {
                 foreach ($data as $field => &$items) {

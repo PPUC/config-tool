@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\better_normalizers\Normalizer;
+namespace Drupal\default_content_deploy\Normalizer;
 
 use Drupal\hal\Normalizer\EntityReferenceItemNormalizer;
 

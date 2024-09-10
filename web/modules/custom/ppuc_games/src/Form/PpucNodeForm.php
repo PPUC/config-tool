@@ -46,7 +46,7 @@ class PpucNodeForm extends NodeForm {
       $i_o_board = $entity->field_i_o_board->entity;
       $i_o_board_type = $i_o_board->field_io_board_type->entity;
       $i_o_board_gpio_mapping = unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
-      if (!in_array((int) ($entity->field_pin->value), $i_o_board_gpio_mapping, TRUE)) {
+      if (!array_key_exists((int) ($entity->field_pin->value), $i_o_board_gpio_mapping)) {
         $form_state->setErrorByName('field_pin[0][value]', $this->t('The selected board has no port %pin.', ['%pin' => $entity->field_pin->value]));
       }
     }

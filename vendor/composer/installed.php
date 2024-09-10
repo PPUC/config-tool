@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'd6d0e3b8292731928f8c5fc8b2d969edddf0600b',
+        'reference' => 'aaf7f4838b93853b026feb335f73fd4952f916f1',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -169,15 +169,6 @@
             'reference' => '861c870e8b75f7c8f69c146c7f89cc1c0f1b49b6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../doctrine/lexer',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'drupal/better_normalizers' => array(
-            'pretty_version' => '2.0.0-beta1',
-            'version' => '2.0.0.0-beta1',
-            'reference' => '2.0.0-beta1',
-            'type' => 'drupal-module',
-            'install_path' => __DIR__ . '/../../web/modules/contrib/better_normalizers',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -364,7 +355,7 @@
         'drupal/default_content_deploy' => array(
             'pretty_version' => 'dev-2.1.x',
             'version' => 'dev-2.1.x',
-            'reference' => 'd4e3c5682bad9929fc0d5dab7a49eaba70dcd44f',
+            'reference' => '34fd24308e3766da3462917b778b80627f028e9e',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/default_content_deploy',
             'aliases' => array(
@@ -561,7 +552,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'd6d0e3b8292731928f8c5fc8b2d969edddf0600b',
+            'reference' => 'aaf7f4838b93853b026feb335f73fd4952f916f1',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -688,7 +679,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'd5ea6bf8f30079474d8900c257db8a20dcd2a5bc',
+            'reference' => '883f97eeb8484a500893e4508f60da3086c69ead',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(

@@ -55,7 +55,7 @@ class DefaultContentDeployMetadataService {
     return $this->uuids[$entity_type][$entity_id] ?? NULL;
   }
 
-  public function mergeUuids(array $uuids): ?string {
+  public function mergeUuids(array $uuids): array {
     return ArrayUtils::merge($uuids, $this->uuids, TRUE);
   }
 

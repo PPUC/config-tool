@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c730e9586ca468e51aaa070123dd2f6",
+    "content-hash": "5e14603c1eadd29559eea48b5d4a9cf1",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1195,68 +1195,6 @@
             "time": "2024-02-05T11:35:39+00:00"
         },
         {
-            "name": "drupal/better_normalizers",
-            "version": "2.0.0-beta1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/better_normalizers.git",
-                "reference": "2.0.0-beta1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/better_normalizers-2.0.0-beta1.zip",
-                "reference": "2.0.0-beta1",
-                "shasum": "519fbded6b4687f1e2c81064dce32798bfb87f14"
-            },
-            "require": {
-                "drupal/core": "^9 || ^10",
-                "drupal/hal": "^1.0 || ^2.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0-beta1",
-                    "datestamp": "1698277485",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Fritsch (chr.fritsch)",
-                    "homepage": "https://www.drupal.org/u/chrfritsch",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Andrey Postnikov (andypost)",
-                    "homepage": "https://www.drupal.org/u/andypost",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Sam Becker (Sam152)",
-                    "homepage": "https://www.drupal.org/u/sam152",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Lee Rowlands (larowlan)",
-                    "homepage": "https://www.drupal.org/u/larowlan",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "Improve the normalizers in core.",
-            "homepage": "https://www.drupal.org/project/better_normalizers",
-            "support": {
-                "source": "https://git.drupal.org/project/better_normalizers.git",
-                "issues": "https://www.drupal.org/project/issues/better_normalizers"
-            }
-        },
-        {
             "name": "drupal/color_field",
             "version": "3.0.1",
             "source": {
@@ -1581,13 +1519,16 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/default_content_deploy.git",
-                "reference": "d4e3c5682bad9929fc0d5dab7a49eaba70dcd44f"
+                "reference": "34fd24308e3766da3462917b778b80627f028e9e"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
                 "drupal/hal": "^1.0 || ^2.0",
                 "ext-dom": "*",
                 "rogervila/array-diff-multidimensional": "^2.0"
+            },
+            "conflict": {
+                "drupal/better_normalizers": "*"
             },
             "require-dev": {
                 "drupal/search_api": "*"
@@ -1598,8 +1539,8 @@
                     "dev-2.1.x": "2.1.x-dev"
                 },
                 "drupal": {
-                    "version": "2.1.0-beta3+20-dev",
-                    "datestamp": "1725917613",
+                    "version": "2.1.0-beta3+22-dev",
+                    "datestamp": "1725961155",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."
@@ -3525,12 +3466,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d5ea6bf8f30079474d8900c257db8a20dcd2a5bc"
+                "reference": "883f97eeb8484a500893e4508f60da3086c69ead"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d5ea6bf8f30079474d8900c257db8a20dcd2a5bc",
-                "reference": "d5ea6bf8f30079474d8900c257db8a20dcd2a5bc",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/883f97eeb8484a500893e4508f60da3086c69ead",
+                "reference": "883f97eeb8484a500893e4508f60da3086c69ead",
                 "shasum": ""
             },
             "conflict": {
@@ -4175,7 +4116,7 @@
                 "tinymighty/wiki-seo": "<1.2.2",
                 "titon/framework": "<9.9.99",
                 "tobiasbg/tablepress": "<=2.0.0.0-RC1",
-                "topthink/framework": "<6.0.17|>=6.1,<6.1.5|>=8,<8.0.4",
+                "topthink/framework": "<6.0.17|>=6.1,<=8.0.4",
                 "topthink/think": "<=6.1.1",
                 "topthink/thinkphp": "<=3.2.3",
                 "torrentpier/torrentpier": "<=2.4.3",
@@ -4338,7 +4279,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-09T21:04:31+00:00"
+            "time": "2024-09-09T23:04:55+00:00"
         },
         {
             "name": "rogervila/array-diff-multidimensional",
@@ -7073,7 +7014,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/better_normalizers": 10,
         "drupal/default_content_deploy": 20,
         "roave/security-advisories": 20
     },

@@ -22,6 +22,9 @@
     "drupal/hal": "^1.0 || ^2.0",
     "rogervila/array-diff-multidimensional": "^2.0"
   },
+  "conflict": {
+    "drupal/better_normalizers": "*"
+  },
   "extra": {
     "drush": {
       "services": {

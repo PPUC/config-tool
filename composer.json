@@ -18,7 +18,6 @@
         "php": "^8.2",
         "composer/installers": "^1.12",
         "cweagans/composer-patches": "^1.7",
-        "drupal/better_normalizers": "^2.0@beta",
         "drupal/color_field": "^3.0",
         "drupal/core": "^10.3",
         "drupal/core-composer-scaffold": "^10.3",
