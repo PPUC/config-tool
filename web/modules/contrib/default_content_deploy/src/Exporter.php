@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Plugin\DataType\EntityReference;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -645,25 +646,23 @@ class Exporter {
     $this->setMode($with_references ? 'reference' : 'default');
     $uuid = $entity->get('uuid')->value;
     $context = [];
-    if (!$this->skipEntity($entity, $context)) {
-      if ($serialized_entity = $this->getSerializedContent($entity)) {
-        $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $uuid);
+    if ($serialized_entity = $this->getSerializedContent($entity)) {
+      $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $uuid);
 
-        if ($with_references) {
-          $indexed_dependencies = [$entity->uuid() => $entity];
-          $referenced_entities = $this->getEntityReferencesRecursive($entity, $context, 0, $indexed_dependencies);
+      if ($with_references) {
+        $indexed_dependencies = [$entity->uuid() => $entity];
+        $referenced_entities = $this->getEntityReferencesRecursive($entity, $context, 0, $indexed_dependencies);
 
-          foreach ($referenced_entities as $uuid => $referenced_entity) {
-            $referenced_entity_type = $referenced_entity->getEntityTypeId();
+        foreach ($referenced_entities as $uuid => $referenced_entity) {
+          $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-            if ($serialized_entity = $this->getSerializedContent($referenced_entity)) {
-              $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
-            }
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity)) {
+            $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
           }
         }
-
-        return TRUE;
       }
+
+      return TRUE;
     }
 
     return FALSE;
@@ -1000,6 +999,45 @@ class Exporter {
   }
 
   /**
+   * Get the referenced entities without loading them.
+   *
+   * This is faster than calling referencedEntities() on the entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *
+   * @return array
+   */
+  protected function getReferencedEntityIds(ContentEntityInterface $entity): array {
+    $referenced_entities = [];
+    $skip_entity_types = $this->getSkipEntityTypeIds();
+
+    // Gather a list of referenced entities.
+    foreach ($entity->getFields() as $field_items) {
+      foreach ($field_items as $field_item) {
+        // Loop over all properties of a field item.
+        foreach ($field_item->getProperties(TRUE) as $property) {
+          if ($property instanceof EntityReference) {
+            $entity_type = $property->getTargetDefinition()->getEntityTypeId();
+            if (!in_array($entity_type, $skip_entity_types)) {
+              try {
+                $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type);
+                if ($entity_type_definition->getGroup() === 'content') {
+                  $referenced_entities[$entity_type] = $property->getTargetIdentifier();
+                }
+              }
+              catch (\Exception $e) {
+                // Ignore any broken definition.
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return $referenced_entities;
+  }
+
+  /**
    * Returns all layout builder referenced blocks of an entity.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
@@ -1072,7 +1110,7 @@ class Exporter {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function getEntityProcessedTextDependencies(ContentEntityInterface $entity): array {
+  protected function getEntityProcessedTextDependencies(ContentEntityInterface $entity): array {
     $skip_entity_types = $this->getSkipEntityTypeIds();
     $entity_dependencies = [];
 
@@ -1146,8 +1184,14 @@ class Exporter {
 
     foreach (array_keys($languages) as $langcode) {
       $translation = $entity->getTranslation($langcode);
-      foreach ($translation->referencedEntities() as $referenced_entity) {
-        $entity_dependencies[$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity;
+      $entityIds = $this->getReferencedEntityIds($translation);
+      foreach ($entityIds as $entityTypeId => $entityId) {
+        // Ignore entity reference if the referenced entity could not be loaded.
+        // Some entities have "NULL" references, for example a top level
+        // taxonomy term references parent 0, which isn't an entity.
+        if ($referenced_entity = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId)) {
+          $entity_dependencies[$entityTypeId][$entityId] = $referenced_entity;
+        }
       }
 
       foreach ($this->getEntityLayoutBuilderDependencies($translation) as $referenced_entity) {
@@ -1169,10 +1213,6 @@ class Exporter {
           );
         }
       }
-    }
-
-    foreach ($this->getSkipEntityTypeIds() as $skipEntityTypeId) {
-      unset($entity_dependencies[$skipEntityTypeId]);
     }
 
     foreach ($entity_dependencies as $entity_type_dependencies) {

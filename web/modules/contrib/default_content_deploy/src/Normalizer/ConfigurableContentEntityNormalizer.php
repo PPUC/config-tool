@@ -146,7 +146,7 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
                     unset($item);
                   }
                 }
-                unset($item);
+                unset($items);
               }
             }
             else {

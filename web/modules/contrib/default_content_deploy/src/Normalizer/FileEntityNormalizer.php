@@ -18,11 +18,6 @@ use Drupal\hal\LinkManager\LinkManagerInterface;
 class FileEntityNormalizer extends ConfigurableContentEntityNormalizer {
 
   /**
-   * {@inheritdoc}
-   */
-  protected $supportedInterfaceOrClass = 'Drupal\file\FileInterface';
-
-  /**
    * The file system service.
    *
    * @var \Drupal\Core\File\FileSystemInterface
@@ -54,6 +49,15 @@ class FileEntityNormalizer extends ConfigurableContentEntityNormalizer {
   public function __construct(LinkManagerInterface $link_manager, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, EntityTypeRepositoryInterface $entity_type_repository, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config, EntityRepositoryInterface $entity_repository, DefaultContentDeployMetadataService $metadata_service, FileSystemInterface $file_system) {
     parent::__construct($link_manager, $entity_type_manager, $module_handler, $entity_type_repository, $entity_field_manager, $config, $entity_repository, $metadata_service);
     $this->fileSystem = $file_system;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSupportedTypes(?string $format): array {
+    return [
+      'Drupal\file\FileInterface' => TRUE,
+    ];
   }
 
   /**

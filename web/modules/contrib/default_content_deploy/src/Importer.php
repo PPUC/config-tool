@@ -291,10 +291,33 @@ class Importer {
   public function prepareForImport(): void {
     // @todo remove because of changes in core >= 9.2
     $this->cache->delete('hal:links:relations');
+    $last_import_timestamp = (int) $this->state->get('dcd.last_import.' . md5($this->getFolder()), 0);
     $this->files = $this->scan($this->getFolder());
 
     foreach ($this->files as $file) {
       if (!isset($this->dataToImport[$file->uuid]) && !isset($this->pathAliasesToImport[$file->uuid])) {
+        if ($this->incremental) {
+          $this->decodeFile($file);
+          if ($export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? NULL) {
+            if ($last_import_timestamp >= $export_timestamp) {
+              $entity_type_definition = $this->entityTypeManager->getDefinition($file->entity_type_id);
+              $table = $entity_type_definition->getBaseTable();
+              $uuid_column = $entity_type_definition->getKey('uuid');
+              if (\Drupal::database()->select($table, 'e')
+                ->fields('e', [$uuid_column])
+                ->condition($uuid_column, $file->uuid)
+                ->range(0, 1)
+                ->execute()
+                ->fetchField()
+              ) {
+                continue;
+              }
+              // Import the entity even with an old export timestamp because it
+              // doesn't exist in database.
+            }
+          }
+        }
+
         $this->addToImport($file);
       }
     }
@@ -363,7 +386,6 @@ class Importer {
       'skipCorrection' => [],
       'verbose' => $this->verbose,
       'preserveIds' => $this->preserveIds,
-      'incremental' => $this->incremental,
       'state_key' => 'dcd.last_import.' . md5($this->getFolder()),
     ];
 
@@ -431,7 +453,7 @@ class Importer {
    * @param $total
    *   Total number of batch operations.
    * @param bool $correction
-   *   Tbd.
+   *   Second ID correction run.
    * @param array &$context
    *   Reference to an array that stores the context of the batch process for status updates.
    *
@@ -440,7 +462,6 @@ class Importer {
   protected function processFile($file, $current, $total, $correction, &$context): void {
     $this->verbose = &$context['results']['verbose'];
     $this->preserveIds = &$context['results']['preserveIds'];
-    $this->incremental = &$context['results']['incremental'];
 
     if ($correction && array_key_exists($file->uuid, $context['results']['skipCorrection'] ?? [])) {
       if ($this->verbose) {
@@ -463,44 +484,18 @@ class Importer {
     }
 
     try {
-      $this->metadataService->reset();
       $is_new = FALSE;
       $this->decodeFile($file);
-      $last_import_timestamp = (int) $this->state->get($context['results']['state_key'], 0);
-      $export_timestamp = $this->metadataService->getExportTimestamp($file->uuid);
 
-      $entity_type_definition = $this->entityTypeManager->getDefinition($file->entity_type_id);
-      $table = $entity_type_definition->getBaseTable();
-      $uuid_column = $entity_type_definition->getKey('uuid');
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
 
-      if (\Drupal::database()->select($table, 'e')
-        ->fields('e', [$uuid_column])
-        ->condition($uuid_column, $file->uuid)
-        ->range(0, 1)
-        ->execute()
-        ->fetchField()
-      ) {
-        if ($this->incremental && $export_timestamp && $last_import_timestamp > $export_timestamp) {
-          if ($this->verbose) {
-            $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_uuid, file is already imported', [
-              '@current' => $current,
-              '@total' => $total,
-              '@time' => $this->getElapsedTime($context['results']['start']),
-              '@entity_type' => $file->entity_type_id,
-              '@entity_uuid' => $file->uuid,
-            ]);
-          }
-          $context['results']['skipCorrection'][$file->uuid] = TRUE;
-
-          return;
-        }
-
-        /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-        $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
+      if ($entity) {
+        $export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? -1;
         // Replace entity ID.
         $file->data[$file->key_id][0]['value'] = $entity->id();
 
-        if (!$file->forceOverride) {
+        if (!$file->forceOverride && !$correction) {
           // Skip if the changed time the same or less in the file.
           if ($entity instanceof EntityChangedInterface) {
             // If an entity was refactored to implement the EntityChangedInterface,
@@ -514,7 +509,7 @@ class Importer {
                 }
               }
               $changed_time = $entity->getChangedTimeAcrossTranslations();
-              if ($changed_time_file <= $changed_time && !$correction) {
+              if ($changed_time_file <= $changed_time) {
                 if ($this->verbose) {
                   $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_id, file (@date_file) is not newer than database (@date_db)', [
                     '@current' => $current,
@@ -564,7 +559,7 @@ class Importer {
         $this->linkManager->setLinkDomain(FALSE);
         $this->exporter->setLinkDomain('');
       }
-      else {
+      elseif (!$correction) {
         $is_new = TRUE;
 
         if (!$this->preserveIds) {
@@ -582,17 +577,13 @@ class Importer {
               '@entity_id' => $file->data[$file->key_id][0]['value'],
             ]);
             $context['results']['skipCorrection'][$file->uuid] = TRUE;
-            if ($export_timestamp > $context['results']['max_export_timestamp']) {
-              $context['results']['max_export_timestamp'] = $export_timestamp;
-            }
 
             return;
           }
         }
       }
-
-      if (!$this->metadataService->isCorrectionRequired($file->uuid)) {
-        $context['results']['skipCorrection'][$file->uuid] = TRUE;
+      else {
+        throw new \RuntimeException('Illegal state, an entity must not be created during ID correction.');
       }
 
       // All entities with entity references will be imported two times to ensure
@@ -605,12 +596,16 @@ class Importer {
         ->getClass();
 
       $this->updateTargetRevisionId($file->data);
-
+      $this->metadataService->reset();
       /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
       $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', ['request_method' => 'POST']);
       $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data));
       $entity->enforceIsNew($is_new);
       $entity->save();
+
+      if ($correction && !$this->metadataService->isCorrectionRequired($file->uuid)) {
+        $context['results']['skipCorrection'][$file->uuid] = TRUE;
+      }
 
       if ($entity->getEntityTypeId() === 'user') {
         // Workaround: store the hashed password directly in the database
@@ -643,6 +638,8 @@ class Importer {
           '@entity_id' => $entity->id(),
         ]);
       }
+
+      $export_timestamp = $this->metadataService->getExportTimestamp($file->uuid);
       if ($export_timestamp > $context['results']['max_export_timestamp']) {
         $context['results']['max_export_timestamp'] = $export_timestamp;
       }

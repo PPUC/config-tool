@@ -41,7 +41,7 @@ class ImportExportFormTest extends BrowserTestBase {
    */
   public function setUp() : void {
     parent::setUp();
-    $this->config('default_content_deploy')
+    $this->config('default_content_deploy.settings')
       ->set('content_directory', 'public://content')
       ->save();
     $this->drupalCreateContentType([
@@ -147,7 +147,7 @@ class ImportExportFormTest extends BrowserTestBase {
     self::assertCount(1, $all_nodes);
     /** @var \Drupal\node\NodeInterface $node */
     $node = reset($all_nodes);
-    // The node id is an auto-increment. The ID must have bean increased during
+    // The node id is an auto-increment. The ID must have been increased during
     // import.
     self::assertSame(2, (int) $node->id(), 'nid has been incremented to 2.');
   }

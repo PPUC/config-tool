@@ -12,7 +12,11 @@ class FileItemNormalizer extends EntityReferenceItemNormalizer {
   /**
    * {@inheritdoc}
    */
-  protected $supportedInterfaceOrClass = 'Drupal\file\Plugin\Field\FieldType\FileItem';
+  public function getSupportedTypes(?string $format): array {
+    return [
+      'Drupal\file\Plugin\Field\FieldType\FileItem' => TRUE,
+    ];
+  }
 
   /**
    * {@inheritdoc}

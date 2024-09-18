@@ -35,11 +35,6 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
   const PSUEDO_PARENT_FIELD_NAME = 'menu_link_content_parent_entity';
 
   /**
-   * {@inheritdoc}
-   */
-  protected $supportedInterfaceOrClass = 'Drupal\menu_link_content\MenuLinkContentInterface';
-
-  /**
    * UUID Reference resolver.
    *
    * @var \Drupal\serialization\EntityResolver\UuidReferenceInterface
@@ -71,6 +66,15 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
   public function __construct(LinkManagerInterface $link_manager, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, EntityTypeRepositoryInterface $entity_type_repository, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config, EntityRepositoryInterface $entity_repository, DefaultContentDeployMetadataService $metadata_service, UuidReferenceInterface $uuid_reference) {
     parent::__construct($link_manager, $entity_type_manager, $module_handler, $entity_type_repository, $entity_field_manager, $config, $entity_repository, $metadata_service);
     $this->uuidReference = $uuid_reference;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSupportedTypes(?string $format): array {
+    return [
+      'Drupal\menu_link_content\MenuLinkContentInterface' => TRUE,
+    ];
   }
 
   /**
