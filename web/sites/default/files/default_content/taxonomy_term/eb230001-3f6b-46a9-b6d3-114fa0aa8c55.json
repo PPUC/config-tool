@@ -53,7 +53,6 @@
         {
             "value": "<p>Light Matrix Adapter<br><a href=\"https:\/\/github.com\/PPUC\/Hardware_Out_8x10\">https:\/\/github.com\/PPUC\/Hardware_Out_8x10<\/a><\/p>",
             "format": "basic_html",
-            "processed": "<p>Light Matrix Adapter<br><a href=\"https:\/\/github.com\/PPUC\/Hardware_Out_8x10\">https:\/\/github.com\/PPUC\/Hardware_Out_8x10<\/a><\/p>",
             "lang": "en"
         }
     ],
@@ -92,6 +91,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1725918422
+        "export_timestamp": 1726655641
     }
 }

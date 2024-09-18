@@ -53,7 +53,6 @@
         {
             "value": "<p>General Illumination<\/p>\r\n",
             "format": "basic_html",
-            "processed": "<p>General Illumination<\/p>",
             "lang": "en"
         }
     ],
@@ -87,6 +86,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1725918422
+        "export_timestamp": 1726655641
     }
 }

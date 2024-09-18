@@ -53,7 +53,6 @@
         {
             "value": "<p>Lamp<\/p>\r\n",
             "format": "basic_html",
-            "processed": "<p>Lamp<\/p>",
             "lang": "en"
         }
     ],
@@ -87,6 +86,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1725918422
+        "export_timestamp": 1726655641
     }
 }

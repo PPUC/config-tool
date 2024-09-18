@@ -1,10 +1,12 @@
 content_directory: sites/default/files/default_content
-skip_computed_fields: true
 text_dependencies: false
 skip_entity_types:
   - block_content
   - file
+  - media
   - menu_link_content
   - node
   - path_alias
 batch_ttl: 14400
+skip_computed_fields: true
+skip_processed_values: true
