@@ -3,13 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.addressable_led.field_brightness
     - field.field.node.addressable_led.field_color
     - field.field.node.addressable_led.field_number
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
-    - field.field.node.addressable_led.field_triplet_position
     - node.type.addressable_led
   module:
     - color_field
@@ -20,13 +18,6 @@ targetEntityType: node
 bundle: addressable_led
 mode: default
 content:
-  field_brightness:
-    type: number
-    weight: 3
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
   field_color:
     type: color_field_widget_html5
     weight: 2
@@ -55,13 +46,6 @@ content:
   field_string_position:
     type: number
     weight: 5
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_triplet_position:
-    type: number
-    weight: 6
     region: content
     settings:
       placeholder: ''

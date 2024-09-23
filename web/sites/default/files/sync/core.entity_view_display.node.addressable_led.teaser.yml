@@ -4,13 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.addressable_led.field_brightness
     - field.field.node.addressable_led.field_color
     - field.field.node.addressable_led.field_number
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
-    - field.field.node.addressable_led.field_triplet_position
     - node.type.addressable_led
   module:
     - user
@@ -27,10 +25,8 @@ content:
     weight: 100
     region: content
 hidden:
-  field_brightness: true
   field_color: true
   field_number: true
   field_role: true
   field_string: true
   field_string_position: true
-  field_triplet_position: true

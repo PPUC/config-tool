@@ -258,7 +258,6 @@ class GamesController extends ControllerBase  {
                 'description' => trim($addressable_led->label()),
                 'number' => (int)($addressable_led->field_number->value),
                 'ledNumber' => (int)($addressable_led->field_string_position->value),
-                'brightness' => (int)($addressable_led->field_brightness->value),
                 'color' => $addressable_led->field_color->color,
               ];
             }

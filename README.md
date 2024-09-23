@@ -64,7 +64,7 @@ Within `PPUC/config-tool` run
 ddev snapshot
 git pull
 ddev drush deploy
-ddev drush dcdi --folder=sites/default/files/default_content --preserve-ids -y
+ddev drush dcdi --folder=sites/default/files/default_content --preserve-ids --force-override -y
 ```
 
 TODO: import/update ppuc profile default content after drush deploy
