@@ -12,7 +12,7 @@ field_name: field_number
 entity_type: node
 bundle: switch
 label: Number
-description: "The switch number according to the original switch matrix.\r\nNumbers greater than 200 are custom switches.\r\nNumbers greater than 240 are treated as negative numbers. (243 is -3, 251 is -11)."
+description: "The switch number within original switch matrix  according to the manual.<br>\r\nNumbers greater than 200 are custom switches.<br>\r\nNumbers greater than 240 are treated as negative numbers. (243 becomes -3, 251 becomes -11)."
 required: true
 translatable: true
 default_value: {  }

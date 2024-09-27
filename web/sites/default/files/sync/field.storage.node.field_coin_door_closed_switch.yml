@@ -1,0 +1,20 @@
+uuid: a54985e1-8eed-40ef-98d5-e91ee254e15f
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_coin_door_closed_switch
+field_name: field_coin_door_closed_switch
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

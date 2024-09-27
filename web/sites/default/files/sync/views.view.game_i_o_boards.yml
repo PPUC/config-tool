@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_color
     - field.storage.node.field_matrix_part
     - field.storage.node.field_number
     - field.storage.node.field_pin
@@ -13,6 +14,7 @@ dependencies:
     - node.type.pwm_device
     - node.type.switch
   module:
+    - color_field
     - node
     - user
 _core:
@@ -792,7 +794,7 @@ display:
           exclude: false
           alter:
             alter_text: false
-            text: ''
+            text: '<div  style="background-color: {{ field_color }};"><strong>{{ field_string_position }}</strong></div>'
             make_link: false
             path: ''
             absolute: false
@@ -835,6 +837,73 @@ display:
             thousand_separator: ''
             prefix_suffix: true
           group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_color:
+          id: field_color
+          table: node__field_color
+          field: field_color
+          relationship: reverse__node__field_string
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: color
+          type: color_field_formatter_swatch
+          settings:
+            shape: circle
+            width: '20'
+            height: '20'
+            opacity: true
+            data_attribute: false
+          group_column: ''
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -922,7 +991,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_number_2 }} {{ title_2 }} ({{ edit_node_2 }}) {{ status_2 }}'
+            text: '{{ field_number_2 }}: {{ title_2 }} ({{ edit_node_2 }}) {{ status_2 }}'
             make_link: false
             path: ''
             absolute: false
@@ -1339,16 +1408,77 @@ display:
           row_class: ''
           default_row_class: true
           columns:
+            status: status
+            status_1: status_1
+            status_2: status_2
+            edit_node: edit_node
+            edit_node_1: edit_node_1
+            edit_node_2: edit_node_2
             title: title
+            field_pin_1: field_pin_1
             field_pin: field_pin
             type: type
+            field_number_1: field_number_1
             title_1: title_1
             field_string_position: field_string_position
+            field_number_2: field_number_2
             title_2: title_2
-            field_triplet_position: field_triplet_position
+            field_matrix_part: field_matrix_part
+            edit_node_3: edit_node_3
+            field_number: field_number
+            field_color: field_color
           default: '-1'
           info:
+            status:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            status_1:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            status_2:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            edit_node:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            edit_node_1:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            edit_node_2:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_pin_1:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -1369,6 +1499,13 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+            field_number_1:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title_1:
               sortable: false
               default_sort_order: asc
@@ -1383,6 +1520,13 @@ display:
               separator: ''
               empty_column: true
               responsive: ''
+            field_number_2:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title_2:
               sortable: false
               default_sort_order: asc
@@ -1390,10 +1534,31 @@ display:
               separator: ''
               empty_column: true
               responsive: ''
-            field_triplet_position:
+            field_matrix_part:
               sortable: false
               default_sort_order: asc
-              align: views-align-center
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            edit_node_3:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_number:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_color:
+              sortable: false
+              default_sort_order: asc
+              align: ''
               separator: ''
               empty_column: true
               responsive: ''
@@ -1457,6 +1622,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_color'
         - 'config:field.storage.node.field_matrix_part'
         - 'config:field.storage.node.field_number'
         - 'config:field.storage.node.field_pin'
@@ -1477,6 +1643,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_color'
         - 'config:field.storage.node.field_matrix_part'
         - 'config:field.storage.node.field_number'
         - 'config:field.storage.node.field_pin'

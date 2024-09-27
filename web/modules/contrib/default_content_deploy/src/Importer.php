@@ -29,6 +29,7 @@ class Importer {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
+  use AdministratorTrait;
 
   /**
    * Deploy manager.
@@ -479,7 +480,7 @@ class Importer {
     }
 
     if (PHP_SAPI === 'cli') {
-      $root_user = $this->entityTypeManager->getStorage('user')->load(1);
+      $root_user = $this->getAdministrator();
       $this->accountSwitcher->switchTo($root_user);
     }
 
@@ -567,7 +568,7 @@ class Importer {
           unset($file->data[$file->key_id]);
         }
         else {
-          $entity_storage = \Drupal::entityTypeManager()->getStorage($file->entity_type_id);
+          $entity_storage = $this->entityTypeManager->getStorage($file->entity_type_id);
           if ($entity_storage->load($file->data[$file->key_id][0]['value'])) {
             $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_id, ID already exists in database', [
               '@current' => $current,
@@ -620,6 +621,11 @@ class Importer {
             ->condition('uid', $entity->id(), '=')
             ->execute();
         }
+      }
+
+      // Invalidate the cache for updated entities.
+      if (!$is_new) {
+        $this->entityTypeManager->getStorage($entity->getEntityTypeId())->resetCache([$entity->id()]);
       }
 
       $this->linkManager->setLinkDomain(FALSE);

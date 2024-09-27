@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.game.body
+    - field.field.node.game.field_coin_door_closed_switch
+    - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
     - field.field.node.game.field_platform
@@ -32,6 +34,8 @@ content:
     weight: 1
     region: content
 hidden:
+  field_coin_door_closed_switch: true
+  field_game_on_solenoid: true
   field_lamp_locations: true
   field_manual: true
   field_platform: true

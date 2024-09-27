@@ -92,7 +92,7 @@ Exports a single entity or group of entities with no references.
   custom_entity_type...)
 
 ### Options
-* **entity_id** - ID of entity for export.
+* **entity_ids** - The IDs of the entities to export (comma-separated list).
 * **bundle** - Entity bundle, e.g. content type for nodes.
 * **skip_entities** - ID of entity to skip.
 * **force-update** - Deletes configurations files that are not used on the site.
@@ -135,7 +135,7 @@ The options are identical in drush dcde.
 
 ### Options
 
-* **entity_id** - ID of entity for export.
+* **entity_ids** - The IDs of the entities to export (comma-separated list).
 * **bundle** - Entity bundle, e.g. content type for nodes.
 * **skip_entities** - ID of entity to skip.
 * **force-update** - Deletes configurations files that are not used on the site.

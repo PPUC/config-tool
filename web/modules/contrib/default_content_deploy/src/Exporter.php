@@ -35,6 +35,7 @@ class Exporter {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
+  use AdministratorTrait;
 
   /**
    * The config factory.
@@ -857,7 +858,7 @@ class Exporter {
         $query = $this->entityTypeManager->getStorage($this->entityTypeId)->getQuery();
         $query->accessCheck(FALSE);
 
-        if ($this->bundle) {
+        if ($key_bundle && $this->bundle) {
           $query->condition($key_bundle, $this->bundle);
         }
 
@@ -952,8 +953,7 @@ class Exporter {
     // Entity could have been removed from the export by an event subscriber!
     if ($entity) {
       if (PHP_SAPI === 'cli') {
-        // @todo This doesn't work anymore in Drupal 10.3!
-        $root_user = $this->entityTypeManager->getStorage('user')->load(1);
+        $root_user = $this->getAdministrator();
         $this->accountSwitcher->switchTo($root_user);
       }
 

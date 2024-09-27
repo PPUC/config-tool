@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.game.body
+    - field.field.node.game.field_coin_door_closed_switch
+    - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
     - field.field.node.game.field_platform
@@ -31,6 +33,20 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: {  }
+  field_coin_door_closed_switch:
+    type: number
+    weight: 35
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_game_on_solenoid:
+    type: number
+    weight: 34
+    region: content
+    settings:
+      placeholder: ''
     third_party_settings: {  }
   field_lamp_locations:
     type: media_library_widget

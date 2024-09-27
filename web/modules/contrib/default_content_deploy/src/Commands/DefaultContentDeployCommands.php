@@ -2,6 +2,9 @@
 
 namespace Drupal\default_content_deploy\Commands;
 
+use Consolidation\AnnotatedCommand\CommandData;
+use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\default_content_deploy\AdministratorTrait;
 use Drupal\default_content_deploy\DeployManager;
 use Drupal\default_content_deploy\Exporter;
 use Drupal\default_content_deploy\Importer;
@@ -14,6 +17,8 @@ use Symfony\Component\Console\Helper\Table;
  * @package Drupal\default_content_deploy\Commands
  */
 class DefaultContentDeployCommands extends DrushCommands {
+
+  use AdministratorTrait;
 
   /**
    * DCD Exporter.
@@ -37,6 +42,13 @@ class DefaultContentDeployCommands extends DrushCommands {
   protected $deployManager;
 
   /**
+   * The account switcher service.
+   *
+   * @var \Drupal\Core\Session\AccountSwitcherInterface
+   */
+  protected $accountSwitcher;
+
+  /**
    * DefaultContentDeployCommands constructor.
    *
    * @param \Drupal\default_content_deploy\Exporter $exporter
@@ -45,12 +57,29 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   DCD Importer.
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
    *   DCD manager.
+   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
+   *   The account switching service.
    */
-  public function __construct(Exporter $exporter, Importer $importer, DeployManager $deploy_manager) {
+  public function __construct(Exporter $exporter, Importer $importer, DeployManager $deploy_manager, AccountSwitcherInterface $account_switcher) {
     parent::__construct();
     $this->exporter = $exporter;
     $this->importer = $importer;
     $this->deployManager = $deploy_manager;
+    $this->accountSwitcher = $account_switcher;
+  }
+
+  /**
+   * @hook pre-command
+   */
+  public function preCommand(CommandData $commandData): void {
+    $this->accountSwitcher->switchTo($this->getAdministrator());
+  }
+
+  /**
+   * @hook post-command
+   */
+  public function postCommand($result, CommandData $commandData) {
+    $this->accountSwitcher->switchBack();
   }
 
   /**
@@ -65,7 +94,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @command default-content-deploy:export
    *
-   * @option entity_id The ID of the entity to export.
+   * @option entity_ids The IDs of the entities to export (comma-separated list).
    * @option bundle Write out the exported bundle of entity
    * @option skip_entities The ID of the entity to skip.
    * @option force-update Deletes configurations files that are not used on the
@@ -81,7 +110,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   Export all nodes from the specified folder.
    * @usage drush dcde node --bundle=page
    *   Export all nodes with bundle page
-   * @usage drush dcde node --bundle=page,article --entity_id=2,3,4
+   * @usage drush dcde node --bundle=page,article --entity_ids=2,3,4
    *   Export all nodes with bundle page or article plus nodes with entities id
    *   2, 3 and 4.
    * @usage drush dcde node --bundle=page,article --skip_entities=5,7
@@ -93,10 +122,10 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExport($entity_type, array $options = ['entity_id' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
-    $entity_ids = $this->processingArrayOption($options['entity_id']);
+    $entity_ids = $this->processingArrayOption($options['entity_ids']);
     $skip_ids = $this->processingArrayOption($options['skip_entities']);
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
 
@@ -142,7 +171,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @command default-content-deploy:export-with-references
    *
-   * @option entity_id The ID of the entity to export.
+   * @option entity_ids The IDs of the entities to export (comma-separated list).
    * @option bundle Write out the exported bundle of entity
    * @option skip_entities The ID of the entity to skip.
    * @option force-update Deletes configurations files that are not used on the
@@ -159,7 +188,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   Export all nodes with references from the specified folder.
    * @usage drush dcder node --bundle=page
    *   Export all nodes with references with bundle page
-   * @usage drush dcder node --bundle=page,article --entity_id=2,3,4
+   * @usage drush dcder node --bundle=page,article --entity_ids=2,3,4
    *   Export all nodes with references with bundle page or article plus nodes
    *   with entitiy id 2, 3 and 4.
    * @usage drush dcder node --bundle=page,article --skip_entities=5,7
@@ -173,10 +202,10 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_id' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
-    $entity_ids = $this->processingArrayOption($options['entity_id']);
+    $entity_ids = $this->processingArrayOption($options['entity_ids']);
     $skip_ids = $this->processingArrayOption($options['skip_entities']);
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
 

@@ -80,6 +80,8 @@ class GamesController extends ControllerBase  {
       'rom' => 'dummy',
       'serialPort' => $node->field_serial_port->value ?? 'dummy',
       'platform' => $platform->getName(),
+      'coinDoorClosedSwitch' => (int)($node->field_coin_door_closed_switch->value ?? 0),
+      'gameOnSolenoid' => (int)($node->field_game_on_solenoid->value ?? 0),
       'debug' => false,
       'boards' => [],
       'dipSwitches' => [],

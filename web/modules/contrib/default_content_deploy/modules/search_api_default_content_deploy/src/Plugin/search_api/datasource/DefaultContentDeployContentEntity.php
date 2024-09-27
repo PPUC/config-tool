@@ -52,7 +52,11 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   public static function formatItemId(string $entity_type, string|int $entity_id, string $langcode): string {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = \Drupal::service('entity_type.manager')->getStorage($entity_type)->load($entity_id);
-    if ($entity->getTranslation($langcode)->isDefaultTranslation()) {
+    // We only need to handle the default translations as all translations will
+    // be embedded in the HAL export. But we also need to check if the
+    // translation exists as Search API added entries to the tracker for all
+    // installed languages in case of an entity deletion.
+    if ($entity->hasTranslation($langcode) && $entity->getTranslation($langcode)->isDefaultTranslation()) {
       return $entity_id . ':' . $langcode . ':' . $entity->uuid();
     }
 

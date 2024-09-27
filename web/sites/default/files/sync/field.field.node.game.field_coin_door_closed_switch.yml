@@ -1,0 +1,23 @@
+uuid: cd117673-38f3-45b6-ab9b-8031a3b6c74f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_coin_door_closed_switch
+    - node.type.game
+id: node.game.field_coin_door_closed_switch
+field_name: field_coin_door_closed_switch
+entity_type: node
+bundle: game
+label: 'Coin Door Closed Switch'
+description: 'Williams WPC: 22'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

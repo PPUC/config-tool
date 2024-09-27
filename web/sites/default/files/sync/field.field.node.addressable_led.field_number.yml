@@ -12,7 +12,7 @@ field_name: field_number
 entity_type: node
 bundle: addressable_led
 label: Number
-description: 'Lamp number, flasher number, GI string'
+description: "Lamp number, flasher number, GI string <br> \r\n\r\nEnter the lamp number according to the lamp matrix in the manual. Custom LEDs which are not part of the original lamp matrix have to start at 100. <br> \r\nThe flasher number is the solenoid number according to the manual. <br> \r\nSome platforms like WPC devide the GI in different sections/strings, usually 1-8, which could be dimmed independently. If your game's platform doesn't support that, enter \"1\". \r\n"
 required: true
 translatable: true
 default_value: {  }

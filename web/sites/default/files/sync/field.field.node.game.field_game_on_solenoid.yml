@@ -1,0 +1,23 @@
+uuid: ab4eee73-ed23-48a2-849a-a7387911df9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game_on_solenoid
+    - node.type.game
+id: node.game.field_game_on_solenoid
+field_name: field_game_on_solenoid
+entity_type: node
+bundle: game
+label: 'Game On Solenoid'
+description: "Williams System 3 - 11: <strong>23</strong>\r\nWilliams WPC: <strong>31</strong>\r\nData East: <strong>23</strong>\r\nSega: <strong>15</strong>\r\nGottlieb System 1: <strong>17</strong>\r\nGottlieb System 80: <strong>10</strong>\r\nGottlieb System 3: <strong>32</strong>\r\n"
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
