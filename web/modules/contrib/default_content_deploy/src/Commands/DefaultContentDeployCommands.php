@@ -7,7 +7,9 @@ use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\default_content_deploy\AdministratorTrait;
 use Drupal\default_content_deploy\DeployManager;
 use Drupal\default_content_deploy\Exporter;
+use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\default_content_deploy\Importer;
+use Drupal\default_content_deploy\ImporterInterface;
 use Drush\Commands\DrushCommands;
 use Symfony\Component\Console\Helper\Table;
 
@@ -23,14 +25,14 @@ class DefaultContentDeployCommands extends DrushCommands {
   /**
    * DCD Exporter.
    *
-   * @var \Drupal\default_content_deploy\Exporter
+   * @var ExporterInterface
    */
   private $exporter;
 
   /**
    * DCD Importer.
    *
-   * @var \Drupal\default_content_deploy\Importer
+   * @var ImporterInterface
    */
   private $importer;
 
@@ -51,16 +53,16 @@ class DefaultContentDeployCommands extends DrushCommands {
   /**
    * DefaultContentDeployCommands constructor.
    *
-   * @param \Drupal\default_content_deploy\Exporter $exporter
+   * @param ExporterInterface $exporter
    *   DCD Exporter.
-   * @param \Drupal\default_content_deploy\Importer $importer
+   * @param ImporterInterface $importer
    *   DCD Importer.
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
    *   DCD manager.
    * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
    *   The account switching service.
    */
-  public function __construct(Exporter $exporter, Importer $importer, DeployManager $deploy_manager, AccountSwitcherInterface $account_switcher) {
+  public function __construct(ExporterInterface $exporter, ImporterInterface $importer, DeployManager $deploy_manager, AccountSwitcherInterface $account_switcher) {
     parent::__construct();
     $this->exporter = $exporter;
     $this->importer = $importer;
@@ -100,8 +102,6 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @option force-update Deletes configurations files that are not used on the
    *   site.
    * @option folder Path to the export folder.
-   * @option skip_entity_type The entity types to skip.
-   *   Use 'drush dcd-entity-list' for list of all content entities.
    * @option changes-since Only export entities that have been changed since a
    *   given date.
    * @usage drush dcde node
@@ -122,7 +122,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
@@ -145,10 +145,6 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     if ($skip_ids) {
       $this->exporter->setSkipEntityIds($skip_ids);
-    }
-
-    if ($skip_type_ids) {
-      $this->exporter->setSkipEntityTypeIds($skip_type_ids);
     }
 
     if (!empty($options['changes-since'])) {
@@ -178,7 +174,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   site.
    * @option folder Path to the export folder.
    * @option text_dependencies Whether to include processed text dependencies.
-   * @option skip_entity_type The entity types to skip.
+   * @option skip_entity_type The referenced entity types to skip.
    *   Use 'drush dcd-entity-list' for list of all content entities.
    * @option changes-since Only export entities that have been changed since a
    *   given date.

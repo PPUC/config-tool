@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\default_content_deploy\DeployManager;
 use Drupal\default_content_deploy\Importer;
+use Drupal\default_content_deploy\ImporterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,7 +19,7 @@ class ImportForm extends FormBase {
   /**
    * Default Content Deploy Importer object.
    *
-   * @var \Drupal\default_content_deploy\Importer
+   * @var ImporterInterface
    */
   private $importer;
 
@@ -39,12 +40,12 @@ class ImportForm extends FormBase {
   /**
    * ImportForm constructor.
    *
-   * @param \Drupal\default_content_deploy\Importer $importer
+   * @param ImporterInterface $importer
    * @param \Drupal\Core\Messenger\Messenger $messenger
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    */
-  public function __construct(Importer $importer, Messenger $messenger, DeployManager $deploy_manager, FileSystemInterface  $file_system) {
+  public function __construct(ImporterInterface $importer, Messenger $messenger, DeployManager $deploy_manager, FileSystemInterface $file_system) {
     $this->importer = $importer;
     $this->messenger = $messenger;
     $this->deployManager = $deploy_manager;

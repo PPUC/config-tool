@@ -8,6 +8,13 @@ use Drupal\user\Entity\User;
 trait AdministratorTrait {
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * @return \Drupal\user\Entity\User
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException

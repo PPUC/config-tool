@@ -5,6 +5,7 @@ namespace Drupal\search_api_default_content_deploy\EventSubscriber;
 use Drupal\default_content_deploy\Event\DefaultContentDeployEvents;
 use Drupal\default_content_deploy\Event\IndexAwareEventInterface;
 use Drupal\default_content_deploy\Event\PostSerializeEvent;
+use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\search_api\Event\IndexingItemsEvent;
 use Drupal\search_api\Event\SearchApiEvents;
 use Drupal\search_api_default_content_deploy\Plugin\search_api\backend\DefaultContentDeployBackend;
@@ -42,7 +43,7 @@ class DefaultContentDeployEventSubscriber implements EventSubscriberInterface {
 
   public function adjustContent(PostSerializeEvent $event): void {
     if ($event->getIndexId()) {
-      /** @var \Drupal\default_content_deploy\Exporter $exporter */
+      /** @var ExporterInterface $exporter */
       $exporter = \Drupal::service('default_content_deploy.exporter');
       /** @var \Drupal\default_content_deploy\DeployManager $deploy_manager */
       $deploy_manager = \Drupal::service('default_content_deploy.manager');

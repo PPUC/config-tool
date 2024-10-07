@@ -166,7 +166,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
    * @return array
    *   Updated normalized values.
    */
-  protected function embedEntity(EntityInterface $entity, $format, array $context, EntityInterface $target_entity, array $normalized, $embedded_field_name) {
+  protected function embedEntity(EntityInterface $entity, string $format, array $context, EntityInterface $target_entity, array $normalized, string $embedded_field_name): array {
     // If the parent entity passed in a langcode, unset it before
     // normalizing the target entity. Otherwise, untranslatable fields
     // of the target entity will include the langcode.
@@ -190,6 +190,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
     $embedded_field_uri = $this->linkManager->getRelationUri($entity->getEntityTypeId(), $entity->bundle(), $embedded_field_name, $context);
     $normalized['_links'][$embedded_field_uri] = [$link];
     $normalized['_embedded'][$embedded_field_uri] = [$embedded];
+
     return $normalized;
   }
 

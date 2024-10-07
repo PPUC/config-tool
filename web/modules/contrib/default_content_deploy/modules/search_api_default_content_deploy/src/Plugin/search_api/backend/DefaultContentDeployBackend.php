@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\default_content_deploy\Exporter;
+use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\search_api\LoggerTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -44,7 +45,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * The exporter.
    *
-   * @var \Drupal\default_content_deploy\Exporter
+   * @var ExporterInterface
    */
   protected $exporter;
 
@@ -65,7 +66,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, Exporter $exporter, EntityTypeManagerInterface $entityTypeManager, FileSystemInterface $file_system) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExporterInterface $exporter, EntityTypeManagerInterface $entityTypeManager, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->exporter = $exporter;

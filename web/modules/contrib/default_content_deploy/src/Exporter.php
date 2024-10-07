@@ -28,10 +28,8 @@ use Drupal\layout_builder\Section;
 use Drupal\layout_builder\Plugin\DataType\SectionData;
 use Drupal\layout_builder\SectionComponent;
 
-/**
- * A service for handling export of default content.
- */
-class Exporter {
+class Exporter implements ExporterInterface
+{
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
@@ -85,13 +83,6 @@ class Exporter {
    * @var \Drupal\Core\Database\Connection
    */
   protected $database;
-
-  /**
-   * Entity Type Manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * Serializer.
@@ -246,14 +237,9 @@ class Exporter {
   }
 
   /**
-   * Set entity type ID.
-   *
-   * @param string $entity_type
-   *   Entity Type.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setEntityTypeId($entity_type) {
+  public function setEntityTypeId(string $entity_type): void {
     $content_entity_types = $this->deployManager->getContentEntityTypes();
 
     if (!array_key_exists($entity_type, $content_entity_types)) {
@@ -261,62 +247,36 @@ class Exporter {
     }
 
     $this->entityTypeId = (string) $entity_type;
-
-    return $this;
   }
 
   /**
-   * Set type of entity content.
-   *
-   * @param string $bundle
-   *  Bundle of the entity type.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setEntityBundle($bundle) {
+  public function setEntityBundle(string $bundle): void {
     $this->bundle = $bundle;
-    return $this;
   }
 
   /**
-   * Set entity IDs for export.
-   *
-   * @param array $entity_ids
-   *   The IDs of entity.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setEntityIds(array $entity_ids) {
+  public function setEntityIds(array $entity_ids): void {
     $this->entityIds = $entity_ids;
-    return $this;
   }
 
   /**
-   * Set entity IDs which needs skip.
-   *
-   * @param array $skip_entity_ids
-   *   The IDs of entity for skip.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setSkipEntityIds(array $skip_entity_ids) {
+  public function setSkipEntityIds(array $skip_entity_ids): void {
     $this->skipEntityIds = $skip_entity_ids;
-    return $this;
+  }
+
+  public function setSkipEntityTypeIds(array $skip_entity_type_ids): void {
+    $this->skipEntityTypeIds = $skip_entity_type_ids;
   }
 
   /**
-   * Set entity type IDs which needs skip.
-   *
-   * @param array $skip_entity_type_ids
-   *   The IDs of entity types for skip.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setSkipEntityTypeIds(array $skip_entity_type_ids) {
-    $this->skipEntityTypeIds = $skip_entity_type_ids;
-    return $this;
-  }
-
   public function getSkipEntityTypeIds(): array {
     if (empty($this->skipEntityTypeIds)) {
       $config = $this->config->get(SettingsForm::CONFIG);
@@ -327,16 +287,9 @@ class Exporter {
   }
 
   /**
-   * Set type of export.
-   *
-   * @param string $mode
-   *  Value type of export.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
-   *
-   * @throws \Exception
+   * {@inheritdoc}
    */
-  public function setMode($mode) {
+  public function setMode(string $mode): void {
     $available_modes = ['all', 'reference', 'default'];
 
     if (in_array($mode, $available_modes)) {
@@ -345,26 +298,25 @@ class Exporter {
     else {
       throw new \Exception('The selected mode is not available');
     }
-
-    return $this;
   }
 
   /**
-   * Is remove old content.
-   *
-   * @param bool $is_update
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setForceUpdate(bool $is_update) {
+  public function setForceUpdate(bool $is_update): void {
     $this->forceUpdate = $is_update;
-    return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setLinkDomain(string $link_domain): void {
     $this->linkDomain = $link_domain;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getLinkDomain(): string {
     if (empty($this->linkDomain)) {
       return $this->deployManager->getCurrentHost();
@@ -374,60 +326,43 @@ class Exporter {
   }
 
   /**
-   * @param \DateTimeInterface $date_time
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setDateTime(\DateTimeInterface $date_time) {
+  public function setDateTime(\DateTimeInterface $date_time): void {
     $this->dateTime = $date_time;
-    return $this;
   }
 
   /**
-   * Set the value of text_dependencies option.
-   *
-   * @param bool|null $text_dependencies
-   *   The value of the text_dependencies option. If null, it will be
-   *   obtained from the configuration.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setTextDependencies($text_dependencies = NULL) {
+  public function setTextDependencies($text_dependencies = NULL): void {
     if (is_null($text_dependencies)) {
       $config = $this->config->get(SettingsForm::CONFIG);
-      $text_dependencies = $config->get('text_dependencies');
+      $text_dependencies = (bool) $config->get('text_dependencies');
     }
 
     $this->includeTextDependencies = $text_dependencies;
-
-    return $this;
   }
 
   /**
-   * @return \DateTimeInterface|null
+   * {@inheritdoc}
    */
-  public function getDateTime() {
+  public function getDateTime(): ?\DateTimeInterface {
     return $this->dateTime;
   }
 
   /**
-   * @return int
+   * {@inheritdoc}
    */
-  public function getTime() {
+  public function getTime(): int {
     return $this->dateTime ? $this->dateTime->getTimestamp() : 0;
   }
 
   /**
-   * Set directory to export.
-   *
-   * @param string $folder
-   *   The content folder.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
+   * {@inheritdoc}
    */
-  public function setFolder(string $folder) {
+  public function setFolder(string $folder): void {
     $this->folder = $folder;
-    return $this;
   }
 
   /**
@@ -438,7 +373,7 @@ class Exporter {
    *
    * @throws \Exception
    */
-  protected function getFolder() {
+  protected function getFolder(): string {
     $folder = $this->folder ?: $this->deployManager->getContentFolder();
 
     if (!isset($folder)) {
@@ -449,25 +384,25 @@ class Exporter {
   }
 
   /**
-   * Get the value of text_dependencies option.
-   *
-   * @return bool
-   *   The value of the text_dependencies option.
+   * {@inheritdoc}
    */
-  public function getTextDependencies() {
+  public function getTextDependencies(): bool {
+    if (is_null($this->includeTextDependencies)) {
+      $this->setTextDependencies();
+    }
+
     return $this->includeTextDependencies;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setVerbose(bool $verbose): void {
     $this->verbose = $verbose;
   }
 
   /**
-   * Export entities by entity type, id or bundle.
-   *
-   * @return \Drupal\default_content_deploy\Exporter
-   *
-   * @throws \Exception
+   * {@inheritdoc}
    */
   public function export(): void {
     switch ($this->mode) {
@@ -488,13 +423,13 @@ class Exporter {
   /**
    * Export content in batch.
    *
-   * @param boolean $with_references
+   * @param bool $with_references
    *   Indicates if export should consider referenced entities.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function exportBatch($with_references = FALSE) {
+  private function exportBatch(bool $with_references = FALSE): void {
     $entity_type = $this->entityTypeId;
     $exported_entity_ids = $this->getEntityIdsForExport();
 
@@ -554,16 +489,11 @@ class Exporter {
 
   }
 
-  public static function initializeContext($vars, &$context): void {
-    // Set the start time, so we can access across batch operations.
-    if (empty($context['results']['start'])) {
-      $context['results']['start'] = microtime(TRUE);
-    }
-
-    $context['results'] = array_merge($context['results'], $vars);
+  public static function initializeContext(array $vars, array &$context): void {
+    $context['results'] = array_merge($context['results'] ?? [], $vars);
   }
 
-  protected function synchronizeContext(&$context): void {
+  protected function synchronizeContext(array &$context): void {
     $this->dateTime = &$context['results']['dateTime'];
     $this->folder = &$context['results']['folder'];
     $this->includeTextDependencies = &$context['results']['includeTextDependencies'];
@@ -573,8 +503,8 @@ class Exporter {
     $this->linkDomain = &$context['results']['linkDomain'];
   }
 
-  public static function exportFile($export_type, $entity_type, $entity_id, $current, $total, &$context): void {
-    /** @var \Drupal\default_content_deploy\Exporter $exporter */
+  public static function exportFile(string $export_type, string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
+    /** @var ExporterInterface $exporter */
     $exporter = \Drupal::service('default_content_deploy.exporter');
     $exporter->synchronizeContext($context);
     $exporter->{$export_type}($entity_type, $entity_id, $current, $total, $context);
@@ -597,7 +527,7 @@ class Exporter {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function exportBatchDefault($entity_type, $entity_id, $current, $total, &$context): void {
+  public function exportBatchDefault(string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
     $uuid = FALSE;
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $uuid = $entity->get('uuid')->value;
@@ -606,13 +536,12 @@ class Exporter {
           $this->writeSerializedEntity($entity_type, $serialized_entity, $uuid);
           $context['results']['exported_entities'][$entity_type][] = $uuid;
           if ($this->verbose) {
-            $context['message'] = $this->t('Exported @type entity (ID @id, bundle @bundle) @current of @total (@time)', [
+            $context['message'] = $this->t('Exported @type entity (ID @id, bundle @bundle) @current of @total', [
               '@type' => $entity_type,
               '@id' => $entity_id,
               '@bundle' => $entity->bundle(),
               '@current' => $current,
               '@total' => $total,
-              '@time' => $this->getElapsedTime($context['results']['start']),
             ]);
           }
 
@@ -624,26 +553,20 @@ class Exporter {
     $context['results']['skipped_entities'][$entity_type][] = $uuid;
 
     if ($this->verbose) {
-      $context['message'] = $this->t('Skipped @type entity (ID @id, bundle @bundle) @current of @total (@time)', [
+      $context['message'] = $this->t('Skipped @type entity (ID @id, bundle @bundle) @current of @total', [
         '@type' => $entity_type,
         '@id' => $entity_id,
         '@bundle' => $entity->bundle(),
         '@current' => $current,
         '@total' => $total,
-        '@time' => $this->getElapsedTime($context['results']['start']),
       ]);
     }
   }
 
   /**
-   * Prepares and exports a single entity to a JSON file.
-   *
-   * @param ContentEntityInterface $entity
-   *   The entity to be exported.
-   * @param boolean $with_references
-   *   Indicates if export should consider referenced entities.
+   * {@inheritdoc}
    */
-  public function exportEntity(ContentEntityInterface $entity, bool $with_references = FALSE): bool {
+  public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): bool {
     $this->setMode($with_references ? 'reference' : 'default');
     $uuid = $entity->get('uuid')->value;
     $context = [];
@@ -674,7 +597,7 @@ class Exporter {
    *
    * @param string $entity_type
    *   The type of the entity being exported.
-   * @param int $entity_id
+   * @param string|int $entity_id
    *   The ID of the entity being exported.
    * @param int $current
    *   The current item.
@@ -686,7 +609,7 @@ class Exporter {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function exportBatchWithReferences($entity_type, $entity_id, $current, $total, &$context): void {
+  public function exportBatchWithReferences(string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
 
       if (!$this->skipEntity($entity, $context)) {
@@ -704,13 +627,12 @@ class Exporter {
         }
 
         if ($this->verbose) {
-          $context['message'] = $this->t('Exported @type entity (ID @id, bundle @bundle) @current of @total (@time)', [
+          $context['message'] = $this->t('Exported @type entity (ID @id, bundle @bundle) @current of @total', [
             '@type' => $entity_type,
             '@id' => $entity_id,
             '@bundle' => $entity->bundle(),
             '@current' => $current,
             '@total' => $total,
-            '@time' => $this->getElapsedTime($context['results']['start']),
           ]);
         }
       }
@@ -718,13 +640,12 @@ class Exporter {
         $context['results']['skipped_entities'][$entity->getEntityTypeId()][] = $entity->uuid();
 
         if ($this->verbose) {
-          $context['message'] = $this->t('Skipped @type entity (ID @id, bundle @bundle) @current of @total (@time)', [
+          $context['message'] = $this->t('Skipped @type entity (ID @id, bundle @bundle) @current of @total', [
             '@type' => $entity_type,
             '@id' => $entity_id,
             '@bundle' => $entity->bundle(),
             '@current' => $current,
             '@total' => $total,
-            '@time' => $this->getElapsedTime($context['results']['start']),
           ]);
         }
       }
@@ -749,6 +670,10 @@ class Exporter {
     $total = 0;
     $current = 1;
     foreach ($content_entity_types as $entity_type => $label) {
+      if (in_array($entity_type, $this->getSkipEntityTypeIds())) {
+        continue;
+      }
+
       $this->setEntityTypeId($entity_type);
       $entity_ids = $this->getEntityIdsForExport();
       $total += count($entity_ids);
@@ -790,6 +715,10 @@ class Exporter {
    *
    * @param bool $success
    *   Indicates whether the batch processing was successful.
+   * @param array $results
+   *    The results.
+   * @param array $operations
+   *    The operations.
    */
   public static function exportFinished($success, $results, $operations): void {
     if ($success) {
@@ -843,37 +772,32 @@ class Exporter {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   private function getEntityIdsForExport(): array {
-    $entity_ids = [];
+    $entity_ids = $this->entityIds;
 
-    if (!in_array($this->entityTypeId, $this->getSkipEntityTypeIds())) {
+    // If the Entity IDs option is null then load all IDs.
+    if (empty($entity_ids)) {
+      $entity_type_definition = $this->entityTypeManager->getDefinition($this->entityTypeId);
+      $key_bundle = $entity_type_definition->getKey('bundle');
+      $entity_class = $entity_type_definition->getClass();
 
-      $entity_ids = $this->entityIds;
+      $query = $this->entityTypeManager->getStorage($this->entityTypeId)->getQuery();
+      $query->accessCheck(FALSE);
 
-      // If the Entity IDs option is null then load all IDs.
-      if (empty($entity_ids)) {
-        $entity_type_definition = $this->entityTypeManager->getDefinition($this->entityTypeId);
-        $key_bundle = $entity_type_definition->getKey('bundle');
-        $entity_class = $entity_type_definition->getClass();
-
-        $query = $this->entityTypeManager->getStorage($this->entityTypeId)->getQuery();
-        $query->accessCheck(FALSE);
-
-        if ($key_bundle && $this->bundle) {
-          $query->condition($key_bundle, $this->bundle);
-        }
-
-        $time = $this->getTime();
-        if ($time && in_array(EntityChangedInterface::class, class_implements($entity_class))) {
-          $query->condition('changed', $time, '>=');
-        }
-
-        $entity_ids = $query->execute();
+      if ($key_bundle && $this->bundle) {
+        $query->condition($key_bundle, $this->bundle);
       }
 
-      // Remove skipped entities from $exported_entity_ids.
-      if (!empty($this->skipEntityIds)) {
-        $entity_ids = array_diff($entity_ids, $this->skipEntityIds);
+      $time = $this->getTime();
+      if ($time && in_array(EntityChangedInterface::class, class_implements($entity_class))) {
+        $query->condition('changed', $time, '>=');
       }
+
+      $entity_ids = $query->execute();
+    }
+
+    // Remove skipped entities from $exported_entity_ids.
+    if (!empty($this->skipEntityIds)) {
+      $entity_ids = array_diff($entity_ids, $this->skipEntityIds);
     }
 
     // For debugging, limit the number of entities.
@@ -906,10 +830,6 @@ class Exporter {
       return TRUE;
     }
 
-    if (in_array($type_id, $this->getSkipEntityTypeIds())) {
-      return TRUE;
-    }
-
     $time = $this->getTime();
     if ($time && ($entity instanceof EntityChangedInterface && $entity->getChangedTimeAcrossTranslations() < $time)) {
       $context['results']['skipped_entities'][$type_id][] = $uuid;
@@ -924,7 +844,7 @@ class Exporter {
    *
    * @throws \Exception
    */
-  private function writeSerializedEntity($entity_type, $serialized_entity, $uuid): void {
+  private function writeSerializedEntity(string $entity_type, string $serialized_entity, string $uuid): void {
     // Ensure that the folder per entity type exists.
     $entity_type_folder = "{$this->getFolder()}/{$entity_type}";
     $this->fileSystem->prepareDirectory($entity_type_folder, FileSystemInterface::CREATE_DIRECTORY);
@@ -933,15 +853,7 @@ class Exporter {
   }
 
   /**
-   * Exports a single entity as importContent expects it.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   * @param bool|null $add_metadata
-   *
-   * @return string
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * {@inheritdoc}
    */
   public function getSerializedContent(ContentEntityInterface $entity, ?bool $add_metadata = TRUE): string {
     $folder = $this->getFolder();
@@ -1178,7 +1090,7 @@ class Exporter {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  private function getEntityReferencesRecursive(ContentEntityInterface $entity, array $context, $depth = 0, array &$indexed_dependencies = []): array {
+  private function getEntityReferencesRecursive(ContentEntityInterface $entity, array $context, ?int $depth = 0, ?array &$indexed_dependencies = []): array {
     $entity_dependencies = [];
     $languages = $entity->getTranslationLanguages();
 
@@ -1186,6 +1098,10 @@ class Exporter {
       $translation = $entity->getTranslation($langcode);
       $entityIds = $this->getReferencedEntityIds($translation);
       foreach ($entityIds as $entityTypeId => $entityId) {
+        if (in_array($entityTypeId, $this->getSkipEntityTypeIds())) {
+          continue;
+        }
+
         // Ignore entity reference if the referenced entity could not be loaded.
         // Some entities have "NULL" references, for example a top level
         // taxonomy term references parent 0, which isn't an entity.
@@ -1195,12 +1111,20 @@ class Exporter {
       }
 
       foreach ($this->getEntityLayoutBuilderDependencies($translation) as $referenced_entity) {
+        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds())) {
+          continue;
+        }
+
         $entity_dependencies[$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity;
       }
     }
 
     if ($this->getTextDependencies()) {
       foreach ($this->getEntityProcessedTextDependencies($entity) as $referenced_entity) {
+        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds())) {
+          continue;
+        }
+
         if ($referenced_entity instanceof ContentEntityInterface) {
           $entity_dependencies[$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity;
         }
@@ -1231,23 +1155,6 @@ class Exporter {
     }
 
     return $indexed_dependencies;
-  }
-
-  /**
-   * Calculates and formats the elapsed time.
-   *
-   * @param float $start
-   *   The start time of the overall batch process.
-   *
-   * @return string
-   *   The formatted elapsed time in minutes.
-   */
-  public function getElapsedTime($start): string {
-    $end = microtime(TRUE);
-    $diff = $end - $start;
-    $elapsed_time = number_format($diff / 60, 2) . ' ' . $this->t('minutes');
-
-    return $elapsed_time;
   }
 
 }

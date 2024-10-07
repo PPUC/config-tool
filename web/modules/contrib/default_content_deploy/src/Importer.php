@@ -18,14 +18,8 @@ use Drupal\hal\LinkManager\LinkManagerInterface;
 use Rogervila\ArrayDiffMultidimensional;
 use Symfony\Component\Serializer\Serializer;
 
-/**
- * A service for handling import of default content.
- *
- * The importContent() method is almost duplicate of
- *   \Drupal\default_content\Importer::importContent with injected code for
- *   content update. We are waiting for better DC code structure in a future.
- */
-class Importer {
+class Importer implements ImporterInterface
+{
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
@@ -116,13 +110,6 @@ class Importer {
   protected $serializer;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
    * The link manager service.
    *
    * @var \Drupal\hal\LinkManager\LinkManagerInterface
@@ -139,7 +126,7 @@ class Importer {
   /**
    * DCD Exporter.
    *
-   * @var \Drupal\default_content_deploy\Exporter
+   * @var ExporterInterface
    */
   protected $exporter;
 
@@ -191,6 +178,8 @@ class Importer {
    *   The Entity repository manager.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   The cache data.
+   * @param ExporterInterface $exporter
+   *   The exporter.
    * @param \Drupal\Core\Database\Connection $database
    *   Database connection.
    * @param \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher $event_dispatcher
@@ -198,9 +187,9 @@ class Importer {
    * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
    *   The metadata service.
    * @param \Drupal\Core\State\StateInterface $state
-   *    The state.
+   *   The state.
    */
-  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, Exporter $exporter, Connection $database, ContainerAwareEventDispatcher $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
+  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, ExporterInterface $exporter, Connection $database, ContainerAwareEventDispatcher $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
     $this->serializer = $serializer;
     $this->entityTypeManager = $entity_type_manager;
     $this->linkManager = $link_manager;
@@ -216,28 +205,17 @@ class Importer {
   }
 
   /**
-   * Is remove changes of an old content.
-   *
-   * @param bool $is_override
-   *
-   * @return \Drupal\default_content_deploy\Importer
+   * {@inheritdoc}
    */
-  public function setForceOverride(bool $is_override) {
-    $this->forceOverride = $is_override;
-    return $this;
+  public function setForceOverride(bool $force): void {
+    $this->forceOverride = $force;
   }
 
   /**
-   * Set directory to import.
-   *
-   * @param string $folder
-   *   The content folder.
-   *
-   * @return \Drupal\default_content_deploy\Importer
+   * {@inheritdoc}
    */
-  public function setFolder(string $folder) {
+  public function setFolder(string $folder): void {
     $this->folder = $folder;
-    return $this;
   }
 
   /**
@@ -248,7 +226,7 @@ class Importer {
    *
    * @throws \Exception
    */
-  protected function getFolder() {
+  protected function getFolder(): string {
     $folder = $this->folder ?: $this->deployManager->getContentFolder();
 
     if (!isset($folder)) {
@@ -258,23 +236,30 @@ class Importer {
     return $folder;
   }
 
-  public function setPreserveIds(bool $preserve) {
+  /**
+   * {@inheritdoc}
+   */
+  public function setPreserveIds(bool $preserve): void {
     $this->preserveIds = $preserve;
   }
 
-  public function setIncremental(bool $incremental) {
+  /**
+   * {@inheritdoc}
+   */
+  public function setIncremental(bool $incremental): void {
     $this->incremental = $incremental;
   }
 
   /**
-   * Get Imported data result.
-   *
-   * @return array
+   * {@inheritdoc}
    */
-  public function getResult() {
+  public function getResult(): array {
     return $this->dataToImport + $this->pathAliasesToImport;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setVerbose(bool $verbose): void {
     $this->verbose = $verbose;
   }
@@ -282,8 +267,6 @@ class Importer {
 
   /**
    * Import data from JSON and create new entities, or update existing.
-   *
-   * @return $this
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -333,7 +316,7 @@ class Importer {
    * @return object[]
    *   List of stdClass objects with name and uri properties.
    */
-  public function scan($directory) {
+  public function scan(string $directory): array {
     // Use Unix paths regardless of platform, skip dot directories, follow
     // symlinks (to allow extensions to be linked from elsewhere), and return
     // the RecursiveDirectoryIterator instance to have access to getSubPath(),
@@ -345,7 +328,7 @@ class Importer {
     $iterator = new \RecursiveIteratorIterator($directory_iterator);
     $files = [];
 
-    /* @var \SplFileInfo $file_info */
+    /** @var \SplFileInfo $file_info */
     foreach ($iterator as $file_info) {
       // Skip directories and non-json files.
       if ($file_info->isDir() || $file_info->getExtension() !== 'json' || str_contains($file_info->getPathname(), '_deleted')) {
@@ -366,13 +349,9 @@ class Importer {
   }
 
   /**
-   * Import to entity.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * {@inheritdoc}
    */
-  public function import() {
+  public function import(): void {
     // Process files in batches.
     $operations = [];
     $total = count($this->dataToImport) + count($this->dataToCorrect) + count($this->pathAliasesToImport);
@@ -430,11 +409,7 @@ class Importer {
     batch_set($batch_definition);
   }
 
-  public static function initializeContext($vars, &$context): void {
-    // Set the start time, so we can access across batch operations.
-    if (empty($context['results']['start'])) {
-      $context['results']['start'] = microtime(TRUE);
-    }
+  public static function initializeContext(array $vars, array &$context): void {
     $context['results']['max_export_timestamp'] = 0;
     $context['results'] = array_merge($context['results'], $vars);
   }
@@ -460,16 +435,15 @@ class Importer {
    *
    * @throws \Exception
    */
-  protected function processFile($file, $current, $total, $correction, &$context): void {
+  protected function processFile(object $file, $current, $total, bool $correction, array &$context): void {
     $this->verbose = &$context['results']['verbose'];
     $this->preserveIds = &$context['results']['preserveIds'];
 
     if ($correction && array_key_exists($file->uuid, $context['results']['skipCorrection'] ?? [])) {
       if ($this->verbose) {
-        $context['message'] = $this->t('@current of @total (@time), skipped correction of @entity_type', [
+        $context['message'] = $this->t('@current of @total, skipped correction of @entity_type', [
           '@current' => $current,
           '@total' => $total,
-          '@time' => $this->getElapsedTime($context['results']['start']),
           '@entity_type' => $file->entity_type_id,
         ]);
       }
@@ -512,10 +486,9 @@ class Importer {
               $changed_time = $entity->getChangedTimeAcrossTranslations();
               if ($changed_time_file <= $changed_time) {
                 if ($this->verbose) {
-                  $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_id, file (@date_file) is not newer than database (@date_db)', [
+                  $context['message'] = $this->t('@current of @total, skipped @entity_type @entity_id, file (@date_file) is not newer than database (@date_db)', [
                     '@current' => $current,
                     '@total' => $total,
-                    '@time' => $this->getElapsedTime($context['results']['start']),
                     '@entity_type' => $entity->getEntityTypeId(),
                     '@entity_id' => $entity->id(),
                     '@date_file' => date('Y-m-d H:i:s', $changed_time_file),
@@ -539,10 +512,9 @@ class Importer {
             $diff = ArrayDiffMultidimensional::looseComparison($file->data, $current_entity_decoded);
             if (!$diff) {
               if ($this->verbose) {
-                $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_id, no changes compared to database', [
+                $context['message'] = $this->t('@current of @total, skipped @entity_type @entity_id, no changes compared to database', [
                   '@current' => $current,
                   '@total' => $total,
-                  '@time' => $this->getElapsedTime($context['results']['start']),
                   '@entity_type' => $entity->getEntityTypeId(),
                   '@entity_id' => $entity->id(),
                 ]);
@@ -570,10 +542,9 @@ class Importer {
         else {
           $entity_storage = $this->entityTypeManager->getStorage($file->entity_type_id);
           if ($entity_storage->load($file->data[$file->key_id][0]['value'])) {
-            $context['message'] = $this->t('@current of @total (@time), skipped @entity_type @entity_id, ID already exists in database', [
+            $context['message'] = $this->t('@current of @total, skipped @entity_type @entity_id, ID already exists in database', [
               '@current' => $current,
               '@total' => $total,
-              '@time' => $this->getElapsedTime($context['results']['start']),
               '@entity_type' => $file->entity_type_id,
               '@entity_id' => $file->data[$file->key_id][0]['value'],
             ]);
@@ -635,10 +606,9 @@ class Importer {
       }
 
       if ($this->verbose) {
-        $context['message'] = $this->t('@current of @total (@time), @operation @entity_type @entity_id', [
+        $context['message'] = $this->t('@current of @total, @operation @entity_type @entity_id', [
           '@current' => $current,
           '@total' => $total,
-          '@time' => $this->getElapsedTime($context['results']['start']),
           '@operation' => $is_new ? $this->t('created') : $this->t('updated'),
           '@entity_type' => $entity->getEntityTypeId(),
           '@entity_id' => $entity->id(),
@@ -652,10 +622,9 @@ class Importer {
 
     }
     catch (\Exception $e) {
-      $context['message'] = $this->t('@current of @total (@time), error on importing @entity_type @uuid: @message', [
+      $context['message'] = $this->t('@current of @total, error on importing @entity_type @uuid: @message', [
         '@current' => $current,
         '@total' => $total,
-        '@time' => $this->getElapsedTime($context['results']['start']),
         '@entity_type' => $file->entity_type_id,
         '@uuid' => $file->uuid,
         '@message' => $e->getMessage(),
@@ -664,28 +633,12 @@ class Importer {
   }
 
   /**
-   * Calculates and formats the elapsed time.
-   *
-   * @param float $start
-   *   The start time of the overall batch process.
-   *
-   * @return string
-   *   The formatted elapsed time in minutes.
-   */
-  public function getElapsedTime($start) {
-    $end = microtime(TRUE);
-    $diff = $end - $start;
-    $elapsed_time = number_format($diff / 60, 2) . ' ' . $this->t('minutes');
-
-    return $elapsed_time;
-  }
-
-  /**
    * Gets url from file for set to Link manager.
    *
-   * @param $file
+   * @param object $file
+   *   The file object.
    */
-  protected function getLinkDomain($file) {
+  protected function getLinkDomain(object $file): string {
     $link = $file->data['_links']['type']['href'];
     $url_data = parse_url($link);
     $host = "{$url_data['scheme']}://{$url_data['host']}";
@@ -695,15 +648,14 @@ class Importer {
   /**
    * Prepare file to import.
    *
-   * @param $file
-   *
-   * @return $this
+   * @param object $file
+   *   The file object.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Exception
    */
-  protected function decodeFile($file): void {
+  protected function decodeFile(object $file): void {
     // Get parsed data.
     $parsed_data = file_get_contents($file->uri);
 
@@ -723,17 +675,18 @@ class Importer {
   /**
    * Here we can edit data`s value before importing.
    *
-   * @param $file
+   * @param object $file
+   *   The file object.
    */
-  protected function prepareData($file): void {
+  protected function prepareData(object $file): void {
     $entity_type_object = $this->entityTypeManager->getDefinition($file->entity_type_id);
     // Keys of entity.
     $file->key_id = $entity_type_object->getKey('id');
 
     // @see path_entity_base_field_info().
     // @todo offer an event to let third party modules register their content
-    //       types. On the other hand, the path is only part of the export if
-    //       computed fields are included, which could be turned off in 2.1.x.
+    //   types. On the other hand, the path is only part of the export if
+    //   computed fields are included, which could be turned off in 2.1.x.
     if (isset($file->data['path']) && in_array($file->entity_type_id, ['taxonomy_term', 'node', 'media', 'commerce_product'])) {
       unset($file->data['path']);
     }
@@ -747,9 +700,10 @@ class Importer {
   /**
    * Adding prepared data for import.
    *
-   * @param $file
+   * @param object $file
+   *   The file object.
    */
-  protected function addToImport($file) {
+  protected function addToImport(object $file): void {
     switch ($file->entity_type_id) {
       case 'path_alias':
         $this->pathAliasesToImport[$file->uuid] = $file;
@@ -769,11 +723,13 @@ class Importer {
   /**
    * Get Entity type ID by link.
    *
-   * @param $link
+   * @param string $link
+   *   The link.
    *
-   * @return string|string[]
+   * @return string
+   *   The entity type ID.
    */
-  private function getEntityTypeByLink($link): string {
+  private function getEntityTypeByLink(string $link): string {
     $type = $this->linkManager->getTypeInternalIds($link);
 
     if ($type) {
@@ -793,11 +749,12 @@ class Importer {
    * If this entity contains a reference field with target revision is value,
    * we should to update it.
    *
-   * @param $decode
+   * @param array $decode
+   *   The decoded entity array.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private function updateTargetRevisionId(&$decode): void {
+  private function updateTargetRevisionId(array &$decode): void {
     if (isset($decode['_embedded'])) {
       foreach ($decode['_embedded'] as $link_key => $link) {
         if (array_column($link, 'target_revision_id')) {
@@ -823,8 +780,12 @@ class Importer {
    *
    * @param bool $success
    *   Indicates whether the batch processing was successful.
+   * @param array $results
+   *   The results.
+   * @param array $operations
+   *   The operations.
    */
-  public static function importFinished($success, $results, $operations): void {
+  public static function importFinished(bool $success, array $results, array $operations): void {
     if ($success) {
       // Batch processing completed successfully.
       \Drupal::messenger()->addMessage(t('Batch import completed successfully.'));
