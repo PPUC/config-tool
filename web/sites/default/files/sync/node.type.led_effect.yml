@@ -1,0 +1,17 @@
+uuid: 0a46ebdf-2243-49b1-9e45-59f502401e8e
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'LED Effect'
+type: led_effect
+description: null
+help: null
+new_revision: false
+preview_mode: 0
+display_submitted: true

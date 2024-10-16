@@ -1,0 +1,23 @@
+uuid: 72e7774f-fd01-428f-bc09-6e6e2b56c62c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_speed
+    - node.type.led_effect
+id: node.led_effect.field_speed
+field_name: field_speed
+entity_type: node
+bundle: led_effect
+label: Speed
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

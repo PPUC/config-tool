@@ -6,10 +6,12 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.addressable_leds.field_after_glow
     - field.field.node.addressable_leds.field_amount_leds
+    - field.field.node.addressable_leds.field_brightness
     - field.field.node.addressable_leds.field_i_o_board
     - field.field.node.addressable_leds.field_led_type
     - field.field.node.addressable_leds.field_light_up
     - field.field.node.addressable_leds.field_pin
+    - field.field.node.addressable_leds.field_segments
     - node.type.addressable_leds
   module:
     - user
@@ -28,7 +30,9 @@ content:
 hidden:
   field_after_glow: true
   field_amount_leds: true
+  field_brightness: true
   field_i_o_board: true
   field_led_type: true
   field_light_up: true
   field_pin: true
+  field_segments: true

@@ -1,0 +1,23 @@
+uuid: c652c4ef-ff94-4d69-8030-85077f6b2754
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_segment
+    - node.type.led_effect
+id: node.led_effect.field_segment
+field_name: field_segment
+entity_type: node
+bundle: led_effect
+label: Segment
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 9
+  prefix: ''
+  suffix: ''
+field_type: integer

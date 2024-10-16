@@ -5,12 +5,15 @@ dependencies:
   config:
     - field.field.node.addressable_leds.field_after_glow
     - field.field.node.addressable_leds.field_amount_leds
+    - field.field.node.addressable_leds.field_brightness
     - field.field.node.addressable_leds.field_i_o_board
     - field.field.node.addressable_leds.field_led_type
     - field.field.node.addressable_leds.field_light_up
     - field.field.node.addressable_leds.field_pin
+    - field.field.node.addressable_leds.field_segments
     - node.type.addressable_leds
   module:
+    - range
     - user
 _core:
   default_config_hash: U17MB6U1rQ6B7dZgt5dm5N7h7ub2ZZCgDULjz61yYTo
@@ -36,6 +39,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 4
+    region: content
+  field_brightness:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 8
     region: content
   field_i_o_board:
     type: entity_reference_label
@@ -70,6 +82,20 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_segments:
+    type: range_integer
+    label: above
+    settings:
+      range_separator: '-'
+      thousand_separator: ''
+      range_combine: true
+      field_prefix_suffix: false
+      from_prefix_suffix: false
+      to_prefix_suffix: false
+      combined_prefix_suffix: false
+    third_party_settings: {  }
+    weight: 7
     region: content
   links:
     settings: {  }

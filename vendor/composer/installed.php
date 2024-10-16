@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '19fdb3e4a49b64591bdf4192939e7673989a76b6',
+        'reference' => '6a67176b36d329d1b8039cea9df2321dfbfa28a6',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -381,6 +381,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/range' => array(
+            'pretty_version' => '1.6.0',
+            'version' => '1.6.0.0',
+            'reference' => '8.x-1.6',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/range',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drush/drush' => array(
             'pretty_version' => '12.5.3',
             'version' => '12.5.3.0',
@@ -472,9 +481,9 @@
             'dev_requirement' => false,
         ),
         'nikic/php-parser' => array(
-            'pretty_version' => 'v5.3.0',
-            'version' => '5.3.0.0',
-            'reference' => '3abf7425cd284141dc5d8d14a9ee444de3345d1a',
+            'pretty_version' => 'v5.3.1',
+            'version' => '5.3.1.0',
+            'reference' => '8eea230464783aa9671db8eea6f8c6ac5285794b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../nikic/php-parser',
             'aliases' => array(),
@@ -552,7 +561,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '19fdb3e4a49b64591bdf4192939e7673989a76b6',
+            'reference' => '6a67176b36d329d1b8039cea9df2321dfbfa28a6',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -679,7 +688,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'c90faeb954dbf0e3bb0657496199afeb99e2d4dd',
+            'reference' => 'f9019349c835564133e2058d1199591fc93224e7',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(

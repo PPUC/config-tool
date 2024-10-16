@@ -1,0 +1,30 @@
+uuid: c5256309-d050-4a07-a738-8f58a6e3d7c4
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.led_effect.field_color
+    - field.field.node.led_effect.field_description
+    - field.field.node.led_effect.field_segment
+    - field.field.node.led_effect.field_speed
+    - field.field.node.led_effect.field_string
+    - node.type.led_effect
+  module:
+    - user
+id: node.led_effect.teaser
+targetEntityType: node
+bundle: led_effect
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_color: true
+  field_description: true
+  field_segment: true
+  field_speed: true
+  field_string: true

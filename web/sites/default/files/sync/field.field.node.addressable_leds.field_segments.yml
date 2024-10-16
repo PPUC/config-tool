@@ -1,0 +1,35 @@
+uuid: c711f739-2131-4415-a39c-ec5ce3d57396
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_segments
+    - node.type.addressable_leds
+  module:
+    - range
+id: node.addressable_leds.field_segments
+field_name: field_segments
+entity_type: node
+bundle: addressable_leds
+label: Segments
+description: 'A segment of LEDs to run effects. Counting starts at 0!'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  field:
+    prefix: ''
+    suffix: ''
+  from:
+    prefix: ''
+    suffix: ''
+  to:
+    prefix: ''
+    suffix: ''
+  combined:
+    prefix: ''
+    suffix: ''
+field_type: range_integer

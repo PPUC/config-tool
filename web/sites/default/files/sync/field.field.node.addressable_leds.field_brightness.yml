@@ -1,0 +1,25 @@
+uuid: c0f6c39a-d60b-4588-ac42-eda9f6b61d50
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_brightness
+    - node.type.addressable_leds
+id: node.addressable_leds.field_brightness
+field_name: field_brightness
+entity_type: node
+bundle: addressable_leds
+label: Brightness
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 50
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer

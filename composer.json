@@ -24,6 +24,7 @@
         "drupal/core-project-message": "^10.3",
         "drupal/default_content_deploy": "2.1.x-dev",
         "drupal/quick_node_clone": "^1.18",
+        "drupal/range": "^1.6",
         "drush/drush": "^12.5.3",
         "roave/security-advisories": "dev-latest"
     },
