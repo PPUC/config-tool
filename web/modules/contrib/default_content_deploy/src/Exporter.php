@@ -59,9 +59,16 @@ class Exporter implements ExporterInterface
   /**
    * Text dependencies option.
    *
-   * @var bool
+   * @var bool|null
    */
   private $includeTextDependencies;
+
+  /**
+   * Skip export timestamp option.
+   *
+   * @var bool|null
+   */
+  private $skipExportTimestamp;
 
   /**
    * DCD Manager.
@@ -335,13 +342,25 @@ class Exporter implements ExporterInterface
   /**
    * {@inheritdoc}
    */
-  public function setTextDependencies($text_dependencies = NULL): void {
+  public function setTextDependencies(?bool $text_dependencies = NULL): void {
     if (is_null($text_dependencies)) {
       $config = $this->config->get(SettingsForm::CONFIG);
       $text_dependencies = (bool) $config->get('text_dependencies');
     }
 
     $this->includeTextDependencies = $text_dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSkipExportTimestamp(?bool $skip = NULL): void {
+    if (is_null($skip)) {
+      $config = $this->config->get(SettingsForm::CONFIG);
+      $skip_export_timestamp = (bool) $config->get('skip_export_timestamp');
+    }
+
+    $this->skipExportTimestamp = $skip;
   }
 
   /**
@@ -392,6 +411,17 @@ class Exporter implements ExporterInterface
     }
 
     return $this->includeTextDependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSkipExportTimestamp(): bool {
+    if (is_null($this->skipExportTimestamp)) {
+      $this->setSkipExportTimestamp();
+    }
+
+    return (bool) $this->skipExportTimestamp;
   }
 
   /**
@@ -476,6 +506,7 @@ class Exporter implements ExporterInterface
       'dateTime' => $this->getDateTime(),
       'folder' => $this->getFolder(),
       'includeTextDependencies' => $this->getTextDependencies(),
+      'skipExportTimestamp' => $this->getSkipExportTimestamp(),
       'skipEntityTypeIds' => $this->getSkipEntityTypeIds(),
       'mode' => $this->mode,
       'verbose' => $this->verbose,
@@ -497,6 +528,7 @@ class Exporter implements ExporterInterface
     $this->dateTime = &$context['results']['dateTime'];
     $this->folder = &$context['results']['folder'];
     $this->includeTextDependencies = &$context['results']['includeTextDependencies'];
+    $this->skipExportTimestamp = &$context['results']['skipExportTimestamp'];
     $this->skipEntityTypeIds = &$context['results']['skipEntityTypeIds'];
     $this->mode = &$context['results']['mode'];
     $this->verbose = &$context['results']['verbose'];
@@ -532,7 +564,7 @@ class Exporter implements ExporterInterface
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $uuid = $entity->get('uuid')->value;
       if (!$this->skipEntity($entity, $context)) {
-        if ($serialized_entity = $this->getSerializedContent($entity)) {
+        if ($serialized_entity = $this->getSerializedContent($entity, !$this->getSkipExportTimestamp())) {
           $this->writeSerializedEntity($entity_type, $serialized_entity, $uuid);
           $context['results']['exported_entities'][$entity_type][] = $uuid;
           if ($this->verbose) {
@@ -570,7 +602,7 @@ class Exporter implements ExporterInterface
     $this->setMode($with_references ? 'reference' : 'default');
     $uuid = $entity->get('uuid')->value;
     $context = [];
-    if ($serialized_entity = $this->getSerializedContent($entity)) {
+    if ($serialized_entity = $this->getSerializedContent($entity, !$this->getSkipExportTimestamp())) {
       $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $uuid);
 
       if ($with_references) {
@@ -580,7 +612,7 @@ class Exporter implements ExporterInterface
         foreach ($referenced_entities as $uuid => $referenced_entity) {
           $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity)) {
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity, !$this->getSkipExportTimestamp())) {
             $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
           }
         }
@@ -620,7 +652,7 @@ class Exporter implements ExporterInterface
         foreach ($referenced_entities as $uuid => $referenced_entity) {
           $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity)) {
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity, !$this->getSkipExportTimestamp())) {
             $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
             $context['results']['exported_entities'][$referenced_entity_type][] = $uuid;
           }
@@ -855,7 +887,7 @@ class Exporter implements ExporterInterface
   /**
    * {@inheritdoc}
    */
-  public function getSerializedContent(ContentEntityInterface $entity, ?bool $add_metadata = TRUE): string {
+  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string {
     $folder = $this->getFolder();
 
     $event = new PreSerializeEvent($entity, $this->mode, $folder);
@@ -1058,7 +1090,12 @@ class Exporter implements ExporterInterface
                 $entity_loaded_by_uuid = $this->entityTypeManager
                   ->getStorage($entity_type)
                   ->loadByProperties(['uuid' => $uuid]);
-                $entity_dependencies[] = reset($entity_loaded_by_uuid);
+
+                $dependency = reset($entity_loaded_by_uuid);
+
+                if ($dependency instanceof EntityInterface) {
+                  $entity_dependencies[] = $dependency;
+                }
               }
             }
           }

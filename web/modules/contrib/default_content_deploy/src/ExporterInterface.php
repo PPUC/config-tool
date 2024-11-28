@@ -165,7 +165,7 @@ interface ExporterInterface {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to be exported.
-   * @param bool|null $add_metadata
+   * @param bool $add_metadata
    *   Include metadata.
    *
    * @return string
@@ -174,5 +174,5 @@ interface ExporterInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getSerializedContent(ContentEntityInterface $entity, ?bool $add_metadata = TRUE): string;
+  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string;
 }

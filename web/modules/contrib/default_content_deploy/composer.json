@@ -23,7 +23,8 @@
     "rogervila/array-diff-multidimensional": "^2.0"
   },
   "conflict": {
-    "drupal/better_normalizers": "*"
+    "drupal/better_normalizers": "*",
+    "drupal/search_api": "<1.36"
   },
   "extra": {
     "drush": {

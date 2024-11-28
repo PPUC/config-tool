@@ -7,6 +7,9 @@ default_content_deploy.common_settings:
     text_dependencies:
       type: boolean
       label: 'Export processed text dependencies'
+    skip_export_timestamp:
+      type: boolean
+      label: 'Skip export timestamp'
     skip_entity_types:
       type: sequence
       label: 'Skip entity types to be exported indirectly by reference or in site export'

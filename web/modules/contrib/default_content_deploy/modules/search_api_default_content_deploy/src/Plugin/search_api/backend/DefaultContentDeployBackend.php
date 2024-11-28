@@ -144,6 +144,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     $directory = rtrim($index_third_party_settings['content_directory'], '/') . '/';
     $this->exporter->setFolder($directory);
     $this->exporter->setTextDependencies($index_third_party_settings['text_dependencies']);
+    $this->exporter->setSkipExportTimestamp($index_third_party_settings['skip_export_timestamp']);
     $this->exporter->setSkipEntityTypeIds($index_third_party_settings['skip_entity_types'] ?? []);
     $this->exporter->setLinkDomain($index_third_party_settings['link_domain']);
 

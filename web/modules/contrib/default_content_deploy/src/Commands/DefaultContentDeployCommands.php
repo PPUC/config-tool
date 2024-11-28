@@ -99,6 +99,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @option entity_ids The IDs of the entities to export (comma-separated list).
    * @option bundle Write out the exported bundle of entity
    * @option skip_entities The ID of the entity to skip.
+   * @option skip-export-timestamp Don't include the timestamp in exports.
    * @option force-update Deletes configurations files that are not used on the
    *   site.
    * @option folder Path to the export folder.
@@ -122,12 +123,11 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
     $skip_ids = $this->processingArrayOption($options['skip_entities']);
-    $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
 
     $this->exporter->setEntityTypeId($entity_type);
     $this->exporter->setEntityBundle($options['bundle']);
@@ -138,6 +138,7 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     $this->exporter->setMode('default');
     $this->exporter->setForceUpdate($options['force-update']);
+    $this->exporter->setSkipExportTimestamp($options['skip-export-timestamp']);
 
     if ($entity_ids) {
       $this->exporter->setEntityIds($entity_ids);
@@ -170,6 +171,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @option entity_ids The IDs of the entities to export (comma-separated list).
    * @option bundle Write out the exported bundle of entity
    * @option skip_entities The ID of the entity to skip.
+   * @option skip-export-timestamp Don't include the timestamp in exports.
    * @option force-update Deletes configurations files that are not used on the
    *   site.
    * @option folder Path to the export folder.
@@ -198,7 +200,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
@@ -207,6 +209,7 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     $this->exporter->setEntityTypeId($entity_type);
     $this->exporter->setEntityBundle($options['bundle']);
+    $this->exporter->setSkipExportTimestamp($options['skip-export-timestamp']);
 
     if (!empty($options['folder'])) {
       $this->exporter->setFolder($options['folder']);
@@ -262,7 +265,8 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   command exports all entity types.
    * @option force-update Deletes configurations files that are not used on the
    *   site.
-   * @option folder Path to the export folder.
+   * @option skip-export-timestamp Don't include the timestamp in exports.
+    * @option folder Path to the export folder.
    * @option skip_entity_type The entity types to skip.
    *   Use 'drush dcd-entity-list' for list of all content entities.
    * @option changes-since Only export entities that have been changed since a
@@ -279,7 +283,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportSite(array $options = ['skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportSite(array $options = ['skip_entity_type' => NULL, 'force-update'=> FALSE, 'skip-export-timestamp' => NULL, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
@@ -294,6 +298,7 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     $this->exporter->setMode('all');
     $this->exporter->setForceUpdate($options['force-update']);
+    $this->exporter->setSkipExportTimestamp($options['skip-export-timestamp']);
 
     if ($skip_type_ids) {
       $this->exporter->setSkipEntityTypeIds($skip_type_ids);

@@ -66,6 +66,7 @@ function search_api_default_content_deploy_default_index_third_party_settings() 
     'content_directory' => '',
     'export_referenced_entities' => FALSE,
     'text_dependencies' => FALSE,
+    'skip_export_timestamp' => FALSE,
     'skip_entity_types' => [],
     'link_domain' => '',
     'delete_single_file_allowed' => FALSE,
@@ -158,6 +159,8 @@ function search_api_default_content_deploy_form_search_api_index_form_alter(&$fo
       $form['third_party_settings']['search_api_default_content_deploy'],
       $settings
     );
+
+    $form['third_party_settings']['search_api_default_content_deploy']['content_directory']['#required'] = FALSE;
   }
 }
 
@@ -175,6 +178,7 @@ function search_api_default_content_deploy_form_search_api_index_form_alter(&$fo
  * @throws \Drupal\search_api\SearchApiException
  */
 function search_api_default_content_deploy_get_servers($only_active = TRUE) {
+  $dcd_servers = [];
   $storage = \Drupal::entityTypeManager()->getStorage('search_api_server');
   /** @var \Drupal\search_api\ServerInterface[] $servers */
   $servers = $only_active ? $storage->loadByProperties(['status' => TRUE]) :
@@ -184,10 +188,10 @@ function search_api_default_content_deploy_get_servers($only_active = TRUE) {
       $server->hasValidBackend() &&
       $server->getBackend() instanceof \Drupal\search_api_default_content_deploy\Plugin\search_api\backend\DefaultContentDeployBackend
     ) {
-      $servers[$server->id()] = $server;
+      $dcd_servers[$server->id()] = $server;
     }
   }
-  return $servers;
+  return $dcd_servers;
 }
 
 /**

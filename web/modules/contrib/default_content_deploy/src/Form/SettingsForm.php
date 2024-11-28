@@ -76,6 +76,7 @@ class SettingsForm extends ConfigFormBase {
       'skip_computed_fields' => $config->get('skip_computed_fields'),
       'skip_processed_values' => $config->get('skip_processed_values'),
       'text_dependencies' => $config->get('text_dependencies'),
+      'skip_export_timestamp' => $config->get('skip_export_timestamp'),
       'skip_entity_types' => $config->get('skip_entity_types') ?? [],
     ]);
 
@@ -119,6 +120,13 @@ class SettingsForm extends ConfigFormBase {
       '#description' => 'If selected, embedded entities within processed text fields will be included in the export.',
     ];
 
+    $form['skip_export_timestamp'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Skip export timestamp'),
+      '#default_value' => $defaults['skip_export_timestamp'],
+      '#description' => 'Usually, the export timestamp gets added as metadata to the each exported entity and used for incremental imports. If the export timestamp is missing, the entity will be always handled in incremental imports.',
+    ];
+
     $all_entity_types = $this->entityTypeManager->getDefinitions();
     $content_entity_types = [];
 
@@ -153,6 +161,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('skip_processed_values', (bool) $form_state->getValue('skip_processed_values'))
       ->set('skip_entity_types', array_values(array_filter($form_state->getValue('skip_entity_types'))))
       ->set('text_dependencies', (bool) $form_state->getValue('text_dependencies'))
+      ->set('skip_export_timestamp', (bool) $form_state->getValue('skip_export_timestamp'))
       ->set('batch_ttl', (int) $form_state->getValue('batch_ttl'))
       ->save();
 
