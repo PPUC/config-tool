@@ -10,7 +10,7 @@ still WIP.
 Install [hombrew](https://brew.sh/) and
 [DDEV](https://ddev.readthedocs.io/en/stable/).
 
-Hust follow the instructions for your operating system. But even if not
+Just follow the instructions for your operating system. But even if not
 documented well, even for Linux we recommended to install DDEV via `brew`!
 The PPUC ecosystem will require homebrew anyway. And it is always better to use
 a package manager.
@@ -18,12 +18,10 @@ a package manager.
 For _macOS_ these are the essential steps:
 ```shell
 brew install docker
-brew install colima
+brew install orbstack
 brew install drud/ddev/ddev
 mkcert -install
-colima start --cpu 4 --memory 6 --disk 100 --dns=1.1.1.1
 ```
-When your Mac restarts, you’ll need to run `colima start` again.
 
 For _Linux_ install docker according to https://ddev.readthedocs.io/en/stable/users/install/docker-installation/#linux
 Afterwards install DDEV:

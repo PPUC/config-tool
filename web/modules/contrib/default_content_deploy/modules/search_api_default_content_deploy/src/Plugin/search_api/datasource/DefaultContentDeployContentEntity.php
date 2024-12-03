@@ -87,9 +87,13 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   public function getPartialItemIds($page = NULL, array $bundles = NULL, array $languages = NULL) {
     $item_ids = parent::getPartialItemIds($page, $bundles, $languages);
 
-    return array_filter($item_ids, function ($item_id) {
-      return $item_id !== '';
-    });
+    if (is_array($item_ids)) {
+      return array_filter($item_ids, function ($item_id) {
+        return $item_id !== '';
+      });
+    }
+
+    return $item_ids;
   }
 
   /**
@@ -98,9 +102,13 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   public function getAffectedItemsForEntityChange(EntityInterface $entity, array $foreign_entity_relationship_map, EntityInterface $original_entity = NULL): array {
     $item_ids = parent::getAffectedItemsForEntityChange($entity, $foreign_entity_relationship_map, $original_entity);
 
-    return array_filter($item_ids, function ($item_id) {
-      return $item_id !== '';
-    });
+    if (is_array($item_ids)) {
+      return array_filter($item_ids, function ($item_id) {
+        return $item_id !== '';
+      });
+    }
+
+    return $item_ids;
   }
 
 }

@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6661b26e4114065282ca20b7bf4044a1f599422d',
+        'reference' => '5a1676f19b85a15c31aa6b912a5e2b069021b446',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -355,7 +355,7 @@
         'drupal/default_content_deploy' => array(
             'pretty_version' => 'dev-2.1.x',
             'version' => 'dev-2.1.x',
-            'reference' => '5401531d41611e618c24b4ae480b39c52faa119e',
+            'reference' => 'e209714468b929a8d93dfc67e26f8095baa76c3c',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/default_content_deploy',
             'aliases' => array(
@@ -561,7 +561,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6661b26e4114065282ca20b7bf4044a1f599422d',
+            'reference' => '5a1676f19b85a15c31aa6b912a5e2b069021b446',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -588,8 +588,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.1|2.0',
-                1 => '^1.0',
+                0 => '^1.0',
+                1 => '1.1|2.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -668,9 +668,9 @@
             ),
         ),
         'psy/psysh' => array(
-            'pretty_version' => 'v0.12.4',
-            'version' => '0.12.4.0',
-            'reference' => '2fd717afa05341b4f8152547f142cd2f130f6818',
+            'pretty_version' => 'v0.12.5',
+            'version' => '0.12.5.0',
+            'reference' => '36a03ff27986682c22985e56aabaf840dd173cb5',
             'type' => 'library',
             'install_path' => __DIR__ . '/../psy/psysh',
             'aliases' => array(),
@@ -688,7 +688,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'fff26f7a91a7458bf6eea5afdd71b4aba1f1d3ea',
+            'reference' => 'd63bf61e4925002df49bcec7043f7c821084c365',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -760,9 +760,9 @@
             'dev_requirement' => false,
         ),
         'symfony/error-handler' => array(
-            'pretty_version' => 'v7.1.7',
-            'version' => '7.1.7.0',
-            'reference' => '010e44661f4c6babaf8c4862fe68c24a53903342',
+            'pretty_version' => 'v7.2.0',
+            'version' => '7.2.0.0',
+            'reference' => '672b3dd1ef8b87119b446d67c58c106c43f965fe',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/error-handler',
             'aliases' => array(),
@@ -1006,9 +1006,9 @@
             'dev_requirement' => false,
         ),
         'symfony/var-exporter' => array(
-            'pretty_version' => 'v7.1.6',
-            'version' => '7.1.6.0',
-            'reference' => '90173ef89c40e7c8c616653241048705f84130ef',
+            'pretty_version' => 'v7.2.0',
+            'version' => '7.2.0.0',
+            'reference' => '1a6a89f95a46af0f142874c9d650a6358d13070d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/var-exporter',
             'aliases' => array(),
@@ -1024,9 +1024,9 @@
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.15.0',
-            'version' => '3.15.0.0',
-            'reference' => '2d5b3964cc21d0188633d7ddce732dc8e874db02',
+            'pretty_version' => 'v3.16.0',
+            'version' => '3.16.0.0',
+            'reference' => '475ad2dc97d65d8631393e721e7e44fb544f0561',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),

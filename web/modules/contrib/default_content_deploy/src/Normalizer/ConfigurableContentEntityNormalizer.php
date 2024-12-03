@@ -140,7 +140,7 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
                         if ('uri' === $name || ('path' === $field && 'value' === $name)) {
                           $value = preg_replace(
                             '@^(.*[/:])' . preg_quote($entity_type_id, '@') . '/' . preg_quote($id, '@') . '([/?#].*|)$@',
-                            '$1' . $entity_type_id . '/' . '$2',
+                            '$1' . $entity_type_id . '/' . $entity->id() . '$2',
                             $value
                           );
                         }
