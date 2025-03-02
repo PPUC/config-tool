@@ -13,3 +13,30 @@ function ppuc_games_entity_type_alter(array &$entity_types) {
     $entity_types['node']->setFormClass('edit', PpucNodeForm::class);
   }
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ppuc_games_form_node_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_state->getFormObject()->getEntity();
+
+  $form['ppuc_info'] = [
+    '#type' => 'details',
+    '#title' => t('Information'),
+    '#open' => TRUE,
+    '#group' => 'advanced',
+    '#weight' => 10,
+    '#access' => TRUE,
+  ];
+
+  $form['uuid'] = [
+    '#type' => 'textfield',
+    '#title' => t('UUID'),
+    '#default_value' => $node->uuid(),
+    '#access' => TRUE,
+    '#disabled' => TRUE,
+    '#group' => 'ppuc_info',
+  ];
+
+}

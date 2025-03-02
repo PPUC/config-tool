@@ -542,6 +542,10 @@ class Importer implements ImporterInterface {
       return;
     }
 
+    if (!$correction) {
+      $this->metadataService->setCurrentUuid($file->uuid);
+    }
+
     if (PHP_SAPI === 'cli') {
       $root_user = $this->getAdministrator();
       $this->accountSwitcher->switchTo($root_user);

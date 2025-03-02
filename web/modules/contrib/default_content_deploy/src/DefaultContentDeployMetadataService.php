@@ -16,6 +16,8 @@ class DefaultContentDeployMetadataService {
    */
   protected array $uuids = [];
 
+  protected string $current_uuid = '';
+
   /**
    * The timestamps when this metadata has been exported.
    *
@@ -91,6 +93,22 @@ class DefaultContentDeployMetadataService {
    */
   public function isCorrectionRequired(string $uuid): bool {
     return $this->correctionRequired[$uuid] ?? TRUE;
+  }
+
+  /**
+   *
+   */
+  public function setCurrentUuid(string $uuid): void {
+    $this->current_uuid = $uuid;
+  }
+
+  /**
+   *
+   */
+  public function setCorrectionRequiredForCurrentUuid(bool $value): void {
+    if (!empty($this->current_uuid)) {
+      $this->correctionRequired[$this->current_uuid] = $value;
+    }
   }
 
 }
