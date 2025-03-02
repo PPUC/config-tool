@@ -123,6 +123,9 @@ class EditorSecurityTest extends BrowserTestBase {
     $editor = Editor::create([
       'format' => 'restricted_with_editor',
       'editor' => 'unicorn',
+      'image_upload' => [
+        'status' => FALSE,
+      ],
     ]);
     $editor->save();
     $format = FilterFormat::create([
@@ -143,6 +146,9 @@ class EditorSecurityTest extends BrowserTestBase {
     $editor = Editor::create([
       'format' => 'restricted_plus_dangerous_tag_with_editor',
       'editor' => 'unicorn',
+      'image_upload' => [
+        'status' => FALSE,
+      ],
     ]);
     $editor->save();
     $format = FilterFormat::create([
@@ -162,6 +168,9 @@ class EditorSecurityTest extends BrowserTestBase {
     $editor = Editor::create([
       'format' => 'unrestricted_with_editor',
       'editor' => 'unicorn',
+      'image_upload' => [
+        'status' => FALSE,
+      ],
     ]);
     $editor->save();
 
@@ -436,9 +445,9 @@ class EditorSecurityTest extends BrowserTestBase {
     $this->drupalGet('node/2/edit');
     $this->assertSession()->fieldValueEquals('edit-body-0-value', self::$sampleContentSecured);
 
-    // Enable editor_test.module's hook_editor_xss_filter_alter() implementation
+    // Enable editor_test's hook_editor_xss_filter_alter() implementation
     // to alter the text editor XSS filter class being used.
-    \Drupal::state()->set('editor_test_editor_xss_filter_alter_enabled', TRUE);
+    \Drupal::keyValue('editor_test')->set('editor_xss_filter_alter_enabled', TRUE);
 
     // First: the Insecure text editor XSS filter.
     $this->drupalGet('node/2/edit');

@@ -81,17 +81,13 @@ class UserController extends ControllerBase {
     UserDataInterface $user_data,
     LoggerInterface $logger,
     FloodInterface $flood,
-    protected ?TimeInterface $time = NULL,
+    protected TimeInterface $time,
   ) {
     $this->dateFormatter = $date_formatter;
     $this->userStorage = $user_storage;
     $this->userData = $user_data;
     $this->logger = $logger;
     $this->flood = $flood;
-    if ($this->time === NULL) {
-      @trigger_error('Calling ' . __METHOD__ . ' without the $time argument is deprecated in drupal:10.3.0 and it will be required in drupal:11.0.0. See https://www.drupal.org/node/3112298', E_USER_DEPRECATED);
-      $this->time = \Drupal::service('datetime.time');
-    }
   }
 
   /**
@@ -264,7 +260,7 @@ class UserController extends ControllerBase {
 
     user_login_finalize($user);
     $this->logger->info('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-    $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in. It is recommended that you set your password.'));
+    $this->messenger()->addStatus($this->t('You have used a one-time login link. You can set your new password now.'));
     // Let the user's password be changed without the current password
     // check.
     $token = Crypt::randomBytesBase64(55);

@@ -5,10 +5,9 @@ namespace Drupal\search_api_default_content_deploy\Plugin\search_api\backend;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\default_content_deploy\Exporter;
 use Drupal\default_content_deploy\ExporterInterface;
+use Drupal\default_content_deploy\ImporterInterface;
 use Drupal\search_api\LoggerTrait;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginDependencyTrait;
 use Drupal\Core\Plugin\PluginFormInterface;
@@ -20,6 +19,7 @@ use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Utility\Utility;
 use Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Default Content Deploy backend for search api.
@@ -45,9 +45,16 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * The exporter.
    *
-   * @var ExporterInterface
+   * @var \Drupal\default_content_deploy\ExporterInterface
    */
   protected $exporter;
+
+  /**
+   * The importer.
+   *
+   * @var \Drupal\default_content_deploy\ImporterInterface
+   */
+  protected $importer;
 
   /**
    * The entity type manager.
@@ -64,14 +71,23 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   protected $fileSystem;
 
   /**
+   * Serializer.
+   *
+   * @var \Symfony\Component\Serializer\Serializer
+   */
+  protected $serializer;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExporterInterface $exporter, EntityTypeManagerInterface $entityTypeManager, FileSystemInterface $file_system) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExporterInterface $exporter, ImporterInterface $importer, EntityTypeManagerInterface $entityTypeManager, FileSystemInterface $file_system, Serializer $serializer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->exporter = $exporter;
+    $this->importer = $importer;
     $this->entityTypeManager = $entityTypeManager;
     $this->fileSystem = $file_system;
+    $this->serializer = $serializer;
   }
 
   /**
@@ -83,8 +99,10 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
       $plugin_id,
       $plugin_definition,
       $container->get('default_content_deploy.exporter'),
+      $container->get('default_content_deploy.importer'),
       $container->get('entity_type.manager'),
-      $container->get('file_system')
+      $container->get('file_system'),
+      $container->get('serializer')
     );
   }
 
@@ -125,10 +143,10 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * {@inheritdoc}
    */
-  public function removeIndex($index) {
+  public function removeIndex($index) {// phpcs:ignore Generic.CodeAnalysis.UselessOverridingMethod
     parent::removeIndex($index);
 
-    // @todo delete directories?
+    // @todo delete directories? If not, remove this method.
   }
 
   /**
@@ -151,7 +169,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     foreach ($items as $item) {
       $datasource = $item->getDatasource();
       if ($datasource instanceof DefaultContentDeployContentEntity) {
-        /** @var ContentEntityInterface $entity */
+        /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
         $entity = $item->getOriginalObject()->getEntity();
         if ($this->exporter->exportEntity($entity, $index_third_party_settings['export_referenced_entities'])) {
           [$datasource_id, $item_id] = Utility::splitCombinedId($item->getId());
@@ -182,11 +200,33 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
       foreach ($ids as $id) {
         [$datasource_id, $item_id] = Utility::splitCombinedId($id);
         if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
-          $file = '/' . $item_matches[1] . '.json';
-          $file_path = $directory . $datasource_matches[1] . $file;
+          $file_name = '/' . $item_matches[1] . '.json';
+          $file_path = $directory . $datasource_matches[1] . $file_name;
           $deleted_directory = $directory . '_deleted/' . $datasource_matches[1];
+
           if ($index_third_party_settings['move_deleted_single_file'] && file_exists($file_path) && $this->fileSystem->prepareDirectory($deleted_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
-            $this->fileSystem->move($file_path, $deleted_directory . $file, FileExists::Replace);
+            $file = new \stdClass();
+            $file->name = $file_name;
+            $file->uuid = str_replace('.json', '', $file->name);
+            $file->uri = $deleted_directory . $file->name;
+            $file->entity_type_id = basename(dirname($file->uri));
+            $file->forceOverride = FALSE;
+            $file->action = $this->t('delete');
+
+            $this->fileSystem->move($file_path, $file->uri, FileExists::Replace);
+
+            try {
+              $this->importer->decodeFile($file);
+              $file->data['_dcd_metadata']['delete_timestamp'] = \Drupal::time()->getRequestTime();
+              $content = $this->serializer->serialize($file->data, 'json', [
+                'json_encode_options' => JSON_PRETTY_PRINT,
+              ]);
+              file_put_contents($file->uri, $content);
+            }
+            catch (\Exception $e) {
+              // The file has been moved already, but adding metadata failed.
+              // @todo Log the exception.
+            }
           }
           else {
             $this->fileSystem->delete($file_path);
@@ -220,4 +260,5 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
    */
   public function search(QueryInterface $query) {
   }
+
 }

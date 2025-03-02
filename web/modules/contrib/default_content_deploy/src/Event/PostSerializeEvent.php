@@ -28,14 +28,23 @@ class PostSerializeEvent extends IndexAwareEvent {
     return $this->entity;
   }
 
+  /**
+   *
+   */
   public function getContent(): string {
     return $this->content;
   }
 
+  /**
+   *
+   */
   public function setContent(string $content): void {
     $this->content = $content;
   }
 
+  /**
+   *
+   */
   public function getContentDecoded(): array {
     /** @var \Symfony\Component\Serializer\Serializer $serializer */
     $serializer = \Drupal::service('serializer');
@@ -43,6 +52,9 @@ class PostSerializeEvent extends IndexAwareEvent {
     return $serializer->decode($this->content, 'json');
   }
 
+  /**
+   *
+   */
   public function setContentDecoded(array $content): void {
     /** @var \Symfony\Component\Serializer\Serializer $serializer */
     $serializer = \Drupal::service('serializer');
@@ -50,11 +62,18 @@ class PostSerializeEvent extends IndexAwareEvent {
     $this->content = $serializer->serialize($content, 'json', ['json_encode_options' => JSON_PRETTY_PRINT]);
   }
 
+  /**
+   *
+   */
   public function getMode(): string {
     return $this->mode;
   }
 
+  /**
+   *
+   */
   public function getFolder(): string {
     return $this->folder;
   }
+
 }

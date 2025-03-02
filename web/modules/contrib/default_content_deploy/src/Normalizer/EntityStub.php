@@ -40,7 +40,7 @@ class EntityStub {
     }
     $path = parse_url($uri, PHP_URL_PATH);
     $static = new static();
-    list($static->entityTypeId, $static->entityId) = explode('/', $path);
+    [$static->entityTypeId, $static->entityId] = explode('/', $path);
     return $static;
   }
 

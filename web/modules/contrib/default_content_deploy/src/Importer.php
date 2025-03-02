@@ -2,24 +2,29 @@
 
 namespace Drupal\default_content_deploy;
 
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\default_content_deploy\Event\ImportBatchFinishedEvent;
+use Drupal\default_content_deploy\Event\PostSaveEntityEvent;
 use Drupal\default_content_deploy\Event\PreSaveEntityEvent;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 use Drupal\hal\LinkManager\LinkManagerInterface;
 use Rogervila\ArrayDiffMultidimensional;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\Serializer;
 
-class Importer implements ImporterInterface
-{
+/**
+ *
+ */
+class Importer implements ImporterInterface {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
@@ -68,6 +73,13 @@ class Importer implements ImporterInterface
   private $pathAliasesToImport = [];
 
   /**
+   * Data to delete.
+   *
+   * @var array
+   */
+  private $dataToDelete = [];
+
+  /**
    * Is remove changes of an old content.
    *
    * @var bool
@@ -87,6 +99,13 @@ class Importer implements ImporterInterface
    * @var bool
    */
   protected $incremental = FALSE;
+
+  /**
+   * Delete during import.
+   *
+   * @var bool
+   */
+  protected $delete = FALSE;
 
   /**
    * The Entity repository manager.
@@ -138,7 +157,7 @@ class Importer implements ImporterInterface
   /**
    * The event dispatcher.
    *
-   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -182,14 +201,14 @@ class Importer implements ImporterInterface
    *   The exporter.
    * @param \Drupal\Core\Database\Connection $database
    *   Database connection.
-   * @param \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher $event_dispatcher
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
    *   The metadata service.
    * @param \Drupal\Core\State\StateInterface $state
    *   The state.
    */
-  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, ExporterInterface $exporter, Connection $database, ContainerAwareEventDispatcher $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
+  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, ExporterInterface $exporter, Connection $database, EventDispatcherInterface $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
     $this->serializer = $serializer;
     $this->entityTypeManager = $entity_type_manager;
     $this->linkManager = $link_manager;
@@ -253,8 +272,15 @@ class Importer implements ImporterInterface
   /**
    * {@inheritdoc}
    */
+  public function setDelete(bool $delete): void {
+    $this->delete = $delete;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getResult(): array {
-    return $this->dataToImport + $this->pathAliasesToImport;
+    return $this->dataToImport + $this->pathAliasesToImport + $this->dataToDelete;
   }
 
   /**
@@ -263,7 +289,6 @@ class Importer implements ImporterInterface
   public function setVerbose(bool $verbose): void {
     $this->verbose = $verbose;
   }
-
 
   /**
    * Import data from JSON and create new entities, or update existing.
@@ -282,29 +307,61 @@ class Importer implements ImporterInterface
       if (!isset($this->dataToImport[$file->uuid]) && !isset($this->pathAliasesToImport[$file->uuid])) {
         if ($this->incremental) {
           $this->decodeFile($file);
-          if ($export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? NULL) {
-            if ($last_import_timestamp >= $export_timestamp) {
-              $entity_type_definition = $this->entityTypeManager->getDefinition($file->entity_type_id);
-              $table = $entity_type_definition->getBaseTable();
-              $uuid_column = $entity_type_definition->getKey('uuid');
-              if (\Drupal::database()->select($table, 'e')
-                ->fields('e', [$uuid_column])
-                ->condition($uuid_column, $file->uuid)
-                ->range(0, 1)
-                ->execute()
-                ->fetchField()
-              ) {
-                continue;
-              }
-              // Import the entity even with an old export timestamp because it
-              // doesn't exist in database.
-            }
+          if (($export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? NULL) && $last_import_timestamp >= $export_timestamp && $this->entityExists($file->entity_type_id, $file->uuid)) {
+            continue;
           }
+          // Delete the entity even with an old delete timestamp because it
+          // still exists in database.
         }
 
         $this->addToImport($file);
       }
     }
+
+    if ($this->delete) {
+      $deleted_files = $this->scan($this->getFolder(), TRUE);
+
+      foreach ($deleted_files as $file) {
+        if (!isset($this->dataToDelete[$file->uuid])) {
+          if ($this->incremental) {
+            $this->decodeFile($file);
+            if (($delete_timestamp = $file->data['_dcd_metadata']['delete_timestamp'] ?? NULL) && $last_import_timestamp >= $delete_timestamp && !$this->entityExists($file->entity_type_id, $file->uuid)) {
+              continue;
+            }
+            // Delete the entity even with an old delete timestamp because it
+            // still exists in database.
+          }
+
+          $this->addToDelete($file);
+        }
+      }
+    }
+  }
+
+  /**
+   * Checks if an entity exists in database.
+   *
+   * @param string $entity_type_id
+   *   The entity type id.
+   * @param string $uuid
+   *   The entity UUID.
+   *
+   * @return bool
+   *   TRUE id the entity exists in database.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Exception
+   */
+  protected function entityExists(string $entity_type_id, string $uuid): bool {
+    $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id);
+    $table = $entity_type_definition->getBaseTable();
+    $uuid_column = $entity_type_definition->getKey('uuid');
+    return \Drupal::database()->select($table, 'e')
+      ->fields('e', [$uuid_column])
+      ->condition($uuid_column, $uuid)
+      ->range(0, 1)
+      ->execute()
+      ->fetchField();
   }
 
   /**
@@ -312,11 +369,20 @@ class Importer implements ImporterInterface
    *
    * @param string $directory
    *   Absolute path to the directory to search.
+   * @param bool $deleted
+   *   List deleted files instead of those to be imported.
    *
    * @return object[]
    *   List of stdClass objects with name and uri properties.
    */
-  public function scan(string $directory): array {
+  public function scan(string $directory, bool $deleted = FALSE): array {
+    if ($deleted) {
+      $directory = rtrim($directory, '/') . '/_deleted';
+    }
+    if (!is_dir($directory)) {
+      return [];
+    }
+
     // Use Unix paths regardless of platform, skip dot directories, follow
     // symlinks (to allow extensions to be linked from elsewhere), and return
     // the RecursiveDirectoryIterator instance to have access to getSubPath(),
@@ -331,7 +397,7 @@ class Importer implements ImporterInterface
     /** @var \SplFileInfo $file_info */
     foreach ($iterator as $file_info) {
       // Skip directories and non-json files.
-      if ($file_info->isDir() || $file_info->getExtension() !== 'json' || str_contains($file_info->getPathname(), '_deleted')) {
+      if ($file_info->isDir() || $file_info->getExtension() !== 'json' || (!$deleted && str_contains($file_info->getPathname(), '_deleted'))) {
         continue;
       }
 
@@ -341,6 +407,7 @@ class Importer implements ImporterInterface
       $file->uri = $file_info->getPathname();
       $file->entity_type_id = basename(dirname($file->uri));
       $file->forceOverride = $this->forceOverride;
+      $file->action = $deleted ? $this->t('delete') : $this->t('create or update');
 
       $files[$file->uri] = $file;
     }
@@ -354,7 +421,7 @@ class Importer implements ImporterInterface
   public function import(): void {
     // Process files in batches.
     $operations = [];
-    $total = count($this->dataToImport) + count($this->dataToCorrect) + count($this->pathAliasesToImport);
+    $total = count($this->dataToImport) + count($this->dataToCorrect) + count($this->pathAliasesToImport) + count($this->dataToDelete);
     $current = 1;
 
     if ($total === 0) {
@@ -367,6 +434,7 @@ class Importer implements ImporterInterface
       'verbose' => $this->verbose,
       'preserveIds' => $this->preserveIds,
       'state_key' => 'dcd.last_import.' . md5($this->getFolder()),
+      'folder' => $this->getFolder(),
     ];
 
     $operations[] = [
@@ -395,6 +463,13 @@ class Importer implements ImporterInterface
       ];
     }
 
+    foreach ($this->dataToDelete as $file) {
+      $operations[] = [
+        [static::class, 'deleteEntity'],
+        [$file, $current++, $total, FALSE],
+      ];
+    }
+
     $batch_definition = [
       'title' => $this->t('Importing Content'),
       'operations' => $operations,
@@ -409,18 +484,32 @@ class Importer implements ImporterInterface
     batch_set($batch_definition);
   }
 
+  /**
+   *
+   */
   public static function initializeContext(array $vars, array &$context): void {
     $context['results']['max_export_timestamp'] = 0;
     $context['results'] = array_merge($context['results'], $vars);
   }
 
+  /**
+   *
+   */
   public static function importFile($file, $current, $total, $correction, &$context): void {
     $importer = \Drupal::service('default_content_deploy.importer');
     $importer->processFile($file, $current, $total, $correction, $context);
   }
 
   /**
-   * Prepare file for import.
+   *
+   */
+  public static function deleteEntity($file, $current, $total, $correction, &$context): void {
+    $importer = \Drupal::service('default_content_deploy.importer');
+    $importer->processDelete($file, $current, $total, $context);
+  }
+
+  /**
+   * Process and import file.
    *
    * @param $file
    *   The file object to use for import.
@@ -562,7 +651,6 @@ class Importer implements ImporterInterface
       // that all entity references are present and valid. Path aliases will be
       // imported last to have a chance to rewrite them to the new ids of newly
       // created entities.
-
       $this->linkManager->setLinkDomain($this->getLinkDomain($file));
       $class = $this->entityTypeManager->getDefinition($file->entity_type_id)
         ->getClass();
@@ -571,11 +659,12 @@ class Importer implements ImporterInterface
       $this->metadataService->reset();
       /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
       $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', ['request_method' => 'POST']);
-      $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data));
+      $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data, $correction, $context));
       $entity->enforceIsNew($is_new);
       $entity->save();
+      $this->eventDispatcher->dispatch(new PostSaveEntityEvent($entity, $file->data, $correction, $context));
 
-      if ($correction && !$this->metadataService->isCorrectionRequired($file->uuid)) {
+      if (!$correction && !$this->metadataService->isCorrectionRequired($file->uuid)) {
         $context['results']['skipCorrection'][$file->uuid] = TRUE;
       }
 
@@ -633,6 +722,70 @@ class Importer implements ImporterInterface
   }
 
   /**
+   * Process and import file.
+   *
+   * @param $file
+   *   The file object to use for import.
+   * @param $current
+   *   Indicates progress of the batch operations.
+   * @param $total
+   *   Total number of batch operations.
+   * @param array &$context
+   *   Reference to an array that stores the context of the batch process for status updates.
+   *
+   * @throws \Exception
+   */
+  protected function processDelete(object $file, $current, $total, array &$context): void {
+    $this->verbose = &$context['results']['verbose'];
+
+    if (PHP_SAPI === 'cli') {
+      $root_user = $this->getAdministrator();
+      $this->accountSwitcher->switchTo($root_user);
+    }
+
+    try {
+      $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
+      if ($entity instanceof ContentEntityInterface) {
+        $id = $entity->id();
+        $entity->delete();
+
+        if ($this->verbose) {
+          $context['message'] = $this->t('@current of @total, @operation @entity_type @entity_id', [
+            '@current' => $current,
+            '@total' => $total,
+            '@operation' => $this->t('deleted'),
+            '@entity_type' => $file->entity_type_id,
+            '@entity_id' => $id,
+          ]);
+        }
+      }
+      elseif ($this->verbose) {
+        $context['message'] = $this->t('@current of @total, @entity_type @uuid does not exist in database anymore', [
+          '@current' => $current,
+          '@total' => $total,
+          '@entity_type' => $file->entity_type_id,
+          '@uuid' => $file->uuid,
+        ]);
+      }
+
+      $this->decodeFile($file);
+      $delete_timestamp = $file->data['_dcd_metadata']['delete_timestamp'] ?? -1;
+      if ($delete_timestamp > $context['results']['max_export_timestamp']) {
+        $context['results']['max_export_timestamp'] = $delete_timestamp;
+      }
+    }
+    catch (\Exception $e) {
+      $context['message'] = $this->t('@current of @total, error on deleting @entity_type @uuid: @message', [
+        '@current' => $current,
+        '@total' => $total,
+        '@entity_type' => $file->entity_type_id,
+        '@uuid' => $file->uuid,
+        '@message' => $e->getMessage(),
+      ]);
+    }
+  }
+
+  /**
    * Gets url from file for set to Link manager.
    *
    * @param object $file
@@ -646,16 +799,9 @@ class Importer implements ImporterInterface
   }
 
   /**
-   * Prepare file to import.
-   *
-   * @param object $file
-   *   The file object.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Exception
+   * @{inheritdoc}
    */
-  protected function decodeFile(object $file): void {
+  public function decodeFile(object $file): void {
     // Get parsed data.
     $parsed_data = file_get_contents($file->uri);
 
@@ -716,6 +862,20 @@ class Importer implements ImporterInterface
       default:
         $this->dataToImport[$file->uuid] = $file;
         $this->dataToCorrect[$file->uuid] = $file;
+        break;
+    }
+  }
+
+  /**
+   * Adding prepared data for deletion.
+   *
+   * @param object $file
+   *   The file object.
+   */
+  protected function addToDelete(object $file): void {
+    switch ($file->entity_type_id) {
+      default:
+        $this->dataToDelete[$file->uuid] = $file;
         break;
     }
   }
@@ -799,6 +959,10 @@ class Importer implements ImporterInterface
       // Batch processing encountered an error.
       \Drupal::messenger()->addMessage(t('An error occurred during the batch export process.'), 'error');
     }
+
+    /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $dispatcher->dispatch(new ImportBatchFinishedEvent($success, $results));
   }
 
 }

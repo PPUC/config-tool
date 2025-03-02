@@ -24,7 +24,7 @@ class ConfigurableFieldItemNormalizer extends FieldItemNormalizer {
    * Constructs a ContentEntityNormalizer object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
-   *    The config factory.
+   *   The config factory.
    */
   public function __construct(ConfigFactoryInterface $config) {
     $this->config = $config;
@@ -47,8 +47,8 @@ class ConfigurableFieldItemNormalizer extends FieldItemNormalizer {
     $config = $this->config->get(SettingsForm::CONFIG);
     if ($config->get('skip_processed_values') ?? FALSE) {
       $normalized = [];
-      // We normalize each individual property, so each can do their own casting,
-      // if needed.
+      // We normalize each individual property, so each can do their own
+      // casting, if needed.
       /** @var \Drupal\Core\TypedData\TypedDataInterface $property */
       $field_properties = !empty($field_item->getProperties(TRUE))
         ? TypedDataInternalPropertiesHelper::getNonInternalProperties($field_item)

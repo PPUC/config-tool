@@ -19,7 +19,6 @@ use Drupal\user\RoleInterface;
  * Tests responsive image display formatter.
  *
  * @group responsive_image
- * @group #slow
  */
 class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
 
@@ -117,7 +116,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
    * @param bool $empty_styles
    *   If true, the image style mappings will get empty image styles.
    */
-  protected function addTestImageStyleMappings($empty_styles = FALSE) {
+  protected function addTestImageStyleMappings($empty_styles = FALSE): void {
     if ($empty_styles) {
       $this->responsiveImgStyle
         ->addImageStyleMapping('responsive_image_test_module.mobile', '1x', [
@@ -186,7 +185,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
    *   If true, use an empty string for image style names.
    *   Defaults to false.
    */
-  protected function doTestResponsiveImageFieldFormatters($scheme, $empty_styles = FALSE) {
+  protected function doTestResponsiveImageFieldFormatters($scheme, $empty_styles = FALSE): void {
     /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = $this->container->get('renderer');
     $node_storage = $this->container->get('entity_type.manager')->getStorage('node');
@@ -428,6 +427,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     assert($large_style instanceof ImageStyleInterface);
     $large_style->addImageEffect([
       'id' => 'image_resize',
+      'weight' => 0,
       'data' => [
         'width' => '480',
         'height' => '480',
@@ -438,6 +438,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     assert($medium_style instanceof ImageStyleInterface);
     $medium_style->addImageEffect([
       'id' => 'image_resize',
+      'weight' => 0,
       'data' => [
         'width' => '220',
         'height' => '220',
@@ -494,7 +495,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
     $image_uri = File::load($node->{$field_name}->target_id)->getFileUri();
     $medium_transform_url = $this->fileUrlGenerator->transformRelative($medium_style->buildUrl($image_uri));
     $large_transform_url = $this->fileUrlGenerator->transformRelative($large_style->buildUrl($image_uri));
-    $this->assertSession()->responseMatches('/<img loading="eager" srcset="' . \preg_quote($medium_transform_url, '/') . ' 1x, ' . \preg_quote($large_transform_url, '/') . ' 1.5x, ' . \preg_quote($large_transform_url, '/') . ' 2x" width="220" height="220" src="' . \preg_quote($large_transform_url, '/') . '" alt="\w+" \/>/');
+    $this->assertSession()->responseMatches('/<img loading="eager" srcset="' . \preg_quote($medium_transform_url, '/') . ' 1x, ' . \preg_quote($large_transform_url, '/') . ' 1.5x, ' . \preg_quote($large_transform_url, '/') . ' 2x" width="480" height="480" src="' . \preg_quote($large_transform_url, '/') . '" alt="\w+" \/>/');
 
     $this->responsiveImgStyle
       // Test the output of an empty media query.
@@ -506,7 +507,7 @@ class ResponsiveImageFieldDisplayTest extends ImageFieldTestBase {
 
     // Assert the picture tag has source tags that include dimensions.
     $this->drupalGet('node/' . $nid);
-    $this->assertSession()->responseMatches('/<picture>\s+<source srcset="' . \preg_quote($large_transform_url, '/') . ' 1x" media="\(min-width: 851px\)" type="image\/webp" width="480" height="480"\/>\s+<source srcset="' . \preg_quote($medium_transform_url, '/') . ' 1x, ' . \preg_quote($large_transform_url, '/') . ' 1.5x, ' . \preg_quote($large_transform_url, '/') . ' 2x" type="image\/webp" width="220" height="220"\/>\s+<img loading="eager" src="' . \preg_quote($large_transform_url, '/') . '" width="480" height="480" alt="\w+" \/>\s+<\/picture>/');
+    $this->assertSession()->responseMatches('/<picture>\s+<source srcset="' . \preg_quote($large_transform_url, '/') . ' 1x" media="\(min-width: 851px\)" type="image\/webp" width="480" height="480"\/>\s+<source srcset="' . \preg_quote($medium_transform_url, '/') . ' 1x, ' . \preg_quote($large_transform_url, '/') . ' 1.5x, ' . \preg_quote($large_transform_url, '/') . ' 2x" type="image\/webp" width="220" height="220"\/>\s+<img loading="eager" width="480" height="480" src="' . \preg_quote($large_transform_url, '/') . '" alt="\w+" \/>\s+<\/picture>/');
   }
 
   /**

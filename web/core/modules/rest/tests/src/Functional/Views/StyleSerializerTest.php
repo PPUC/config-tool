@@ -17,7 +17,6 @@ use Drupal\views\Views;
  * Tests the serializer style plugin.
  *
  * @group rest
- * @group #slow
  * @see \Drupal\rest\Plugin\views\display\RestExport
  * @see \Drupal\rest\Plugin\views\style\Serializer
  * @see \Drupal\rest\Plugin\views\row\DataEntityRow
@@ -55,6 +54,8 @@ class StyleSerializerTest extends ViewTestBase {
 
   /**
    * A user with administrative privileges to look at test entity and configure views.
+   *
+   * @var \Drupal\user\Entity\User|false
    */
   protected $adminUser;
 
@@ -157,7 +158,7 @@ class StyleSerializerTest extends ViewTestBase {
    * @param string $format
    *   The new request format.
    */
-  protected function addRequestWithFormat($format) {
+  protected function addRequestWithFormat($format): void {
     $request = \Drupal::request();
     $request = clone $request;
     $request->setRequestFormat($format);

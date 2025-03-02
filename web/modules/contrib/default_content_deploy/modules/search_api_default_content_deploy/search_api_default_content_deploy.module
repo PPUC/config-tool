@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\default_content_deploy\Form\SettingsForm;
+use Drupal\search_api_default_content_deploy\Plugin\search_api\backend\DefaultContentDeployBackend;
 use Drupal\search_api\IndexInterface;
 use Laminas\Stdlib\ArrayUtils;
 
@@ -53,7 +54,6 @@ function search_api_default_content_deploy_search_api_index_update(IndexInterfac
   \Drupal::getContainer()->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
     ->indexUpdate($index);
 }
-
 
 /**
  * Get the default third party settings of an index for DCD.
@@ -186,8 +186,7 @@ function search_api_default_content_deploy_get_servers($only_active = TRUE) {
   foreach ($servers as $server) {
     if (
       $server->hasValidBackend() &&
-      $server->getBackend() instanceof \Drupal\search_api_default_content_deploy\Plugin\search_api\backend\DefaultContentDeployBackend
-    ) {
+      $server->getBackend() instanceof DefaultContentDeployBackend) {
       $dcd_servers[$server->id()] = $server;
     }
   }

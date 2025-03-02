@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\default_content_deploy\DeployManager;
-use Drupal\default_content_deploy\Exporter;
 use Drupal\default_content_deploy\ExporterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,7 +19,7 @@ class ExportForm extends FormBase {
   /**
    * Default Content Deploy Export object.
    *
-   * @var ExporterInterface
+   * @var \Drupal\default_content_deploy\ExporterInterface
    */
   protected $exporter;
 
@@ -50,7 +49,7 @@ class ExportForm extends FormBase {
    *
    * @param \Drupal\Core\Messenger\Messenger $messenger
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
-   * @param ExporterInterface $exporter
+   * @param \Drupal\default_content_deploy\ExporterInterface $exporter
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    */

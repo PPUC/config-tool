@@ -2,6 +2,7 @@
   "name": "drupal/default_content_deploy",
   "description": "Drupal module for exporting and deploying content in *.json files.",
   "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Martin Klíma",
@@ -20,6 +21,7 @@
   "require": {
     "ext-dom": "*",
     "drupal/hal": "^1.0 || ^2.0",
+    "laminas/laminas-stdlib": "^3.2",
     "rogervila/array-diff-multidimensional": "^2.0"
   },
   "conflict": {

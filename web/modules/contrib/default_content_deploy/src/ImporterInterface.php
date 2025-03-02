@@ -2,12 +2,10 @@
 
 namespace Drupal\default_content_deploy;
 
-
 /**
  * A service for handling import of default content.
  */
-interface ImporterInterface
-{
+interface ImporterInterface {
 
   /**
    * Force override of existing content.
@@ -26,7 +24,7 @@ interface ImporterInterface
   public function setFolder(string $folder): void;
 
   /**
-   * Set option to preserve the original Entity IDs
+   * Set option to preserve the original Entity IDs.
    *
    * Note: this might lead to conflicts with existing content.
    *
@@ -42,6 +40,14 @@ interface ImporterInterface
    *   Incremental mode.
    */
   public function setIncremental(bool $incremental): void;
+
+  /**
+   * Enable the deletion of content.
+   *
+   * @param bool $delete
+   *   Delete content.
+   */
+  public function setDelete(bool $delete): void;
 
   /**
    * Get Imported data result.
@@ -67,4 +73,17 @@ interface ImporterInterface
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function import(): void;
+
+  /**
+   * Prepare file to import.
+   *
+   * @param object $file
+   *   The file object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Exception
+   */
+  public function decodeFile(object $file): void;
+
 }

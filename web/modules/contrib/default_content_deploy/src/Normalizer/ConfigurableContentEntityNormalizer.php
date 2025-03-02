@@ -70,7 +70,7 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function normalize($entity, $format = NULL, array $context = array()) : float|array|int|bool|\ArrayObject|string|null  {
+  public function normalize($entity, $format = NULL, array $context = []) : float|array|int|bool|\ArrayObject|string|null {
     $config = $this->config->get(SettingsForm::CONFIG);
     if ($config->get('skip_computed_fields') ?? FALSE) {
       // Check if the entity has computed fields and remove them.
@@ -104,8 +104,9 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
                     if ($entity = $storage->load($matches[3])) {
                       $entity_array['_dcd_metadata']['uuids'][$matches[2]][$matches[3]] = $entity->uuid();
                     }
-                  } catch (\Exception $e) {
-                    // nop
+                  }
+                  catch (\Exception $e) {
+                    // Nop.
                   }
                 }
               }
@@ -157,7 +158,8 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
               $this->metadataService->setCorrectionRequired($data['uuid'][0]['value'], TRUE);
               break 2;
             }
-          } catch (\Exception $e) {
+          }
+          catch (\Exception $e) {
             $this->metadataService->setCorrectionRequired($data['uuid'][0]['value'], TRUE);
             break 2;
           }

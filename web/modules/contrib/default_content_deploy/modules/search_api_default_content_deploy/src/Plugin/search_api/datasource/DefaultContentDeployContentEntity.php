@@ -2,15 +2,10 @@
 
 namespace Drupal\search_api_default_content_deploy\Plugin\search_api\datasource;
 
-use Drupal\Component\Utility\Crypt;
-use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
-use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
-use Drupal\search_api\Utility\Utility;
 
 /**
  * Represents a datasource which exposes the content entities.
@@ -84,7 +79,7 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   /**
    * {@inheritdoc}
    */
-  public function getPartialItemIds($page = NULL, array $bundles = NULL, array $languages = NULL) {
+  public function getPartialItemIds($page = NULL, ?array $bundles = NULL, ?array $languages = NULL) {
     $item_ids = parent::getPartialItemIds($page, $bundles, $languages);
 
     if (is_array($item_ids)) {
@@ -99,7 +94,7 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   /**
    * {@inheritdoc}
    */
-  public function getAffectedItemsForEntityChange(EntityInterface $entity, array $foreign_entity_relationship_map, EntityInterface $original_entity = NULL): array {
+  public function getAffectedItemsForEntityChange(EntityInterface $entity, array $foreign_entity_relationship_map, ?EntityInterface $original_entity = NULL): array {
     $item_ids = parent::getAffectedItemsForEntityChange($entity, $foreign_entity_relationship_map, $original_entity);
 
     if (is_array($item_ids)) {

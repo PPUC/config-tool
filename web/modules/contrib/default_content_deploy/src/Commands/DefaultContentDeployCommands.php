@@ -6,9 +6,7 @@ use Consolidation\AnnotatedCommand\CommandData;
 use Drupal\Core\Session\AccountSwitcherInterface;
 use Drupal\default_content_deploy\AdministratorTrait;
 use Drupal\default_content_deploy\DeployManager;
-use Drupal\default_content_deploy\Exporter;
 use Drupal\default_content_deploy\ExporterInterface;
-use Drupal\default_content_deploy\Importer;
 use Drupal\default_content_deploy\ImporterInterface;
 use Drush\Commands\DrushCommands;
 use Symfony\Component\Console\Helper\Table;
@@ -25,14 +23,14 @@ class DefaultContentDeployCommands extends DrushCommands {
   /**
    * DCD Exporter.
    *
-   * @var ExporterInterface
+   * @var \Drupal\default_content_deploy\ExporterInterface
    */
   private $exporter;
 
   /**
    * DCD Importer.
    *
-   * @var ImporterInterface
+   * @var \Drupal\default_content_deploy\ImporterInterface
    */
   private $importer;
 
@@ -53,9 +51,9 @@ class DefaultContentDeployCommands extends DrushCommands {
   /**
    * DefaultContentDeployCommands constructor.
    *
-   * @param ExporterInterface $exporter
+   * @param \Drupal\default_content_deploy\ExporterInterface $exporter
    *   DCD Exporter.
-   * @param ImporterInterface $importer
+   * @param \Drupal\default_content_deploy\ImporterInterface $importer
    *   DCD Importer.
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
    *   DCD manager.
@@ -123,14 +121,16 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'force-update' => FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
     $skip_ids = $this->processingArrayOption($options['skip_entities']);
 
     $this->exporter->setEntityTypeId($entity_type);
-    $this->exporter->setEntityBundle($options['bundle']);
+    if (!empty($options['bundle'])) {
+      $this->exporter->setEntityBundle($options['bundle']);
+    }
 
     if (!empty($options['folder'])) {
       $this->exporter->setFolder($options['folder']);
@@ -182,7 +182,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   given date.
    * @usage drush dcder node
    *   Export all nodes with references
-   * @usage drush dcder node  --folder='../content'
+   * @usage drush dcder node --folder='../content'
    *   Export all nodes with references from the specified folder.
    * @usage drush dcder node --bundle=page
    *   Export all nodes with references with bundle page
@@ -200,7 +200,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'skip_entity_type' => NULL, 'force-update'=> FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'skip_entity_type' => NULL, 'force-update' => FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
@@ -208,7 +208,9 @@ class DefaultContentDeployCommands extends DrushCommands {
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
 
     $this->exporter->setEntityTypeId($entity_type);
-    $this->exporter->setEntityBundle($options['bundle']);
+    if (!empty($options['bundle'])) {
+      $this->exporter->setEntityBundle($options['bundle']);
+    }
     $this->exporter->setSkipExportTimestamp($options['skip-export-timestamp']);
 
     if (!empty($options['folder'])) {
@@ -266,7 +268,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @option force-update Deletes configurations files that are not used on the
    *   site.
    * @option skip-export-timestamp Don't include the timestamp in exports.
-    * @option folder Path to the export folder.
+   * @option folder Path to the export folder.
    * @option skip_entity_type The entity types to skip.
    *   Use 'drush dcd-entity-list' for list of all content entities.
    * @option changes-since Only export entities that have been changed since a
@@ -283,7 +285,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportSite(array $options = ['skip_entity_type' => NULL, 'force-update'=> FALSE, 'skip-export-timestamp' => NULL, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportSite(array $options = ['skip_entity_type' => NULL, 'force-update' => FALSE, 'skip-export-timestamp' => NULL, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
@@ -341,7 +343,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function contentDeployImport(array $options = ['force-override' => FALSE, 'folder' => self::OPT, 'preserve-ids' => FALSE, 'incremental' => FALSE]): void {
+  public function contentDeployImport(array $options = ['force-override' => FALSE, 'folder' => self::OPT, 'preserve-ids' => FALSE, 'incremental' => FALSE, 'delete' => FALSE]): void {
     $this->importer->setVerbose($this->output()->isVerbose());
 
     // Perform read only update.
@@ -352,8 +354,8 @@ class DefaultContentDeployCommands extends DrushCommands {
     }
 
     $this->importer->setPreserveIds($options['preserve-ids']);
-
     $this->importer->setIncremental($options['incremental']);
+    $this->importer->setDelete($options['delete']);
 
     $this->importer->prepareForImport();
 
@@ -361,9 +363,9 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     if ($this->output()->isVerbose()) {
       $table = new Table($this->output());
-      $table->setHeaders(['Entity Type', 'UUID']);
+      $table->setHeaders(['Entity Type', 'UUID', 'Action']);
       foreach ($result as $uuid => $file) {
-        $table->addRow([$file->entity_type_id, $uuid]);
+        $table->addRow([$file->entity_type_id, $uuid, $file->action]);
       }
       $table->render();
     }

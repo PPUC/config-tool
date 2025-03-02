@@ -80,7 +80,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function normalize($entity, $format = NULL, array $context = array()) : float|array|int|bool|\ArrayObject|string|null {
+  public function normalize($entity, $format = NULL, array $context = []) : float|array|int|bool|\ArrayObject|string|null {
     $normalized = parent::normalize($entity, $format, $context);
     if (isset($normalized['link']) && is_array($normalized['link'])) {
       foreach ($normalized['link'] as $key => $link) {
@@ -127,7 +127,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function denormalize($data, $class, $format = NULL, array $context = array()): mixed {
+  public function denormalize($data, $class, $format = NULL, array $context = []): mixed {
     if (isset($data['link']) && is_array($data['link'])) {
       foreach ($data['link'] as $key => $link) {
         try {
@@ -170,7 +170,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
     // If the parent entity passed in a langcode, unset it before
     // normalizing the target entity. Otherwise, untranslatable fields
     // of the target entity will include the langcode.
-    $langcode = isset($context['langcode']) ? $context['langcode'] : NULL;
+    $langcode = $context['langcode'] ?? NULL;
     unset($context['langcode']);
     $context['included_fields'] = ['uuid'];
 

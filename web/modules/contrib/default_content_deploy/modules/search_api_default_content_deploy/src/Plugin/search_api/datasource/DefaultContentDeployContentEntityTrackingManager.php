@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\search_api_default_content_deploy\Plugin\search_api\datasource;
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\search_api\IndexInterface;
-use Drupal\search_api\Plugin\search_api\datasource\ContentEntityTaskManager;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntityTrackingManager;
-use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Utility\Utility;
 
 /**
  * Provides hook implementations on behalf of the Content Entity datasource.
@@ -45,7 +39,6 @@ class DefaultContentDeployContentEntityTrackingManager extends ContentEntityTrac
     }
 
     $datasource_id = static::DATASOURCE_BASE_ID . ':' . $entity->getEntityTypeId();
-    $default_translation = $entity->getUntranslated();
     $item_id = self::formatItemId($entity->getEntityTypeId(), $entity->id(), $entity->language()->getId());
 
     foreach ($indexes as $index) {
@@ -83,4 +76,5 @@ class DefaultContentDeployContentEntityTrackingManager extends ContentEntityTrac
       $index->trackItemsDeleted($datasource_id, [$item_id]);
     }
   }
+
 }

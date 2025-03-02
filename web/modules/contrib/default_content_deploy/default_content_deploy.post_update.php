@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Rename default_content_deploy.content_directory to default_content_deploy.settings.
  */
 function default_content_deploy_post_update_8001_rename_config() {

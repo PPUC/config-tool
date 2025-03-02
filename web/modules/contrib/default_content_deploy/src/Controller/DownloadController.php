@@ -32,7 +32,7 @@ class DownloadController implements ContainerInjectionInterface {
   /**
    * The Event dispatcher.
    *
-   * @var EventDispatcherInterface
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -80,7 +80,7 @@ class DownloadController implements ContainerInjectionInterface {
     $headers = [
       'Content-Type' => 'application/tar+gzip',
       'Content-Description' => 'File Download',
-      'Content-Disposition' => 'attachment; filename=' . $sanitized_filename
+      'Content-Disposition' => 'attachment; filename=' . $sanitized_filename,
     ];
 
     return new BinaryFileResponse($path, 200, $headers);

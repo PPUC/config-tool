@@ -9,11 +9,19 @@ use Drupal\Core\Queue\Batch;
  */
 class DefaultContentDeployBatch extends Batch {
 
-  // A dedicate table causes some issues with drush.	
+  // A dedicate table causes some issues with drush.
+  // @code
   // const TABLE_NAME = 'default_content_deploy_queue';
+  // @endcode
 
+  /**
+   *
+   */
   protected int $ttl = 14400;
 
+  /**
+   *
+   */
   public function setTtl(int $ttl) {
     $this->ttl = $ttl;
   }

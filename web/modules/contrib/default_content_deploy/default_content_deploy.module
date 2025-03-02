@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Module file.
+ */
+
 use Drupal\default_content_deploy\Form\SettingsForm;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 

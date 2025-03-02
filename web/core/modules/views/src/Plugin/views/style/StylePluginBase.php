@@ -46,6 +46,8 @@ abstract class StylePluginBase extends PluginBase {
 
   /**
    * Store all available tokens row rows.
+   *
+   * @var array
    */
   protected $rowTokens = [];
 
@@ -88,7 +90,7 @@ abstract class StylePluginBase extends PluginBase {
    *
    * @var array|null
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
+  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName, Drupal.Commenting.VariableComment.Missing
   protected $rendered_fields;
 
   /**
@@ -115,7 +117,7 @@ abstract class StylePluginBase extends PluginBase {
    *
    * @var string[]
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
+  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName, Drupal.Commenting.VariableComment.Missing
   public array $render_tokens = [];
 
   /**

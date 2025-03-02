@@ -37,15 +37,25 @@ class PreSerializeEvent extends IndexAwareEvent {
     $this->entity = $entity;
   }
 
+  /**
+   *
+   */
   public function unsetEntity(): void {
     $this->setEntity();
   }
 
+  /**
+   *
+   */
   public function getMode(): string {
     return $this->mode;
   }
 
+  /**
+   *
+   */
   public function getFolder(): string {
     return $this->folder;
   }
+
 }

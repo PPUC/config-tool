@@ -56,7 +56,7 @@ class ConfigImporterMissingContentTest extends KernelTestBase implements LoggerI
   /**
    * {@inheritdoc}
    */
-  public function register(ContainerBuilder $container) {
+  public function register(ContainerBuilder $container): void {
     parent::register($container);
     $container->register('logger.ConfigImporterMissingContentTest', __CLASS__)->addTag('logger');
     $container->set('logger.ConfigImporterMissingContentTest', $this);
@@ -145,9 +145,12 @@ class ConfigImporterMissingContentTest extends KernelTestBase implements LoggerI
     $this->enableModules([
       'block',
       'block_content',
+      'field',
+      'text',
     ]);
     $this->container->get('theme_installer')->install(['stark']);
     $this->installEntitySchema('block_content');
+    $this->installConfig(['block_content']);
     // Create a block content type.
     $block_content_type = BlockContentType::create([
       'id' => 'test',
@@ -179,12 +182,12 @@ class ConfigImporterMissingContentTest extends KernelTestBase implements LoggerI
     $this->logMessages = [];
     $config_importer = $this->configImporter();
     $config_importer->import();
-    $this->assertNotContains('The "block_content:6376f337-fcbf-4b28-b30e-ed5b6932e692" was not found', $this->logMessages);
+    $this->assertNotContains('The "block_content:6376f337-fcbf-4b28-b30e-ed5b6932e692" block plugin was not found', $this->logMessages);
 
     // Ensure the expected message is generated when creating an instance of the
     // block.
     $instance = $this->container->get('plugin.manager.block')->createInstance($plugin_id);
-    $this->assertContains('The "block_content:6376f337-fcbf-4b28-b30e-ed5b6932e692" was not found', $this->logMessages);
+    $this->assertContains('The "block_content:6376f337-fcbf-4b28-b30e-ed5b6932e692" block plugin was not found', $this->logMessages);
     $this->assertInstanceOf(Broken::class, $instance);
   }
 

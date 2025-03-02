@@ -2,6 +2,7 @@
 
 namespace Drupal\views\Plugin\views;
 
+use Drupal\Component\Utility\FilterArray;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\UrlHelper;
@@ -85,7 +86,7 @@ abstract class HandlerBase extends PluginBase implements ViewsHandlerInterface {
   /**
    * Tracks whether the plugin is a handler.
    */
-  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName
+  // phpcs:ignore Drupal.NamingConventions.ValidVariableName.LowerCamelName, Drupal.Commenting.VariableComment.Missing
   public bool $is_handler;
 
   /**
@@ -832,7 +833,7 @@ abstract class HandlerBase extends PluginBase implements ViewsHandlerInterface {
     // Filter any empty matches (Like from '++' in a string) and reset the
     // array keys. 'strlen' is used as the filter callback so we do not lose
     // 0 values (would otherwise evaluate == FALSE).
-    $value = array_values(array_filter($value, 'strlen'));
+    $value = array_values(FilterArray::removeEmptyStrings($value));
 
     if ($force_int) {
       $value = array_map('intval', $value);

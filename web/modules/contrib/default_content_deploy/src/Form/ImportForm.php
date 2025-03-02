@@ -7,7 +7,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\Messenger;
 use Drupal\default_content_deploy\DeployManager;
-use Drupal\default_content_deploy\Importer;
 use Drupal\default_content_deploy\ImporterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,7 +18,7 @@ class ImportForm extends FormBase {
   /**
    * Default Content Deploy Importer object.
    *
-   * @var ImporterInterface
+   * @var \Drupal\default_content_deploy\ImporterInterface
    */
   private $importer;
 
@@ -40,7 +39,7 @@ class ImportForm extends FormBase {
   /**
    * ImportForm constructor.
    *
-   * @param ImporterInterface $importer
+   * @param \Drupal\default_content_deploy\ImporterInterface $importer
    * @param \Drupal\Core\Messenger\Messenger $messenger
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
    * @param \Drupal\Core\File\FileSystemInterface $file_system
@@ -167,8 +166,7 @@ class ImportForm extends FormBase {
       $this->importer->prepareForImport();
 
       // @todo Use the result and convert the form into a confirm form
-      //    $result = $this->importer->getResult();
-
+      //   $result = $this->importer->getResult();
       $this->importer->import();
     }
     catch (\Exception $exception) {

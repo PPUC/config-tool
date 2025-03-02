@@ -2,7 +2,6 @@
 
 namespace Drupal\default_content_deploy;
 
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
@@ -23,13 +22,16 @@ use Drupal\default_content_deploy\Event\PreSerializeEvent;
 use Drupal\default_content_deploy\Form\SettingsForm;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 use Drupal\hal\LinkManager\LinkManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Serializer\Serializer;
 use Drupal\layout_builder\Section;
 use Drupal\layout_builder\Plugin\DataType\SectionData;
 use Drupal\layout_builder\SectionComponent;
 
-class Exporter implements ExporterInterface
-{
+/**
+ *
+ */
+class Exporter implements ExporterInterface {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
@@ -159,7 +161,7 @@ class Exporter implements ExporterInterface
    *
    * @var string
    */
-  private $mode;
+  private $mode = 'default';
 
   /**
    * Is remove old content.
@@ -185,7 +187,7 @@ class Exporter implements ExporterInterface
   /**
    * The event dispatcher.
    *
-   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $eventDispatcher;
 
@@ -198,7 +200,6 @@ class Exporter implements ExporterInterface
    * @var bool
    */
   protected $verbose = FALSE;
-
 
   /**
    * Exporter constructor.
@@ -217,8 +218,8 @@ class Exporter implements ExporterInterface
    *   The file system service.
    * @param \Drupal\hal\LinkManager\LinkManagerInterface $link_manager
    *   The link manager service.
-   * @param \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher $event_dispatcher
-   *    The event dispatcher.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
@@ -228,7 +229,7 @@ class Exporter implements ExporterInterface
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
    */
-  public function __construct(Connection $database, DeployManager $deploy_manager, EntityTypeManagerInterface $entityTypeManager, Serializer $serializer, AccountSwitcherInterface $account_switcher, FileSystemInterface $file_system, LinkManagerInterface $link_manager, ContainerAwareEventDispatcher $eventDispatcher, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config, LanguageManagerInterface $language_manager, EntityRepositoryInterface $entity_repository) {
+  public function __construct(Connection $database, DeployManager $deploy_manager, EntityTypeManagerInterface $entityTypeManager, Serializer $serializer, AccountSwitcherInterface $account_switcher, FileSystemInterface $file_system, LinkManagerInterface $link_manager, EventDispatcherInterface $event_dispatcher, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config, LanguageManagerInterface $language_manager, EntityRepositoryInterface $entity_repository) {
     $this->database = $database;
     $this->entityTypeManager = $entityTypeManager;
     $this->serializer = $serializer;
@@ -236,7 +237,7 @@ class Exporter implements ExporterInterface
     $this->deployManager = $deploy_manager;
     $this->fileSystem = $file_system;
     $this->linkManager = $link_manager;
-    $this->eventDispatcher = $eventDispatcher;
+    $this->eventDispatcher = $event_dispatcher;
     $this->moduleHandler = $module_handler;
     $this->config = $config;
     $this->languageManager = $language_manager;
@@ -277,6 +278,9 @@ class Exporter implements ExporterInterface
     $this->skipEntityIds = $skip_entity_ids;
   }
 
+  /**
+   *
+   */
   public function setSkipEntityTypeIds(array $skip_entity_type_ids): void {
     $this->skipEntityTypeIds = $skip_entity_type_ids;
   }
@@ -287,7 +291,7 @@ class Exporter implements ExporterInterface
   public function getSkipEntityTypeIds(): array {
     if (empty($this->skipEntityTypeIds)) {
       $config = $this->config->get(SettingsForm::CONFIG);
-     return $config->get('skip_entity_types') ?? [];
+      return $config->get('skip_entity_types') ?? [];
     }
 
     return $this->skipEntityTypeIds;
@@ -501,6 +505,9 @@ class Exporter implements ExporterInterface
     batch_set($batch_definition);
   }
 
+  /**
+   *
+   */
   protected function getInitializeContextOperation(): array {
     $context = [
       'dateTime' => $this->getDateTime(),
@@ -520,10 +527,16 @@ class Exporter implements ExporterInterface
 
   }
 
+  /**
+   *
+   */
   public static function initializeContext(array $vars, array &$context): void {
     $context['results'] = array_merge($context['results'] ?? [], $vars);
   }
 
+  /**
+   *
+   */
   protected function synchronizeContext(array &$context): void {
     $this->dateTime = &$context['results']['dateTime'];
     $this->folder = &$context['results']['folder'];
@@ -535,6 +548,9 @@ class Exporter implements ExporterInterface
     $this->linkDomain = &$context['results']['linkDomain'];
   }
 
+  /**
+   *
+   */
   public static function exportFile(string $export_type, string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
     /** @var ExporterInterface $exporter */
     $exporter = \Drupal::service('default_content_deploy.exporter');
@@ -564,7 +580,7 @@ class Exporter implements ExporterInterface
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $uuid = $entity->get('uuid')->value;
       if (!$this->skipEntity($entity, $context)) {
-        if ($serialized_entity = $this->getSerializedContent($entity, !$this->getSkipExportTimestamp())) {
+        if ($serialized_entity = $this->getSerializedContent($entity, TRUE)) {
           $this->writeSerializedEntity($entity_type, $serialized_entity, $uuid);
           $context['results']['exported_entities'][$entity_type][] = $uuid;
           if ($this->verbose) {
@@ -602,7 +618,7 @@ class Exporter implements ExporterInterface
     $this->setMode($with_references ? 'reference' : 'default');
     $uuid = $entity->get('uuid')->value;
     $context = [];
-    if ($serialized_entity = $this->getSerializedContent($entity, !$this->getSkipExportTimestamp())) {
+    if ($serialized_entity = $this->getSerializedContent($entity, TRUE)) {
       $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $uuid);
 
       if ($with_references) {
@@ -612,7 +628,7 @@ class Exporter implements ExporterInterface
         foreach ($referenced_entities as $uuid => $referenced_entity) {
           $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity, !$this->getSkipExportTimestamp())) {
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE)) {
             $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
           }
         }
@@ -652,7 +668,7 @@ class Exporter implements ExporterInterface
         foreach ($referenced_entities as $uuid => $referenced_entity) {
           $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity, !$this->getSkipExportTimestamp())) {
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE)) {
             $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
             $context['results']['exported_entities'][$referenced_entity_type][] = $uuid;
           }
@@ -748,9 +764,9 @@ class Exporter implements ExporterInterface
    * @param bool $success
    *   Indicates whether the batch processing was successful.
    * @param array $results
-   *    The results.
+   *   The results.
    * @param array $operations
-   *    The operations.
+   *   The operations.
    */
   public static function exportFinished($success, $results, $operations): void {
     if ($success) {
@@ -760,12 +776,14 @@ class Exporter implements ExporterInterface
       $counts = [];
       if (isset($results['exported_entities'])) {
         foreach ($results['exported_entities'] as $entity_type => $entities) {
-          $counts[$entity_type]['exported'] = count($entities);  // Count the number of entities per type
+          // Count the number of entities per type.
+          $counts[$entity_type]['exported'] = count($entities);
         }
       }
       if (isset($results['skipped_entities'])) {
         foreach ($results['skipped_entities'] as $entity_type => $entities) {
-          $counts[$entity_type]['skipped'] = count($entities);  // Count the number of entities per type
+          // Count the number of entities per type.
+          $counts[$entity_type]['skipped'] = count($entities);
         }
       }
 
@@ -833,11 +851,13 @@ class Exporter implements ExporterInterface
     }
 
     // For debugging, limit the number of entities.
-    // return array_slice($entity_ids, 0, 10, true);
-
+    // return array_slice($entity_ids, 0, 10, true);.
     return $entity_ids;
   }
 
+  /**
+   *
+   */
   protected function skipEntity(EntityInterface $entity, array &$context): bool {
     if (!($entity instanceof ContentEntityInterface)) {
       return TRUE;
@@ -917,7 +937,10 @@ class Exporter implements ExporterInterface
       }
 
       if ($add_metadata) {
-        $entity_array['_dcd_metadata']['export_timestamp'] = \Drupal::time()->getRequestTime();
+        if (!$this->getSkipExportTimestamp()) {
+          $entity_array['_dcd_metadata']['export_timestamp'] = \Drupal::time()
+            ->getRequestTime();
+        }
       }
       else {
         unset($entity_array['_dcd_metadata']);
@@ -966,7 +989,11 @@ class Exporter implements ExporterInterface
               try {
                 $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type);
                 if ($entity_type_definition->getGroup() === 'content') {
-                  $referenced_entities[$entity_type] = $property->getTargetIdentifier();
+                  // Some entities have "NULL" references, for example a top level
+                  // taxonomy term references parent 0, which isn't an entity.
+                  if ($id = $property->getTargetIdentifier()) {
+                    $referenced_entities[$entity_type][] = $id;
+                  }
                 }
               }
               catch (\Exception $e) {
@@ -1086,7 +1113,7 @@ class Exporter implements ExporterInterface
               $uuid = $node->getAttribute('data-entity-uuid');
 
               // Only add the dependency if it does not already exist.
-              if (!in_array($uuid,  $entity_dependencies)) {
+              if (!in_array($uuid, $entity_dependencies)) {
                 $entity_loaded_by_uuid = $this->entityTypeManager
                   ->getStorage($entity_type)
                   ->loadByProperties(['uuid' => $uuid]);
@@ -1134,16 +1161,15 @@ class Exporter implements ExporterInterface
     foreach (array_keys($languages) as $langcode) {
       $translation = $entity->getTranslation($langcode);
       $entityIds = $this->getReferencedEntityIds($translation);
-      foreach ($entityIds as $entityTypeId => $entityId) {
+      foreach ($entityIds as $entityTypeId => $entityIdsByType) {
         if (in_array($entityTypeId, $this->getSkipEntityTypeIds())) {
           continue;
         }
-
-        // Ignore entity reference if the referenced entity could not be loaded.
-        // Some entities have "NULL" references, for example a top level
-        // taxonomy term references parent 0, which isn't an entity.
-        if ($referenced_entity = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId)) {
-          $entity_dependencies[$entityTypeId][$entityId] = $referenced_entity;
+        foreach ($entityIdsByType as $entityId) {
+          // Ignore entity reference if the referenced entity could not be loaded.
+          if ($referenced_entity = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId)) {
+            $entity_dependencies[$entityTypeId][$entityId] = $referenced_entity;
+          }
         }
       }
 
@@ -1177,7 +1203,7 @@ class Exporter implements ExporterInterface
     }
 
     foreach ($entity_dependencies as $entity_type_dependencies) {
-      /** @var ContentEntityInterface $dependent_entity */
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $dependent_entity */
       foreach ($entity_type_dependencies as $dependent_entity) {
         // Using UUID to keep dependencies unique to prevent recursion.
         $key = $dependent_entity->uuid();

@@ -31,11 +31,11 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
    * are keyed by language code, whereas LanguageInterface::LANGCODE_DEFAULT
    * is used for values in default language.
    *
+   * @var array
+   *
    * @todo Add methods for getting original fields and for determining
    * changes.
    * @todo Provide a better way for defining default values.
-   *
-   * @var array
    */
   protected $values = [];
 
@@ -49,9 +49,9 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
   /**
    * Local cache for field definitions.
    *
-   * @see ContentEntityBase::getFieldDefinitions()
-   *
    * @var array
+   *
+   * @see ContentEntityBase::getFieldDefinitions()
    */
   protected $fieldDefinitions;
 
@@ -546,7 +546,7 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
   /**
    * {@inheritdoc}
    */
-  public function __sleep() {
+  public function __sleep(): array {
     // Get the values of instantiated field objects, only serialize the values.
     foreach ($this->fields as $name => $fields) {
       foreach ($fields as $langcode => $field) {
@@ -687,8 +687,7 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
   /**
    * {@inheritdoc}
    */
-  #[\ReturnTypeWillChange]
-  public function getIterator() {
+  public function getIterator(): \ArrayIterator {
     return new \ArrayIterator($this->getFields());
   }
 
@@ -1185,7 +1184,11 @@ abstract class ContentEntityBase extends EntityBase implements \IteratorAggregat
     if ($entity_type->hasKey('id')) {
       $duplicate->{$entity_type->getKey('id')}->value = NULL;
     }
+    // Explicitly mark the entity as new and the default revision. A new entity
+    // is always the default revision, but that persists only until the entity
+    // is saved.
     $duplicate->enforceIsNew();
+    $duplicate->isDefaultRevision(TRUE);
 
     // Check if the entity type supports UUIDs and generate a new one if so.
     if ($entity_type->hasKey('uuid')) {

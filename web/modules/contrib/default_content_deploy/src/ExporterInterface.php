@@ -21,7 +21,7 @@ interface ExporterInterface {
    * Set type of entity content.
    *
    * @param string $bundle
-   *  Bundle of the entity type.
+   *   Bundle of the entity type.
    */
   public function setEntityBundle(string $bundle): void;
 
@@ -59,7 +59,7 @@ interface ExporterInterface {
    * Set type of export.
    *
    * @param string $mode
-   *  Value type of export.
+   *   Value type of export.
    *
    * @throws \Exception
    */
@@ -84,6 +84,7 @@ interface ExporterInterface {
   /**
    * Set the Domain of the links to other entities in the HAL format.
    * *
+   *
    * @return string
    *   The link domain
    */
@@ -153,7 +154,7 @@ interface ExporterInterface {
   /**
    * Prepares and exports a single entity to a JSON file.
    *
-   * @param ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to be exported.
    * @param bool|null $with_references
    *   Indicates if export should consider referenced entities.
@@ -175,4 +176,5 @@ interface ExporterInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string;
+
 }

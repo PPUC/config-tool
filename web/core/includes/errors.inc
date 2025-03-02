@@ -34,7 +34,6 @@ function drupal_error_levels() {
     E_USER_ERROR => ['User error', RfcLogLevel::ERROR],
     E_USER_WARNING => ['User warning', RfcLogLevel::WARNING],
     E_USER_NOTICE => ['User notice', RfcLogLevel::NOTICE],
-    E_STRICT => ['Strict warning', RfcLogLevel::DEBUG],
     E_RECOVERABLE_ERROR => ['Recoverable fatal error', RfcLogLevel::ERROR],
     E_DEPRECATED => ['Deprecated function', RfcLogLevel::DEBUG],
     E_USER_DEPRECATED => ['User deprecated function', RfcLogLevel::DEBUG],
@@ -330,7 +329,7 @@ function _drupal_get_error_level() {
   try {
     $error_level = \Drupal::config('system.logging')->get('error_level');
   }
-  catch (\Exception $e) {
+  catch (\Exception) {
     $error_level = $GLOBALS['config']['system.logging']['error_level'] ?? ERROR_REPORTING_HIDE;
   }
 

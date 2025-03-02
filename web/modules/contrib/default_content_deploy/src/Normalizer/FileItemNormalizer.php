@@ -35,7 +35,7 @@ class FileItemNormalizer extends EntityReferenceItemNormalizer {
   /**
    * {@inheritdoc}
    */
-  public function normalize($field_item, $format = NULL, array $context = array()) : float|array|int|bool|\ArrayObject|string|null  {
+  public function normalize($field_item, $format = NULL, array $context = []) : float|array|int|bool|\ArrayObject|string|null {
     /** @var \Drupal\file\Plugin\Field\FieldType\FileItem $field_item */
 
     $data = parent::normalize($field_item, $format, $context);
