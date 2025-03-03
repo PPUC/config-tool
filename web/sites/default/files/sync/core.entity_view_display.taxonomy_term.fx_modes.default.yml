@@ -1,0 +1,31 @@
+uuid: fada378b-651f-4096-a296-313aeca07a6c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.fx_modes.field_number
+    - taxonomy.vocabulary.fx_modes
+  module:
+    - text
+id: taxonomy_term.fx_modes.default
+targetEntityType: taxonomy_term
+bundle: fx_modes
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_number:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

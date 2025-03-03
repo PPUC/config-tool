@@ -1,0 +1,9 @@
+uuid: 0ef0dcb8-a366-4ca4-92b1-876521ef2329
+langcode: en
+status: true
+dependencies: {  }
+name: 'FX Modes'
+vid: fx_modes
+description: 'WS2812FX modes'
+weight: 0
+new_revision: false

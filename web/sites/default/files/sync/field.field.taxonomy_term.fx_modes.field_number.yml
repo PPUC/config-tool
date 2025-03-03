@@ -1,0 +1,23 @@
+uuid: 9c833fb3-bf2c-4f37-8b06-9d67f1600f7f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_number
+    - taxonomy.vocabulary.fx_modes
+id: taxonomy_term.fx_modes.field_number
+field_name: field_number
+entity_type: taxonomy_term
+bundle: fx_modes
+label: Number
+description: 'https://github.com/kitesurfer1404/WS2812FX/blob/master/src/modes_arduino.h'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 56
+  prefix: ''
+  suffix: ''
+field_type: integer

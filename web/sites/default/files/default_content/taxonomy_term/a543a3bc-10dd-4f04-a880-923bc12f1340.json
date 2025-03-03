@@ -1,0 +1,96 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/58?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/fx_modes"
+        },
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 58
+        }
+    ],
+    "uuid": [
+        {
+            "value": "a543a3bc-10dd-4f04-a880-923bc12f1340"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "fx_modes"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-03-03T19:06:44+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Scan",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Runs a single pixel back and forth.<\/p>",
+            "format": "basic_html",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2025-03-03T19:06:44+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "field_number": [
+        {
+            "value": 13
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1741029836
+    }
+}

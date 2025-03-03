@@ -1,0 +1,96 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/94?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/fx_modes"
+        },
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 94
+        }
+    ],
+    "uuid": [
+        {
+            "value": "fba21852-cc7a-4b81-a633-512528adab11"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "fx_modes"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-03-03T19:18:43+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Fire Flicker (soft)",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Fire flickering effect. Runs slower\/softer.<\/p>",
+            "format": "basic_html",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2025-03-03T19:18:43+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "field_number": [
+        {
+            "value": 49
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1741029836
+    }
+}
