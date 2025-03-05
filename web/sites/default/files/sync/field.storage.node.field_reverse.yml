@@ -1,0 +1,18 @@
+uuid: e75d93ce-f769-42b1-a084-30a3020ce8e5
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_reverse
+field_name: field_reverse
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,9 @@
+uuid: 18ac2ec6-9916-46b0-aa27-4d1382daf424
+langcode: en
+status: true
+dependencies: {  }
+name: 'PWM Effects'
+vid: pwm_effects
+description: 'Effects for PWM devices'
+weight: 0
+new_revision: false

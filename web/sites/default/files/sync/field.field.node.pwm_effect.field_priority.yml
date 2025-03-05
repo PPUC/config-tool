@@ -1,0 +1,25 @@
+uuid: 666c26a5-b963-4ce8-aa46-bbb816a99a56
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_priority
+    - node.type.pwm_effect
+id: node.pwm_effect.field_priority
+field_name: field_priority
+entity_type: node
+bundle: pwm_effect
+label: Priority
+description: 'An effect with higher priority can terminate another running effect with lower priority.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  min: 1
+  max: 64
+  prefix: ''
+  suffix: ''
+field_type: integer

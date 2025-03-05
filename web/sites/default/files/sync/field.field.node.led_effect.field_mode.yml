@@ -1,0 +1,23 @@
+uuid: cdc42e3c-61e0-44a7-a6a7-c55389f15428
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_mode
+    - node.type.led_effect
+id: node.led_effect.field_mode
+field_name: field_mode
+entity_type: node
+bundle: led_effect
+label: Mode
+description: 'The effect should only run in a specific game mode. 0 means any mode.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer

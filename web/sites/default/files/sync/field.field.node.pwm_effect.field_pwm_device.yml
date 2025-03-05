@@ -1,0 +1,29 @@
+uuid: 5795ce6b-7e64-456b-b9c4-b9cfaba57aba
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pwm_device
+    - node.type.pwm_device
+    - node.type.pwm_effect
+id: node.pwm_effect.field_pwm_device
+field_name: field_pwm_device
+entity_type: node
+bundle: pwm_effect
+label: 'PWM Device'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      pwm_device: pwm_device
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

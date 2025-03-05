@@ -1,15 +1,16 @@
-uuid: f15a0cb1-5521-4327-8d0e-032ca0ae5758
+uuid: cdfa0b29-adb1-40e4-bbdd-4fc34c5c600c
 langcode: en
 status: true
 dependencies:
   module:
     - node
-id: node.field_description
-field_name: field_description
+id: node.field_frequency
+field_name: field_frequency
 entity_type: node
-type: string_long
+type: integer
 settings:
-  case_sensitive: false
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

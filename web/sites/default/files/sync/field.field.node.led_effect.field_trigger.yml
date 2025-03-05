@@ -1,0 +1,19 @@
+uuid: daa3f72d-13fe-44dd-acfc-ced3437642e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger
+    - node.type.led_effect
+id: node.led_effect.field_trigger
+field_name: field_trigger
+entity_type: node
+bundle: led_effect
+label: Trigger
+description: "A DOF string describing the events that trigger the effect. Multiple triggers have to be separated by a forward slash \"/\".\r\nTriggers:\r\n<ul>\r\n<li>S: solenoid, flasher, motor</li>\r\n<li>L: lamp</li>\r\n<li>W: switch</li>\r\n<li>D: DMD</li>\r\n</ul>\r\n\r\nThe string is not 100% DOF compatible, but derived from DOF. The format is the character of the trigger followed by its number, than a space followed by ON or OFF. Example:\r\n<code>\r\nS12 ON/L24 OFF/W14 ON\r\n</code>\r\nThe effect will be triggered when solenoid 12 gets fired or when lamp 24 is turned off or when switch 14 gets closed.\r\n"
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

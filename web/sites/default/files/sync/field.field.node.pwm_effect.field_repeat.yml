@@ -1,0 +1,23 @@
+uuid: 370676e2-9bbf-4c8f-918f-f93109cfc1d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_repeat
+    - node.type.pwm_effect
+id: node.pwm_effect.field_repeat
+field_name: field_repeat
+entity_type: node
+bundle: pwm_effect
+label: Repeat
+description: 'How many times should the effect be repeated? -1 means that the effect runs endlessly or until it gets terminated by an effect with higher priority.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: -1
+  max: 127
+  prefix: ''
+  suffix: ''
+field_type: integer

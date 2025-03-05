@@ -1,0 +1,29 @@
+uuid: 2cc54825-afaf-42de-849e-9c57b82b36e4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pwm_effect
+    - node.type.pwm_effect
+    - taxonomy.vocabulary.pwm_effects
+id: node.pwm_effect.field_pwm_effect
+field_name: field_pwm_effect
+entity_type: node
+bundle: pwm_effect
+label: Effect
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      pwm_effects: pwm_effects
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

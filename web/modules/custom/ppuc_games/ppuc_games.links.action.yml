@@ -75,3 +75,19 @@ ppuc_games.add_addresable_led:
   appears_on:
     - entity.node.canonical
   title: 'Add LED'
+
+ppuc_games.add_pwm_effect:
+  route_name: node.add
+  route_parameters:
+    node_type: 'pwm_effect'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add PWM Effect'
+
+ppuc_games.add_led_effect:
+  route_name: node.add
+  route_parameters:
+    node_type: 'led_effect'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add LED Effect'

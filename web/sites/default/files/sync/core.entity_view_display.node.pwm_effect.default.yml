@@ -1,37 +1,26 @@
-uuid: e8698702-2907-4d62-9340-f59b61b7b431
+uuid: cd10d8da-4426-4be7-a624-46bef45b82cf
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.led_effect.field_color
-    - field.field.node.led_effect.field_duration
-    - field.field.node.led_effect.field_effect
-    - field.field.node.led_effect.field_mode
-    - field.field.node.led_effect.field_priority
-    - field.field.node.led_effect.field_repeat
-    - field.field.node.led_effect.field_reverse
-    - field.field.node.led_effect.field_segment
-    - field.field.node.led_effect.field_speed
-    - field.field.node.led_effect.field_string
-    - field.field.node.led_effect.field_trigger
-    - node.type.led_effect
+    - field.field.node.pwm_effect.field_duration
+    - field.field.node.pwm_effect.field_frequency
+    - field.field.node.pwm_effect.field_max_intensity
+    - field.field.node.pwm_effect.field_min_intensity
+    - field.field.node.pwm_effect.field_mode
+    - field.field.node.pwm_effect.field_priority
+    - field.field.node.pwm_effect.field_pwm_device
+    - field.field.node.pwm_effect.field_pwm_effect
+    - field.field.node.pwm_effect.field_repeat
+    - field.field.node.pwm_effect.field_trigger
+    - node.type.pwm_effect
   module:
-    - color_field
     - user
-id: node.led_effect.default
+id: node.pwm_effect.default
 targetEntityType: node
-bundle: led_effect
+bundle: pwm_effect
 mode: default
 content:
-  field_color:
-    type: color_field_formatter_text
-    label: above
-    settings:
-      format: hex
-      opacity: true
-    third_party_settings: {  }
-    weight: 3
-    region: content
   field_duration:
     type: number_integer
     label: above
@@ -41,13 +30,32 @@ content:
     third_party_settings: {  }
     weight: 9
     region: content
-  field_effect:
-    type: entity_reference_label
+  field_frequency:
+    type: number_integer
     label: above
     settings:
-      link: true
+      thousand_separator: ''
+      prefix_suffix: true
     third_party_settings: {  }
-    weight: 6
+    weight: 103
+    region: content
+  field_max_intensity:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_min_intensity:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
     region: content
   field_mode:
     type: number_integer
@@ -67,6 +75,22 @@ content:
     third_party_settings: {  }
     weight: 8
     region: content
+  field_pwm_device:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_pwm_effect:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 102
+    region: content
   field_repeat:
     type: number_integer
     label: above
@@ -75,42 +99,6 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 10
-    region: content
-  field_reverse:
-    type: boolean
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    weight: 7
-    region: content
-  field_segment:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 4
-    region: content
-  field_speed:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 5
-    region: content
-  field_string:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 2
     region: content
   field_trigger:
     type: basic_string
@@ -122,6 +110,6 @@ content:
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 100
     region: content
 hidden: {  }

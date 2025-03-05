@@ -1,0 +1,91 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/104?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_effects"
+        },
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 104
+        }
+    ],
+    "uuid": [
+        {
+            "value": "59333973-8adb-47aa-b5e2-c1723517e281"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "pwm_effects"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-03-04T12:52:02+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Sine",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Sine curve.<\/p>",
+            "format": "basic_html",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2025-03-04T12:52:02+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1741200748
+    }
+}

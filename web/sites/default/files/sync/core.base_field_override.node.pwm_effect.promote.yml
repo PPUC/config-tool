@@ -1,0 +1,22 @@
+uuid: 20d7219a-5a7d-4a2d-a035-774158bafef4
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.pwm_effect
+id: node.pwm_effect.promote
+field_name: promote
+entity_type: node
+bundle: pwm_effect
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

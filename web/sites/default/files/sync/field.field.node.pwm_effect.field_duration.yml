@@ -1,0 +1,23 @@
+uuid: 1d00ae7f-27d8-4c7b-b2e3-33d1bdc1536e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_duration
+    - node.type.pwm_effect
+id: node.pwm_effect.field_duration
+field_name: field_duration
+entity_type: node
+bundle: pwm_effect
+label: Duration
+description: 'Duration of the effect in milliseconds.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

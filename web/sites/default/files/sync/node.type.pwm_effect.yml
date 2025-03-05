@@ -1,4 +1,4 @@
-uuid: 0a46ebdf-2243-49b1-9e45-59f502401e8e
+uuid: 82ea2e33-47ca-45de-b1f3-f6eeef953c51
 langcode: en
 status: true
 dependencies:
@@ -8,9 +8,9 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
-name: 'LED Effect'
-type: led_effect
-description: 'WS2812FX Effect'
+name: 'PWM Effect'
+type: pwm_effect
+description: 'PWM device effect, for example shaker.'
 help: null
 new_revision: false
 preview_mode: 0

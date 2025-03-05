@@ -1,0 +1,23 @@
+uuid: 137419d0-6637-44a1-a605-066e9acb2c95
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_min_intensity
+    - node.type.pwm_effect
+id: node.pwm_effect.field_min_intensity
+field_name: field_min_intensity
+entity_type: node
+bundle: pwm_effect
+label: 'Min Intensity'
+description: 'Minimum intensity.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer

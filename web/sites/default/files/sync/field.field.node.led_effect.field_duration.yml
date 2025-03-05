@@ -1,0 +1,23 @@
+uuid: 04e96f33-9462-4891-9461-22e9deac43e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_duration
+    - node.type.led_effect
+id: node.led_effect.field_duration
+field_name: field_duration
+entity_type: node
+bundle: led_effect
+label: Duration
+description: 'Duration of the effect in milliseconds.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

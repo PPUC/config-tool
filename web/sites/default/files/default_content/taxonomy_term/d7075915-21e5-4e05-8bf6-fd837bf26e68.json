@@ -1,0 +1,91 @@
+{
+    "_links": {
+        "self": {
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/105?_format=hal_json"
+        },
+        "type": {
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_effects"
+        },
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+            null
+        ]
+    },
+    "tid": [
+        {
+            "value": 105
+        }
+    ],
+    "uuid": [
+        {
+            "value": "d7075915-21e5-4e05-8bf6-fd837bf26e68"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "pwm_effects"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-03-04T12:54:12+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "name": [
+        {
+            "value": "Ramp down and stop",
+            "lang": "en"
+        }
+    ],
+    "description": [
+        {
+            "value": "<p>Useful to gracefully stop a running PWM effect like \"Sine\" to not stop immediately.&nbsp;<\/p>",
+            "format": "basic_html",
+            "lang": "en"
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "_embedded": {
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+            null
+        ]
+    },
+    "changed": [
+        {
+            "value": "2025-03-04T12:54:12+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1741200748
+    }
+}

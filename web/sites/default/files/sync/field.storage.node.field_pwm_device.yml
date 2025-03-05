@@ -1,0 +1,19 @@
+uuid: 2a5a5ff3-d7c3-4677-800e-e58711bf4b6d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_pwm_device
+field_name: field_pwm_device
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

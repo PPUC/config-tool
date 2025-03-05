@@ -64,6 +64,9 @@ class RequestEventSubscriber implements EventSubscriberInterface {
           elseif ($node->hasField('field_switch_matrix')) {
             $nid = $node->field_switch_matrix->target_id;
           }
+          elseif ($node->hasField('field_pwm_device')) {
+            $nid = $node->field_pwm_device->target_id;
+          }
 
           if ($nid) {
             $response = new RedirectResponse(str_replace('/node/' . $node->id(), '/node/' . $nid, $event->getRequest()->getUri()));

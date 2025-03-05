@@ -1,0 +1,29 @@
+uuid: 9b661371-e812-4368-b112-3015b9f87f3f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_effect
+    - node.type.led_effect
+    - taxonomy.vocabulary.fx_modes
+id: node.led_effect.field_effect
+field_name: field_effect
+entity_type: node
+bundle: led_effect
+label: Effect
+description: 'https://github.com/kitesurfer1404/WS2812FX?tab=readme-ov-file#effects'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      fx_modes: fx_modes
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

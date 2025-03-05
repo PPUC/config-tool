@@ -5,10 +5,16 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.led_effect.field_color
-    - field.field.node.led_effect.field_description
+    - field.field.node.led_effect.field_duration
+    - field.field.node.led_effect.field_effect
+    - field.field.node.led_effect.field_mode
+    - field.field.node.led_effect.field_priority
+    - field.field.node.led_effect.field_repeat
+    - field.field.node.led_effect.field_reverse
     - field.field.node.led_effect.field_segment
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
+    - field.field.node.led_effect.field_trigger
     - node.type.led_effect
   module:
     - user
@@ -24,7 +30,13 @@ content:
     region: content
 hidden:
   field_color: true
-  field_description: true
+  field_duration: true
+  field_effect: true
+  field_mode: true
+  field_priority: true
+  field_repeat: true
+  field_reverse: true
   field_segment: true
   field_speed: true
   field_string: true
+  field_trigger: true

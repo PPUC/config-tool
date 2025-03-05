@@ -1,0 +1,21 @@
+uuid: 0437336f-9633-42fc-bfed-0d37e8d3d80a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_reverse
+    - node.type.led_effect
+id: node.led_effect.field_reverse
+field_name: field_reverse
+entity_type: node
+bundle: led_effect
+label: Reverse
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

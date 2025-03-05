@@ -1,0 +1,23 @@
+uuid: 2788ecf1-9afe-45fd-907b-a067a238ca39
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_frequency
+    - node.type.pwm_effect
+id: node.pwm_effect.field_frequency
+field_name: field_frequency
+entity_type: node
+bundle: pwm_effect
+label: Frequency
+description: 'The frequency in Hz.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

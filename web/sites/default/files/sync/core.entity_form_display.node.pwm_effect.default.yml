@@ -1,98 +1,88 @@
-uuid: d1101f85-12b3-4c5b-b95b-97de093a953a
+uuid: 5374ac0c-3b5d-45ff-98cd-6adc9c5140ae
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.led_effect.field_color
-    - field.field.node.led_effect.field_duration
-    - field.field.node.led_effect.field_effect
-    - field.field.node.led_effect.field_mode
-    - field.field.node.led_effect.field_priority
-    - field.field.node.led_effect.field_repeat
-    - field.field.node.led_effect.field_reverse
-    - field.field.node.led_effect.field_segment
-    - field.field.node.led_effect.field_speed
-    - field.field.node.led_effect.field_string
-    - field.field.node.led_effect.field_trigger
-    - node.type.led_effect
-  module:
-    - color_field
-id: node.led_effect.default
+    - field.field.node.pwm_effect.field_duration
+    - field.field.node.pwm_effect.field_frequency
+    - field.field.node.pwm_effect.field_max_intensity
+    - field.field.node.pwm_effect.field_min_intensity
+    - field.field.node.pwm_effect.field_mode
+    - field.field.node.pwm_effect.field_priority
+    - field.field.node.pwm_effect.field_pwm_device
+    - field.field.node.pwm_effect.field_pwm_effect
+    - field.field.node.pwm_effect.field_repeat
+    - field.field.node.pwm_effect.field_trigger
+    - node.type.pwm_effect
+id: node.pwm_effect.default
 targetEntityType: node
-bundle: led_effect
+bundle: pwm_effect
 mode: default
 content:
-  field_color:
-    type: color_field_widget_html5
+  field_duration:
+    type: number
     weight: 5
     region: content
     settings:
-      show_extra: false
-    third_party_settings: {  }
-  field_duration:
-    type: number
-    weight: 7
-    region: content
-    settings:
       placeholder: ''
     third_party_settings: {  }
-  field_effect:
-    type: options_select
+  field_frequency:
+    type: number
     weight: 4
     region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_mode:
-    type: number
-    weight: 11
-    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_priority:
-    type: number
-    weight: 9
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_repeat:
-    type: number
-    weight: 10
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_reverse:
-    type: boolean_checkbox
-    weight: 8
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  field_segment:
-    type: number
-    weight: 3
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_speed:
+  field_max_intensity:
     type: number
     weight: 6
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_string:
+  field_min_intensity:
+    type: number
+    weight: 7
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_mode:
+    type: number
+    weight: 10
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_priority:
+    type: number
+    weight: 8
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_pwm_device:
     type: options_select
     weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_pwm_effect:
+    type: options_select
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_repeat:
+    type: number
+    weight: 9
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_trigger:
     type: string_textarea
-    weight: 12
+    weight: 11
     region: content
     settings:
       rows: 5
@@ -100,7 +90,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 13
+    weight: 12
     region: content
     settings:
       display_label: true

@@ -1,0 +1,23 @@
+uuid: 2e66e573-3f6e-479c-86c5-76f11e7308a1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_repeat
+    - node.type.led_effect
+id: node.led_effect.field_repeat
+field_name: field_repeat
+entity_type: node
+bundle: led_effect
+label: Repeat
+description: 'How many times should the effect be repeated? -1 means that the effect runs endlessly or until it gets terminated by an effect with higher priority.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: -1
+  max: 127
+  prefix: ''
+  suffix: ''
+field_type: integer
