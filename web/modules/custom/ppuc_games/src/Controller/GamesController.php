@@ -66,10 +66,11 @@ class GamesController extends ControllerBase  {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   protected function buildYaml(NodeInterface $node, array &$objects): array {
     /** @var \Drupal\taxonomy\TermInterface $platform */
-    $platform = $node->field_platform->entity;
+    $platform = $node->get('field_platform')->entity;
     $yaml = [
       'ppucVersion' => 1,
       'rom' => 'dummy',
@@ -102,8 +103,8 @@ class GamesController extends ControllerBase  {
       }
       $yaml['dipSwitches'][] = [
         'description' => trim($dip_switch->label()),
-        'number' => (int)($dip_switch->field_number->value),
-        'on' => (bool)($dip_switch->field_status->value),
+        'number' => (int)($dip_switch->get('field_number')->value),
+        'on' => (bool)($dip_switch->get('field_status')->value),
       ];
     }
 
@@ -116,8 +117,8 @@ class GamesController extends ControllerBase  {
     /** @var NodeInterface $i_o_board */
     foreach ($i_o_boards as $i_o_board) {
       $objects[] = $i_o_board;
-      $i_o_board_number = (int)($i_o_board->field_number->value);
-      $i_o_board_type = $i_o_board->field_io_board_type->entity;
+      $i_o_board_number = (int)($i_o_board->get('field_number')->value);
+      $i_o_board_type = $i_o_board->get('field_io_board_type')->entity;
       $i_o_board_gpio_mapping = unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
       $poll_events = FALSE;
 
@@ -133,9 +134,9 @@ class GamesController extends ControllerBase  {
             if ($i_o_board->isPublished() && $device->isPublished()) {
               $yaml['switches'][] = [
                 'description' => trim($device->label()),
-                'number' => (int) ($device->field_number->value),
+                'number' => (int) ($device->get('field_number')->value),
                 'board' => $i_o_board_number,
-                'port' => $i_o_board_gpio_mapping[(int) ($device->field_pin->value)],
+                'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
               ];
 
               $poll_events = TRUE;
@@ -157,7 +158,7 @@ class GamesController extends ControllerBase  {
             foreach ($switch_matrix_parts as $switch_matrix_part) {
               $objects[] = $switch_matrix_part;
               $part = '';
-              switch ($switch_matrix_part->field_matrix_part->entity->uuid()) {
+              switch ($switch_matrix_part->get('field_matrix_part')->entity->uuid()) {
                 case '71d21092-dbdc-4741-9894-194b28fd5228':
                   $part = 'columns';
 
@@ -172,8 +173,8 @@ class GamesController extends ControllerBase  {
               if ($switch_matrix_part->isPublished()) {
                 $switch_matrix[$part][] = [
                   'description' => trim($switch_matrix_part->label()),
-                  'number' => (int) ($switch_matrix_part->field_number->value),
-                  'port' => $i_o_board_gpio_mapping[(int) ($switch_matrix_part->field_pin->value)],
+                  'number' => (int) ($switch_matrix_part->get('field_number')->value),
+                  'port' => $i_o_board_gpio_mapping[(int) ($switch_matrix_part->get('field_pin')->value)],
                 ];
               }
             }
@@ -182,8 +183,8 @@ class GamesController extends ControllerBase  {
               $yaml['switchMatrix'] = [
                   'description' => trim($device->label()),
                   'board' => $i_o_board_number,
-                  'activeLow' => (bool) ($device->field_active_low->value),
-                  'pulseTime' => (int) ($device->field_pulse_time->value),
+                  'activeLow' => (bool) ($device->get('field_active_low')->value),
+                  'pulseTime' => (int) ($device->get('field_pulse_time')->value),
                 ] + $switch_matrix;
             }
 
@@ -191,7 +192,7 @@ class GamesController extends ControllerBase  {
 
           case 'pwm_device':
             $type = '';
-            switch ($device->field_pwm_type->entity->uuid()) {
+            switch ($device->get('field_pwm_type')->entity->uuid()) {
               case '620014f7-3bb6-4413-8d22-284706357dbb':
                 $type = 'flasher';
 
@@ -222,7 +223,7 @@ class GamesController extends ControllerBase  {
                 continue;
               }
               $trigger = [];
-              foreach (explode('/', $pwm_effect->field_trigger->value) as $t) {
+              foreach (explode('/', $pwm_effect->get('field_trigger')->value) as $t) {
                 if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
                   $trigger[] = [
                     'source' => $matches[1],
@@ -234,14 +235,14 @@ class GamesController extends ControllerBase  {
 
               $effects[] = [
                 'description' => trim($pwm_effect->label()),
-                'duration' => (int)($pwm_effect->field_duration->value),
-                'effect' => (int)($pwm_effect->field_pwm_effect->value),
-                'frequency' => (int)($pwm_effect->field_frequency->value),
-                'maxIntensity' => (int)($pwm_effect->field_max_intensity->value),
-                'minIntensity' => (int)($pwm_effect->field_min_intensity->value),
-                'mode' => (int)($pwm_effect->field_mode->value),
-                'priority' =>  (int)($pwm_effect->field_priority->value),
-                'repeat' => (int)($pwm_effect->field_repeat->value),
+                'duration' => (int)($pwm_effect->get('field_duration')->value),
+                'effect' => (int)($pwm_effect->get('field_pwm_effect')->value),
+                'frequency' => (int)($pwm_effect->get('field_frequency')->value),
+                'maxIntensity' => (int)($pwm_effect->get('field_max_intensity')->value),
+                'minIntensity' => (int)($pwm_effect->get('field_min_intensity')->value),
+                'mode' => (int)($pwm_effect->get('field_mode')->value),
+                'priority' =>  (int)($pwm_effect->get('field_priority')->value),
+                'repeat' => (int)($pwm_effect->get('field_repeat')->value),
                 'trigger' => $trigger,
               ];
             }
@@ -250,15 +251,15 @@ class GamesController extends ControllerBase  {
               $yaml['pwmOutput'][] = [
                 'description' => trim($device->label()),
                 'type' => $type,
-                'number' => (int) ($device->field_number->value),
+                'number' => (int) ($device->get('field_number')->value),
                 'board' => $i_o_board_number,
-                'port' => $i_o_board_gpio_mapping[(int) ($device->field_pin->value)],
-                'power' => (int) ($device->field_power->value),
-                'holdPower' => (int) ($device->field_hold_power->value),
-                'holdPowerActivationTime' => (int) ($device->field_hold_power_activation_time->value),
-                'minPulseTime' => (int) ($device->field_min_pulse_time->value),
-                'maxPulseTime' => (int) ($device->field_max_pulse_time->value),
-                'fastFlipSwitch' => (int) ($device->field_fast_activation_switch->entity->field_number->value ?? 0),
+                'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
+                'power' => (int) ($device->get('field_power')->value),
+                'holdPower' => (int) ($device->get('field_hold_power')->value),
+                'holdPowerActivationTime' => (int) ($device->get('field_hold_power_activation_time')->value),
+                'minPulseTime' => (int) ($device->get('field_min_pulse_time')->value),
+                'maxPulseTime' => (int) ($device->get('field_max_pulse_time')->value),
+                'fastFlipSwitch' => (int) ($device->get('field_fast_activation_switch')->entity->field_number->value ?? 0),
                 'effects' => $effects,
               ];
             }
@@ -283,7 +284,7 @@ class GamesController extends ControllerBase  {
                 continue;
               }
               $role = '';
-              switch ($addressable_led->field_role->entity->uuid()) {
+              switch ($addressable_led->get('field_role')->entity->uuid()) {
                 case '380dd744-eef0-4bb8-9b62-d6d4ac2af2c6':
                   $role = 'lamps';
 
@@ -302,9 +303,9 @@ class GamesController extends ControllerBase  {
 
               $leds[$role][] = [
                 'description' => trim($addressable_led->label()),
-                'number' => (int)($addressable_led->field_number->value),
-                'ledNumber' => (int)($addressable_led->field_string_position->value),
-                'color' => $addressable_led->field_color->color,
+                'number' => (int)($addressable_led->get('field_number')->value),
+                'ledNumber' => (int)($addressable_led->get('field_string_position')->value),
+                'color' => $addressable_led->get('field_color')->color,
               ];
             }
 
@@ -322,7 +323,7 @@ class GamesController extends ControllerBase  {
                 continue;
               }
               $trigger = [];
-              foreach (explode('/', $led_effect->field_trigger->value) as $t) {
+              foreach (explode('/', $led_effect->get('field_trigger')->value) as $t) {
                 if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
                   $trigger[] = [
                     'source' => $matches[1],
@@ -334,29 +335,40 @@ class GamesController extends ControllerBase  {
 
               $effects[] = [
                 'description' => trim($led_effect->label()),
-                'color' => (int)($led_effect->field_color->value),
-                'duration' => (int)($led_effect->field_duration->value),
-                'effect' => (int)($led_effect->field_effect->value),
-                'reverse' => (int)($led_effect->field_reverse->value),
-                'segment' => (int)($led_effect->field_segment->value),
-                'speed' => (int)($led_effect->field_speed->value),
-                'mode' => (int)($led_effect->field_mode->value),
-                'priority' =>  (int)($led_effect->field_priority->value),
-                'repeat' => (int)($led_effect->field_repeat->value),
+                'color' => (int)($led_effect->get('field_color')->value),
+                'duration' => (int)($led_effect->get('field_duration')->value),
+                'effect' => (int)($led_effect->get('field_effect')->value),
+                'reverse' => (int)($led_effect->get('field_reverse')->value),
+                'segment' => (int)($led_effect->get('field_segment')->value),
+                'speed' => (int)($led_effect->get('field_speed')->value),
+                'mode' => (int)($led_effect->get('field_mode')->value),
+                'priority' =>  (int)($led_effect->get('field_priority')->value),
+                'repeat' => (int)($led_effect->get('field_repeat')->value),
                 'trigger' => $trigger,
               ];
             }
 
             if ($i_o_board->isPublished() && $device->isPublished()) {
+              $segments = [];
+              /** @var \Drupal\range\Plugin\Field\FieldType\RangeIntegerItem $segment */
+              foreach ($device->get('field_segments') as $number => $segment) {
+                $segments[] = [
+                  'number' => (int) $number,
+                  'from' => (int) ($segment->get('from')->getValue()),
+                  'to' => (int) ($segment->get('to')->getValue()),
+                ];
+              }
+
               $yaml['ledStripes'][] = [
                   'description' => trim($device->label()),
                   'board' => $i_o_board_number,
-                  'port' => $i_o_board_gpio_mapping[(int) ($device->field_pin->value)],
-                  'ledType' => $device->field_led_type->entity->getName(),
-                  'brightness' => (int) ($device->field_brightness->value),
-                  'amount' => (int) ($device->field_amount_leds->value),
-                  'lightUp' => (int) ($device->field_light_up->value),
-                  'afterGlow' => (int) ($device->field_after_glow->value),
+                  'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
+                  'ledType' => $device->get('field_led_type')->entity->getName(),
+                  'brightness' => (int) ($device->get('field_brightness')->value),
+                  'amount' => (int) ($device->get('field_amount_leds')->value),
+                  'lightUp' => (int) ($device->get('field_light_up')->value),
+                  'afterGlow' => (int) ($device->get('field_after_glow')->value),
+                  'segments' => $segments,
                 ] + $leds + ['effects' => $effects];
             }
 
@@ -385,7 +397,7 @@ class GamesController extends ControllerBase  {
    * @return \Symfony\Component\HttpFoundation\Response
    *   The HTTP response object.
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException|\Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function streamPinMameYaml(NodeInterface $node): Response {
     $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.yml', 'yml');
