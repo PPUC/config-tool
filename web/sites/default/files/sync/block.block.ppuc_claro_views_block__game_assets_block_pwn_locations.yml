@@ -11,7 +11,7 @@ dependencies:
 id: ppuc_claro_views_block__game_assets_block_pwn_locations
 theme: ppuc_claro
 region: sidebar
-weight: -2
+weight: -3
 provider: null
 plugin: 'views_block:game_assets-block_pwn_locations'
 settings:

@@ -11,7 +11,7 @@ dependencies:
 id: ppuc_claro_views_block__game_assets_block_solenoid_locations
 theme: ppuc_claro
 region: sidebar
-weight: -3
+weight: -4
 provider: null
 plugin: 'views_block:game_assets-block_solenoid_locations'
 settings:

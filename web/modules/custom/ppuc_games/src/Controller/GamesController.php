@@ -15,10 +15,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * ConfigDownloadController.
  */
-class GamesController extends ControllerBase  {
+class GamesController extends ControllerBase {
 
-  public function __construct(protected FileSystemInterface $fileSystem, protected ExporterInterface $exporter) {
-  }
+  public function __construct(protected FileSystemInterface $fileSystem, protected ExporterInterface $exporter) {}
 
   /**
    * {@inheritdoc}
@@ -76,9 +75,9 @@ class GamesController extends ControllerBase  {
       'rom' => 'dummy',
       'serialPort' => $node->field_serial_port->value ?? 'dummy',
       'platform' => $platform->getName(),
-      'coinDoorClosedSwitch' => (int)($node->field_coin_door_closed_switch->value ?? 0),
-      'gameOnSolenoid' => (int)($node->field_game_on_solenoid->value ?? 0),
-      'debug' => false,
+      'coinDoorClosedSwitch' => (int) ($node->field_coin_door_closed_switch->value ?? 0),
+      'gameOnSolenoid' => (int) ($node->field_game_on_solenoid->value ?? 0),
+      'debug' => FALSE,
       'boards' => [],
       'dipSwitches' => [],
       'switches' => [],
@@ -103,8 +102,8 @@ class GamesController extends ControllerBase  {
       }
       $yaml['dipSwitches'][] = [
         'description' => trim($dip_switch->label()),
-        'number' => (int)($dip_switch->get('field_number')->value),
-        'on' => (bool)($dip_switch->get('field_status')->value),
+        'number' => (int) ($dip_switch->get('field_number')->value),
+        'on' => (bool) ($dip_switch->get('field_status')->value),
       ];
     }
 
@@ -117,7 +116,7 @@ class GamesController extends ControllerBase  {
     /** @var NodeInterface $i_o_board */
     foreach ($i_o_boards as $i_o_board) {
       $objects[] = $i_o_board;
-      $i_o_board_number = (int)($i_o_board->get('field_number')->value);
+      $i_o_board_number = (int) ($i_o_board->get('field_number')->value);
       $i_o_board_type = $i_o_board->get('field_io_board_type')->entity;
       $i_o_board_gpio_mapping = unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
       $poll_events = FALSE;
@@ -151,9 +150,13 @@ class GamesController extends ControllerBase  {
 
             $switch_matrix_parts = $storage->loadByProperties([
               'field_switch_matrix' => $device->id(),
-              $node->getEntityType()->getKey('bundle') => 'switch_matrix_column_row',
+              $node->getEntityType()
+                ->getKey('bundle') => 'switch_matrix_column_row',
             ]);
-            uasort($switch_matrix_parts, [$this, 'sortEntitiesByMatrixPartAndNumberField']);
+            uasort($switch_matrix_parts, [
+              $this,
+              'sortEntitiesByMatrixPartAndNumberField',
+            ]);
             /** @var NodeInterface $switch_matrix_part */
             foreach ($switch_matrix_parts as $switch_matrix_part) {
               $objects[] = $switch_matrix_part;
@@ -203,6 +206,17 @@ class GamesController extends ControllerBase  {
 
                 break;
 
+              case '66bf8987-9d98-46dd-a7b4-81fde06af734':
+                $type = 'motor';
+
+                break;
+
+              case 'bc5322b5-df99-4637-b0f9-59a6be00db27':
+                $type = 'shaker';
+
+                break;
+
+              case 'f72c503f-19af-488e-8eb1-64f234854ea7':
               default:
                 $type = 'coil';
 
@@ -227,7 +241,7 @@ class GamesController extends ControllerBase  {
                 if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
                   $trigger[] = [
                     'source' => $matches[1],
-                    'number' => (int)($matches[2]),
+                    'number' => (int) ($matches[2]),
                     'value' => ($matches[3] === 'OFF') ? 0 : 1,
                   ];
                 }
@@ -235,14 +249,14 @@ class GamesController extends ControllerBase  {
 
               $effects[] = [
                 'description' => trim($pwm_effect->label()),
-                'duration' => (int)($pwm_effect->get('field_duration')->value),
-                'effect' => (int)($pwm_effect->get('field_pwm_effect')->value),
-                'frequency' => (int)($pwm_effect->get('field_frequency')->value),
-                'maxIntensity' => (int)($pwm_effect->get('field_max_intensity')->value),
-                'minIntensity' => (int)($pwm_effect->get('field_min_intensity')->value),
-                'mode' => (int)($pwm_effect->get('field_mode')->value),
-                'priority' =>  (int)($pwm_effect->get('field_priority')->value),
-                'repeat' => (int)($pwm_effect->get('field_repeat')->value),
+                'duration' => (int) ($pwm_effect->get('field_duration')->value),
+                'effect' => (int) ($pwm_effect->get('field_pwm_effect')->entity->field_number->value ?? 0),
+                'frequency' => (int) ($pwm_effect->get('field_frequency')->value),
+                'maxIntensity' => (int) ($pwm_effect->get('field_max_intensity')->value),
+                'minIntensity' => (int) ($pwm_effect->get('field_min_intensity')->value),
+                'mode' => (int) ($pwm_effect->get('field_mode')->value),
+                'priority' => (int) ($pwm_effect->get('field_priority')->value),
+                'repeat' => (int) ($pwm_effect->get('field_repeat')->value),
                 'trigger' => $trigger,
               ];
             }
@@ -303,8 +317,8 @@ class GamesController extends ControllerBase  {
 
               $leds[$role][] = [
                 'description' => trim($addressable_led->label()),
-                'number' => (int)($addressable_led->get('field_number')->value),
-                'ledNumber' => (int)($addressable_led->get('field_string_position')->value),
+                'number' => (int) ($addressable_led->get('field_number')->value),
+                'ledNumber' => (int) ($addressable_led->get('field_string_position')->value),
                 'color' => $addressable_led->get('field_color')->color,
               ];
             }
@@ -327,7 +341,7 @@ class GamesController extends ControllerBase  {
                 if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
                   $trigger[] = [
                     'source' => $matches[1],
-                    'number' => (int)($matches[2]),
+                    'number' => (int) ($matches[2]),
                     'value' => ($matches[3] === 'OFF') ? 0 : 1,
                   ];
                 }
@@ -335,15 +349,15 @@ class GamesController extends ControllerBase  {
 
               $effects[] = [
                 'description' => trim($led_effect->label()),
-                'color' => (int)($led_effect->get('field_color')->value),
-                'duration' => (int)($led_effect->get('field_duration')->value),
-                'effect' => (int)($led_effect->get('field_effect')->value),
-                'reverse' => (int)($led_effect->get('field_reverse')->value),
-                'segment' => (int)($led_effect->get('field_segment')->value),
-                'speed' => (int)($led_effect->get('field_speed')->value),
-                'mode' => (int)($led_effect->get('field_mode')->value),
-                'priority' =>  (int)($led_effect->get('field_priority')->value),
-                'repeat' => (int)($led_effect->get('field_repeat')->value),
+                'color' => (int) ($led_effect->get('field_color')->value),
+                'duration' => (int) ($led_effect->get('field_duration')->value),
+                'effect' => (int) ($led_effect->get('field_effect')->entity->field_number->value ?? 0),
+                'reverse' => (int) ($led_effect->get('field_reverse')->value),
+                'segment' => (int) ($led_effect->get('field_segment')->value),
+                'speed' => (int) ($led_effect->get('field_speed')->value),
+                'mode' => (int) ($led_effect->get('field_mode')->value),
+                'priority' => (int) ($led_effect->get('field_priority')->value),
+                'repeat' => (int) ($led_effect->get('field_repeat')->value),
                 'trigger' => $trigger,
               ];
             }

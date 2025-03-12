@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_locations
     - field.field.node.game.field_translite
+    - field.field.node.game.field_translite_in_game
     - node.type.game
   module:
     - text
@@ -43,4 +44,5 @@ hidden:
   field_solenoid_locations: true
   field_switch_locations: true
   field_translite: true
+  field_translite_in_game: true
   links: true

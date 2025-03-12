@@ -1,0 +1,20 @@
+uuid: 3a11ce30-b214-4595-b9b6-ef6fc1e7b4bc
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+    - node
+id: node.field_translite_in_game
+field_name: field_translite_in_game
+entity_type: node
+type: entity_reference
+settings:
+  target_type: media
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,23 +1,23 @@
 {
     "_links": {
         "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/105?_format=hal_json"
+            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/106?_format=hal_json"
         },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_effects"
+            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_device"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
             null
         ]
     },
     "tid": [
         {
-            "value": 105
+            "value": 106
         }
     ],
     "uuid": [
         {
-            "value": "d7075915-21e5-4e05-8bf6-fd837bf26e68"
+            "value": "bc5322b5-df99-4637-b0f9-59a6be00db27"
         }
     ],
     "langcode": [
@@ -28,12 +28,12 @@
     ],
     "vid": [
         {
-            "target_id": "pwm_effects"
+            "target_id": "pwm_device"
         }
     ],
     "revision_created": [
         {
-            "value": "2025-03-04T12:54:12+00:00",
+            "value": "2025-03-11T13:29:06+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -45,14 +45,7 @@
     ],
     "name": [
         {
-            "value": "Ramp down and stop",
-            "lang": "en"
-        }
-    ],
-    "description": [
-        {
-            "value": "<p>Useful to gracefully stop a running PWM effect like \"Sine\" to not stop immediately.&nbsp;<\/p>",
-            "format": "basic_html",
+            "value": "Shaker",
             "lang": "en"
         }
     ],
@@ -62,13 +55,13 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_effects\/parent": [
+        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
             null
         ]
     },
     "changed": [
         {
-            "value": "2025-03-12T18:58:51+00:00",
+            "value": "2025-03-11T13:29:06+00:00",
             "lang": "en",
             "format": "Y-m-d\\TH:i:sP"
         }
@@ -85,12 +78,7 @@
             "lang": "en"
         }
     ],
-    "field_number": [
-        {
-            "value": 2
-        }
-    ],
     "_dcd_metadata": {
-        "export_timestamp": 1741806118
+        "export_timestamp": 1741699849
     }
 }

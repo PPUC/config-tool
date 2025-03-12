@@ -1,0 +1,31 @@
+uuid: 3d115334-b5b7-401b-93d8-f481ac214a60
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.pwm_effects.field_number
+    - taxonomy.vocabulary.pwm_effects
+  module:
+    - text
+id: taxonomy_term.pwm_effects.default
+targetEntityType: taxonomy_term
+bundle: pwm_effects
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_number:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

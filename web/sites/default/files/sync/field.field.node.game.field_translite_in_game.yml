@@ -1,0 +1,29 @@
+uuid: e10ab0cf-b7e8-4a38-ae52-8f94510c13ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_translite_in_game
+    - media.type.translite
+    - node.type.game
+id: node.game.field_translite_in_game
+field_name: field_translite_in_game
+entity_type: node
+bundle: game
+label: 'Translite in-game'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      translite: translite
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

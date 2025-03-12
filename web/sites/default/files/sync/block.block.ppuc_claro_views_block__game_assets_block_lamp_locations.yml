@@ -11,7 +11,7 @@ dependencies:
 id: ppuc_claro_views_block__game_assets_block_lamp_locations
 theme: ppuc_claro
 region: sidebar
-weight: -5
+weight: -6
 provider: null
 plugin: 'views_block:game_assets-block_lamp_locations'
 settings:

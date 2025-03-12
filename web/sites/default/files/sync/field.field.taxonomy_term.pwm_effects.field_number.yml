@@ -1,0 +1,23 @@
+uuid: be54bae3-1bf8-4bac-949f-cbc92589c80d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_number
+    - taxonomy.vocabulary.pwm_effects
+id: taxonomy_term.pwm_effects.field_number
+field_name: field_number
+entity_type: taxonomy_term
+bundle: pwm_effects
+label: Number
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 128
+  prefix: ''
+  suffix: ''
+field_type: integer

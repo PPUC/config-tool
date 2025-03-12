@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_locations
     - field.field.node.game.field_translite
+    - field.field.node.game.field_translite_in_game
     - node.type.game
   module:
     - text
@@ -38,7 +39,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 5
+    weight: 3
     region: content
   field_game_on_solenoid:
     type: number_integer
@@ -47,7 +48,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 4
+    weight: 2
     region: content
   field_platform:
     type: entity_reference_label
@@ -64,4 +65,5 @@ hidden:
   field_solenoid_locations: true
   field_switch_locations: true
   field_translite: true
+  field_translite_in_game: true
   links: true
