@@ -2,9 +2,11 @@
 
 namespace Drupal\search_api_default_content_deploy\Plugin\search_api\backend;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\default_content_deploy\ImporterInterface;
 use Drupal\search_api\LoggerTrait;
@@ -27,7 +29,7 @@ use Symfony\Component\Serializer\Serializer;
  * @SearchApiBackend(
  *   id = "search_api_default_content_deploy",
  *   label = @Translation("Default Content Deploy"),
- *   description = @Translation("'Leverage the Search API infrastructure to track and incrementally export content..")
+ *   description = @Translation("Leverage the Search API infrastructure to track and incrementally export content.")
  * )
  */
 class DefaultContentDeployBackend extends BackendPluginBase implements PluginFormInterface {
@@ -43,51 +45,21 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   use LoggerTrait;
 
   /**
-   * The exporter.
-   *
-   * @var \Drupal\default_content_deploy\ExporterInterface
-   */
-  protected $exporter;
-
-  /**
-   * The importer.
-   *
-   * @var \Drupal\default_content_deploy\ImporterInterface
-   */
-  protected $importer;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The file system service.
-   *
-   * @var \Drupal\Core\File\FileSystemInterface
-   */
-  protected $fileSystem;
-
-  /**
-   * Serializer.
-   *
-   * @var \Symfony\Component\Serializer\Serializer
-   */
-  protected $serializer;
-
-  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExporterInterface $exporter, ImporterInterface $importer, EntityTypeManagerInterface $entityTypeManager, FileSystemInterface $file_system, Serializer $serializer) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    array $plugin_definition,
+    protected readonly ExporterInterface $exporter,
+    protected readonly ImporterInterface $importer,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly FileSystemInterface $fileSystem,
+    protected readonly Serializer $serializer,
+    protected readonly TimeInterface $time,
+    protected readonly AccountProxyInterface $currentUser,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->exporter = $exporter;
-    $this->importer = $importer;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->fileSystem = $file_system;
-    $this->serializer = $serializer;
   }
 
   /**
@@ -102,24 +74,39 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
       $container->get('default_content_deploy.importer'),
       $container->get('entity_type.manager'),
       $container->get('file_system'),
-      $container->get('serializer')
+      $container->get('serializer'),
+      $container->get('datetime.time'),
+      $container->get('current_user'),
     );
   }
 
   /**
    * {@inheritdoc}
-   *
-   * @throws \Drupal\Component\Plugin\Exception\PluginException
-   * @throws \Drupal\search_api\SearchApiException
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
+    $form['default_content_deploy_backend'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default Content Deploy'),
+      '#default_value' => $this->t('Leverage the Search API infrastructure to track and incrementally export content.'),
+      '#disabled' => TRUE,
+    ];
+
     return $form;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDiscouragedProcessors() {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
+    if (!$this->currentUser->hasPermission('default content deploy export')) {
+      $form_state->setErrorByName('default_content_deploy_backend', '"Export content" permission is required to configure the Default Content Deploy backend.');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDiscouragedProcessors(): array {
     return [
       'content_access',
       'double_quote_workaround',
@@ -155,7 +142,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\search_api\SearchApiException
    */
-  public function indexItems(IndexInterface $index, array $items) {
+  public function indexItems(IndexInterface $index, array $items): array {
     $ret = [];
 
     $index_third_party_settings = $index->getThirdPartySettings('search_api_default_content_deploy') + search_api_default_content_deploy_default_index_third_party_settings();
@@ -167,10 +154,13 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     $this->exporter->setLinkDomain($index_third_party_settings['link_domain']);
 
     foreach ($items as $item) {
+      //$this->getLogger()->debug($item->getId());
       $datasource = $item->getDatasource();
       if ($datasource instanceof DefaultContentDeployContentEntity) {
+        // Don't use getOriginalObject() to get the real state from the
+        // database.
         /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-        $entity = $item->getOriginalObject()->getEntity();
+        $entity = $index->loadItem($item->getId())->getEntity();
         if ($this->exporter->exportEntity($entity, $index_third_party_settings['export_referenced_entities'])) {
           [$datasource_id, $item_id] = Utility::splitCombinedId($item->getId());
           if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
@@ -192,12 +182,13 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * {@inheritdoc}
    */
-  public function deleteItems(IndexInterface $index, array $ids) {
+  public function deleteItems(IndexInterface $index, array $item_ids): void {
     $index_third_party_settings = $index->getThirdPartySettings('search_api_default_content_deploy') + search_api_default_content_deploy_default_index_third_party_settings();
 
     if ($index_third_party_settings['delete_single_file_allowed']) {
       $directory = rtrim($index_third_party_settings['content_directory'], '/') . '/';
-      foreach ($ids as $id) {
+      foreach ($item_ids as $id) {
+        //$this->getLogger()->debug($id);
         [$datasource_id, $item_id] = Utility::splitCombinedId($id);
         if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
           $file_name = '/' . $item_matches[1] . '.json';
@@ -217,7 +208,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
 
             try {
               $this->importer->decodeFile($file);
-              $file->data['_dcd_metadata']['delete_timestamp'] = \Drupal::time()->getRequestTime();
+              $file->data['_dcd_metadata']['delete_timestamp'] = $this->time->getRequestTime();
               $content = $this->serializer->serialize($file->data, 'json', [
                 'json_encode_options' => JSON_PRETTY_PRINT,
               ]);
@@ -239,7 +230,7 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * {@inheritdoc}
    */
-  public function deleteAllIndexItems(IndexInterface $index, $datasource_id = NULL) {
+  public function deleteAllIndexItems(IndexInterface $index, $datasource_id = NULL): void {
     $index_third_party_settings = $index->getThirdPartySettings('search_api_default_content_deploy') + search_api_default_content_deploy_default_index_third_party_settings();
 
     if ($index_third_party_settings['delete_all_files_allowed']) {
@@ -258,7 +249,8 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   /**
    * {@inheritdoc}
    */
-  public function search(QueryInterface $query) {
+  public function search(QueryInterface $query): void {
+    // No searches on this index-only backend.
   }
 
 }

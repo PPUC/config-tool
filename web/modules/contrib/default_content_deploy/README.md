@@ -35,14 +35,15 @@ If you are sure the export and import sites have the same configuration and you
 need to synchronize only content, you can skip this chapter.
 
 You need identical site UUID for successful syncing configuration between sites.
-If you need to sychronize configuration, use drush **config-set**
+If you need to synchronize configuration, use drush **config-set**
 for set Site UUID to identical value.
 
 **Example**
 
     drush config-set "system.site" uuid 11111111-1111-1111-1111-111111111111
 
-The best practice is to install a drush site from already existing configuration,
+The best practice is to install a drush site from already existing 
+configuration,
 e.g.:
 
     drush si minimal --existing-config
@@ -66,9 +67,11 @@ outside of the document root.
 **Example**
 
     // Relative path.
-    $config['default_content_deploy.settings']['content_directory'] = '../content';
+    $config['default_content_deploy.settings']['content_directory'] = 
+    '../content';
     // Absolute path.
-    $config['default_content_deploy.settings']['content_directory'] = '/var/dcd/content';
+    $config['default_content_deploy.settings']['content_directory'] = 
+    '/var/dcd/content';
 
 
 You can also do this on the `/admin/config/development/dcd` page.
@@ -154,7 +157,7 @@ Export all nodes with references with bundle page
 
     drush dcder node --bundle=page,article --entity_id=2,3,4
 Export all nodes with references with bundle page or article plus nodes
-with entitiy id 2, 3 and 4.
+with entity id 2, 3 and 4.
 
     drush dcder node --bundle=page,article --skip_entities=5,7
 Export all nodes with references with bundle page or article and skip nodes
@@ -192,7 +195,8 @@ Export complete website but from the specified folder
 Deploy (import/create/update/replace) content from all exported files.
 
 JSON files with exported content is expected in the directory defined
-in **$config['default_content_deploy']['content_directory']** or on the administrative page. It can be defined in the **settings.php**.
+in **$config['default_content_deploy']['content_directory']** or on the
+administrative page. It can be defined in the **settings.php**.
 See example in the Configuration section above.
 
 
@@ -203,7 +207,7 @@ See example in the Configuration section above.
 - ID of entity is not preserved, so the entity can change its ID.
 - Non-existing entity (the new one) is created with a new ID.
 - Existing entity is updated only if imported entity is newer
-  (by timestamp of the last entity change accross all translations).
+  (by timestamp of the last entity change across all translations).
 - Imported entity with the same or older time
   than the current existing entity is skipped.
 - If a file entity does not have an existing file, the file will be created.
@@ -267,7 +271,7 @@ Even though the DCD module does not necessarily require that the sites have
 identical site UUID, it is logical that transferring entities from one site to
 another requires identical configuration of entities (e.g. identical fields in
 identically named bundles). That is why we include configuration synchronization
-to the teamworkflow.
+to the team workflow.
 
 There are many articles about export/import configuration, so this is only a
 summarization of the most important things.
@@ -289,7 +293,7 @@ provides the first copy of a project. He must:
 
 3. Install Drupal project (use the same installation profile, e.g. minimal)
 4. Set (or get) Site UUID and share the value with the team.
-   Identical Site UUID is neccessary for sharing Drupal configuration files.
+   Identical Site UUID is necessary for sharing Drupal configuration files.
 
         drush config-get "system.site" uuid
 
@@ -309,7 +313,8 @@ install clones of the project. They must:
 1. Clone project from the Git repository
 2. Set identical information (identical setting in settings.php)
   1. Common directory for config management ($config_directories['sync'])
-  2. Common directory for content export/import ($config['default_content_deploy']['content_directory'])
+  2. Common directory for content export/import 
+  ($config['default_content_deploy']['content_directory'])
   3. Common file or value for Drupal salt ($settings['hash_salt'])
 3. Install Drupal with the same installation profile
 4. Set Site UUID to identical value.
@@ -354,7 +359,7 @@ references.
 
   This command warns a user about entities in conflict.
   You can use **--verbose** option (**-v**) for more detailed information.
-  We recomend more aggressive way which ensures that all content entities
+  We recommend more aggressive way which ensures that all content entities
   will be synchronized with the source. This option also rewrites already
   created content and updates UUID for core user entity. See detailed
   explanation in the **Important Import rules**.
@@ -376,7 +381,7 @@ references.
     5. drush dcdi
 
 
-## Jenkins and tools for continous development / integration
+## Jenkins and tools for continuous development / integration
 
 Imagine Jenkins like one of the developers in the puller role but with
 no interaction capability. His workflow can look like this:
@@ -418,20 +423,3 @@ Example of .htaccess for Apache host.
     Deny from all
 
 Place .htaccess into content directory.
-
-
-# Authors and maintainers
-- Martin Klíma, https://www.drupal.org/u/martin_klima, martin.klima@hqis.cz
-- Jakub Hnilička, https://www.drupal.org/u/hnilickajakub
-- Radoslav Terezka, https://www.drupal.org/u/hideaway
-- Miroslav Lee, https://www.drupal.org/u/miroslav-lee
-- Markus Kalkbrenner, https://www.drupal.org/u/mkalkbrenner
--
-# Sponsor
-This project has been sponsored by:
-
-HBF s.r.o., http://hbf.sk/, https://www.drupal.org/hbf
-
-HBF provides flexible easy-to-use web solutions for your company.
-Its mission is to help you run your business in online world with attractive
-and perfectly working website.

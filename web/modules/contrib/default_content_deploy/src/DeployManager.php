@@ -11,7 +11,10 @@ use Drupal\Core\Site\Settings;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
+ * Manages the deployment of default content.
  *
+ * This class provides functionality for managing, compressing,
+ * and extracting default content for the site.
  */
 class DeployManager {
 
@@ -73,18 +76,15 @@ class DeployManager {
   }
 
   /**
-   * Get UUID of entity.
+   * Get UUID of an entity.
    *
-   * @param $entity_type
+   * @param string $entity_type
    *   Entity type ID.
-   * @param $id
-   *   ID of entity.
+   * @param string|int $id
+   *   ID of the entity.
    *
    * @return string
    *   UUID value.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getEntityUuidById(string $entity_type, string|int $id): string {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($id);
@@ -142,9 +142,10 @@ class DeployManager {
   }
 
   /**
-   * Gets host of current site.
+   * Gets the current site's host with protocol.
    *
    * @return string
+   *   The full URL of the current site (e.g., "https://example.com").
    */
   public function getCurrentHost(): string {
     $protocol = $this->request->getScheme();
@@ -168,11 +169,13 @@ class DeployManager {
   }
 
   /**
-   * Uncompressed an archive with content files.
+   * Extracts an archive with content files.
    *
-   * @param $file
+   * @param string $file
+   *   The path to the archive file to be extracted.
    *
    * @throws \Exception
+   *   Throws an exception if the archive has an incorrect folder structure.
    */
   public function uncompressContent(string $file): void {
     $folder = $this->fileSystem->getTempDirectory() . '/dcd';

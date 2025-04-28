@@ -43,6 +43,8 @@ class DownloadController implements ContainerInjectionInterface {
    *   The DCD manager.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   The File system.
+   * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The Event dispatcher.
    */
   public function __construct(DeployManager $deploy_manager, FileSystemInterface $file_system, EventDispatcherInterface $event_dispatcher) {
     $this->deployManager = $deploy_manager;
@@ -64,7 +66,11 @@ class DownloadController implements ContainerInjectionInterface {
   /**
    * Return binary archive file for download.
    *
+   * @param string|null $file_name
+   *   The name of the file to be used in the response, if provided.
+   *
    * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+   *   The response containing the compressed content file for download.
    */
   public function downloadCompressedContent(?string $file_name = NULL) {
     $this->deployManager->compressContent();

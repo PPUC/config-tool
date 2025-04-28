@@ -24,8 +24,10 @@ class UuidResolver extends CoreUuidResolver {
    *
    * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
+   * @param Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
+   *   The metadata service.
    */
-  public function __construct(EntityRepositoryInterface $entity_repository, DefaultContentDeployMetadataService  $metadata_service) {
+  public function __construct(EntityRepositoryInterface $entity_repository, DefaultContentDeployMetadataService $metadata_service) {
     parent::__construct($entity_repository);
     $this->metadataService = $metadata_service;
   }

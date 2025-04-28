@@ -81,35 +81,43 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Skip computed fields'),
       '#default_value' => $config->get('skip_computed_fields'),
-      '#description' => 'If selected, computed fields will not be included in the export.',
+      '#description' => $this->t('If selected, computed fields will not be included in the export.'),
     ];
 
     $form['skip_processed_values'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Skip processed values'),
       '#default_value' => $config->get('skip_processed_values'),
-      '#description' => 'If selected, processed values will not be included in the export.',
+      '#description' => $this->t('If selected, processed values will not be included in the export.'),
     ];
 
     $form['batch_ttl'] = [
       '#type' => 'number',
       '#title' => $this->t('Batch TTL'),
       '#default_value' => $config->get('batch_ttl') ?? 14400,
-      '#description' => 'TTL in seconds for batch items until the garbage collection for orphaned items removes them.',
+      '#description' => $this->t('TTL in seconds for batch items until the garbage collection for orphaned items removes them.'),
     ];
 
     return parent::buildForm($form, $form_state);
   }
 
   /**
+   * Generates common form elements for content export settings.
    *
+   * @param array $form
+   *   The form array to which elements will be added.
+   * @param array $defaults
+   *   An associative array containing default values for the form fields.
+   *
+   * @return array
+   *   The modified form array with additional elements for content export.
    */
   public function getCommonFormElements(array $form, array $defaults) {
     $form['content_directory'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Content Directory'),
       '#default_value' => $defaults['content_directory'],
-      '#description' => 'Specify the path relative to index.php. For example: ../content',
+      '#description' => $this->t('Specify the path relative to index.php. For example: ../content'),
       '#required' => TRUE,
     ];
 
@@ -117,14 +125,14 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Export processed text dependencies'),
       '#default_value' => $defaults['text_dependencies'],
-      '#description' => 'If selected, embedded entities within processed text fields will be included in the export.',
+      '#description' => $this->t('If selected, embedded entities within processed text fields will be included in the export.'),
     ];
 
     $form['skip_export_timestamp'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Skip export timestamp'),
       '#default_value' => $defaults['skip_export_timestamp'],
-      '#description' => 'Usually, the export timestamp gets added as metadata to the each exported entity and used for incremental imports. If the export timestamp is missing, the entity will be always handled in incremental imports.',
+      '#description' => $this->t('Usually, the export timestamp gets added as metadata to the each exported entity and used for incremental imports. If the export timestamp is missing, the entity will be always handled in incremental imports.'),
     ];
 
     $all_entity_types = $this->entityTypeManager->getDefinitions();

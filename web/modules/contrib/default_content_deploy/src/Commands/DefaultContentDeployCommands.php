@@ -2,9 +2,7 @@
 
 namespace Drupal\default_content_deploy\Commands;
 
-use Consolidation\AnnotatedCommand\CommandData;
-use Drupal\Core\Session\AccountSwitcherInterface;
-use Drupal\default_content_deploy\AdministratorTrait;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\default_content_deploy\DeployManager;
 use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\default_content_deploy\ImporterInterface;
@@ -12,41 +10,12 @@ use Drush\Commands\DrushCommands;
 use Symfony\Component\Console\Helper\Table;
 
 /**
- * Class DefaultContentDeployCommands.
+ * Provides Drush commands for deploying default content.
  *
- * @package Drupal\default_content_deploy\Commands
+ * This class contains Drush commands to manage the export, import,
+ * and deployment of default content in a Drupal site.
  */
 class DefaultContentDeployCommands extends DrushCommands {
-
-  use AdministratorTrait;
-
-  /**
-   * DCD Exporter.
-   *
-   * @var \Drupal\default_content_deploy\ExporterInterface
-   */
-  private $exporter;
-
-  /**
-   * DCD Importer.
-   *
-   * @var \Drupal\default_content_deploy\ImporterInterface
-   */
-  private $importer;
-
-  /**
-   * Default deploy content manager.
-   *
-   * @var \Drupal\default_content_deploy\DeployManager
-   */
-  protected $deployManager;
-
-  /**
-   * The account switcher service.
-   *
-   * @var \Drupal\Core\Session\AccountSwitcherInterface
-   */
-  protected $accountSwitcher;
 
   /**
    * DefaultContentDeployCommands constructor.
@@ -55,37 +24,24 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   DCD Exporter.
    * @param \Drupal\default_content_deploy\ImporterInterface $importer
    *   DCD Importer.
-   * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
+   * @param \Drupal\default_content_deploy\DeployManager $deployManager
    *   DCD manager.
-   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
-   *   The account switching service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
    */
-  public function __construct(ExporterInterface $exporter, ImporterInterface $importer, DeployManager $deploy_manager, AccountSwitcherInterface $account_switcher) {
+  public function __construct(
+    protected readonly ExporterInterface $exporter,
+    protected readonly ImporterInterface $importer,
+    protected readonly DeployManager $deployManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {
     parent::__construct();
-    $this->exporter = $exporter;
-    $this->importer = $importer;
-    $this->deployManager = $deploy_manager;
-    $this->accountSwitcher = $account_switcher;
-  }
-
-  /**
-   * @hook pre-command
-   */
-  public function preCommand(CommandData $commandData): void {
-    $this->accountSwitcher->switchTo($this->getAdministrator());
-  }
-
-  /**
-   * @hook post-command
-   */
-  public function postCommand($result, CommandData $commandData) {
-    $this->accountSwitcher->switchBack();
   }
 
   /**
    * Exports a single entity or group of entities.
    *
-   * @param $entity_type
+   * @param string $entity_type
    *   The entity type to export. If a wrong content entity type is entered,
    *   module displays a list of all content entity types.
    * @param array $options
@@ -121,7 +77,18 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExport($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'force-update' => FALSE, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExport(
+    string $entity_type,
+    array $options = [
+      'entity_ids' => NULL,
+      'bundle' => NULL,
+      'skip_entities' => NULL,
+      'skip-export-timestamp' => NULL,
+      'force-update' => FALSE,
+      'folder' => self::OPT,
+      'changes-since' => self::OPT,
+    ],
+  ): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
@@ -188,7 +155,7 @@ class DefaultContentDeployCommands extends DrushCommands {
    *   Export all nodes with references with bundle page
    * @usage drush dcder node --bundle=page,article --entity_ids=2,3,4
    *   Export all nodes with references with bundle page or article plus nodes
-   *   with entitiy id 2, 3 and 4.
+   *   with entity id 2, 3 and 4.
    * @usage drush dcder node --bundle=page,article --skip_entities=5,7
    *   Export all nodes with references with bundle page or article and skip
    *   nodes with entity id 5 and 7.
@@ -200,7 +167,20 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportWithReferences($entity_type, array $options = ['entity_ids' => NULL, 'bundle' => NULL, 'skip_entities' => NULL, 'skip-export-timestamp' => NULL, 'skip_entity_type' => NULL, 'force-update' => FALSE, 'folder' => self::OPT, 'text_dependencies' => NULL, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportWithReferences(
+    string $entity_type,
+    array $options = [
+      'entity_ids' => NULL,
+      'bundle' => NULL,
+      'skip_entities' => NULL,
+      'skip-export-timestamp' => NULL,
+      'skip_entity_type' => NULL,
+      'force-update' => FALSE,
+      'folder' => self::OPT,
+      'text_dependencies' => NULL,
+      'changes-since' => self::OPT,
+    ],
+  ): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $entity_ids = $this->processingArrayOption($options['entity_ids']);
@@ -285,7 +265,15 @@ class DefaultContentDeployCommands extends DrushCommands {
    *
    * @throws \Exception
    */
-  public function contentDeployExportSite(array $options = ['skip_entity_type' => NULL, 'force-update' => FALSE, 'skip-export-timestamp' => NULL, 'folder' => self::OPT, 'changes-since' => self::OPT]): void {
+  public function contentDeployExportSite(
+    array $options = [
+      'skip_entity_type' => NULL,
+      'force-update' => FALSE,
+      'skip-export-timestamp' => NULL,
+      'folder' => self::OPT,
+      'changes-since' => self::OPT,
+    ],
+  ): void {
     $this->exporter->setVerbose($this->output()->isVerbose());
 
     $skip_type_ids = $this->processingArrayOption($options['skip_entity_type']);
@@ -343,7 +331,15 @@ class DefaultContentDeployCommands extends DrushCommands {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function contentDeployImport(array $options = ['force-override' => FALSE, 'folder' => self::OPT, 'preserve-ids' => FALSE, 'incremental' => FALSE, 'delete' => FALSE]): void {
+  public function contentDeployImport(
+    array $options = [
+      'force-override' => FALSE,
+      'folder' => self::OPT,
+      'preserve-ids' => FALSE,
+      'incremental' => FALSE,
+      'delete' => FALSE,
+    ],
+  ): void {
     $this->importer->setVerbose($this->output()->isVerbose());
 
     // Perform read only update.
@@ -385,9 +381,9 @@ class DefaultContentDeployCommands extends DrushCommands {
   /**
    * Get UUID of entity.
    *
-   * @param $entity_type
+   * @param string $entity_type
    *   Entity type ID.
-   * @param $id
+   * @param int $id
    *   ID of entity.
    *
    * @return string
@@ -419,24 +415,9 @@ class DefaultContentDeployCommands extends DrushCommands {
   }
 
   /**
-   * Display info before/after export.
-   *
-   * @param $result
-   *   Array with entity types.
-   */
-  private function displayExportResult($result) {
-    foreach ($result as $entity_type => $value) {
-      $this->logger->notice(dt('Exported @count entities of the "@entity_type" entity type.', [
-        '@count' => count($value),
-        '@entity_type' => $entity_type,
-      ]));
-    }
-  }
-
-  /**
    * Helper for processing array drush options.
    *
-   * @param $option
+   * @param array $option
    *   Drush option.
    *
    * @return array|null
@@ -454,9 +435,11 @@ class DefaultContentDeployCommands extends DrushCommands {
   }
 
   /**
-   * Convert the Available entity list to a readable form.
+   * Converts the available entity list to a readable format.
    *
    * @return string
+   *   A string containing the available entity types, formatted as
+   *   "machine_name (label)" and separated by new lines.
    */
   private function getAvailableEntityTypes() {
     $function = function ($machine_name, $label) {

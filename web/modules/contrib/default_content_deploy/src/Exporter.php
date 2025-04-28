@@ -2,9 +2,11 @@
 
 namespace Drupal\default_content_deploy;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\DefaultContent\AdminAccountSwitcher;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
@@ -15,48 +17,32 @@ use Drupal\Core\Entity\Plugin\DataType\EntityReference;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\default_content_deploy\Event\PostSerializeEvent;
 use Drupal\default_content_deploy\Event\PreSerializeEvent;
 use Drupal\default_content_deploy\Form\SettingsForm;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 use Drupal\hal\LinkManager\LinkManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Serializer\Serializer;
 use Drupal\layout_builder\Section;
 use Drupal\layout_builder\Plugin\DataType\SectionData;
 use Drupal\layout_builder\SectionComponent;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
+ * Handles the export of content for deployment.
  *
+ * This class provides methods for exporting entities and managing
+ * the export process within the default_content_deploy module.
  */
 class Exporter implements ExporterInterface {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
-  use AdministratorTrait;
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $config;
-
-  /**
-   * The language manager service.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
-   * The entity repository.
-   *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-   */
-  protected $entityRepository;
 
   /**
    * Text dependencies option.
@@ -71,41 +57,6 @@ class Exporter implements ExporterInterface {
    * @var bool|null
    */
   private $skipExportTimestamp;
-
-  /**
-   * DCD Manager.
-   *
-   * @var \Drupal\default_content_deploy\DeployManager
-   */
-  protected $deployManager;
-
-  /**
-   * The file system service.
-   *
-   * @var \Drupal\Core\File\FileSystemInterface
-   */
-  protected $fileSystem;
-
-  /**
-   * DB connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $database;
-
-  /**
-   * Serializer.
-   *
-   * @var \Symfony\Component\Serializer\Serializer
-   */
-  protected $serializer;
-
-  /**
-   * The account switcher service.
-   *
-   * @var \Drupal\Core\Session\AccountSwitcherInterface
-   */
-  protected $accountSwitcher;
 
   /**
    * Entity type ID.
@@ -171,77 +122,63 @@ class Exporter implements ExporterInterface {
   private $forceUpdate;
 
   /**
+   * Stores the current date and time for export operations.
+   *
+   * This is used to timestamp the export process and track changes
+   * across different entities.
+   *
    * @var \DateTimeInterface
    */
   private $dateTime;
 
+  /**
+   * Stores the domain used for generating links in exported content.
+   *
+   * This ensures that URLs are correctly rewritten when exporting
+   * and deploying content.
+   *
+   * @var string
+   */
   private $linkDomain = '';
 
   /**
-   * The link manager service.
+   * Determines whether verbose logging is enabled.
    *
-   * @var \Drupal\hal\LinkManager\LinkManagerInterface
-   */
-  protected $linkManager;
-
-  /**
-   * The event dispatcher.
+   * If set to TRUE, additional details about the export process
+   * will be logged for debugging purposes.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-   */
-  protected $eventDispatcher;
-
-  /**
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
    * @var bool
    */
   protected $verbose = FALSE;
 
   /**
-   * Exporter constructor.
+   * An admin account, required for full access on export.
    *
-   * @param \Drupal\Core\Database\Connection $database
-   *   DB connection.
-   * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
-   *   DCD Manager.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Entity Type Manager.
-   * @param \Symfony\Component\Serializer\Serializer $serializer
-   *   Serializer.
-   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
-   *   The account switcher service.
-   * @param \Drupal\Core\File\FileSystemInterface $file_system
-   *   The file system service.
-   * @param \Drupal\hal\LinkManager\LinkManagerInterface $link_manager
-   *   The link manager service.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   The event dispatcher.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
-   *   The config factory.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager service.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
+   * @var \Drupal\Core\Session\AccountInterface|null
    */
-  public function __construct(Connection $database, DeployManager $deploy_manager, EntityTypeManagerInterface $entityTypeManager, Serializer $serializer, AccountSwitcherInterface $account_switcher, FileSystemInterface $file_system, LinkManagerInterface $link_manager, EventDispatcherInterface $event_dispatcher, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config, LanguageManagerInterface $language_manager, EntityRepositoryInterface $entity_repository) {
-    $this->database = $database;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->serializer = $serializer;
-    $this->accountSwitcher = $account_switcher;
-    $this->deployManager = $deploy_manager;
-    $this->fileSystem = $file_system;
-    $this->linkManager = $link_manager;
-    $this->eventDispatcher = $event_dispatcher;
-    $this->moduleHandler = $module_handler;
-    $this->config = $config;
-    $this->languageManager = $language_manager;
-    $this->entityRepository = $entity_repository;
+  private AccountInterface|null $adminAccount = NULL;
+
+  /**
+   * Exporter constructor.
+   */
+  public function __construct(
+    protected readonly Connection $database,
+    protected readonly DeployManager $deployManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly SerializerInterface $serializer,
+    protected readonly AdminAccountSwitcher $adminAccountSwitcher,
+    protected readonly FileSystemInterface $fileSystem,
+    protected readonly LinkManagerInterface $linkManager,
+    protected readonly EventDispatcherInterface $eventDispatcher,
+    protected readonly ModuleHandlerInterface $moduleHandler,
+    protected readonly ConfigFactoryInterface $config,
+    protected readonly LanguageManagerInterface $languageManager,
+    protected readonly EntityRepositoryInterface $entityRepository,
+    protected readonly MessengerInterface $messenger,
+    protected readonly TimeInterface $time,
+    protected readonly LoggerInterface $logger,
+    protected readonly AccountProxyInterface $currentUser,
+  ) {
   }
 
   /**
@@ -254,7 +191,7 @@ class Exporter implements ExporterInterface {
       throw new \InvalidArgumentException(sprintf('Entity type "%s" does not exist', $entity_type));
     }
 
-    $this->entityTypeId = (string) $entity_type;
+    $this->entityTypeId = $entity_type;
   }
 
   /**
@@ -279,7 +216,7 @@ class Exporter implements ExporterInterface {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function setSkipEntityTypeIds(array $skip_entity_type_ids): void {
     $this->skipEntityTypeIds = $skip_entity_type_ids;
@@ -361,7 +298,6 @@ class Exporter implements ExporterInterface {
   public function setSkipExportTimestamp(?bool $skip = NULL): void {
     if (is_null($skip)) {
       $config = $this->config->get(SettingsForm::CONFIG);
-      $skip_export_timestamp = (bool) $config->get('skip_export_timestamp');
     }
 
     $this->skipExportTimestamp = $skip;
@@ -469,7 +405,7 @@ class Exporter implements ExporterInterface {
 
     // Exit if there is nothing to export.
     if (empty($exported_entity_ids)) {
-      \Drupal::messenger()->addMessage(t('Nothing to export.'), 'error');
+      $this->messenger->addMessage($this->t('Nothing to export.'), 'error');
       return;
     }
 
@@ -498,7 +434,7 @@ class Exporter implements ExporterInterface {
       'progressive' => TRUE,
       'queue' => [
         'class' => DefaultContentDeployBatch::class,
-        'name' => 'default_content_deploy:export:' . \Drupal::time()->getCurrentMicroTime(),
+        'name' => 'default_content_deploy:export:' . $this->time->getCurrentMicroTime(),
       ],
     ];
 
@@ -506,7 +442,25 @@ class Exporter implements ExporterInterface {
   }
 
   /**
+   * Prepares the operation for initializing the export context.
    *
+   * This method constructs an array of parameters required to initialize the
+   * export context, including metadata such as timestamps, folder paths,
+   * export modes, and dependency settings.
+   *
+   * @return array
+   *   A callable operation and its parameters for initializing the export
+   *   context.
+   *   - The first element is a callable reference to `initializeContext`.
+   *   - The second element is an array containing:
+   *     - `dateTime`: The timestamp of the export operation.
+   *     - `folder`: The target directory for export files.
+   *     - `includeTextDependencies`: Whether to include text dependencies.
+   *     - `skipExportTimestamp`: Whether to exclude the export timestamp.
+   *     - `skipEntityTypeIds`: An array of entity type IDs to be skipped.
+   *     - `mode`: The export mode setting.
+   *     - `verbose`: Whether verbose logging is enabled.
+   *     - `linkDomain`: The domain associated with content links.
    */
   protected function getInitializeContextOperation(): array {
     $context = [
@@ -528,14 +482,45 @@ class Exporter implements ExporterInterface {
   }
 
   /**
+   * Initializes or updates the export context with provided variables.
    *
+   * This method merges the given variables into the export context, ensuring
+   * that any missing parameters are properly initialized while retaining
+   * existing context values.
+   *
+   * @param array $vars
+   *   An associative array of variables to be added to the context.
+   * @param array &$context
+   *   The export context array, which stores processing parameters.
+   *   - `results`: An array containing the current state of the export process.
+   *
+   * @return void
+   *   This method does not return a value but modifies the context array.
    */
   public static function initializeContext(array $vars, array &$context): void {
     $context['results'] = array_merge($context['results'] ?? [], $vars);
   }
 
   /**
+   * Synchronizes the export context with class properties.
    *
+   * This method updates the object's properties by referencing values
+   * stored in the export context, ensuring that all parameters remain
+   * consistent throughout the export process.
+   *
+   * @param array $context
+   *   The context array that contains export-related parameters, including:
+   *   - `dateTime`: The timestamp of the export.
+   *   - `folder`: The directory where export files are stored.
+   *   - `includeTextDependencies`: Whether to include text dependencies.
+   *   - `skipExportTimestamp`: Whether to skip adding export timestamps.
+   *   - `skipEntityTypeIds`: An array of entity type IDs to exclude.
+   *   - `mode`: The export mode (e.g., full or incremental).
+   *   - `verbose`: Whether verbose logging is enabled.
+   *   - `linkDomain`: The base domain used for links in the export.
+   *
+   * @return void
+   *   This method does not return a value but modifies the context array.
    */
   protected function synchronizeContext(array &$context): void {
     $this->dateTime = &$context['results']['dateTime'];
@@ -549,10 +534,30 @@ class Exporter implements ExporterInterface {
   }
 
   /**
+   * Exports a file for a given entity.
    *
+   * This method uses the exporter service to process and export a specific
+   * entity based on the provided parameters.
+   *
+   * @param string $export_type
+   *   The type of export operation (e.g., 'export', 'exportRevision').
+   * @param string $entity_type
+   *   The entity type (e.g., 'node', 'taxonomy_term').
+   * @param string|int $entity_id
+   *   The entity ID or UUID.
+   * @param int $current
+   *   The current step in the export process.
+   * @param int $total
+   *   The total number of entities to be exported.
+   * @param array $context
+   *   The context array that tracks export progress and results.
+   *
+   * @return void
+   *   This method does not return a value but modifies the context array.
    */
   public static function exportFile(string $export_type, string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
     /** @var ExporterInterface $exporter */
+    // @phpstan-ignore-next-line
     $exporter = \Drupal::service('default_content_deploy.exporter');
     $exporter->synchronizeContext($context);
     $exporter->{$export_type}($entity_type, $entity_id, $current, $total, $context);
@@ -751,7 +756,7 @@ class Exporter implements ExporterInterface {
       'progressive' => TRUE,
       'queue' => [
         'class' => DefaultContentDeployBatch::class,
-        'name' => 'default_content_deploy:export:' . \Drupal::time()->getCurrentMicroTime(),
+        'name' => 'default_content_deploy:export:' . $this->time->getCurrentMicroTime(),
       ],
     ];
 
@@ -771,6 +776,7 @@ class Exporter implements ExporterInterface {
   public static function exportFinished($success, $results, $operations): void {
     if ($success) {
       // Batch processing completed successfully.
+      // @phpstan-ignore-next-line
       \Drupal::messenger()->addMessage(t('Batch export completed successfully.'));
 
       $counts = [];
@@ -790,6 +796,7 @@ class Exporter implements ExporterInterface {
       // Output result counts per entity type.
       foreach ($counts as $type => $count) {
         if ($count['skipped'] ?? 0) {
+          // @phpstan-ignore-next-line
           \Drupal::messenger()
             ->addMessage(t('@type: @exported exported, @skipped skipped dynamically (excluded bundle, changed timestamp, event, erroneous, ...)', [
               '@type' => $type,
@@ -798,6 +805,7 @@ class Exporter implements ExporterInterface {
             ]));
         }
         else {
+          // @phpstan-ignore-next-line
           \Drupal::messenger()
             ->addMessage(t('@type: @exported exported,', [
               '@type' => $type,
@@ -808,6 +816,7 @@ class Exporter implements ExporterInterface {
     }
     else {
       // Batch processing encountered an error.
+      // @phpstan-ignore-next-line
       \Drupal::messenger()->addMessage(t('An error occurred during the batch export process.'), 'error');
     }
   }
@@ -856,7 +865,18 @@ class Exporter implements ExporterInterface {
   }
 
   /**
+   * Determines whether an entity should be skipped during processing.
    *
+   * This method checks if an entity has already been exported, skipped,
+   * or is outdated based on its last changed time.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check.
+   * @param array $context
+   *   The processing context array, which stores exported and skipped entities.
+   *
+   * @return bool
+   *   TRUE if the entity should be skipped, FALSE otherwise.
    */
   protected function skipEntity(EntityInterface $entity, array &$context): bool {
     if (!($entity instanceof ContentEntityInterface)) {
@@ -916,13 +936,15 @@ class Exporter implements ExporterInterface {
 
     // Entity could have been removed from the export by an event subscriber!
     if ($entity) {
-      if (PHP_SAPI === 'cli') {
-        $root_user = $this->getAdministrator();
-        $this->accountSwitcher->switchTo($root_user);
+      if (!$this->adminAccount) {
+        $this->adminAccount = $this->adminAccountSwitcher->switchToAdministrator();
+      }
+      else {
+        $this->adminAccountSwitcher->switchTo($this->adminAccount);
       }
 
       $this->linkManager->setLinkDomain($this->getLinkDomain());
-      $content = $this->serializer->serialize($entity, 'hal_json');
+      $content = $this->serializer->serialize($entity, 'hal_json', ['account' => $this->currentUser]);
 
       $entity_array = $this->serializer->decode($content, 'json');
 
@@ -933,12 +955,19 @@ class Exporter implements ExporterInterface {
 
       // Add user password hash.
       if ($entity->getEntityTypeId() === 'user') {
+        /** @var \Drupal\user\UserInterface $entity */
         $entity_array['pass'][0]['value'] = $entity->getPassword();
+      }
+
+      // Add secret hash.
+      if ($entity->getEntityTypeId() === 'consumer') {
+        /** @var \Drupal\consumers\Entity\ConsumerInterface $entity */
+        $entity_array['secret'][0]['value'] = $entity->get('secret')->value;
       }
 
       if ($add_metadata) {
         if (!$this->getSkipExportTimestamp()) {
-          $entity_array['_dcd_metadata']['export_timestamp'] = \Drupal::time()
+          $entity_array['_dcd_metadata']['export_timestamp'] = $this->time
             ->getRequestTime();
         }
       }
@@ -955,9 +984,7 @@ class Exporter implements ExporterInterface {
 
       $this->linkManager->setLinkDomain(FALSE);
 
-      if (PHP_SAPI === 'cli') {
-        $this->accountSwitcher->switchBack();
-      }
+      $this->adminAccountSwitcher->switchBack();
 
       return $event->getContent();
     }
@@ -966,13 +993,16 @@ class Exporter implements ExporterInterface {
   }
 
   /**
-   * Get the referenced entities without loading them.
+   * Gets the referenced entities without loading them.
    *
-   * This is faster than calling referencedEntities() on the entity.
+   * This method is faster than calling `referencedEntities()` on the entity.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity from which to retrieve referenced entity IDs.
    *
    * @return array
+   *   An associative array of referenced entity field names as keys, and arrays
+   *   of entity IDs as values.
    */
   protected function getReferencedEntityIds(ContentEntityInterface $entity): array {
     $referenced_entities = [];
@@ -989,8 +1019,9 @@ class Exporter implements ExporterInterface {
               try {
                 $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type);
                 if ($entity_type_definition->getGroup() === 'content') {
-                  // Some entities have "NULL" references, for example a top level
-                  // taxonomy term references parent 0, which isn't an entity.
+                  // Some entities have "NULL" references, for example a top
+                  // level taxonomy term references parent 0, which isn't an
+                  // entity.
                   if ($id = $property->getTargetIdentifier()) {
                     $referenced_entities[$entity_type][] = $id;
                   }
@@ -1024,7 +1055,8 @@ class Exporter implements ExporterInterface {
     $entity_dependencies = [];
 
     if ($this->moduleHandler->moduleExists('layout_builder') && !in_array('block_content', $this->getSkipEntityTypeIds())) {
-      // Gather a list of referenced entities, modeled after ContentEntityBase::referencedEntities().
+      // Gather a list of referenced entities, modeled after
+      // ContentEntityBase::referencedEntities().
       foreach ($entity->getFields() as $field_key => $field_items) {
         foreach ($field_items as $field_item) {
           // Loop over all properties of a field item.
@@ -1036,7 +1068,8 @@ class Exporter implements ExporterInterface {
                 // Get list of components inside the LayoutBuilder Section.
                 $components = $section->getComponents();
                 foreach ($components as $component_uuid => $component) {
-                  // Gather components of type "inline_block:html_block", by block revision_id.
+                  // Gather components of type "inline_block:html_block", by
+                  // block revision_id.
                   if ($component instanceof SectionComponent) {
                     $configuration = $component->get('configuration');
                     if ($configuration['id'] === 'inline_block:html_block' && !empty($configuration['block_revision_id'])) {
@@ -1166,7 +1199,8 @@ class Exporter implements ExporterInterface {
           continue;
         }
         foreach ($entityIdsByType as $entityId) {
-          // Ignore entity reference if the referenced entity could not be loaded.
+          // Ignore entity reference if the referenced entity could not be
+          // loaded.
           if ($referenced_entity = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId)) {
             $entity_dependencies[$entityTypeId][$entityId] = $referenced_entity;
           }
@@ -1192,8 +1226,8 @@ class Exporter implements ExporterInterface {
           $entity_dependencies[$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity;
         }
         else {
-          \Drupal::logger('default_content_deploy')->warning(
-            t('Invalid text dependency found in @entity_type with ID @id', [
+          $this->logger->warning(
+            $this->t('Invalid text dependency found in @entity_type with ID @id', [
               '@entity_type' => $entity->getEntityTypeId(),
               '@id' => $entity->id(),
             ])

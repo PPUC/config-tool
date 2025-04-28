@@ -1,6 +1,7 @@
 services:
   search_api_default_content_deploy.default_content_deploy_event_subscriber:
     class: Drupal\search_api_default_content_deploy\EventSubscriber\DefaultContentDeployEventSubscriber
+    arguments: ['@default_content_deploy.exporter', '@default_content_deploy.manager']
     tags:
       - {name: event_subscriber}
 

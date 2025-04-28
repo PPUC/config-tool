@@ -48,10 +48,15 @@ class ExportForm extends FormBase {
    * ExportForm constructor.
    *
    * @param \Drupal\Core\Messenger\Messenger $messenger
+   *   The messenger service for displaying messages.
    * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
+   *   The deploy manager service for handling content deployment.
    * @param \Drupal\default_content_deploy\ExporterInterface $exporter
+   *   The exporter service for exporting content entities.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $bundle_info
+   *   The service providing bundle information for entity types.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
+   *   The file system service for handling file operations.
    */
   public function __construct(Messenger $messenger, DeployManager $deploy_manager, ExporterInterface $exporter, EntityTypeBundleInfoInterface $bundle_info, FileSystemInterface $file_system) {
     $this->exporter = $exporter;
@@ -194,10 +199,13 @@ class ExportForm extends FormBase {
   /**
    * Ajax callback for Mode form element.
    *
-   * @param $form
+   * @param array $form
+   *   The form structure.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    *
    * @return array
+   *   The modified form settings element.
    */
   public function processingMode($form, FormStateInterface $form_state) {
     $mode = $form_state->getValue('mode');
@@ -216,10 +224,13 @@ class ExportForm extends FormBase {
   /**
    * Ajax callback for Entity type form element.
    *
-   * @param $form
+   * @param array $form
+   *   The form structure.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    *
    * @return array
+   *   The updated bundle settings element.
    */
   public function processingEntityType($form, FormStateInterface $form_state) {
     $entity_type_id = $form_state->getValue('entity_type');
@@ -304,11 +315,14 @@ class ExportForm extends FormBase {
   }
 
   /**
-   * Helper for getting all bundles list of Entity type id.
+   * Retrieves a list of all bundles for a given entity type ID.
    *
-   * @param $entity_type_id
+   * @param string $entity_type_id
+   *   The machine name of the entity type.
    *
    * @return array|false
+   *   An associative array of bundle names keyed by their machine names,
+   *   or FALSE if the entity type is invalid.
    */
   private function getBundlesByEntityTypeId($entity_type_id) {
     $bundles[''] = $this->t('- None -');

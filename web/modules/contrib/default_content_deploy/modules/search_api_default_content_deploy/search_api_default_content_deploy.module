@@ -17,7 +17,7 @@ use Laminas\Stdlib\ArrayUtils;
  *
  * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityInsert()
  */
-function search_api_default_content_deploy_entity_insert(EntityInterface $entity) {
+function search_api_default_content_deploy_entity_insert(EntityInterface $entity): void {
   \Drupal::getContainer()
     ->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
     ->entityInsert($entity);
@@ -28,7 +28,7 @@ function search_api_default_content_deploy_entity_insert(EntityInterface $entity
  *
  * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityUpdate()
  */
-function search_api_default_content_deploy_entity_update(EntityInterface $entity) {
+function search_api_default_content_deploy_entity_update(EntityInterface $entity): void {
   \Drupal::getContainer()
     ->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
     ->entityUpdate($entity);
@@ -39,7 +39,7 @@ function search_api_default_content_deploy_entity_update(EntityInterface $entity
  *
  * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::entityDelete()
  */
-function search_api_default_content_deploy_entity_delete(EntityInterface $entity) {
+function search_api_default_content_deploy_entity_delete(EntityInterface $entity): void {
   // Call this hook on behalf of the Content Entity datasource.
   \Drupal::getContainer()->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
     ->entityDelete($entity);
@@ -50,7 +50,7 @@ function search_api_default_content_deploy_entity_delete(EntityInterface $entity
  *
  * @see \Drupal\search_api_default_content_deploy\Plugin\search_api\datasource\DefaultContentDeployContentEntityTrackingManager::indexUpdate()
  */
-function search_api_default_content_deploy_search_api_index_update(IndexInterface $index) {
+function search_api_default_content_deploy_search_api_index_update(IndexInterface $index): void {
   \Drupal::getContainer()->get('search_api_default_content_deploy.dcd_entity_datasource.tracking_manager')
     ->indexUpdate($index);
 }
@@ -61,7 +61,7 @@ function search_api_default_content_deploy_search_api_index_update(IndexInterfac
  * @return array
  *   Third party settings array.
  */
-function search_api_default_content_deploy_default_index_third_party_settings() {
+function search_api_default_content_deploy_default_index_third_party_settings(): array {
   return [
     'content_directory' => '',
     'export_referenced_entities' => FALSE,
@@ -84,14 +84,14 @@ function search_api_default_content_deploy_default_index_third_party_settings() 
  * @return array
  *   Third party settings array.
  */
-function search_api_default_content_deploy_merge_default_index_third_party_settings(array $third_party_settings) {
+function search_api_default_content_deploy_merge_default_index_third_party_settings(array $third_party_settings): array {
   return ArrayUtils::merge(search_api_default_content_deploy_default_index_third_party_settings(), $third_party_settings, TRUE);
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function search_api_default_content_deploy_form_search_api_index_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function search_api_default_content_deploy_form_search_api_index_form_alter(&$form, FormStateInterface $form_state, $form_id): void {
   // We need to restrict by form ID here because this function is also called
   // via hook_form_BASE_FORM_ID_alter (which is wrong, e.g. in the case of the
   // form ID search_api_field_config).
@@ -161,6 +161,22 @@ function search_api_default_content_deploy_form_search_api_index_form_alter(&$fo
     );
 
     $form['third_party_settings']['search_api_default_content_deploy']['content_directory']['#required'] = FALSE;
+
+    $form['#validate'][] = '_search_api_default_content_deploy_validate_server';
+  }
+}
+
+/**
+ * Check permission to export content on manipulations of the index form.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function _search_api_default_content_deploy_validate_server(array &$form, FormStateInterface $form_state): void {
+  if (!\Drupal::currentUser()->hasPermission('default content deploy export')) {
+    $form_state->setErrorByName('server', '"Export content" permission is required to configure the Default Content Deploy backend.');
   }
 }
 
@@ -177,7 +193,7 @@ function search_api_default_content_deploy_form_search_api_index_form_alter(&$fo
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  * @throws \Drupal\search_api\SearchApiException
  */
-function search_api_default_content_deploy_get_servers($only_active = TRUE) {
+function search_api_default_content_deploy_get_servers($only_active = TRUE): array {
   $dcd_servers = [];
   $storage = \Drupal::entityTypeManager()->getStorage('search_api_server');
   /** @var \Drupal\search_api\ServerInterface[] $servers */
@@ -205,7 +221,7 @@ function search_api_default_content_deploy_get_servers($only_active = TRUE) {
  *
  * @see \search_api_solr_form_search_api_index_form_alter
  */
-function _search_api_default_content_deploy_visibility() {
+function _search_api_default_content_deploy_visibility(): array {
   $valid_option = [];
   $servers = search_api_default_content_deploy_get_servers(FALSE);
   foreach ($servers as $server) {

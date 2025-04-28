@@ -2,14 +2,17 @@
 
 namespace Drupal\default_content_deploy;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\DefaultContent\AdminAccountSwitcher;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Session\AccountSwitcherInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\default_content_deploy\Event\ImportBatchFinishedEvent;
@@ -18,24 +21,16 @@ use Drupal\default_content_deploy\Event\PreSaveEntityEvent;
 use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 use Drupal\hal\LinkManager\LinkManagerInterface;
 use Rogervila\ArrayDiffMultidimensional;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- *
+ * Handles the import of default content.
  */
 class Importer implements ImporterInterface {
 
   use DependencySerializationTrait;
   use StringTranslationTrait;
-  use AdministratorTrait;
-
-  /**
-   * Deploy manager.
-   *
-   * @var \Drupal\default_content_deploy\DeployManager
-   */
-  protected $deployManager;
 
   /**
    * Scanned files.
@@ -108,119 +103,38 @@ class Importer implements ImporterInterface {
   protected $delete = FALSE;
 
   /**
-   * The Entity repository manager.
+   * Determines whether verbose mode is enabled.
    *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-   */
-  protected $entityRepository;
-
-  /**
-   * The cache data.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
-   */
-  protected $cache;
-
-  /**
-   * The serializer service.
-   *
-   * @var \Symfony\Component\Serializer\Serializer
-   */
-  protected $serializer;
-
-  /**
-   * The link manager service.
-   *
-   * @var \Drupal\hal\LinkManager\LinkManagerInterface
-   */
-  protected $linkManager;
-
-  /**
-   * The account switcher.
-   *
-   * @var \Drupal\Core\Session\AccountSwitcherInterface
-   */
-  protected $accountSwitcher;
-
-  /**
-   * DCD Exporter.
-   *
-   * @var ExporterInterface
-   */
-  protected $exporter;
-
-  /**
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $database;
-
-  /**
-   * The event dispatcher.
-   *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-   */
-  protected $eventDispatcher;
-
-  /**
-   * The metadata service.
-   *
-   * @var \Drupal\default_content_deploy\DefaultContentDeployMetadataService
-   */
-  protected $metadataService;
-
-  /**
-   * The state.
-   *
-   * @var \Drupal\Core\State\StateInterface
-   */
-  protected $state;
-
-  /**
    * @var bool
    */
   protected $verbose = FALSE;
 
   /**
-   * Constructs the default content deploy manager.
+   * An admin account, required for full access on import.
    *
-   * @param \Symfony\Component\Serializer\Serializer $serializer
-   *   The serializer service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager service.
-   * @param \Drupal\hal\LinkManager\LinkManagerInterface $link_manager
-   *   The link manager service.
-   * @param \Drupal\Core\Session\AccountSwitcherInterface $account_switcher
-   *   The account switcher.
-   * @param \Drupal\default_content_deploy\DeployManager $deploy_manager
-   *   Deploy manager.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The Entity repository manager.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   The cache data.
-   * @param ExporterInterface $exporter
-   *   The exporter.
-   * @param \Drupal\Core\Database\Connection $database
-   *   Database connection.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   The event dispatcher.
-   * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
-   *   The metadata service.
-   * @param \Drupal\Core\State\StateInterface $state
-   *   The state.
+   * @var \Drupal\Core\Session\AccountInterface|null
    */
-  public function __construct(Serializer $serializer, EntityTypeManagerInterface $entity_type_manager, LinkManagerInterface $link_manager, AccountSwitcherInterface $account_switcher, DeployManager $deploy_manager, EntityRepositoryInterface $entity_repository, CacheBackendInterface $cache, ExporterInterface $exporter, Connection $database, EventDispatcherInterface $event_dispatcher, DefaultContentDeployMetadataService $metadata_service, StateInterface $state) {
-    $this->serializer = $serializer;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->linkManager = $link_manager;
-    $this->accountSwitcher = $account_switcher;
-    $this->deployManager = $deploy_manager;
-    $this->entityRepository = $entity_repository;
-    $this->cache = $cache;
-    $this->exporter = $exporter;
-    $this->database = $database;
-    $this->eventDispatcher = $event_dispatcher;
-    $this->metadataService = $metadata_service;
-    $this->state = $state;
+  private AccountInterface|null $adminAccount = NULL;
+
+  /**
+   * Constructs the default content deploy manager.
+   */
+  public function __construct(
+    protected readonly SerializerInterface $serializer,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly LinkManagerInterface $linkManager,
+    protected readonly AdminAccountSwitcher $adminAccountSwitcher,
+    protected readonly DeployManager $deployManager,
+    protected readonly EntityRepositoryInterface $entityRepository,
+    protected readonly CacheBackendInterface $cache,
+    protected readonly ExporterInterface $exporter,
+    protected readonly Connection $database,
+    protected readonly EventDispatcherInterface $eventDispatcher,
+    protected readonly DefaultContentDeployMetadataService $metadataService,
+    protected readonly StateInterface $state,
+    protected readonly MessengerInterface $messenger,
+    protected readonly TimeInterface $time,
+  ) {
   }
 
   /**
@@ -356,7 +270,7 @@ class Importer implements ImporterInterface {
     $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id);
     $table = $entity_type_definition->getBaseTable();
     $uuid_column = $entity_type_definition->getKey('uuid');
-    return \Drupal::database()->select($table, 'e')
+    return $this->database->select($table, 'e')
       ->fields('e', [$uuid_column])
       ->condition($uuid_column, $uuid)
       ->range(0, 1)
@@ -425,7 +339,7 @@ class Importer implements ImporterInterface {
     $current = 1;
 
     if ($total === 0) {
-      \Drupal::messenger()->addMessage(t('Nothing to import.'));
+      $this->messenger->addMessage($this->t('Nothing to import.'));
       return;
     }
 
@@ -477,7 +391,7 @@ class Importer implements ImporterInterface {
       'progressive' => TRUE,
       'queue' => [
         'class' => DefaultContentDeployBatch::class,
-        'name' => 'default_content_deploy:import:' . \Drupal::time()->getCurrentMicroTime(),
+        'name' => 'default_content_deploy:import:' . $this->time->getCurrentMicroTime(),
       ],
     ];
 
@@ -485,7 +399,12 @@ class Importer implements ImporterInterface {
   }
 
   /**
+   * Initializes the context for the import process.
    *
+   * @param array $vars
+   *   The variables to initialize in the context.
+   * @param array &$context
+   *   The reference to the batch context array.
    */
   public static function initializeContext(array $vars, array &$context): void {
     $context['results']['max_export_timestamp'] = 0;
@@ -493,34 +412,59 @@ class Importer implements ImporterInterface {
   }
 
   /**
+   * Imports a file and processes its data.
    *
+   * @param object $file
+   *   The file object to import.
+   * @param int $current
+   *   Indicates progress of the batch operations.
+   * @param int $total
+   *   Total number of batch operations.
+   * @param bool $correction
+   *   Whether this is a second ID correction run.
+   * @param array &$context
+   *   The reference to the batch context array.
    */
   public static function importFile($file, $current, $total, $correction, &$context): void {
+    // @phpstan-ignore-next-line
     $importer = \Drupal::service('default_content_deploy.importer');
     $importer->processFile($file, $current, $total, $correction, $context);
   }
 
   /**
+   * Deletes an entity from the system.
    *
+   * @param object $file
+   *   The file object representing the entity to delete.
+   * @param int $current
+   *   Indicates progress of the batch operations.
+   * @param int $total
+   *   Total number of batch operations.
+   * @param bool $correction
+   *   Whether this is a second ID correction run.
+   * @param array &$context
+   *   The reference to the batch context array.
    */
   public static function deleteEntity($file, $current, $total, $correction, &$context): void {
+    // @phpstan-ignore-next-line
     $importer = \Drupal::service('default_content_deploy.importer');
     $importer->processDelete($file, $current, $total, $context);
   }
 
   /**
-   * Process and import file.
+   * Processes and imports a file.
    *
-   * @param $file
+   * @param object $file
    *   The file object to use for import.
-   * @param $current
+   * @param int $current
    *   Indicates progress of the batch operations.
-   * @param $total
+   * @param int $total
    *   Total number of batch operations.
    * @param bool $correction
    *   Second ID correction run.
    * @param array &$context
-   *   Reference to an array that stores the context of the batch process for status updates.
+   *   Reference to an array that stores the context of the batch process for
+   *   status updates.
    *
    * @throws \Exception
    */
@@ -546,9 +490,11 @@ class Importer implements ImporterInterface {
       $this->metadataService->setCurrentUuid($file->uuid);
     }
 
-    if (PHP_SAPI === 'cli') {
-      $root_user = $this->getAdministrator();
-      $this->accountSwitcher->switchTo($root_user);
+    if (!$this->adminAccount) {
+      $this->adminAccount = $this->adminAccountSwitcher->switchToAdministrator();
+    }
+    else {
+      $this->adminAccountSwitcher->switchTo($this->adminAccount);
     }
 
     try {
@@ -566,8 +512,9 @@ class Importer implements ImporterInterface {
         if (!$file->forceOverride && !$correction) {
           // Skip if the changed time the same or less in the file.
           if ($entity instanceof EntityChangedInterface) {
-            // If an entity was refactored to implement the EntityChangedInterface,
-            // older exports don't contain the changed field.
+            // If an entity was refactored to implement the
+            // EntityChangedInterface, older exports don't contain the changed
+            // field.
             if (isset($file->data['changed'])) {
               $changed_time_file = 0;
               foreach ($file->data['changed'] as $changed) {
@@ -651,10 +598,10 @@ class Importer implements ImporterInterface {
         throw new \RuntimeException('Illegal state, an entity must not be created during ID correction.');
       }
 
-      // All entities with entity references will be imported two times to ensure
-      // that all entity references are present and valid. Path aliases will be
-      // imported last to have a chance to rewrite them to the new ids of newly
-      // created entities.
+      // All entities with entity references will be imported two times to
+      // ensure that all entity references are present and valid. Path aliases
+      // will be imported last to have a chance to rewrite them to the new ids
+      // of newly created entities.
       $this->linkManager->setLinkDomain($this->getLinkDomain($file));
       $class = $this->entityTypeManager->getDefinition($file->entity_type_id)
         ->getClass();
@@ -665,26 +612,22 @@ class Importer implements ImporterInterface {
       $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', ['request_method' => 'POST']);
       $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data, $correction, $context));
       $entity->enforceIsNew($is_new);
+
+      if (($file->data['pass'][0]['value'] ?? FALSE) && $entity->getEntityTypeId() === 'user' && $entity->hasField('password')) {
+        // Make sure that it is not hashed again.
+        $entity->get('password')->pre_hashed = TRUE;
+      }
+
+      if (($file->data['secret'][0]['value'] ?? FALSE) && $entity->getEntityTypeId() === 'consumer' && $entity->hasField('secret')) {
+        // Make sure that it is not hashed again.
+        $entity->get('secret')->pre_hashed = TRUE;
+      }
+
       $entity->save();
       $this->eventDispatcher->dispatch(new PostSaveEntityEvent($entity, $file->data, $correction, $context));
 
       if (!$correction && !$this->metadataService->isCorrectionRequired($file->uuid)) {
         $context['results']['skipCorrection'][$file->uuid] = TRUE;
-      }
-
-      if ($entity->getEntityTypeId() === 'user') {
-        // Workaround: store the hashed password directly in the database
-        // and avoid the entity API which doesn't provide support for
-        // setting password hashes directly.
-        $hashed_pass = $file->data['pass'][0]['value'] ?? FALSE;
-        if ($hashed_pass) {
-          $this->database->update('users_field_data')
-            ->fields([
-              'pass' => $hashed_pass,
-            ])
-            ->condition('uid', $entity->id(), '=')
-            ->execute();
-        }
       }
 
       // Invalidate the cache for updated entities.
@@ -693,10 +636,6 @@ class Importer implements ImporterInterface {
       }
 
       $this->linkManager->setLinkDomain(FALSE);
-
-      if (PHP_SAPI === 'cli') {
-        $this->accountSwitcher->switchBack();
-      }
 
       if ($this->verbose) {
         $context['message'] = $this->t('@current of @total, @operation @entity_type @entity_id', [
@@ -723,28 +662,34 @@ class Importer implements ImporterInterface {
         '@message' => $e->getMessage(),
       ]);
     }
+    finally {
+      $this->adminAccountSwitcher->switchBack();
+    }
   }
 
   /**
-   * Process and import file.
+   * Processes and imports a file for deletion.
    *
-   * @param $file
+   * @param object $file
    *   The file object to use for import.
-   * @param $current
+   * @param int $current
    *   Indicates progress of the batch operations.
-   * @param $total
+   * @param int $total
    *   Total number of batch operations.
    * @param array &$context
-   *   Reference to an array that stores the context of the batch process for status updates.
+   *   Reference to an array that stores the context of the batch process
+   *   for status updates.
    *
    * @throws \Exception
    */
   protected function processDelete(object $file, $current, $total, array &$context): void {
     $this->verbose = &$context['results']['verbose'];
 
-    if (PHP_SAPI === 'cli') {
-      $root_user = $this->getAdministrator();
-      $this->accountSwitcher->switchTo($root_user);
+    if (!$this->adminAccount) {
+      $this->adminAccount = $this->adminAccountSwitcher->switchToAdministrator();
+    }
+    else {
+      $this->adminAccountSwitcher->switchTo($this->adminAccount);
     }
 
     try {
@@ -787,6 +732,9 @@ class Importer implements ImporterInterface {
         '@message' => $e->getMessage(),
       ]);
     }
+    finally {
+      $this->adminAccountSwitcher->switchBack();
+    }
   }
 
   /**
@@ -803,7 +751,9 @@ class Importer implements ImporterInterface {
   }
 
   /**
-   * @{inheritdoc}
+   * Decodes the given file and prepares its data for import.
+   *
+   * {@inheritdoc}
    */
   public function decodeFile(object $file): void {
     // Get parsed data.
@@ -837,7 +787,18 @@ class Importer implements ImporterInterface {
     // @todo offer an event to let third party modules register their content
     //   types. On the other hand, the path is only part of the export if
     //   computed fields are included, which could be turned off in 2.1.x.
-    if (isset($file->data['path']) && in_array($file->entity_type_id, ['taxonomy_term', 'node', 'media', 'commerce_product'])) {
+    if (
+      isset($file->data['path']) &&
+      in_array(
+        $file->entity_type_id,
+        [
+          'taxonomy_term',
+          'node',
+          'media',
+          'commerce_product',
+        ]
+      )
+    ) {
       unset($file->data['path']);
     }
 
@@ -877,10 +838,8 @@ class Importer implements ImporterInterface {
    *   The file object.
    */
   protected function addToDelete(object $file): void {
-    switch ($file->entity_type_id) {
-      default:
-        $this->dataToDelete[$file->uuid] = $file;
-        break;
+    if (isset($file->entity_type_id)) {
+      $this->dataToDelete[$file->uuid] = $file;
     }
   }
 
@@ -910,13 +869,16 @@ class Importer implements ImporterInterface {
   }
 
   /**
-   * If this entity contains a reference field with target revision is value,
-   * we should to update it.
+   * Updates the target revision ID for reference fields.
+   *
+   * If this entity contains a reference field with a target revision ID value,
+   * we update it to reflect the latest revision.
    *
    * @param array $decode
    *   The decoded entity array.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
+   *   Thrown if an error occurs during entity storage operations.
    */
   private function updateTargetRevisionId(array &$decode): void {
     if (isset($decode['_embedded'])) {
@@ -952,19 +914,24 @@ class Importer implements ImporterInterface {
   public static function importFinished(bool $success, array $results, array $operations): void {
     if ($success) {
       // Batch processing completed successfully.
+      // @phpstan-ignore-next-line
       \Drupal::messenger()->addMessage(t('Batch import completed successfully.'));
 
+      // @phpstan-ignore-next-line
       if ($results['max_export_timestamp'] > ((int) \Drupal::state()->get($results['state_key'], 0))) {
+        // @phpstan-ignore-next-line
         \Drupal::state()
           ->set($results['state_key'], $results['max_export_timestamp']);
       }
     }
     else {
       // Batch processing encountered an error.
+      // @phpstan-ignore-next-line
       \Drupal::messenger()->addMessage(t('An error occurred during the batch export process.'), 'error');
     }
 
     /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+    // @phpstan-ignore-next-line
     $dispatcher = \Drupal::service('event_dispatcher');
     $dispatcher->dispatch(new ImportBatchFinishedEvent($success, $results));
   }

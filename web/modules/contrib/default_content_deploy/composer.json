@@ -3,26 +3,14 @@
   "description": "Drupal module for exporting and deploying content in *.json files.",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
-  "authors": [
-    {
-      "name": "Martin Klíma",
-      "email": "martin.klima@hqis.cz"
-    },
-    {
-      "name": "Jakub Hnilička"
-    },
-    {
-      "name": "Radoslav Terezka"
-    },
-    {
-      "name": "Markus Kalkbrenner"
-    }
-  ],
   "require": {
     "ext-dom": "*",
     "drupal/hal": "^1.0 || ^2.0",
     "laminas/laminas-stdlib": "^3.2",
     "rogervila/array-diff-multidimensional": "^2.0"
+  },
+  "require-dev": {
+    "drupal/search_api": "^1.37"
   },
   "conflict": {
     "drupal/better_normalizers": "*",

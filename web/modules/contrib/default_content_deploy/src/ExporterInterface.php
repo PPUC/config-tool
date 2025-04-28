@@ -5,44 +5,44 @@ namespace Drupal\default_content_deploy;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
- * A service for handling export of default content.
+ * Defines an interface for exporting default content.
  */
 interface ExporterInterface {
 
   /**
-   * Set entity type ID.
+   * Sets the entity type ID.
    *
    * @param string $entity_type
-   *   Entity Type.
+   *   The entity type ID.
    */
   public function setEntityTypeId(string $entity_type): void;
 
   /**
-   * Set type of entity content.
+   * Sets the entity bundle.
    *
    * @param string $bundle
-   *   Bundle of the entity type.
+   *   The entity bundle.
    */
   public function setEntityBundle(string $bundle): void;
 
   /**
-   * Set entity IDs for export.
+   * Sets entity IDs for export.
    *
    * @param array $entity_ids
-   *   The IDs of entity.
+   *   The entity IDs.
    */
   public function setEntityIds(array $entity_ids): void;
 
   /**
-   * Set entity IDs which needs skip.
+   * Sets entity IDs to be skipped.
    *
    * @param array $skip_entity_ids
-   *   The IDs of entity for skip.
+   *   The entity IDs to skip.
    */
   public function setSkipEntityIds(array $skip_entity_ids): void;
 
   /**
-   * Set entity type IDs which needs skip.
+   * Sets entity type IDs to be skipped.
    *
    * @param array $skip_entity_type_ids
    *   The entity type IDs to skip.
@@ -50,63 +50,68 @@ interface ExporterInterface {
   public function setSkipEntityTypeIds(array $skip_entity_type_ids): void;
 
   /**
+   * Gets the entity type IDs to be skipped.
+   *
    * @return array
-   *   The entity type IDs to skip.
+   *   The entity type IDs.
    */
   public function getSkipEntityTypeIds(): array;
 
   /**
-   * Set type of export.
+   * Sets the export mode.
    *
    * @param string $mode
-   *   Value type of export.
+   *   The export mode.
    *
    * @throws \Exception
+   *   Throws an exception if an invalid mode is set.
    */
   public function setMode(string $mode): void;
 
   /**
-   * Force override of existing exported content.
+   * Forces override of existing exported content.
    *
    * @param bool $force
-   *   TRUE if content should be overridden.
+   *   TRUE to force override.
    */
   public function setForceUpdate(bool $force): void;
 
   /**
-   * Set the Domain of the links to other entities in the HAL format.
+   * Sets the domain for HAL format entity links.
    *
    * @param string $link_domain
-   *   The domain.
+   *   The domain to be set.
    */
   public function setLinkDomain(string $link_domain): void;
 
   /**
-   * Set the Domain of the links to other entities in the HAL format.
-   * *
+   * Gets the domain for HAL format entity links.
    *
    * @return string
-   *   The link domain
+   *   The link domain.
    */
   public function getLinkDomain(): string;
 
   /**
-   * Set the datetime. All content changes before will be ignored during the export.
+   * Sets the datetime for export filtering.
+   *
+   * All content changes before this datetime will be ignored.
    *
    * @param \DateTimeInterface $date_time
+   *   The datetime to be set.
    */
   public function setDateTime(\DateTimeInterface $date_time): void;
 
   /**
-   * Get the datetime. All content changes before will be ignored during the export.
+   * Gets the datetime used for export filtering.
    *
    * @return \DateTimeInterface|null
-   *   The datetime.
+   *   The datetime, or NULL if not set.
    */
   public function getDateTime(): ?\DateTimeInterface;
 
   /**
-   * Get the datetime as timestamp.
+   * Gets the export datetime as a timestamp.
    *
    * @return int
    *   The timestamp.
@@ -114,40 +119,40 @@ interface ExporterInterface {
   public function getTime(): int;
 
   /**
-   * Set the value of text_dependencies option.
+   * Sets the value of the text dependencies option.
    *
    * @param bool|null $text_dependencies
-   *   The value of the text_dependencies option. If null, it will be
-   *   obtained from the configuration.
+   *   The text dependencies option. If NULL, it will be obtained
+   *   from the configuration.
    */
   public function setTextDependencies(?bool $text_dependencies = NULL): void;
 
   /**
-   * Get the value of text_dependencies option.
+   * Gets the value of the text dependencies option.
    *
    * @return bool
-   *   The value of the text_dependencies option.
+   *   The text dependencies option value.
    */
   public function getTextDependencies(): ?bool;
 
   /**
-   * Set directory to export.
+   * Sets the directory for export.
    *
    * @param string $folder
-   *   The content folder.
+   *   The folder path.
    */
   public function setFolder(string $folder): void;
 
   /**
-   * Enable the verbose mode.
+   * Enables or disables verbose mode.
    *
    * @param bool $verbose
-   *   Set to TRUE for verbose mode.
+   *   TRUE to enable verbose mode.
    */
   public function setVerbose(bool $verbose): void;
 
   /**
-   * Export entities.
+   * Exports entities.
    */
   public function export(): void;
 
@@ -157,23 +162,28 @@ interface ExporterInterface {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to be exported.
    * @param bool|null $with_references
-   *   Indicates if export should consider referenced entities.
+   *   TRUE to export referenced entities.
+   *
+   * @return bool
+   *   TRUE on success, FALSE on failure.
    */
   public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): bool;
 
   /**
-   * Exports a single entity as importContent expects it.
+   * Exports a single entity in a format compatible with importContent.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to be exported.
    * @param bool $add_metadata
-   *   Include metadata.
+   *   TRUE to include metadata.
    *
    * @return string
-   *   The serialized Entity.
+   *   The serialized entity.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *   Thrown if the entity definition is invalid.
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   Thrown if the entity plugin is not found.
    */
   public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string;
 

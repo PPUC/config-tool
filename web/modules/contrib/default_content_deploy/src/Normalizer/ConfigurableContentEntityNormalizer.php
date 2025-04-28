@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
-use Drupal\Core\Entity\TranslatableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\default_content_deploy\DefaultContentDeployMetadataService;
 use Drupal\default_content_deploy\Form\SettingsForm;
@@ -71,17 +70,20 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
    * {@inheritdoc}
    */
   public function normalize($entity, $format = NULL, array $context = []) : float|array|int|bool|\ArrayObject|string|null {
-    $config = $this->config->get(SettingsForm::CONFIG);
-    if ($config->get('skip_computed_fields') ?? FALSE) {
-      // Check if the entity has computed fields and remove them.
-      foreach ($entity->getFieldDefinitions() as $field_name => $field_definition) {
-        if (isset($entity->$field_name) && $field_definition->isComputed()) {
-          unset($entity->$field_name);
-          if ($entity instanceof TranslatableInterface) {
-            foreach ($entity->getTranslationLanguages(FALSE) as $langcode => $language) {
-              $translation = $entity->getTranslation($langcode);
-              unset($translation->$field_name);
-            }
+    $context += [
+      'included_fields' => NULL,
+    ];
+
+    // If the list of fields is not yet limited to specific fields, computed
+    // fields might to be excluded. If the list is already limited, we're in a
+    // recursion and must not touch the list of fields.
+    if ($context['included_fields'] === NULL) {
+      $config = $this->config->get(SettingsForm::CONFIG);
+      if ($config->get('skip_computed_fields') ?? FALSE) {
+        // Check if the entity has computed fields and remove them.
+        foreach ($entity->getFieldDefinitions() as $field_name => $field_definition) {
+          if (isset($entity->$field_name) && !$field_definition->isComputed()) {
+            $context['included_fields'][] = $field_name;
           }
         }
       }
@@ -96,11 +98,9 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
             foreach ($item as $name => $value) {
               if ('uri' === $name || ('path' === $field && 'value' === $name)) {
                 if (preg_match('@^(internal:|entity:|)/?(\w+)/(\d+)([/?#].*|)$@', $value, $matches)) {
-                  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
-                  $entity_type_manager = \Drupal::service('entity_type.manager');
                   try {
                     /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
-                    $storage = $entity_type_manager->getStorage($matches[2]);
+                    $storage = $this->entityTypeManager->getStorage($matches[2]);
                     if ($entity = $storage->load($matches[3])) {
                       $entity_array['_dcd_metadata']['uuids'][$matches[2]][$matches[3]] = $entity->uuid();
                     }

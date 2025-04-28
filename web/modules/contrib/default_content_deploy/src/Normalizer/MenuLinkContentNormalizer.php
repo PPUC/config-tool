@@ -21,18 +21,18 @@ use Drupal\serialization\EntityResolver\UuidReferenceInterface;
 class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
 
   /**
-   * Psuedo field name for embedding target entity.
+   * Pseudo field name for embedding target entity.
    *
    * @var string
    */
-  const PSUEDO_FIELD_NAME = 'menu_link_content_target_entity';
+  const PSEUDO_FIELD_NAME = 'menu_link_content_target_entity';
 
   /**
-   * Psuedo field name for embedding parent target entity.
+   * Pseudo field name for embedding parent target entity.
    *
    * @var string
    */
-  const PSUEDO_PARENT_FIELD_NAME = 'menu_link_content_parent_entity';
+  const PSEUDO_PARENT_FIELD_NAME = 'menu_link_content_parent_entity';
 
   /**
    * UUID Reference resolver.
@@ -88,7 +88,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
           $stub = EntityStub::fromEntityUri($link['uri']);
           try {
             if ($target_entity = $this->entityTypeManager->getStorage($stub->getEntityTypeId())->load($stub->getEntityId())) {
-              $normalized = $this->embedEntity($entity, $format, $context, $target_entity, $normalized, self::PSUEDO_FIELD_NAME);
+              $normalized = $this->embedEntity($entity, $format, $context, $target_entity, $normalized, self::PSEUDO_FIELD_NAME);
               $normalized['link'][$key] += [
                 'target_uuid' => $target_entity->uuid(),
               ];
@@ -116,7 +116,7 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
           [$plugin_id, $parent_uuid] = explode(PluginBase::DERIVATIVE_SEPARATOR, $parent['value']);
           if ($plugin_id === 'menu_link_content' && $parent_entity = $this->entityRepository->loadEntityByUuid('menu_link_content', $parent_uuid)) {
             // This entity has a parent menu link entity, we embed it.
-            $normalized = $this->embedEntity($entity, $format, $context, $parent_entity, $normalized, self::PSUEDO_PARENT_FIELD_NAME);
+            $normalized = $this->embedEntity($entity, $format, $context, $parent_entity, $normalized, self::PSEUDO_PARENT_FIELD_NAME);
           }
         }
       }
