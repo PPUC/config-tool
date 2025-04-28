@@ -11,9 +11,41 @@ use Drupal\default_content_deploy\Queue\DefaultContentDeployBatch;
 /**
  * Implements hook_cron().
  */
-function default_content_deploy_cron() {
+function default_content_deploy_cron(): void {
   $config = \Drupal::config(SettingsForm::CONFIG);
   $queue = new DefaultContentDeployBatch('default_content_deploy', \Drupal::database());
   $queue->setTtl((int) ($config->get('batch_ttl') ?? 14400));
   $queue->garbageCollection();
+}
+
+/**
+ * Alter the HAL type URI.
+ *
+ * Format: [ENTITY_TYPE]/[BUNDLE].
+ *
+ * @param string $uri
+ *   The URI to alter.
+ * @param array $context
+ *   The context from the serializer/normalizer operation.
+ */
+function default_content_deploy_hal_type_uri_alter(&$uri, $context = []): void {
+  if (($context['default_content_deploy'] ?? FALSE) === TRUE) {
+    $uri = preg_replace('@^.*/rest/type/@', '', $uri);
+  }
+}
+
+/**
+ * Alter the HAL relation URI.
+ *
+ * Format: relation/[ENTITY_TYPE]/[BUNDLE]/[FIELD].
+ *
+ * @param string $uri
+ *   The URI to alter.
+ * @param array $context
+ *   The context from the serializer/normalizer operation.
+ */
+function default_content_deploy_hal_relation_uri_alter(&$uri, $context = []): void {
+  if (($context['default_content_deploy'] ?? FALSE) === TRUE) {
+    $uri = preg_replace('@^.*/rest/@', '', $uri);
+  }
 }

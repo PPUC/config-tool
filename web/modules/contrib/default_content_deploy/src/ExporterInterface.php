@@ -77,22 +77,6 @@ interface ExporterInterface {
   public function setForceUpdate(bool $force): void;
 
   /**
-   * Sets the domain for HAL format entity links.
-   *
-   * @param string $link_domain
-   *   The domain to be set.
-   */
-  public function setLinkDomain(string $link_domain): void;
-
-  /**
-   * Gets the domain for HAL format entity links.
-   *
-   * @return string
-   *   The link domain.
-   */
-  public function getLinkDomain(): string;
-
-  /**
    * Sets the datetime for export filtering.
    *
    * All content changes before this datetime will be ignored.
@@ -163,11 +147,8 @@ interface ExporterInterface {
    *   The entity to be exported.
    * @param bool|null $with_references
    *   TRUE to export referenced entities.
-   *
-   * @return bool
-   *   TRUE on success, FALSE on failure.
    */
-  public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): bool;
+  public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): void;
 
   /**
    * Exports a single entity in a format compatible with importContent.
@@ -176,6 +157,8 @@ interface ExporterInterface {
    *   The entity to be exported.
    * @param bool $add_metadata
    *   TRUE to include metadata.
+   * @param array $context
+   *   The optional context. Only uuids are relevant.
    *
    * @return string
    *   The serialized entity.
@@ -185,6 +168,6 @@ interface ExporterInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    *   Thrown if the entity plugin is not found.
    */
-  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string;
+  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata, array &$context = []): string;
 
 }

@@ -1519,12 +1519,12 @@
         },
         {
             "name": "drupal/default_content_deploy",
-            "version": "dev-2.1.x",
-            "version_normalized": "dev-2.1.x",
+            "version": "dev-2.2.x",
+            "version_normalized": "dev-2.2.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/default_content_deploy.git",
-                "reference": "bfb5c7c5f21076a732fa5e0fb9f71224ce6ac90a"
+                "reference": "f4f8a6fccee4f9619f21d89972078e702865f58d"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
@@ -1543,11 +1543,11 @@
             "type": "drupal-module",
             "extra": {
                 "branch-alias": {
-                    "dev-2.1.x": "2.1.x-dev"
+                    "dev-2.2.x": "2.2.x-dev"
                 },
                 "drupal": {
-                    "version": "2.1.4+22-dev",
-                    "datestamp": "1742825808",
+                    "version": "2.2.0-beta1+3-dev",
+                    "datestamp": "1745834090",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."

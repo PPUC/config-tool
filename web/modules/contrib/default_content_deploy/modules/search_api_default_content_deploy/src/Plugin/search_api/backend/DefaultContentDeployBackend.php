@@ -151,25 +151,15 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     $this->exporter->setTextDependencies($index_third_party_settings['text_dependencies']);
     $this->exporter->setSkipExportTimestamp($index_third_party_settings['skip_export_timestamp']);
     $this->exporter->setSkipEntityTypeIds($index_third_party_settings['skip_entity_types'] ?? []);
-    $this->exporter->setLinkDomain($index_third_party_settings['link_domain']);
 
     foreach ($items as $item) {
-      //$this->getLogger()->debug($item->getId());
       $datasource = $item->getDatasource();
       if ($datasource instanceof DefaultContentDeployContentEntity) {
         // Don't use getOriginalObject() to get the real state from the
         // database.
         /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
         $entity = $index->loadItem($item->getId())->getEntity();
-        if ($this->exporter->exportEntity($entity, $index_third_party_settings['export_referenced_entities'])) {
-          [$datasource_id, $item_id] = Utility::splitCombinedId($item->getId());
-          if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
-            $file_path = $directory . '_deleted/' . $datasource_matches[1] . '/' . $item_matches[1] . '.json';
-            if (file_exists($file_path)) {
-              $this->fileSystem->delete($file_path);
-            }
-          }
-        }
+        $this->exporter->exportEntity($entity, $index_third_party_settings['export_referenced_entities']);
         // Even if the export "failed" we need to mark the item as indexed
         // because a dcd event subscriber might have skipped the entity.
         $ret[] = $item->getId();
@@ -188,7 +178,6 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     if ($index_third_party_settings['delete_single_file_allowed']) {
       $directory = rtrim($index_third_party_settings['content_directory'], '/') . '/';
       foreach ($item_ids as $id) {
-        //$this->getLogger()->debug($id);
         [$datasource_id, $item_id] = Utility::splitCombinedId($id);
         if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
           $file_name = '/' . $item_matches[1] . '.json';

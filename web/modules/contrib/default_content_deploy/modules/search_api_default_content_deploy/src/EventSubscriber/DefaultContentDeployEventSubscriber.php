@@ -41,7 +41,7 @@ class DefaultContentDeployEventSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[DefaultContentDeployEvents::PRE_SERIALIZE] = [['setIndexId', 1000]];
     $events[DefaultContentDeployEvents::POST_SERIALIZE] = [['setIndexId', 1000], ['adjustContent', 1000]];
     $events[SearchApiEvents::INDEXING_ITEMS] = [['identifyIndex']];
@@ -80,21 +80,11 @@ class DefaultContentDeployEventSubscriber implements EventSubscriberInterface {
    */
   public function adjustContent(PostSerializeEvent $event): void {
     if ($event->getIndexId()) {
-      $link_domain = $this->exporter->getLinkDomain();
-      $current_host = $this->deployManager->getCurrentHost();
-
-      if ($link_domain !== $current_host) {
-        // Adjust the link domain.
-        $link_domain = str_replace('/', '\/', $link_domain);
-        $current_host = str_replace('/', '\/', $current_host);
-        $event->setContent(str_replace($current_host, $link_domain, $event->getContent()));
-      }
-
       $entity = $event->getEntity();
       $file_path = rtrim($event->getFolder(), '/') . '/' . $entity->getEntityTypeId() . '/' . $entity->uuid() . '.json';
       if (file_exists($file_path)) {
         $content = file_get_contents($file_path);
-        if (preg_replace('/"export_timestamp": \d+/', '', $content) === preg_replace('/"export_timestamp": \d+/', '', $event->getContent())) {
+        if (preg_replace('/"export_timestamp"\s*:\s*\d+/', '', $content) === preg_replace('/"export_timestamp"\s*:\s*\d+/', '', $event->getContent())) {
           // Everything except the export timestamp is identical, so don't
           // write the file.
           $event->setContent('');

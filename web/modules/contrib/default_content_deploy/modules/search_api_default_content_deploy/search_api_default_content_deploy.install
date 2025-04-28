@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall hooks for search_api_default_content_deploy.
+ */
+
+/**
+ * Gets all backend configs for active default content deploy servers.
+ *
+ * @param string $pattern
+ *   Pattern to filter the backend configs.
+ *
+ * @return array
+ *   All backend configs for active Solr servers keyed by server name.
+ */
+function search_api_default_content_deploy_update_helper_get_backend_configs(string $pattern = 'default_content_deploy'): array {
+  $config_factory = \Drupal::configFactory();
+  $backend_configs = [];
+  foreach ($config_factory->listAll('search_api.server.') as $server_name) {
+    $server = $config_factory->get($server_name);
+    if (strpos($server->get('backend'), $pattern) !== FALSE) {
+      $backend_configs[$server_name] = $server->get('backend_config');
+    }
+  }
+  return $backend_configs;
+}
+
+/**
+ * Gets all index third party settings for default content deploy backends.
+ *
+ * @param string $pattern
+ *   Pattern to filter the server configs.
+ *
+ * @return array
+ *   All backend configs for active Solr servers keyed by server name.
+ */
+function search_api_default_content_deploy_update_helper_get_index_third_party_settings(string $pattern = 'default_content_deploy'): array {
+  $backend_configs = search_api_default_content_deploy_update_helper_get_backend_configs($pattern);
+  $indexes = search_api_default_content_deploy_update_helper_get_indexes($pattern);
+  $index_third_party_settings = [];
+  foreach ($indexes as $index_id => $index) {
+    $config_id = 'search_api.server.' . $index->get('server');
+    if (isset($backend_configs[$config_id])) {
+      $index_third_party_settings[$index_id] = $index->get('third_party_settings.search_api_default_content_deploy');
+    }
+  }
+  return $index_third_party_settings;
+}
+
+/**
+ * Saves a modified index config.
+ *
+ * @param string $index_id
+ *   ID of the default_content_deploy index.
+ * @param array $third_party_settings
+ *   Third party settings array.
+ * @param bool $trusted_data
+ *   Boolean to indicate if the data is trusted.
+ */
+function search_api_default_content_deploy_update_helper_save_index_third_party_settings(string $index_id, array $third_party_settings, bool $trusted_data = TRUE): void {
+  \Drupal::configFactory()->getEditable($index_id)
+    ->set('third_party_settings.search_api_default_content_deploy', $third_party_settings)
+    ->save($trusted_data);
+}
+
+/**
+ * Gets all index settings for Solr servers.
+ *
+ * @param string $pattern
+ *   Pattern to filter the index configs.
+ *
+ * @return array
+ *   All index configs for Solr servers keyed by index name.
+ */
+function search_api_default_content_deploy_update_helper_get_indexes(string $pattern = 'default_content_deploy'): array {
+  $backend_configs = search_api_default_content_deploy_update_helper_get_backend_configs($pattern);
+  $config_factory = \Drupal::configFactory();
+  $indexes = [];
+  foreach ($config_factory->listAll('search_api.index.') as $index_id) {
+    $index = $config_factory->get($index_id);
+    $config_id = 'search_api.server.' . $index->get('server');
+    if (isset($backend_configs[$config_id])) {
+      $indexes[$index_id] = $index;
+    }
+  }
+  return $indexes;
+}
+
+/**
+ * Remove link domain setting from default content deploy index.
+ */
+function search_api_default_content_deploy_update_8001() {
+  foreach (search_api_default_content_deploy_update_helper_get_index_third_party_settings() as $index_id => $third_party_settings) {
+    if (isset($third_party_settings['link_domain'])) {
+      unset($third_party_settings['link_domain']);
+      search_api_default_content_deploy_update_helper_save_index_third_party_settings($index_id, $third_party_settings);
+    }
+  }
+}

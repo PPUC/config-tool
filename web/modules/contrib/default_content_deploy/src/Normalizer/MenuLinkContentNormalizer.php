@@ -176,7 +176,6 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
 
     // Normalize the target entity.
     $embedded = $this->serializer->normalize($target_entity, $format, $context);
-    $link = $embedded['_links']['self'];
     // If the field is translatable, add the langcode to the link
     // relation object. This does not indicate the language of the
     // target entity.
@@ -188,7 +187,6 @@ class MenuLinkContentNormalizer extends ConfigurableContentEntityNormalizer {
     // normalized entity so that the items are properly added to the
     // _links and _embedded objects.
     $embedded_field_uri = $this->linkManager->getRelationUri($entity->getEntityTypeId(), $entity->bundle(), $embedded_field_name, $context);
-    $normalized['_links'][$embedded_field_uri] = [$link];
     $normalized['_embedded'][$embedded_field_uri] = [$embedded];
 
     return $normalized;

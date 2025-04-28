@@ -1,4 +1,9 @@
 services:
+  serializer.normalizer.field.default_content_deploy:
+    class: Drupal\default_content_deploy\Normalizer\PasswordItemNormalizer
+    arguments: ['@config.factory']
+    tags:
+      - { name: normalizer, priority: 30 }
   logger.channel.default_content_deploy:
     parent: logger.channel_base
     arguments: ['default_content_deploy']

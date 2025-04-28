@@ -22,7 +22,7 @@
         "drupal/core": "^11.1",
         "drupal/core-composer-scaffold": "^11.1",
         "drupal/core-project-message": "^11.1",
-        "drupal/default_content_deploy": "2.1.x-dev",
+        "drupal/default_content_deploy": "2.2.x-dev",
         "drupal/quick_node_clone": "^1.22",
         "drupal/range": "^1.6",
         "drush/drush": "^13.3",

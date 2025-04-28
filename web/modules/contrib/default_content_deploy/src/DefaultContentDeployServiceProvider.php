@@ -4,6 +4,7 @@ namespace Drupal\default_content_deploy;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
+use Drupal\default_content_deploy\EntityResolver\TargetIdResolver;
 use Drupal\default_content_deploy\EntityResolver\UuidResolver;
 use Drupal\default_content_deploy\Normalizer\ConfigurableContentEntityNormalizer;
 use Drupal\default_content_deploy\Normalizer\ConfigurableFieldItemNormalizer;
@@ -27,6 +28,12 @@ class DefaultContentDeployServiceProvider extends ServiceProviderBase {
       $definition = $container->getDefinition('serializer.entity_resolver.uuid');
       $definition->setClass(UuidResolver::class);
       $definition->addArgument(new Reference('default_content_deploy.metadata'));
+    }
+
+    if ($container->hasDefinition('serialization.entity_resolver.target_id')) {
+      // Override the existing service.
+      $definition = $container->getDefinition('serialization.entity_resolver.target_id');
+      $definition->setClass(TargetIdResolver::class);
     }
 
     if ($container->hasDefinition('serializer.normalizer.entity.hal')) {

@@ -14,20 +14,12 @@ use Drupal\hal\Normalizer\FieldItemNormalizer;
 class ConfigurableFieldItemNormalizer extends FieldItemNormalizer {
 
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $config;
-
-  /**
    * Constructs a ContentEntityNormalizer object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    *   The config factory.
    */
-  public function __construct(ConfigFactoryInterface $config) {
-    $this->config = $config;
+  public function __construct(protected ConfigFactoryInterface $config) {
   }
 
   /**

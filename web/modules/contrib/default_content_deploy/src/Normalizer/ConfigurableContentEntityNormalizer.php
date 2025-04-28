@@ -19,27 +19,6 @@ use Drupal\hal\Normalizer\ContentEntityNormalizer;
 class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
 
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $config;
-
-  /**
-   * The entity repository.
-   *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-   */
-  protected $entityRepository;
-
-  /**
-   * The metadata service.
-   *
-   * @var \Drupal\default_content_deploy\DefaultContentDeployMetadataService
-   */
-  protected $metadataService;
-
-  /**
    * Constructs a ContentEntityNormalizer object.
    *
    * @param \Drupal\hal\LinkManager\LinkManagerInterface $link_manager
@@ -54,24 +33,25 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
    *   The entity field manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    *   The config factory.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository
    *   The entity repository.
-   * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadata_service
+   * @param \Drupal\default_content_deploy\DefaultContentDeployMetadataService $metadataService
    *   The metadata service.
    */
-  public function __construct(LinkManagerInterface $link_manager, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, EntityTypeRepositoryInterface $entity_type_repository, EntityFieldManagerInterface $entity_field_manager, ConfigFactoryInterface $config, EntityRepositoryInterface $entity_repository, DefaultContentDeployMetadataService $metadata_service) {
+  public function __construct(LinkManagerInterface $link_manager, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, EntityTypeRepositoryInterface $entity_type_repository, EntityFieldManagerInterface $entity_field_manager, protected ConfigFactoryInterface $config, protected EntityRepositoryInterface $entityRepository, protected DefaultContentDeployMetadataService $metadataService) {
     parent::__construct($link_manager, $entity_type_manager, $module_handler, $entity_type_repository, $entity_field_manager);
-    $this->config = $config;
-    $this->entityRepository = $entity_repository;
-    $this->metadataService = $metadata_service;
   }
 
   /**
    * {@inheritdoc}
    */
   public function normalize($entity, $format = NULL, array $context = []) : float|array|int|bool|\ArrayObject|string|null {
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+
     $context += [
       'included_fields' => NULL,
+      'uuids' => [],
+      '_links' => [],
     ];
 
     // If the list of fields is not yet limited to specific fields, computed
@@ -88,8 +68,27 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
         }
       }
     }
+    elseif (count($context['included_fields']) === 1 && in_array('uuid', $context['included_fields'], TRUE) && isset($context['uuids'][$entity->getEntityTypeId()][$entity->id()])) {
+      $normalized = [];
+      if (isset($context['_links'][$entity->getEntityTypeId()][$entity->id()])) {
+        $normalized['_links'] = $context['_links'][$entity->getEntityTypeId()][$entity->id()];
+      }
+      return $normalized + ['uuid' => $context['uuids'][$entity->getEntityTypeId()][$entity->id()]];
+    }
 
     $entity_array = parent::normalize($entity, $format, $context);
+
+    if (!empty($entity_array['_links'])) {
+      $entity_array['_links'] = array_intersect_key($entity_array['_links'], array_flip(['type']));
+      $entity_array['_links']['self']['href'] = '_dcd/' . $entity->getEntityTypeId() . '/' . $entity->id();
+    }
+
+    if (isset($entity_array['uuid'])) {
+      $context['uuids'][$entity->getEntityTypeId()][$entity->id()] = $entity_array['uuid'];
+      if (!empty($entity_array['_links'])) {
+        $context['_links'][$entity->getEntityTypeId()][$entity->id()] = $entity_array['_links'];
+      }
+    }
 
     if (is_array($entity_array)) {
       foreach ($entity_array as $field => $items) {

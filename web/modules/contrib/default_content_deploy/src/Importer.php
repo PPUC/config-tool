@@ -68,6 +68,13 @@ class Importer implements ImporterInterface {
   private $pathAliasesToImport = [];
 
   /**
+   * FIle entities to import.
+   *
+   * @var array
+   */
+  private $filesToImport = [];
+
+  /**
    * Data to delete.
    *
    * @var array
@@ -170,6 +177,18 @@ class Importer implements ImporterInterface {
   }
 
   /**
+   * Get the state key to track max export timestamps in states.
+   *
+   * @return string
+   *   The state key.
+   *
+   * @throws \Exception
+   */
+  protected function getStateKey(): string {
+    return 'dcd.last_import.' . md5($this->getFolder());
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setPreserveIds(bool $preserve): void {
@@ -194,7 +213,7 @@ class Importer implements ImporterInterface {
    * {@inheritdoc}
    */
   public function getResult(): array {
-    return $this->dataToImport + $this->pathAliasesToImport + $this->dataToDelete;
+    return $this->filesToImport + $this->dataToImport + $this->pathAliasesToImport + $this->dataToDelete;
   }
 
   /**
@@ -212,20 +231,18 @@ class Importer implements ImporterInterface {
    * @throws \Exception
    */
   public function prepareForImport(): void {
-    // @todo remove because of changes in core >= 9.2
-    $this->cache->delete('hal:links:relations');
-    $last_import_timestamp = (int) $this->state->get('dcd.last_import.' . md5($this->getFolder()), 0);
+    $last_import_timestamp = (int) $this->state->get($this->getStateKey(), 0);
     $this->files = $this->scan($this->getFolder());
 
     foreach ($this->files as $file) {
-      if (!isset($this->dataToImport[$file->uuid]) && !isset($this->pathAliasesToImport[$file->uuid])) {
+      if (!isset($this->filesToImport[$file->uuid]) && !isset($this->dataToImport[$file->uuid]) && !isset($this->pathAliasesToImport[$file->uuid])) {
         if ($this->incremental) {
-          $this->decodeFile($file);
-          if (($export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? NULL) && $last_import_timestamp >= $export_timestamp && $this->entityExists($file->entity_type_id, $file->uuid)) {
+          $content = file_get_contents($file->uri);
+          if (preg_match('/"export_timestamp"\s*:\s*(\d+)/', $content, $matches) && $last_import_timestamp >= $matches[1] && $this->entityExists($file->entity_type_id, $file->uuid)) {
             continue;
           }
-          // Delete the entity even with an old delete timestamp because it
-          // still exists in database.
+          // Import the entity even with an old export timestamp if it does not
+          // exist in database.
         }
 
         $this->addToImport($file);
@@ -238,12 +255,12 @@ class Importer implements ImporterInterface {
       foreach ($deleted_files as $file) {
         if (!isset($this->dataToDelete[$file->uuid])) {
           if ($this->incremental) {
-            $this->decodeFile($file);
-            if (($delete_timestamp = $file->data['_dcd_metadata']['delete_timestamp'] ?? NULL) && $last_import_timestamp >= $delete_timestamp && !$this->entityExists($file->entity_type_id, $file->uuid)) {
+            $content = file_get_contents($file->uri);
+            if (preg_match('/"delete_timestamp"\s*:\s*(\d+)/', $content, $matches) && $last_import_timestamp >= $matches[1] && !$this->entityExists($file->entity_type_id, $file->uuid)) {
               continue;
             }
-            // Delete the entity even with an old delete timestamp because it
-            // still exists in database.
+            // Delete the entity even with an old delete timestamp if it still
+            // exists in database.
           }
 
           $this->addToDelete($file);
@@ -335,7 +352,7 @@ class Importer implements ImporterInterface {
   public function import(): void {
     // Process files in batches.
     $operations = [];
-    $total = count($this->dataToImport) + count($this->dataToCorrect) + count($this->pathAliasesToImport) + count($this->dataToDelete);
+    $total = count($this->filesToImport) + count($this->dataToImport) + count($this->dataToCorrect) + count($this->pathAliasesToImport) + count($this->dataToDelete);
     $current = 1;
 
     if ($total === 0) {
@@ -347,14 +364,22 @@ class Importer implements ImporterInterface {
       'skipCorrection' => [],
       'verbose' => $this->verbose,
       'preserveIds' => $this->preserveIds,
-      'state_key' => 'dcd.last_import.' . md5($this->getFolder()),
+      'state_key' => $this->getStateKey(),
       'folder' => $this->getFolder(),
+      'default_content_deploy_import' => TRUE,
     ];
 
     $operations[] = [
       [static::class, 'initializeContext'],
       [$context],
     ];
+
+    foreach ($this->filesToImport as $file) {
+      $operations[] = [
+        [static::class, 'importFile'],
+        [$file, $current++, $total, FALSE],
+      ];
+    }
 
     foreach ($this->dataToImport as $file) {
       $operations[] = [
@@ -469,6 +494,8 @@ class Importer implements ImporterInterface {
    * @throws \Exception
    */
   protected function processFile(object $file, $current, $total, bool $correction, array &$context): void {
+    $this->linkManager->setLinkDomain('default_content_deploy');
+
     $this->verbose = &$context['results']['verbose'];
     $this->preserveIds = &$context['results']['preserveIds'];
 
@@ -545,11 +572,10 @@ class Importer implements ImporterInterface {
             }
           }
           else {
-            $link_domain = $this->getLinkDomain($file);
-            $this->linkManager->setLinkDomain($link_domain);
-            $this->exporter->setLinkDomain($link_domain);
             $current_entity_decoded = $this->serializer->decode($this->exporter->getSerializedContent($entity, FALSE), 'hal_json');
-            $diff = ArrayDiffMultidimensional::looseComparison($file->data, $current_entity_decoded);
+            $data = $file->data;
+            unset($data['_dcd_metadata']);
+            $diff = ArrayDiffMultidimensional::looseComparison($data, $current_entity_decoded);
             if (!$diff) {
               if ($this->verbose) {
                 $context['message'] = $this->t('@current of @total, skipped @entity_type @entity_id, no changes compared to database', [
@@ -568,9 +594,6 @@ class Importer implements ImporterInterface {
             }
           }
         }
-
-        $this->linkManager->setLinkDomain(FALSE);
-        $this->exporter->setLinkDomain('');
       }
       elseif (!$correction) {
         $is_new = TRUE;
@@ -602,27 +625,18 @@ class Importer implements ImporterInterface {
       // ensure that all entity references are present and valid. Path aliases
       // will be imported last to have a chance to rewrite them to the new ids
       // of newly created entities.
-      $this->linkManager->setLinkDomain($this->getLinkDomain($file));
       $class = $this->entityTypeManager->getDefinition($file->entity_type_id)
         ->getClass();
 
       $this->updateTargetRevisionId($file->data);
       $this->metadataService->reset();
       /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', ['request_method' => 'POST']);
+      $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', [
+        'request_method' => 'POST',
+        'default_content_deploy' => TRUE,
+      ]);
       $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data, $correction, $context));
       $entity->enforceIsNew($is_new);
-
-      if (($file->data['pass'][0]['value'] ?? FALSE) && $entity->getEntityTypeId() === 'user' && $entity->hasField('password')) {
-        // Make sure that it is not hashed again.
-        $entity->get('password')->pre_hashed = TRUE;
-      }
-
-      if (($file->data['secret'][0]['value'] ?? FALSE) && $entity->getEntityTypeId() === 'consumer' && $entity->hasField('secret')) {
-        // Make sure that it is not hashed again.
-        $entity->get('secret')->pre_hashed = TRUE;
-      }
-
       $entity->save();
       $this->eventDispatcher->dispatch(new PostSaveEntityEvent($entity, $file->data, $correction, $context));
 
@@ -634,8 +648,6 @@ class Importer implements ImporterInterface {
       if (!$is_new) {
         $this->entityTypeManager->getStorage($entity->getEntityTypeId())->resetCache([$entity->id()]);
       }
-
-      $this->linkManager->setLinkDomain(FALSE);
 
       if ($this->verbose) {
         $context['message'] = $this->t('@current of @total, @operation @entity_type @entity_id', [
@@ -683,6 +695,8 @@ class Importer implements ImporterInterface {
    * @throws \Exception
    */
   protected function processDelete(object $file, $current, $total, array &$context): void {
+    $this->linkManager->setLinkDomain('default_content_deploy');
+
     $this->verbose = &$context['results']['verbose'];
 
     if (!$this->adminAccount) {
@@ -738,19 +752,6 @@ class Importer implements ImporterInterface {
   }
 
   /**
-   * Gets url from file for set to Link manager.
-   *
-   * @param object $file
-   *   The file object.
-   */
-  protected function getLinkDomain(object $file): string {
-    $link = $file->data['_links']['type']['href'];
-    $url_data = parse_url($link);
-    $host = "{$url_data['scheme']}://{$url_data['host']}";
-    return (!isset($url_data['port'])) ? $host : "{$host}:{$url_data['port']}";
-  }
-
-  /**
    * Decodes the given file and prepares its data for import.
    *
    * {@inheritdoc}
@@ -758,6 +759,9 @@ class Importer implements ImporterInterface {
   public function decodeFile(object $file): void {
     // Get parsed data.
     $parsed_data = file_get_contents($file->uri);
+    // Backward compatibility for exports before 2.2.x.
+    $parsed_data = preg_replace('@"href": "http[^"]+/rest\\\\/type\\\\/([^"]+)"@', '"href": "$1"', $parsed_data);
+    $parsed_data = preg_replace('@"http[^"]+/rest\\\\/(relation[^"]+)"@', '"$1"', $parsed_data);
 
     // Decode.
     try {
@@ -821,7 +825,7 @@ class Importer implements ImporterInterface {
         break;
 
       case 'file':
-        $this->dataToImport[$file->uuid] = $file;
+        $this->filesToImport[$file->uuid] = $file;
         break;
 
       default:

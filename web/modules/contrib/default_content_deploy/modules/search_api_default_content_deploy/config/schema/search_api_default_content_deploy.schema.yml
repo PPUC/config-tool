@@ -3,9 +3,6 @@
 
 search_api.index.*.third_party.search_api_default_content_deploy:
   type: default_content_deploy.common_settings
-  link_domain:
-    type: string
-    label: 'Domain of the relation'
   delete_single_file_allowed:
     type: boolean
     label: 'Deleted entities will be removed from the export folder'

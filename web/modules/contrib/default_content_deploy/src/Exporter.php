@@ -132,16 +132,6 @@ class Exporter implements ExporterInterface {
   private $dateTime;
 
   /**
-   * Stores the domain used for generating links in exported content.
-   *
-   * This ensures that URLs are correctly rewritten when exporting
-   * and deploying content.
-   *
-   * @var string
-   */
-  private $linkDomain = '';
-
-  /**
    * Determines whether verbose logging is enabled.
    *
    * If set to TRUE, additional details about the export process
@@ -258,24 +248,6 @@ class Exporter implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
-  public function setLinkDomain(string $link_domain): void {
-    $this->linkDomain = $link_domain;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLinkDomain(): string {
-    if (empty($this->linkDomain)) {
-      return $this->deployManager->getCurrentHost();
-    }
-
-    return $this->linkDomain;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function setDateTime(\DateTimeInterface $date_time): void {
     $this->dateTime = $date_time;
   }
@@ -339,7 +311,7 @@ class Exporter implements ExporterInterface {
       throw new \Exception('Directory for content deploy is not set.');
     }
 
-    return $folder;
+    return rtrim($folder, '/');
   }
 
   /**
@@ -460,7 +432,8 @@ class Exporter implements ExporterInterface {
    *     - `skipEntityTypeIds`: An array of entity type IDs to be skipped.
    *     - `mode`: The export mode setting.
    *     - `verbose`: Whether verbose logging is enabled.
-   *     - `linkDomain`: The domain associated with content links.
+   *
+   * @throws \Exception
    */
   protected function getInitializeContextOperation(): array {
     $context = [
@@ -471,7 +444,8 @@ class Exporter implements ExporterInterface {
       'skipEntityTypeIds' => $this->getSkipEntityTypeIds(),
       'mode' => $this->mode,
       'verbose' => $this->verbose,
-      'linkDomain' => $this->linkDomain,
+      'uuids' => [],
+      '_links' => [],
     ];
 
     return [
@@ -517,7 +491,6 @@ class Exporter implements ExporterInterface {
    *   - `skipEntityTypeIds`: An array of entity type IDs to exclude.
    *   - `mode`: The export mode (e.g., full or incremental).
    *   - `verbose`: Whether verbose logging is enabled.
-   *   - `linkDomain`: The base domain used for links in the export.
    *
    * @return void
    *   This method does not return a value but modifies the context array.
@@ -530,7 +503,6 @@ class Exporter implements ExporterInterface {
     $this->skipEntityTypeIds = &$context['results']['skipEntityTypeIds'];
     $this->mode = &$context['results']['mode'];
     $this->verbose = &$context['results']['verbose'];
-    $this->linkDomain = &$context['results']['linkDomain'];
   }
 
   /**
@@ -579,15 +551,18 @@ class Exporter implements ExporterInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Exception
    */
   public function exportBatchDefault(string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
+    $this->linkManager->setLinkDomain('default_content_deploy');
+
     $uuid = FALSE;
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $uuid = $entity->get('uuid')->value;
       if (!$this->skipEntity($entity, $context)) {
-        if ($serialized_entity = $this->getSerializedContent($entity, TRUE)) {
+        if ($serialized_entity = $this->getSerializedContent($entity, TRUE, $context)) {
           $this->writeSerializedEntity($entity_type, $serialized_entity, $uuid);
-          $context['results']['exported_entities'][$entity_type][] = $uuid;
+          $context['results']['exported_entities'][$entity_type][$entity_id] = $uuid;
           if ($this->verbose) {
             $context['message'] = $this->t('Exported @type entity (ID @id, bundle @bundle) @current of @total', [
               '@type' => $entity_type,
@@ -619,30 +594,58 @@ class Exporter implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
-  public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): bool {
-    $this->setMode($with_references ? 'reference' : 'default');
-    $uuid = $entity->get('uuid')->value;
+  public function exportEntity(ContentEntityInterface $entity, ?bool $with_references = FALSE): void {
+    $this->linkManager->setLinkDomain('default_content_deploy');
+
     $context = [];
-    if ($serialized_entity = $this->getSerializedContent($entity, TRUE)) {
-      $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $uuid);
 
-      if ($with_references) {
-        $indexed_dependencies = [$entity->uuid() => $entity];
-        $referenced_entities = $this->getEntityReferencesRecursive($entity, $context, 0, $indexed_dependencies);
-
-        foreach ($referenced_entities as $uuid => $referenced_entity) {
-          $referenced_entity_type = $referenced_entity->getEntityTypeId();
-
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE)) {
-            $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
-          }
-        }
+    // Check if a batch is currently running. But ignore a Default Content
+    // Deploy import batch that triggers this function.
+    if (
+      function_exists('batch_get') &&
+      ($batch = &batch_get()) &&
+      isset($batch['current_set']) &&
+      ($current_set = &$batch['sets'][$batch['current_set']]) &&
+      !isset($current_set['results']['default_content_deploy_import'])
+    ) {
+      if (isset($current_set['results'])) {
+        // Search API batch.
+        $context['results'] = &$current_set['results'];
       }
 
-      return TRUE;
+      if (!isset($context['results']['uuids'])) {
+        $context['results']['uuids'] = [];
+      }
+      if (!isset($context['results']['_links'])) {
+        $context['results']['_links'] = [];
+      }
+      if (!isset($context['results']['exported_entities'])) {
+        $context['results']['exported_entities'] = [];
+      }
+
+      if ($context['results']['exported_entities'][$entity->getEntityTypeId()][$entity->id()] ?? FALSE) {
+        // Already exported in current context.
+        return;
+      }
     }
 
-    return FALSE;
+    $this->setMode($with_references ? 'reference' : 'default');
+    if ($serialized_entity = $this->getSerializedContent($entity, TRUE, $context)) {
+      $this->writeSerializedEntity($entity->getEntityTypeId(), $serialized_entity, $entity->uuid());
+      $context['results']['exported_entities'][$entity->getEntityTypeId()][$entity->id()] = $entity->uuid();
+    }
+
+    if ($with_references) {
+      $indexed_dependencies = [$entity->uuid() => $entity];
+      $referenced_entities = $this->getEntityReferencesRecursive($entity, $context, 0, $indexed_dependencies);
+
+      foreach ($referenced_entities as $uuid => $referenced_entity) {
+        if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE, $context)) {
+          $this->writeSerializedEntity($referenced_entity->getEntityTypeId(), $serialized_entity, $uuid);
+          $context['results']['exported_entities'][$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity->uuid();
+        }
+      }
+    }
   }
 
   /**
@@ -663,6 +666,8 @@ class Exporter implements ExporterInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function exportBatchWithReferences(string $entity_type, string|int $entity_id, int $current, int $total, array &$context): void {
+    $this->linkManager->setLinkDomain('default_content_deploy');
+
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
 
       if (!$this->skipEntity($entity, $context)) {
@@ -673,9 +678,9 @@ class Exporter implements ExporterInterface {
         foreach ($referenced_entities as $uuid => $referenced_entity) {
           $referenced_entity_type = $referenced_entity->getEntityTypeId();
 
-          if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE)) {
+          if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE, $context)) {
             $this->writeSerializedEntity($referenced_entity_type, $serialized_entity, $uuid);
-            $context['results']['exported_entities'][$referenced_entity_type][] = $uuid;
+            $context['results']['exported_entities'][$referenced_entity_type][$referenced_entity->id()] = $uuid;
           }
         }
 
@@ -919,15 +924,19 @@ class Exporter implements ExporterInterface {
   private function writeSerializedEntity(string $entity_type, string $serialized_entity, string $uuid): void {
     // Ensure that the folder per entity type exists.
     $entity_type_folder = "{$this->getFolder()}/{$entity_type}";
-    $this->fileSystem->prepareDirectory($entity_type_folder, FileSystemInterface::CREATE_DIRECTORY);
+    if (!$this->fileSystem->prepareDirectory($entity_type_folder, FileSystemInterface::CREATE_DIRECTORY)) {
+      throw new \Exception("Unable to create folder {$entity_type_folder}.");
+    }
 
-    file_put_contents("{$entity_type_folder}/{$uuid}.json", $serialized_entity);
+    if (!file_put_contents("{$entity_type_folder}/{$uuid}.json", $serialized_entity)) {
+      throw new \Exception("Unable to write serialized entity {$entity_type_folder}/{$uuid}.json to file system.");
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata): string {
+  public function getSerializedContent(ContentEntityInterface $entity, bool $add_metadata, array &$context = []): string {
     $folder = $this->getFolder();
 
     $event = new PreSerializeEvent($entity, $this->mode, $folder);
@@ -943,8 +952,12 @@ class Exporter implements ExporterInterface {
         $this->adminAccountSwitcher->switchTo($this->adminAccount);
       }
 
-      $this->linkManager->setLinkDomain($this->getLinkDomain());
-      $content = $this->serializer->serialize($entity, 'hal_json', ['account' => $this->currentUser]);
+      $content = $this->serializer->serialize($entity, 'hal_json', [
+        'default_content_deploy' => TRUE,
+        'account' => $this->currentUser,
+        'uuids' => &$context['results']['uuids'],
+        '_links' => &$context['results']['_links'],
+      ]);
 
       $entity_array = $this->serializer->decode($content, 'json');
 
@@ -953,16 +966,15 @@ class Exporter implements ExporterInterface {
         unset($entity_array[$entity->getEntityType()->getKey('revision')]);
       }
 
-      // Add user password hash.
+      /*
+       * Add user password hash manually. Access to that field is blocked by
+       * core, so that our Normalizer doesn't get invoked.
+       * @see \Drupal\user\UserAccessControlHandler::checkFieldAccess()
+       * @see \Drupal\default_content_deploy\Normalizer\PasswordItemNormalizer
+       */
       if ($entity->getEntityTypeId() === 'user') {
-        /** @var \Drupal\user\UserInterface $entity */
         $entity_array['pass'][0]['value'] = $entity->getPassword();
-      }
-
-      // Add secret hash.
-      if ($entity->getEntityTypeId() === 'consumer') {
-        /** @var \Drupal\consumers\Entity\ConsumerInterface $entity */
-        $entity_array['secret'][0]['value'] = $entity->get('secret')->value;
+        $entity_array['pass'][0]['pre_hashed'] = TRUE;
       }
 
       if ($add_metadata) {
@@ -981,8 +993,6 @@ class Exporter implements ExporterInterface {
 
       $event = new PostSerializeEvent($entity, $content, $this->mode, $folder);
       $this->eventDispatcher->dispatch($event);
-
-      $this->linkManager->setLinkDomain(FALSE);
 
       $this->adminAccountSwitcher->switchBack();
 
@@ -1146,7 +1156,7 @@ class Exporter implements ExporterInterface {
               $uuid = $node->getAttribute('data-entity-uuid');
 
               // Only add the dependency if it does not already exist.
-              if (!in_array($uuid, $entity_dependencies)) {
+              if (!isset($entity_dependencies[$uuid])) {
                 $entity_loaded_by_uuid = $this->entityTypeManager
                   ->getStorage($entity_type)
                   ->loadByProperties(['uuid' => $uuid]);
@@ -1154,7 +1164,7 @@ class Exporter implements ExporterInterface {
                 $dependency = reset($entity_loaded_by_uuid);
 
                 if ($dependency instanceof EntityInterface) {
-                  $entity_dependencies[] = $dependency;
+                  $entity_dependencies[$uuid] = $dependency;
                 }
               }
             }
@@ -1195,10 +1205,13 @@ class Exporter implements ExporterInterface {
       $translation = $entity->getTranslation($langcode);
       $entityIds = $this->getReferencedEntityIds($translation);
       foreach ($entityIds as $entityTypeId => $entityIdsByType) {
-        if (in_array($entityTypeId, $this->getSkipEntityTypeIds())) {
+        if (in_array($entityTypeId, $this->getSkipEntityTypeIds(), TRUE)) {
           continue;
         }
         foreach ($entityIdsByType as $entityId) {
+          if ($context['results']['exported_entities'][$entityTypeId][$entityId] ?? FALSE) {
+            continue;
+          }
           // Ignore entity reference if the referenced entity could not be
           // loaded.
           if ($referenced_entity = $this->entityTypeManager->getStorage($entityTypeId)->load($entityId)) {
@@ -1208,17 +1221,22 @@ class Exporter implements ExporterInterface {
       }
 
       foreach ($this->getEntityLayoutBuilderDependencies($translation) as $referenced_entity) {
-        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds())) {
+        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds(), TRUE)) {
           continue;
         }
-
+        if ($context['results']['exported_entities'][$referenced_entity->getEntityTypeId()][$referenced_entity->id()] ?? FALSE) {
+          continue;
+        }
         $entity_dependencies[$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity;
       }
     }
 
     if ($this->getTextDependencies()) {
       foreach ($this->getEntityProcessedTextDependencies($entity) as $referenced_entity) {
-        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds())) {
+        if (in_array($referenced_entity->getEntityTypeId(), $this->getSkipEntityTypeIds(), TRUE)) {
+          continue;
+        }
+        if ($context['results']['exported_entities'][$referenced_entity->getEntityTypeId()][$referenced_entity->id()] ?? FALSE) {
           continue;
         }
 

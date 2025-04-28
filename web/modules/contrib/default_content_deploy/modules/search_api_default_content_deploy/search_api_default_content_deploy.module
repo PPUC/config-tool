@@ -68,7 +68,6 @@ function search_api_default_content_deploy_default_index_third_party_settings():
     'text_dependencies' => FALSE,
     'skip_export_timestamp' => FALSE,
     'skip_entity_types' => [],
-    'link_domain' => '',
     'delete_single_file_allowed' => FALSE,
     'move_deleted_single_file' => FALSE,
     'delete_all_files_allowed' => FALSE,
@@ -123,13 +122,6 @@ function search_api_default_content_deploy_form_search_api_index_form_alter(&$fo
       '#title' => t('Export referenced entities'),
       '#default_value' => $settings['export_referenced_entities'],
       '#description' => t('If checked, references entities will be exported as well if their type is not skipped below.'),
-    ];
-
-    $form['third_party_settings']['search_api_default_content_deploy']['link_domain'] = [
-      '#type' => 'textfield',
-      '#title' => t('HAL Link Domain'),
-      '#default_value' => $settings['link_domain'],
-      '#description' => t('The base URI like "https://my.site.dev".'),
     ];
 
     $form['third_party_settings']['search_api_default_content_deploy']['delete_single_file_allowed'] = [
