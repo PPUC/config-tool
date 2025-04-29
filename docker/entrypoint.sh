@@ -40,7 +40,6 @@ else
   ${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
-    --force-override \
     --yes
 fi
 

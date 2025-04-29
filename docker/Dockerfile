@@ -4,12 +4,13 @@ FROM drupal:11-apache
 WORKDIR /var/www
 
 # Copy only what's required to run the app
-COPY web/ html/
+COPY web/ web/
 COPY vendor/ vendor/
 COPY docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh \
- && chown -R www-data:www-data /var/www
+ && chown -R www-data:www-data /var/www \
+ && ln -sf /var/www/web /var/www/html
 
 ENV DRUPAL_DOCKER=1
 
