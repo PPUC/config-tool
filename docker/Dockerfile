@@ -1,5 +1,8 @@
 FROM php:8.3-apache
 
+# Set working directory fir installation
+WORKDIR /var/www
+
 # Install system dependencies
 RUN apt update && apt install -y \
     wget \
@@ -24,9 +27,6 @@ RUN wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
 RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
     docker-php-ext-install pdo pdo_sqlite gd \
 
-# Set working directory
-WORKDIR /var/www
-
 # Copy application files
 COPY web/ web/
 COPY vendor/ vendor/
@@ -39,7 +39,7 @@ RUN chmod +x /entrypoint.sh \
 # Create symlink: html -> web
 RUN ln -sf /var/www/web /var/www/html
 
-# Set working directory inside the container to the webroot
+# Set working directory for runtime
 WORKDIR /var/www/html
 
 # Set environment variable to detect Docker

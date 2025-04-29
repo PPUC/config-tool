@@ -22,11 +22,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
+      - name: Build and Load Multi-Arch Docker Image
         run: |
-          docker build -f docker/Dockerfile -t config-tool:latest .
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -f docker/Dockerfile \
+            -t config-tool:latest \
+            --load .
 
-      - name: Save Docker image to tar file
+      - name: Save Multi-Arch Docker image to tar file
         run: |
           docker save config-tool:latest -o config-tool.tar
 
@@ -44,7 +48,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Tag and Push Docker image to GitHub Packages
+      - name: Tag and Push Docker image to GHCR
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
