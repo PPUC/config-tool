@@ -4,9 +4,18 @@ FROM php:8.3-apache
 RUN apt update && apt install -y \
     sqlite3 \
     libsqlite3-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
     unzip \
-    git \
-    && docker-php-ext-install pdo pdo_sqlite
+    git
+
+RUN apt install -y -t trixie \
+    sqlite3 \
+    libsqlite3-dev
+
+RUN docker-php-ext-configure gd --with-jpeg --with-webp \
+ && docker-php-ext-install pdo pdo_sqlite gd
 
 # Set working directory
 WORKDIR /var/www
