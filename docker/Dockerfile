@@ -4,11 +4,11 @@ FROM php:8.3-apache
 WORKDIR /usr/src
 
 # Install build dependencies
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y \
     wget make gcc g++ \
-    libjpeg-dev libpng-dev libwebp-dev \
+    libjpeg-dev libpng-dev libwebp-dev zlib1g-dev \
     unzip git apache2-dev libxml2-dev \
-    libsqlite3-dev pkg-config
+    libsqlite3-dev pkg-config libzip-dev
 
 # Build and install latest SQLite (3.49.1)
 RUN wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
@@ -30,6 +30,8 @@ RUN docker-php-source extract && \
         --with-apxs2 \
         --with-pdo-sqlite=/usr/local \
         --with-sqlite3=/usr/local \
+        --with-zlib \
+        --with-zip \
         --with-config-file-path=/usr/local/etc/php \
         --with-config-file-scan-dir=/usr/local/etc/php/conf.d && \
     make -j$(nproc) && \
@@ -38,9 +40,9 @@ RUN docker-php-source extract && \
 
 # Install PHP extensions with correct SQLite version
 RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
-    docker-php-ext-install pdo pdo_sqlite gd
+    docker-php-ext-install pdo pdo_sqlite gd zip zlib
 
-# Enable PHP module in Apache (no need for a2enmod as it's built-in with php:apache images)
+# Enable PHP module in Apache
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 # Copy application code
