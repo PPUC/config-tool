@@ -2,7 +2,10 @@ FROM php:8.3-apache
 
 # Install system dependencies
 RUN apt update && apt install -y \
-    sqlite3 \
+    wget \
+    make \
+    gcc \
+    g++ \
     libsqlite3-dev \
     libjpeg-dev \
     libpng-dev \
@@ -10,12 +13,16 @@ RUN apt update && apt install -y \
     unzip \
     git
 
-RUN apt install -y -t trixie \
-    sqlite3 \
-    libsqlite3-dev
+# Install latest SQLite (3.49+)
+RUN wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
+    tar xzf sqlite-autoconf-3490100.tar.gz && \
+    cd sqlite-autoconf-3490100 && \
+    ./configure && make && make install && \
+    cd .. && rm -rf sqlite-autoconf-3490100*
 
-RUN docker-php-ext-configure gd --with-jpeg --with-webp \
- && docker-php-ext-install pdo pdo_sqlite gd
+# Rebuild PHP extensions
+RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
+    docker-php-ext-install pdo pdo_sqlite gd \
 
 # Set working directory
 WORKDIR /var/www
