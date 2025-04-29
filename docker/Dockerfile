@@ -17,34 +17,32 @@ RUN wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
     ./configure --prefix=/usr/local && make && make install && \
     cd .. && rm -rf sqlite-autoconf-3490100*
 
-# Replace SQLite
+# Update system SQLite binaries and libraries
 RUN cp /usr/local/bin/sqlite3 /usr/bin/sqlite3 && \
     cp /usr/local/lib/libsqlite3.so* /usr/lib/ && \
     ldconfig
 
 # Rebuild PHP with the new SQLite version
 RUN docker-php-source extract && \
-    cd /usr/src/php/ext/pdo_sqlite && \
-    phpize && \
-    ./configure --with-pdo-sqlite=/usr/local && \
-    make && make install && \
-    docker-php-ext-enable pdo_sqlite && \
+    cd /usr/src/php && \
+    ./buildconf --force && \
+    ./configure \
+        --with-apxs2 \
+        --with-pdo-mysql \
+        --with-pdo-sqlite=/usr/local \
+        --with-sqlite3=/usr/local \
+        --with-config-file-path=/usr/local/etc/php \
+        --with-config-file-scan-dir=/usr/local/etc/php/conf.d && \
+    make -j$(nproc) && \
+    make install && \
     docker-php-source delete
 
 # Install PHP extensions with correct SQLite version
 RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
-    docker-php-ext-install pdo gd
+    docker-php-ext-install pdo pdo_sqlite gd
 
-# Rebuild Apache PHP module
-RUN a2dismod php8.3 && \
-    docker-php-source extract && \
-    cd /usr/src/php && \
-    ./buildconf --force && \
-    ./configure --with-apxs2 --with-pdo-mysql --with-pdo-sqlite=/usr/local --with-sqlite3=/usr/local && \
-    make && \
-    make install && \
-    a2enmod php8.3 && \
-    docker-php-source delete
+# Enable PHP module in Apache (no need for a2enmod as it's built-in with php:apache images)
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 # Copy application code
 WORKDIR /var/www
