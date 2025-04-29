@@ -22,7 +22,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ppuc-config-tool:latest .
+          docker build -f docker/Dockerfile -t ppuc-config-tool:latest .
 
       - name: Save Docker image to tar file
         run: |
