@@ -30,12 +30,12 @@ jobs:
           docker buildx build \
             --platform linux/${{ matrix.arch }} \
             -f docker/Dockerfile \
-            -t config-tool:${{ matrix.arch }} \
+            -t config-tool-${{ matrix.arch }}:latest   \
             --load .
 
       - name: Save Docker image to tar file
         run: |
-          docker save config-tool:${{ matrix.arch }} -o config-tool-${{ matrix.arch }}.tar
+          docker save config-tool-${{ matrix.arch }}:latest -o config-tool-${{ matrix.arch }}.tar
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
