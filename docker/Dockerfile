@@ -4,10 +4,10 @@ FROM php:8.3-apache
 WORKDIR /usr/src
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt update && apt install -y \
     wget make gcc g++ \
     libjpeg-dev libpng-dev libwebp-dev \
-    unzip git apache2-dev \
+    unzip git apache2-dev libxml2-dev \
     libsqlite3-dev pkg-config
 
 # Build and install latest SQLite (3.49.1)
@@ -28,7 +28,6 @@ RUN docker-php-source extract && \
     ./buildconf --force && \
     ./configure \
         --with-apxs2 \
-        --with-pdo-mysql \
         --with-pdo-sqlite=/usr/local \
         --with-sqlite3=/usr/local \
         --with-config-file-path=/usr/local/etc/php \
