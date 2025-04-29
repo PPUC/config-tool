@@ -1,21 +1,35 @@
-FROM drupal:11-apache
+FROM php:8.3-apache
 
-# Install sqlite3 CLI
-RUN apt-get update && apt-get install -y sqlite3
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    libsqlite3-dev \
+    unzip \
+    git \
+    && docker-php-ext-install pdo pdo_sqlite apcu
 
-# Copy only what's required to run the config-tool
+# Set working directory
+WORKDIR /var/www
+
+# Copy application files
 COPY web/ web/
 COPY vendor/ vendor/
 COPY docker/entrypoint.sh /entrypoint.sh
 
+# Set permissions
 RUN chmod +x /entrypoint.sh \
- && chown -R www-data:www-data /var/www \
- && ln -sf /var/www/web /var/www/html
+ && chown -R www-data:www-data /var/www
 
+# Create symlink: html -> web
+RUN ln -sf /var/www/web /var/www/html
+
+# Set working directory inside the container to the webroot
 WORKDIR /var/www/html
 
+# Set environment variable to detect Docker
 ENV DRUPAL_DOCKER=1
 
+# Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
