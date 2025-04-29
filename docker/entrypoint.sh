@@ -2,7 +2,7 @@
 set -e
 
 # Paths
-PERSIST_DIR=/var/www/html/config-tool-data
+PERSIST_DIR=/var/www/web/config-tool-data
 DB_PATH=${PERSIST_DIR}/db/.ht.sqlite
 DRUSH=/var/www/vendor/bin/drush
 
@@ -23,7 +23,6 @@ if [ ! -f "${DB_PATH}" ]; then
     --account-name=admin \
     --account-pass=admin \
     --existing-config \
-    --db-url=sqlite:///${DB_PATH} \
     --yes
 
   ${DRUSH} dcdi \

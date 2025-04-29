@@ -39,6 +39,7 @@ module:
   range: 0
   responsive_image: 0
   serialization: 0
+  sqlite: 0
   system: 0
   taxonomy: 0
   text: 0
