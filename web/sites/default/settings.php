@@ -865,6 +865,8 @@ else if (getenv('DRUPAL_DOCKER') === '1') {
   ];
 
   $config['file_public_path'] = 'config-tool-data/files';
+
+  $settings['config_sync_directory'] = '/var/www/web/sites/default/files/sync';
 }
 
 /**
