@@ -1,12 +1,12 @@
 FROM php:8.3-apache
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt update && apt install -y \
     sqlite3 \
     libsqlite3-dev \
     unzip \
     git \
-    && docker-php-ext-install pdo pdo_sqlite apcu
+    && docker-php-ext-install pdo pdo_sqlite
 
 # Set working directory
 WORKDIR /var/www
