@@ -858,6 +858,14 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 if (file_exists(__DIR__ . '/settings.ddev.php') && getenv('IS_DDEV_PROJECT') == 'true') {
   include __DIR__ . '/settings.ddev.php';
 }
+else if (getenv('DRUPAL_DOCKER') === '1') {
+  $databases['default']['default'] = [
+    'driver' => 'sqlite',
+    'database' => '/var/www/html/drupal-persist/db/.ht.sqlite',
+  ];
+
+  $config['file_public_path'] = 'drupal-persist/files';
+}
 
 /**
  * Load local development override configuration, if available.
