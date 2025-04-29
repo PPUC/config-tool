@@ -25,7 +25,7 @@ RUN wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
 
 # Rebuild PHP extensions
 RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
-    docker-php-ext-install pdo pdo_sqlite gd \
+    docker-php-ext-install pdo pdo_sqlite gd
 
 # Copy application files
 COPY web/ web/
