@@ -861,10 +861,10 @@ if (file_exists(__DIR__ . '/settings.ddev.php') && getenv('IS_DDEV_PROJECT') == 
 else if (getenv('DRUPAL_DOCKER') === '1') {
   $databases['default']['default'] = [
     'driver' => 'sqlite',
-    'database' => '/var/www/html/drupal-persist/db/.ht.sqlite',
+    'database' => '/var/www/html/config-tool-data/db/.ht.sqlite',
   ];
 
-  $config['file_public_path'] = 'drupal-persist/files';
+  $config['file_public_path'] = 'config-tool-data/files';
 }
 
 /**

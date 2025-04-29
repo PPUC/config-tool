@@ -2,7 +2,7 @@
 set -e
 
 # Paths
-PERSIST_DIR=/var/www/html/drupal-persist
+PERSIST_DIR=/var/www/html/config-tool-data
 DB_PATH=${PERSIST_DIR}/db/.ht.sqlite
 DRUSH=/var/www/vendor/bin/drush
 
@@ -33,7 +33,15 @@ if [ ! -f "${DB_PATH}" ]; then
 
   echo \"PPUC Config Tool installation completed.\"
 else
-  echo \"Existing DB found — skipping install.\"
+  echo \"Existing DB found - check for updates\"
+
+  ${DRUSH} deploy
+
+  ${DRUSH} dcdi \
+    --folder=sites/default/files/default_content \
+    --preserve-ids \
+    --force-override \
+    --yes
 fi
 
 exec apache2-foreground
