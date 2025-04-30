@@ -1,9 +1,8 @@
 FROM php:8.3-apache
 
-# Set working directory for build context
 WORKDIR /usr/src
 
-# Install all dependencies in a single RUN command
+# Install and configure everything in one layer
 RUN apt-get update && apt-get install -y \
     wget make gcc g++ \
     libjpeg-dev libpng-dev libwebp-dev zlib1g-dev \
@@ -45,12 +44,20 @@ RUN apt-get update && apt-get install -y \
     apt-get purge -y --auto-remove wget make gcc g++ && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    # PHP config
     cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
     update-ca-certificates && \
     echo "allow_url_fopen = On" >> /usr/local/etc/php/conf.d/drupal.ini && \
     echo "openssl.cafile = /etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/drupal.ini && \
-    sed -ri -e 's!/var/www/html!/var/www/web!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
-    a2enmod rewrite
+    # Apache config
+    a2enmod rewrite && \
+    echo "DocumentRoot /var/www/web" > /etc/apache2/conf-available/document-root.conf && \
+    echo "<Directory /var/www/web>" >> /etc/apache2/conf-available/document-root.conf && \
+    echo "    Options Indexes FollowSymLinks" >> /etc/apache2/conf-available/document-root.conf && \
+    echo "    AllowOverride All" >> /etc/apache2/conf-available/document-root.conf && \
+    echo "    Require all granted" >> /etc/apache2/conf-available/document-root.conf && \
+    echo "</Directory>" >> /etc/apache2/conf-available/document-root.conf && \
+    a2enconf document-root
 
 WORKDIR /var/www
 COPY --chown=www-data:www-data web/ web/
@@ -59,7 +66,7 @@ COPY docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
-WORKDIR /var/www/html
+WORKDIR /var/www/web
 ENV DRUPAL_DOCKER=1
 
 ENTRYPOINT ["/entrypoint.sh"]
