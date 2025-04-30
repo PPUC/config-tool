@@ -1,14 +1,16 @@
 FROM php:8.3-apache
 
+# Set working directory for build context
 WORKDIR /usr/src
 
-# Install and configure everything in one layer
+# Install all dependencies including oniguruma
 RUN apt-get update && apt-get install -y \
     wget make gcc g++ \
     libjpeg-dev libpng-dev libwebp-dev zlib1g-dev \
     unzip git apache2-dev libxml2-dev \
     libsqlite3-dev pkg-config libzip-dev \
-    libcurl4-openssl-dev ca-certificates && \
+    libcurl4-openssl-dev ca-certificates \
+    libonig-dev && \
     # Build and install SQLite
     wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz && \
     tar xzf sqlite-autoconf-3490100.tar.gz && \
