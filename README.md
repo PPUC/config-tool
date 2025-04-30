@@ -3,6 +3,19 @@
 The PPUC config-tool is a web application to configure your controllers. it is
 still WIP.
 
+## Installation
+
+The PPUC config-tool is a web appication based on Drupal, written in PHP.
+So it needs a webserver to run.
+
+To run a local instance, a docker image is available:
+```sh
+docker pull ghcr.io/ppuc/config-tool:latest
+docker run -p 8080:80 -v config-tool-data:/var/www/web/config-tool-data ghcr.io/ppuc/config-tool:latest
+```
+
+Then open `localhost:8080`in a web browser and login as user `ppuc` using the password `ppuc`.
+
 ## Development
 
 ### Linux and macOS
