@@ -87,23 +87,24 @@ jobs:
       - name: Create and push multi-arch manifest
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
 
           # Retag the loaded images
-          docker tag config-tool:dev-amd64 ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64
-          docker tag config-tool:dev-arm64 ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+          docker tag config-tool:dev-amd64 ghcr.io/$OWNER/config-tool:$VERSION-amd64
+          docker tag config-tool:dev-arm64 ghcr.io/$OWNER/config-tool:$VERSION-arm64
 
           # Push arch-specific images
-          docker push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64
-          docker push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+          docker push ghcr.io/$OWNER/config-tool:$VERSION-amd64
+          docker push ghcr.io/$OWNER/config-tool:$VERSION-arm64
 
           # Create and push manifests
-          docker manifest create ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION \
-            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64 \
-            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+          docker manifest create ghcr.io/$OWNER/config-tool:$VERSION \
+            --amend ghcr.io/$OWNER/config-tool:$VERSION-amd64 \
+            --amend ghcr.io/$OWNER/config-tool:$VERSION-arm64
 
-          docker manifest create ghcr.io/${{ github.repository_owner }}/config-tool:latest \
-            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64 \
-            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+          docker manifest create ghcr.io/$OWNER/config-tool:latest \
+            --amend ghcr.io/$OWNER/config-tool:$VERSION-amd64 \
+            --amend ghcr.io/$OWNER/config-tool:$VERSION-arm64
 
-          docker manifest push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION
-          docker manifest push ghcr.io/${{ github.repository_owner }}/config-tool:latest
+          docker manifest push ghcr.io/$OWNER/config-tool:$VERSION
+          docker manifest push ghcr.io/$OWNER/config-tool:latest
