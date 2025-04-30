@@ -10,6 +10,11 @@ DRUSH=/var/www/vendor/bin/drush
 mkdir -p ${PERSIST_DIR}/db ${PERSIST_DIR}/files
 chown -R www-data:www-data ${PERSIST_DIR}
 
+# Function to run commands as www-data
+run_as_www_data() {
+    su www-data -s /bin/bash -c "$1"
+}
+
 # Auto-install Drupal if DB is missing
 if [ ! -f "${DB_PATH}" ]; then
   echo "No DB found — installing PPUC Config Tool with SQLite..."
@@ -19,30 +24,30 @@ if [ ! -f "${DB_PATH}" ]; then
     exit 1
   fi
 
-  # Run drush as www-data using su-exec
-  su-exec www-data ${DRUSH} site:install ppuc \
-    --site-name="Pinball Power-Up Controller" \
+  # Run drush as www-data
+  run_as_www_data "${DRUSH} site:install ppuc \
+    --site-name='Pinball Power-Up Controller' \
     --account-name=admin \
     --account-pass=admin \
     --existing-config \
-    --yes
+    --yes"
 
-  su-exec www-data ${DRUSH} dcdi \
+  run_as_www_data "${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
-    --yes
+    --yes"
 
   echo "PPUC Config Tool installation completed."
 else
   echo "Existing DB found - check for updates"
 
-  # Run drush commands as www-data using su-exec
-  su-exec www-data ${DRUSH} deploy
+  # Run drush commands as www-data
+  run_as_www_data "${DRUSH} deploy"
 
-  su-exec www-data ${DRUSH} dcdi \
+  run_as_www_data "${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
-    --yes
+    --yes"
 fi
 
 # Ensure permissions are correct
