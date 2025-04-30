@@ -19,15 +19,15 @@ if [ ! -f "${DB_PATH}" ]; then
     exit 1
   fi
 
-  # Run drush as www-data
-  sudo -u www-data ${DRUSH} site:install ppuc \
+  # Run drush as www-data using su-exec
+  su-exec www-data ${DRUSH} site:install ppuc \
     --site-name="Pinball Power-Up Controller" \
     --account-name=admin \
     --account-pass=admin \
     --existing-config \
     --yes
 
-  sudo -u www-data ${DRUSH} dcdi \
+  su-exec www-data ${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
     --yes
@@ -36,10 +36,10 @@ if [ ! -f "${DB_PATH}" ]; then
 else
   echo "Existing DB found - check for updates"
 
-  # Run drush commands as www-data
-  sudo -u www-data ${DRUSH} deploy
+  # Run drush commands as www-data using su-exec
+  su-exec www-data ${DRUSH} deploy
 
-  sudo -u www-data ${DRUSH} dcdi \
+  su-exec www-data ${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
     --yes
