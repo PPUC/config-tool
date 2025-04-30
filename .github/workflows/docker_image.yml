@@ -13,10 +13,17 @@ on:
 
 jobs:
   build-artifacts:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runs-on: ubuntu-latest
+          - arch: arm64
+            runs-on: ubuntu-24.04-arm
+
+    name: Build for ${{ matrix.arch }}
+    runs-on: ${{ matrix.runs-on }}
 
     steps:
       - name: Checkout code
@@ -25,22 +32,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Export Image for ${{ matrix.arch }}
+      - name: Build and Export Image
         run: |
           docker buildx build \
             --platform linux/${{ matrix.arch }} \
             -f docker/Dockerfile \
-            -t config-tool-${{ matrix.arch }}:latest   \
+            -t config-tool:dev-${{ matrix.arch }} \
             --load .
 
       - name: Save Docker image to tar file
         run: |
-          docker save config-tool-${{ matrix.arch }}:latest -o config-tool-${{ matrix.arch }}.tar
+          docker save config-tool:dev-${{ matrix.arch }} -o config-tool-${{ matrix.arch }}.tar
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
         with:
-          name: config-tool-image-${{ matrix.arch }}
+          name: config-tool-${{ matrix.arch }}
           path: config-tool-${{ matrix.arch }}.tar
 
   publish-multiarch:
@@ -49,11 +56,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Load Docker images
+        run: |
+          docker load -i artifacts/config-tool-amd64.tar  # Loads as config-tool:dev-amd64
+          docker load -i artifacts/config-tool-arm64.tar  # Loads as config-tool:dev-arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -62,12 +79,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Multi-Arch Docker Image to GHCR
+      - name: Create and push multi-arch manifest
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            -f docker/Dockerfile \
-            -t ghcr.io/${{ github.repository_owner }}/config-tool:${VERSION} \
-            -t ghcr.io/${{ github.repository_owner }}/config-tool:latest \
-            --push .
+
+          # Retag the loaded images (using the correct dev-* tags)
+          docker tag config-tool:dev-amd64 ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64
+          docker tag config-tool:dev-arm64 ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+
+          # Push arch-specific images
+          docker push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64
+          docker push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+
+          # Create and push manifests
+          docker manifest create ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION \
+            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64 \
+            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+
+          docker manifest create ghcr.io/${{ github.repository_owner }}/config-tool:latest \
+            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-amd64 \
+            --amend ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION-arm64
+
+          docker manifest push ghcr.io/${{ github.repository_owner }}/config-tool:$VERSION
+          docker manifest push ghcr.io/${{ github.repository_owner }}/config-tool:latest
