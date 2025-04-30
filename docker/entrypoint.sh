@@ -6,6 +6,7 @@ PERSIST_DIR=/var/www/web/config-tool-data
 DB_PATH=${PERSIST_DIR}/db/.ht.sqlite
 DRUSH=/var/www/vendor/bin/drush
 
+# Ensure directories exist with correct permissions
 mkdir -p ${PERSIST_DIR}/db ${PERSIST_DIR}/files
 chown -R www-data:www-data ${PERSIST_DIR}
 
@@ -18,28 +19,35 @@ if [ ! -f "${DB_PATH}" ]; then
     exit 1
   fi
 
-  ${DRUSH} site:install ppuc \
+  # Run drush as www-data
+  sudo -u www-data ${DRUSH} site:install ppuc \
     --site-name="Pinball Power-Up Controller" \
     --account-name=admin \
     --account-pass=admin \
     --existing-config \
     --yes
 
-  ${DRUSH} dcdi \
+  sudo -u www-data ${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
     --yes
 
-  echo \"PPUC Config Tool installation completed.\"
+  echo "PPUC Config Tool installation completed."
 else
-  echo \"Existing DB found - check for updates\"
+  echo "Existing DB found - check for updates"
 
-  ${DRUSH} deploy
+  # Run drush commands as www-data
+  sudo -u www-data ${DRUSH} deploy
 
-  ${DRUSH} dcdi \
+  sudo -u www-data ${DRUSH} dcdi \
     --folder=sites/default/files/default_content \
     --preserve-ids \
     --yes
 fi
+
+# Ensure permissions are correct
+chown -R www-data:www-data ${PERSIST_DIR}
+chmod 755 ${PERSIST_DIR}
+[ -f "${DB_PATH}" ] && chmod 664 "${DB_PATH}"
 
 exec apache2-foreground

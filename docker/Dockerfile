@@ -72,13 +72,7 @@ COPY docker/entrypoint.sh /entrypoint.sh
 
 # Fix permissions
 RUN chmod +x /entrypoint.sh && \
-    chown -R www-data:www-data /var/www && \
-    find /var/www -type d -exec chmod 755 {} \; && \
-    find /var/www -type f -exec chmod 644 {} \; && \
-    if [ -f /var/www/web/sites/default/.sqlite ]; then \
-        chown www-data:www-data /var/www/web/sites/default/.sqlite && \
-        chmod 664 /var/www/web/sites/default/.sqlite; \
-    fi
+    chown -R www-data:www-data /var/www
 
 WORKDIR /var/www/html
 ENV DRUPAL_DOCKER=1
