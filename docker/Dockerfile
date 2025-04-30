@@ -38,9 +38,12 @@ RUN docker-php-source extract && \
     make install && \
     docker-php-source delete
 
-# Install PHP extensions with correct SQLite version
+# Install PHP extensions
 RUN docker-php-ext-configure gd --with-jpeg --with-webp && \
-    docker-php-ext-install pdo pdo_sqlite gd zip zlib
+    docker-php-ext-install gd
+
+# Note: pdo, pdo_sqlite, zip and zlib are already included in the base PHP image
+# so we don't need to explicitly install them
 
 # Enable PHP module in Apache
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
