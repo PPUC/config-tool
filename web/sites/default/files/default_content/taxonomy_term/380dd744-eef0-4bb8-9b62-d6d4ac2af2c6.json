@@ -1,14 +1,11 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/16?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_role"
+            "href": "taxonomy_term\/led_role"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
-            null
-        ]
+        "self": {
+            "href": "_dcd\/taxonomy_term\/16"
+        }
     },
     "tid": [
         {
@@ -62,7 +59,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_role\/parent": [
+        "relation\/taxonomy_term\/led_role\/parent": [
             null
         ]
     },
@@ -86,6 +83,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1726655641
+        "export_timestamp": 1746023808
     }
 }

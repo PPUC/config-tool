@@ -286,7 +286,7 @@ $databases = [];
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
-$settings['hash_salt'] = '';
+$settings['hash_salt'] = 'PPUC';
 
 /**
  * Deployment identifier.
@@ -867,7 +867,6 @@ else if (getenv('DRUPAL_DOCKER') === '1') {
   $config['file_public_path'] = 'config-tool-data/files';
 
   $settings['config_sync_directory'] = '/var/www/web/sites/default/files/sync';
-  $settings['hash_salt'] = 'PPUC';
 }
 
 /**

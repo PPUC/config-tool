@@ -1,14 +1,11 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/27?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/matrix_part"
+            "href": "taxonomy_term\/matrix_part"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
-            null
-        ]
+        "self": {
+            "href": "_dcd\/taxonomy_term\/27"
+        }
     },
     "tid": [
         {
@@ -62,7 +59,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/matrix_part\/parent": [
+        "relation\/taxonomy_term\/matrix_part\/parent": [
             null
         ]
     },
@@ -86,6 +83,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1726655641
+        "export_timestamp": 1746023808
     }
 }

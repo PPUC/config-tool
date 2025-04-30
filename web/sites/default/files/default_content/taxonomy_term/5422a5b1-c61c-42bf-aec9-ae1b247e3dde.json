@@ -1,14 +1,11 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/81?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/fx_modes"
+            "href": "taxonomy_term\/fx_modes"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
-            null
-        ]
+        "self": {
+            "href": "_dcd\/taxonomy_term\/81"
+        }
     },
     "tid": [
         {
@@ -62,7 +59,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/fx_modes\/parent": [
+        "relation\/taxonomy_term\/fx_modes\/parent": [
             null
         ]
     },
@@ -91,6 +88,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1741029836
+        "export_timestamp": 1746023808
     }
 }

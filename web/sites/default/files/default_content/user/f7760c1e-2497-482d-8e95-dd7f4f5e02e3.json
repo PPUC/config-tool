@@ -1,10 +1,10 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/user\/2?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/user\/user"
+            "href": "user\/user"
+        },
+        "self": {
+            "href": "_dcd\/user\/2"
         }
     },
     "uid": [
@@ -58,13 +58,13 @@
     ],
     "access": [
         {
-            "value": "2024-09-18T10:30:12+00:00",
+            "value": "2025-04-30T14:33:57+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
     "login": [
         {
-            "value": "2024-09-09T21:49:26+00:00",
+            "value": "2025-04-28T13:00:36+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -81,10 +81,11 @@
     ],
     "pass": [
         {
-            "value": "$2y$10$rduzMsrIyjne7voOPwkFcOgCnejwRQRmGAqW5dlDf3GHqCDG1xPha"
+            "value": "$2y$10$rduzMsrIyjne7voOPwkFcOgCnejwRQRmGAqW5dlDf3GHqCDG1xPha",
+            "pre_hashed": true
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1726655641
+        "export_timestamp": 1746023808
     }
 }

@@ -1,14 +1,11 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/102?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/pwm_device"
+            "href": "taxonomy_term\/pwm_device"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
-            null
-        ]
+        "self": {
+            "href": "_dcd\/taxonomy_term\/102"
+        }
     },
     "tid": [
         {
@@ -55,7 +52,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/pwm_device\/parent": [
+        "relation\/taxonomy_term\/pwm_device\/parent": [
             null
         ]
     },
@@ -79,6 +76,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1741200748
+        "export_timestamp": 1746023808
     }
 }

@@ -1,14 +1,11 @@
 {
     "_links": {
-        "self": {
-            "href": "https:\/\/config-tool.ddev.site\/taxonomy\/term\/19?_format=hal_json"
-        },
         "type": {
-            "href": "https:\/\/config-tool.ddev.site\/rest\/type\/taxonomy_term\/led_type"
+            "href": "taxonomy_term\/led_type"
         },
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
-            null
-        ]
+        "self": {
+            "href": "_dcd\/taxonomy_term\/19"
+        }
     },
     "tid": [
         {
@@ -55,7 +52,7 @@
         }
     ],
     "_embedded": {
-        "https:\/\/config-tool.ddev.site\/rest\/relation\/taxonomy_term\/led_type\/parent": [
+        "relation\/taxonomy_term\/led_type\/parent": [
             null
         ]
     },
@@ -84,6 +81,6 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1726655641
+        "export_timestamp": 1746023808
     }
 }
