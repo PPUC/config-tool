@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y \
     docker-php-source delete && \
     # Install PHP extensions
     docker-php-ext-configure gd --with-jpeg --with-webp && \
-    docker-php-ext-install gd curl && \
+    docker-php-ext-install gd curl mbstring && \
     # Clean up
     apt-get purge -y --auto-remove wget make gcc g++ && \
     apt-get clean && \
