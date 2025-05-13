@@ -30,10 +30,12 @@ interface RelationLinkManagerInterface extends ConfigurableLinkManagerInterface 
    *
    * @param string $relation_uri
    *   Relation URI (or IANA link relation type) to transform into internal IDs.
+   * @param array $context
+   *   (optional) Optional serializer/normalizer context.
    *
    * @return array
    *   Array with keys 'entity_type_id', 'bundle' and 'field_name'.
    */
-  public function getRelationInternalIds($relation_uri);
+  public function getRelationInternalIds($relation_uri, $context = []);
 
 }

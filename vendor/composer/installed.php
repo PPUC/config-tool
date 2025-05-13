@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6c3dd4f39ab1b04a4e47a3ae876d48ae45b1ad44',
+        'reference' => 'c4b79d418d0b5e28049fddb758884e2dab6a79b2',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -346,7 +346,7 @@
         'drupal/default_content_deploy' => array(
             'pretty_version' => 'dev-2.2.x',
             'version' => 'dev-2.2.x',
-            'reference' => 'f4f8a6fccee4f9619f21d89972078e702865f58d',
+            'reference' => 'd52cf833263a24d10cfff2d0e34bdcd3d9ace8b9',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../web/modules/contrib/default_content_deploy',
             'aliases' => array(
@@ -579,7 +579,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6c3dd4f39ab1b04a4e47a3ae876d48ae45b1ad44',
+            'reference' => 'c4b79d418d0b5e28049fddb758884e2dab6a79b2',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

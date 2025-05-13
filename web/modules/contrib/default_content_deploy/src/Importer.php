@@ -760,9 +760,11 @@ class Importer implements ImporterInterface {
     // Get parsed data.
     $parsed_data = file_get_contents($file->uri);
     // Backward compatibility for exports before 2.2.x.
-    $parsed_data = preg_replace('@"href": "http[^"]+/rest\\\\/type\\\\/([^"]+)"@', '"href": "$1"', $parsed_data);
-    $parsed_data = preg_replace('@"http[^"]+/rest\\\\/(relation[^"]+)"@', '"$1"', $parsed_data);
-
+    if (preg_match('@"href": "(http[^"]+)/rest\\\\/type\\\\/[^"]+"@', $parsed_data, $matches)) {
+      $parsed_data = preg_replace('@"href": "http[^"]+/rest\\\\/type\\\\/([^"?]+).*?"@', '"href": "$1"', $parsed_data);
+      $parsed_data = preg_replace('@"http[^"]+/rest\\\\/(relation[^"?]+).*?"@', '"$1"', $parsed_data);
+      $parsed_data = preg_replace('@"href": "' . preg_quote($matches[1], '@') . '([^"?]+).*?"@', '"href": "_dcd$1"', $parsed_data);
+    }
     // Decode.
     try {
       $decode = $this->serializer->decode($parsed_data, 'hal_json');
@@ -777,7 +779,7 @@ class Importer implements ImporterInterface {
   }
 
   /**
-   * Here we can edit data`s value before importing.
+   * Here we can edit data's value before importing.
    *
    * @param object $file
    *   The file object.

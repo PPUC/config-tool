@@ -1,4 +1,8 @@
 {
   "patches": {
+    "drupal/hal": {
+      "2904423 - Translated field denormalization creates duplicate values": "https://www.drupal.org/files/issues/2023-04-05/2904423-90.patch",
+      "3517446 - Cached relation IDs are broken": "https://www.drupal.org/files/issues/2025-04-04/3517446.patch"
+    }
   }
 }

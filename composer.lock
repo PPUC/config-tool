@@ -1466,7 +1466,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/default_content_deploy.git",
-                "reference": "f4f8a6fccee4f9619f21d89972078e702865f58d"
+                "reference": "d52cf833263a24d10cfff2d0e34bdcd3d9ace8b9"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
@@ -1488,8 +1488,8 @@
                     "dev-2.2.x": "2.2.x-dev"
                 },
                 "drupal": {
-                    "version": "2.2.0-beta1+3-dev",
-                    "datestamp": "1745834090",
+                    "version": "2.2.0-beta2+2-dev",
+                    "datestamp": "1747149066",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."

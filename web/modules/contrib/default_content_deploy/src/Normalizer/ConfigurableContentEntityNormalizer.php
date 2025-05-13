@@ -168,6 +168,15 @@ class ConfigurableContentEntityNormalizer extends ContentEntityNormalizer {
       unset($data['_dcd_metadata']);
     }
 
+    if (isset($data['_embedded']) && !$this->metadataService->isCorrectionRequired($data['uuid'][0]['value'])) {
+      foreach (array_keys($data['_embedded']) as $relation) {
+        $field_ids = $this->linkManager->getRelationInternalIds($relation, $context);
+        if (empty($field_ids)) {
+          $this->metadataService->setCorrectionRequired($data['uuid'][0]['value'], TRUE);
+        }
+      }
+    }
+
     return parent::denormalize($data, $class, $format, $context);
   }
 

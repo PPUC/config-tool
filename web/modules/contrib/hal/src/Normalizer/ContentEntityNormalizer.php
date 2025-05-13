@@ -155,8 +155,6 @@ class ContentEntityNormalizer extends NormalizerBase {
           break;
         }
       }
-      // Remove the default langcode so it does not get iterated over below.
-      unset($data[$default_langcode_key]);
     }
 
     if ($entity_type->hasKey('bundle')) {
@@ -179,7 +177,7 @@ class ContentEntityNormalizer extends NormalizerBase {
 
     // Flatten the embedded values.
     foreach ($embedded as $relation => $field) {
-      $field_ids = $this->linkManager->getRelationInternalIds($relation);
+      $field_ids = $this->linkManager->getRelationInternalIds($relation, $context);
       if (!empty($field_ids)) {
         $field_name = $field_ids['field_name'];
         $data[$field_name] = $field;

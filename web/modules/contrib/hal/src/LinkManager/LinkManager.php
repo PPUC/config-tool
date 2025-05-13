@@ -55,8 +55,8 @@ class LinkManager implements LinkManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRelationInternalIds($relation_uri) {
-    return $this->relationLinkManager->getRelationInternalIds($relation_uri);
+  public function getRelationInternalIds($relation_uri, $context = []) {
+    return $this->relationLinkManager->getRelationInternalIds($relation_uri, $context);
   }
 
   /**
