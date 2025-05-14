@@ -26,7 +26,7 @@ jobs:
           sudo apt-get install -y yq
       - id: version
         run: |
-          TAG=$(yq e '.slogan | sub("^v", "")' web/sites/default/files/sync/system.site.yml)
+          TAG=$(yq -r '.slogan' web/sites/default/files/sync/system.site.yml | sed 's/^v//')
           echo "${TAG}"
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
       - name: Check git tag
