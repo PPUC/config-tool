@@ -2,9 +2,9 @@ _core:
   default_config_hash: VDJxTZtQR21qB4lvOq8zszJZLvLKrSPQpdn2E3T71Ww
 langcode: en
 uuid: 1b923c28-14b0-4fd0-8138-76b453cb5d07
-name: 'Pinball Power-Up Controller'
+name: 'PPUC Config Tool'
 mail: admin@example.com
-slogan: ''
+slogan: v0.1.3-dev-snapshot
 page:
   403: ''
   404: ''
