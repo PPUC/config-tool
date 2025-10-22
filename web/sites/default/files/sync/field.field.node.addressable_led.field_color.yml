@@ -14,13 +14,13 @@ field_name: field_color
 entity_type: node
 bundle: addressable_led
 label: Color
-description: 'The default color when no effect is running an the LED is turned on by the CPU.'
+description: 'The default color when no effect is running and the LED is turned on by the CPU.'
 required: true
 translatable: false
 default_value:
   -
-    color: FFFFFF
-    opacity: 0.0
+    color: '#ffffff'
+    opacity: null
 default_value_callback: ''
 settings:
   opacity: 0

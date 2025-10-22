@@ -346,10 +346,9 @@ class GamesController extends ControllerBase {
                   ];
                 }
               }
-
               $effects[] = [
                 'description' => trim($led_effect->label()),
-                'color' => (int) ($led_effect->get('field_color')->value),
+                'color' => $led_effect->get('field_color')->color,
                 'duration' => (int) ($led_effect->get('field_duration')->value),
                 'effect' => (int) ($led_effect->get('field_effect')->entity->field_number->value ?? 0),
                 'reverse' => (int) ($led_effect->get('field_reverse')->value),
@@ -367,7 +366,7 @@ class GamesController extends ControllerBase {
               /** @var \Drupal\range\Plugin\Field\FieldType\RangeIntegerItem $segment */
               foreach ($device->get('field_segments') as $number => $segment) {
                 $segments[] = [
-                  'number' => (int) $number,
+                  'number' => ((int) $number) + 1,
                   'from' => (int) ($segment->get('from')->getValue()),
                   'to' => (int) ($segment->get('to')->getValue()),
                 ];

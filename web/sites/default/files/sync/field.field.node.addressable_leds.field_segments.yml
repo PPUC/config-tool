@@ -12,7 +12,7 @@ field_name: field_segments
 entity_type: node
 bundle: addressable_leds
 label: Segments
-description: 'A segment of LEDs to run effects. Counting starts at 0!'
+description: 'A segment of LEDs to run effects. Counting starts at 1!'
 required: false
 translatable: false
 default_value: {  }

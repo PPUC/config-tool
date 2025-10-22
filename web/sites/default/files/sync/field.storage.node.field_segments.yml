@@ -12,7 +12,7 @@ type: range_integer
 settings: {  }
 module: range
 locked: false
-cardinality: 10
+cardinality: 9
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
