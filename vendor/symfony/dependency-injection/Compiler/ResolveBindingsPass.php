@@ -118,10 +118,10 @@ class ResolveBindingsPass extends AbstractRecursivePass
         foreach ($bindings as $key => $binding) {
             [$bindingValue, $bindingId, $used, $bindingType, $file] = $binding->getValues();
             if ($used) {
-                $this->usedBindings[$bindingId] = true;
-                unset($this->unusedBindings[$bindingId]);
-            } elseif (!isset($this->usedBindings[$bindingId])) {
-                $this->unusedBindings[$bindingId] = [$key, $this->currentId, $bindingType, $file];
+                $this->usedBindings[$bindingId ?? ''] = true;
+                unset($this->unusedBindings[$bindingId ?? '']);
+            } elseif (!isset($this->usedBindings[$bindingId ?? ''])) {
+                $this->unusedBindings[$bindingId ?? ''] = [$key, $this->currentId, $bindingType, $file];
             }
 
             if (preg_match('/^(?:(?:array|bool|float|int|string|iterable|([^ $]++)) )\$/', $key, $m)) {
@@ -189,7 +189,8 @@ class ResolveBindingsPass extends AbstractRecursivePass
                 if (
                     $value->isAutowired()
                     && !$value->hasTag('container.ignore_attributes')
-                    && $parameter->getAttributes(Autowire::class, \ReflectionAttribute::IS_INSTANCEOF)
+                    && ($parameter->getAttributes(Autowire::class, \ReflectionAttribute::IS_INSTANCEOF)
+                    || $parameter->getAttributes(Target::class, \ReflectionAttribute::IS_INSTANCEOF))
                 ) {
                     continue;
                 }
@@ -228,7 +229,7 @@ class ResolveBindingsPass extends AbstractRecursivePass
 
             foreach ($names as $key => $name) {
                 if (\array_key_exists($name, $arguments) && (0 === $key || \array_key_exists($key - 1, $arguments))) {
-                    if (!array_key_exists($key, $arguments)) {
+                    if (!\array_key_exists($key, $arguments)) {
                         $arguments[$key] = $arguments[$name];
                     }
                     unset($arguments[$name]);
@@ -260,8 +261,8 @@ class ResolveBindingsPass extends AbstractRecursivePass
     {
         [$bindingValue, $bindingId] = $binding->getValues();
 
-        $this->usedBindings[$bindingId] = true;
-        unset($this->unusedBindings[$bindingId]);
+        $this->usedBindings[$bindingId ?? ''] = true;
+        unset($this->unusedBindings[$bindingId ?? '']);
 
         return $bindingValue;
     }

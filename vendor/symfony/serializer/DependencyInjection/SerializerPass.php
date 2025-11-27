@@ -19,6 +19,8 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Serializer\Debug\TraceableEncoder;
 use Symfony\Component\Serializer\Debug\TraceableNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -86,6 +88,10 @@ class SerializerPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds($tagName) as $serviceId => $tags) {
             $definition = $container->getDefinition($serviceId);
+
+            if (array_any($tags, $closure = fn (array $tag) => (bool) $tag)) {
+                $tags = array_filter($tags, $closure);
+            }
 
             foreach ($tags as $tag) {
                 $names = (array) ($tag['serializer'] ?? []);
@@ -175,6 +181,11 @@ class SerializerPass implements CompilerPassInterface
 
             $container->registerChild($serializerId, 'serializer')->setArgument('$defaultContext', $config['default_context']);
             $container->registerAliasForArgument($serializerId, SerializerInterface::class, $serializerName.'.serializer');
+            $container->registerAliasForArgument($serializerId, SerializerInterface::class, $serializerName);
+            $container->registerAliasForArgument($serializerId, NormalizerInterface::class, $serializerName.'.normalizer');
+            $container->registerAliasForArgument($serializerId, NormalizerInterface::class, $serializerName);
+            $container->registerAliasForArgument($serializerId, DenormalizerInterface::class, $serializerName.'.denormalizer');
+            $container->registerAliasForArgument($serializerId, DenormalizerInterface::class, $serializerName);
 
             $this->configureSerializer($container, $serializerId, $normalizers, $encoders, $serializerName);
 

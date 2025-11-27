@@ -35,7 +35,7 @@ abstract class CompoundConstraintTestCase extends TestCase
     protected ValidatorInterface $validator;
     protected ?ConstraintViolationListInterface $violationList = null;
     protected ExecutionContextInterface $context;
-    protected string $root;
+    protected mixed $root;
 
     private mixed $validatedValue;
 
@@ -102,7 +102,8 @@ abstract class CompoundConstraintTestCase extends TestCase
             next($expectedViolations);
         }
 
-        $this->assertEmpty(
+        $this->assertSame(
+            [],
             $failedToAssertViolations,
             \sprintf('Expected violation(s) for constraint(s) %s to be raised by compound.',
                 implode(', ', array_map(fn ($violation) => ($violation->getConstraint())::class, $failedToAssertViolations))

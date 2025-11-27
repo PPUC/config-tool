@@ -72,7 +72,6 @@ class NodeRevisionsUiTest extends NodeTestBase {
     $this->submitForm($edit, 'Save');
 
     // Load the node again and check the revision is the same as before.
-    $node_storage->resetCache([$node->id()]);
     $node_revision = $node_storage->load($node->id(), TRUE);
     $this->assertEquals($node->getRevisionId(), $node_revision->getRevisionId(), "After an existing node is saved with 'Create new revision' unchecked, a new revision is not created.");
 
@@ -86,7 +85,6 @@ class NodeRevisionsUiTest extends NodeTestBase {
     $this->submitForm($edit, 'Save');
 
     // Load the node again and check the revision is different from before.
-    $node_storage->resetCache([$node->id()]);
     $node_revision = $node_storage->load($node->id());
     $this->assertNotEquals($node->getRevisionId(), $node_revision->getRevisionId(), "After an existing node is saved with 'Create new revision' checked, a new revision is created.");
   }
@@ -203,7 +201,7 @@ class NodeRevisionsUiTest extends NodeTestBase {
    * This can be removed after 'entity.node.version_history' local task is
    * removed by https://www.drupal.org/project/drupal/issues/3153559.
    *
-   * @covers node_local_tasks_alter
+   * @covers \Drupal\node\Hook\NodeHooks1::localTasksAlter
    */
   public function testNodeDuplicateRevisionsTab(): void {
     $this->drupalPlaceBlock('local_tasks_block');
@@ -215,22 +213,6 @@ class NodeRevisionsUiTest extends NodeTestBase {
     // There must be exactly one 'Revisions' local task.
     $xpath = $this->assertSession()->buildXPathQuery('//a[contains(@href, :href)]', [':href' => $node->toUrl('version-history')->toString()]);
     $this->assertSession()->elementsCount('xpath', $xpath, 1);
-  }
-
-  /**
-   * Tests the node revisions page is cacheable by dynamic page cache.
-   */
-  public function testNodeRevisionsCacheability(): void {
-    $this->drupalLogin($this->editor);
-    $node = $this->drupalCreateNode();
-    // Admin paths are always uncacheable by dynamic page cache, swap node
-    // to non admin theme to test cacheability.
-    $this->config('node.settings')->set('use_admin_theme', FALSE)->save();
-    \Drupal::service('router.builder')->rebuild();
-    $this->drupalGet($node->toUrl('version-history'));
-    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'MISS');
-    $this->drupalGet($node->toUrl('version-history'));
-    $this->assertSession()->responseHeaderEquals('X-Drupal-Dynamic-Cache', 'HIT');
   }
 
 }

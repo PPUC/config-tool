@@ -3,6 +3,7 @@
 namespace Drupal\search_api_default_content_deploy\Plugin\search_api\backend;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
@@ -39,6 +40,8 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
   }
 
   use PluginDependencyTrait;
+
+  use DependencySerializationTrait;
 
   use StringTranslationTrait;
 
@@ -151,6 +154,9 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
     $this->exporter->setTextDependencies($index_third_party_settings['text_dependencies']);
     $this->exporter->setSkipExportTimestamp($index_third_party_settings['skip_export_timestamp']);
     $this->exporter->setSkipEntityTypeIds($index_third_party_settings['skip_entity_types'] ?? []);
+    if (method_exists($index, 'getIndexingRequestTime') && ($request_time = $index->getIndexingRequestTime())) {
+      $this->exporter->setRequestTime($request_time);
+    }
 
     foreach ($items as $item) {
       $datasource = $item->getDatasource();
@@ -160,9 +166,22 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
         /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
         $entity = $index->loadItem($item->getId())->getEntity();
         $this->exporter->exportEntity($entity, $index_third_party_settings['export_referenced_entities']);
-        // Even if the export "failed" we need to mark the item as indexed
+        // Even if the export "failed", we need to mark the item as indexed
         // because a dcd event subscriber might have skipped the entity.
         $ret[] = $item->getId();
+
+        if ($index_third_party_settings['move_deleted_single_file']) {
+          $deleted_directories = [
+            $directory . '_deleted/',
+            $directory . '_thumbs/_deleted/',
+          ];
+          $file_path = $entity->getEntityTypeId() . '/' . $entity->uuid() . '.json';
+          foreach ($deleted_directories as $deleted_directory) {
+            if (file_exists($deleted_directory . $file_path)) {
+              $this->fileSystem->delete($deleted_directory . $file_path);
+            }
+          }
+        }
       }
     }
 
@@ -177,12 +196,15 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
 
     if ($index_third_party_settings['delete_single_file_allowed']) {
       $directory = rtrim($index_third_party_settings['content_directory'], '/') . '/';
+      $thumbs_directory = $directory . '_thumbs/';
       foreach ($item_ids as $id) {
         [$datasource_id, $item_id] = Utility::splitCombinedId($id);
         if (preg_match('/^dcd_entity:(.+)$/', $datasource_id, $datasource_matches) && preg_match('/:([^:]+)$/', $item_id, $item_matches)) {
           $file_name = '/' . $item_matches[1] . '.json';
           $file_path = $directory . $datasource_matches[1] . $file_name;
           $deleted_directory = $directory . '_deleted/' . $datasource_matches[1];
+          $thumbs_file_path = $thumbs_directory . $datasource_matches[1] . $file_name;
+          $thumbs_deleted_directory = $thumbs_directory . '_deleted/' . $datasource_matches[1];
 
           if ($index_third_party_settings['move_deleted_single_file'] && file_exists($file_path) && $this->fileSystem->prepareDirectory($deleted_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
             $file = new \stdClass();
@@ -193,6 +215,8 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
             $file->forceOverride = FALSE;
             $file->action = $this->t('delete');
 
+            // Move the file instead of deleting. Just in case of an exception
+            // later.
             $this->fileSystem->move($file_path, $file->uri, FileExists::Replace);
 
             try {
@@ -202,6 +226,16 @@ class DefaultContentDeployBackend extends BackendPluginBase implements PluginFor
                 'json_encode_options' => JSON_PRETTY_PRINT,
               ]);
               file_put_contents($file->uri, $content);
+
+              if (file_exists($thumbs_file_path) && $this->fileSystem->prepareDirectory($thumbs_deleted_directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+                // Move the file instead of deleting. Just in case of an
+                // exception later.
+                $this->fileSystem->move($thumbs_file_path, $thumbs_deleted_directory . $file->name, FileExists::Replace);
+                $data['_dcd_metadata'] = $file->data['_dcd_metadata'];
+                file_put_contents($thumbs_deleted_directory . $file->name, $this->serializer->serialize($data, 'json', [
+                  'json_encode_options' => JSON_PRETTY_PRINT,
+                ]));
+              }
             }
             catch (\Exception $e) {
               // The file has been moved already, but adding metadata failed.

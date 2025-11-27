@@ -2,7 +2,6 @@
 
 namespace Drupal\search_api_default_content_deploy\Plugin\search_api\datasource;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
@@ -37,8 +36,12 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   /**
    * {@inheritdoc}
    */
-  public function getItemId(ComplexDataInterface $item) {
-    return parent::getItemId($item) ?: NULL;
+  public function getPartialItemIds($page = NULL, ?array $bundles = NULL, ?array $languages = NULL): ?array {
+    $item_ids = parent::getPartialItemIds($page, $bundles, $languages);
+    if (!empty($item_ids)) {
+      $item_ids = array_unique($item_ids);
+    }
+    return $item_ids;
   }
 
   /**
@@ -47,15 +50,11 @@ class DefaultContentDeployContentEntity extends ContentEntity {
   public static function formatItemId(string $entity_type, string|int $entity_id, string $langcode): string {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity = \Drupal::service('entity_type.manager')->getStorage($entity_type)->load($entity_id);
-    // We only need to handle the default translations as all translations will
-    // be embedded in the HAL export. But we also need to check if the
-    // translation exists as Search API added entries to the tracker for all
-    // installed languages in case of an entity deletion.
-    if ($entity->hasTranslation($langcode) && $entity->getTranslation($langcode)->isDefaultTranslation()) {
-      return $entity_id . ':' . $langcode . ':' . $entity->uuid();
-    }
+    // We always need to handle the default translations as all translations
+    // will be embedded in the HAL export.
+    $langcode = $entity->getUntranslated()->language()->getId();
 
-    return '';
+    return $entity_id . ':' . $langcode . ':' . $entity->uuid();
   }
 
   /**
@@ -74,36 +73,6 @@ class DefaultContentDeployContentEntity extends ContentEntity {
     }
 
     return $items;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPartialItemIds($page = NULL, ?array $bundles = NULL, ?array $languages = NULL) {
-    $item_ids = parent::getPartialItemIds($page, $bundles, $languages);
-
-    if (is_array($item_ids)) {
-      return array_filter($item_ids, function ($item_id) {
-        return $item_id !== '';
-      });
-    }
-
-    return $item_ids;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAffectedItemsForEntityChange(EntityInterface $entity, array $foreign_entity_relationship_map, ?EntityInterface $original_entity = NULL): array {
-    $item_ids = parent::getAffectedItemsForEntityChange($entity, $foreign_entity_relationship_map, $original_entity);
-
-    if (is_array($item_ids)) {
-      return array_filter($item_ids, function ($item_id) {
-        return $item_id !== '';
-      });
-    }
-
-    return $item_ids;
   }
 
 }

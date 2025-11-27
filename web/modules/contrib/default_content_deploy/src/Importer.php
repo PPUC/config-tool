@@ -41,10 +41,8 @@ class Importer implements ImporterInterface {
 
   /**
    * Directory to import.
-   *
-   * @var string
    */
-  private $folder;
+  private ?string $folder = NULL;
 
   /**
    * Data to import.
@@ -155,36 +153,37 @@ class Importer implements ImporterInterface {
    * {@inheritdoc}
    */
   public function setFolder(string $folder): void {
-    $this->folder = $folder;
+    $this->folder = rtrim($folder, '/');
+    $this->exporter->setFolder($folder);
   }
 
   /**
-   * Get directory to import.
+   * {@inheritdoc}
+   */
+  public function getFolder(): string {
+    if (NULL === $this->folder) {
+      $this->setFolder($this->deployManager->getContentFolder());
+    }
+
+    return $this->folder;
+  }
+
+  /**
+   * Get thumbs directory to import.
    *
    * @return string
    *   The content folder.
    *
    * @throws \Exception
    */
-  protected function getFolder(): string {
-    $folder = $this->folder ?: $this->deployManager->getContentFolder();
-
-    if (!isset($folder)) {
-      throw new \Exception('Directory for content deploy is not set.');
-    }
-
-    return $folder;
+  protected function getThumbsFolder(): string {
+    return $this->getFolder() . '/_thumbs';
   }
 
   /**
-   * Get the state key to track max export timestamps in states.
-   *
-   * @return string
-   *   The state key.
-   *
-   * @throws \Exception
+   * {@inheritdoc}
    */
-  protected function getStateKey(): string {
+  public function getStateKey(): string {
     return 'dcd.last_import.' . md5($this->getFolder());
   }
 
@@ -232,37 +231,65 @@ class Importer implements ImporterInterface {
    */
   public function prepareForImport(): void {
     $last_import_timestamp = (int) $this->state->get($this->getStateKey(), 0);
-    $this->files = $this->scan($this->getFolder());
+    $this->files = $this->scan($this->getThumbsFolder());
+    if (empty($this->files)) {
+      $this->files = $this->scan($this->getFolder());
+    }
 
     foreach ($this->files as $file) {
       if (!isset($this->filesToImport[$file->uuid]) && !isset($this->dataToImport[$file->uuid]) && !isset($this->pathAliasesToImport[$file->uuid])) {
+        $content = '';
         if ($this->incremental) {
           $content = file_get_contents($file->uri);
-          if (preg_match('/"export_timestamp"\s*:\s*(\d+)/', $content, $matches) && $last_import_timestamp >= $matches[1] && $this->entityExists($file->entity_type_id, $file->uuid)) {
-            continue;
+          if (preg_match('/"export_timestamp"\s*:\s*(\d+)/', $content, $matches)) {
+            if ($last_import_timestamp > $matches[1] && $this->entityExists($file->entity_type_id, $file->uuid)) {
+              continue;
+            }
+            $file->export_timestamp = $matches[1];
           }
           // Import the entity even with an old export timestamp if it does not
-          // exist in database.
+          // exist in the database.
+          // If the export timestamp of a file is exactly the same as
+          // $last_import_timestamp we don't skip it, but leave for the standard
+          // check against the database later. This is important to avoid race
+          // conditions with huge exports where all timestamps are the
+          // same.
         }
 
+        $file->uri = str_replace('/_thumbs', '', $file->uri);
+        $file->sort_key = (preg_match('/"sort_key"\s*:\s*(\d+)/', $content, $matches)) ? $matches[1] . '-' . $file->entity_type_id : $file->uuid;
         $this->addToImport($file);
       }
     }
 
     if ($this->delete) {
-      $deleted_files = $this->scan($this->getFolder(), TRUE);
+      $deleted_files = $this->scan($this->getThumbsFolder(), TRUE);
+      if (empty($deleted_files)) {
+        $deleted_files = $this->scan($this->getFolder(), TRUE);
+      }
 
       foreach ($deleted_files as $file) {
         if (!isset($this->dataToDelete[$file->uuid])) {
+          $content = '';
           if ($this->incremental) {
             $content = file_get_contents($file->uri);
-            if (preg_match('/"delete_timestamp"\s*:\s*(\d+)/', $content, $matches) && $last_import_timestamp >= $matches[1] && !$this->entityExists($file->entity_type_id, $file->uuid)) {
-              continue;
+            if (preg_match('/"delete_timestamp"\s*:\s*(\d+)/', $content, $matches)) {
+              if ($last_import_timestamp > $matches[1] && !$this->entityExists($file->entity_type_id, $file->uuid)) {
+                continue;
+              }
+              $file->delete_timestamp = $matches[1];
             }
             // Delete the entity even with an old delete timestamp if it still
-            // exists in database.
+            // exists in the database.
+            // If the export timestamp of a file is exactly the same as
+            // $last_import_timestamp we don't skip it, but leave for the standard
+            // check against the database later. This is important to avoid race
+            // conditions with huge exports where all timestamps are the
+            // same.
           }
 
+          $file->uri = str_replace('/_thumbs', '', $file->uri);
+          $file->sort_key = (preg_match('/"sort_key"\s*:\s*(\d+)/', $content, $matches)) ? $matches[1] . '-' . $file->entity_type_id : $file->uuid;
           $this->addToDelete($file);
         }
       }
@@ -296,15 +323,7 @@ class Importer implements ImporterInterface {
   }
 
   /**
-   * Returns a list of file objects.
-   *
-   * @param string $directory
-   *   Absolute path to the directory to search.
-   * @param bool $deleted
-   *   List deleted files instead of those to be imported.
-   *
-   * @return object[]
-   *   List of stdClass objects with name and uri properties.
+   * {@inheritdoc}
    */
   public function scan(string $directory, bool $deleted = FALSE): array {
     if ($deleted) {
@@ -328,7 +347,13 @@ class Importer implements ImporterInterface {
     /** @var \SplFileInfo $file_info */
     foreach ($iterator as $file_info) {
       // Skip directories and non-json files.
-      if ($file_info->isDir() || $file_info->getExtension() !== 'json' || (!$deleted && str_contains($file_info->getPathname(), '_deleted'))) {
+      if (
+        $file_info->isDir() ||
+        $file_info->getExtension() !== 'json' ||
+        (!$deleted && str_contains($file_info->getPathname(), '/_deleted')) ||
+        (!str_contains($directory, '/_thumbs') && str_contains($file_info->getPathname(), '/_thumbs')) ||
+        str_contains($file_info->getPathname(), '/.git')
+      ) {
         continue;
       }
 
@@ -374,6 +399,7 @@ class Importer implements ImporterInterface {
       [$context],
     ];
 
+    ksort($this->filesToImport, SORT_NUMERIC);
     foreach ($this->filesToImport as $file) {
       $operations[] = [
         [static::class, 'importFile'],
@@ -381,6 +407,7 @@ class Importer implements ImporterInterface {
       ];
     }
 
+    ksort($this->dataToImport, SORT_NUMERIC);
     foreach ($this->dataToImport as $file) {
       $operations[] = [
         [static::class, 'importFile'],
@@ -388,13 +415,17 @@ class Importer implements ImporterInterface {
       ];
     }
 
-    foreach ($this->dataToCorrect as $file) {
-      $operations[] = [
-        [static::class, 'importFile'],
-        [$file, $current++, $total, TRUE],
-      ];
+    if (!$this->preserveIds) {
+      ksort($this->dataToCorrect, SORT_NUMERIC);
+      foreach ($this->dataToCorrect as $file) {
+        $operations[] = [
+          [static::class, 'importFile'],
+          [$file, $current++, $total, TRUE],
+        ];
+      }
     }
 
+    ksort($this->pathAliasesToImport, SORT_NUMERIC);
     foreach ($this->pathAliasesToImport as $file) {
       $operations[] = [
         [static::class, 'importFile'],
@@ -532,7 +563,7 @@ class Importer implements ImporterInterface {
       $entity = $this->entityRepository->loadEntityByUuid($file->entity_type_id, $file->uuid);
 
       if ($entity) {
-        $export_timestamp = $file->data['_dcd_metadata']['export_timestamp'] ?? -1;
+        $export_timestamp = $file->export_timestamp ?? -1;
         // Replace entity ID.
         $file->data[$file->key_id][0]['value'] = $entity->id();
 
@@ -562,7 +593,9 @@ class Importer implements ImporterInterface {
                     '@date_db' => date('Y-m-d H:i:s', $changed_time),
                   ]);
                 }
-                $context['results']['skipCorrection'][$file->uuid] = TRUE;
+                if (!$this->preserveIds) {
+                  $context['results']['skipCorrection'][$file->uuid] = TRUE;
+                }
                 if ($export_timestamp > $context['results']['max_export_timestamp']) {
                   $context['results']['max_export_timestamp'] = $export_timestamp;
                 }
@@ -585,7 +618,9 @@ class Importer implements ImporterInterface {
                   '@entity_id' => $entity->id(),
                 ]);
               }
-              $context['results']['skipCorrection'][$file->uuid] = TRUE;
+              if (!$this->preserveIds) {
+                $context['results']['skipCorrection'][$file->uuid] = TRUE;
+              }
               if ($export_timestamp > $context['results']['max_export_timestamp']) {
                 $context['results']['max_export_timestamp'] = $export_timestamp;
               }
@@ -611,8 +646,6 @@ class Importer implements ImporterInterface {
               '@entity_type' => $file->entity_type_id,
               '@entity_id' => $file->data[$file->key_id][0]['value'],
             ]);
-            $context['results']['skipCorrection'][$file->uuid] = TRUE;
-
             return;
           }
         }
@@ -625,28 +658,48 @@ class Importer implements ImporterInterface {
       // ensure that all entity references are present and valid. Path aliases
       // will be imported last to have a chance to rewrite them to the new ids
       // of newly created entities.
-      $class = $this->entityTypeManager->getDefinition($file->entity_type_id)
-        ->getClass();
+      $entity_type_object = $this->entityTypeManager->getDefinition($file->entity_type_id);
+      $class = $entity_type_object->getClass();
+
+      $revision_id = null;
+      if ($entity && ($key_revision_id = $entity_type_object->getKey('revision')) && ($revision_id = $entity->getRevisionId())) {
+        // Update the latest revision or replace the entity with a new one using
+        // the same revision ID.
+        $file->data[$key_revision_id][0]['value'] = $revision_id;
+      }
 
       $this->updateTargetRevisionId($file->data);
       $this->metadataService->reset();
-      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-      $entity = $this->serializer->denormalize($file->data, $class, 'hal_json', [
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $imported_entity */
+      $imported_entity = $this->serializer->denormalize($file->data, $class, 'hal_json', [
         'request_method' => 'POST',
         'default_content_deploy' => TRUE,
       ]);
-      $this->eventDispatcher->dispatch(new PreSaveEntityEvent($entity, $file->data, $correction, $context));
-      $entity->enforceIsNew($is_new);
-      $entity->save();
-      $this->eventDispatcher->dispatch(new PostSaveEntityEvent($entity, $file->data, $correction, $context));
 
-      if (!$correction && !$this->metadataService->isCorrectionRequired($file->uuid)) {
+      if ($entity && $entity->bundle() !== $imported_entity->bundle()) {
+        // It is possible to programmatically change the bundle of an entity.
+        // But that would lead to crashes. To avoid that, the entity must be
+        // deleted first.
+        $entity->delete();
+      }
+
+      $this->eventDispatcher->dispatch(new PreSaveEntityEvent($imported_entity, $file->data, $correction, $context));
+      $imported_entity->enforceIsNew($is_new);
+      if ($revision_id) {
+        $imported_entity->updateLoadedRevisionId();
+        $imported_entity->setNewRevision(FALSE);
+      }
+      $imported_entity->setSyncing(TRUE);
+      $imported_entity->save();
+      $this->eventDispatcher->dispatch(new PostSaveEntityEvent($imported_entity, $file->data, $correction, $context));
+
+      if (!$correction && !$this->preserveIds && !$this->metadataService->isCorrectionRequired($file->uuid)) {
         $context['results']['skipCorrection'][$file->uuid] = TRUE;
       }
 
       // Invalidate the cache for updated entities.
       if (!$is_new) {
-        $this->entityTypeManager->getStorage($entity->getEntityTypeId())->resetCache([$entity->id()]);
+        $this->entityTypeManager->getStorage($imported_entity->getEntityTypeId())->resetCache([$imported_entity->id()]);
       }
 
       if ($this->verbose) {
@@ -654,16 +707,17 @@ class Importer implements ImporterInterface {
           '@current' => $current,
           '@total' => $total,
           '@operation' => $is_new ? $this->t('created') : $this->t('updated'),
-          '@entity_type' => $entity->getEntityTypeId(),
-          '@entity_id' => $entity->id(),
+          '@entity_type' => $imported_entity->getEntityTypeId(),
+          '@entity_id' => $imported_entity->id(),
         ]);
       }
 
-      $export_timestamp = $this->metadataService->getExportTimestamp($file->uuid);
-      if ($export_timestamp > $context['results']['max_export_timestamp']) {
-        $context['results']['max_export_timestamp'] = $export_timestamp;
-      }
-
+      // @todo That need to be the value read by scan, not at runtime in case
+      //   the file gets overwritten during import.
+      //$export_timestamp = $this->metadataService->getExportTimestamp($file->uuid);
+      //if ($export_timestamp > $context['results']['max_export_timestamp']) {
+      //  $context['results']['max_export_timestamp'] = $export_timestamp;
+      //}
     }
     catch (\Exception $e) {
       $context['message'] = $this->t('@current of @total, error on importing @entity_type @uuid: @message', [
@@ -732,7 +786,7 @@ class Importer implements ImporterInterface {
       }
 
       $this->decodeFile($file);
-      $delete_timestamp = $file->data['_dcd_metadata']['delete_timestamp'] ?? -1;
+      $delete_timestamp = $file->delete_timestamp ?? -1;
       if ($delete_timestamp > $context['results']['max_export_timestamp']) {
         $context['results']['max_export_timestamp'] = $delete_timestamp;
       }
@@ -808,7 +862,7 @@ class Importer implements ImporterInterface {
       unset($file->data['path']);
     }
 
-    // Ignore revision and id of entity.
+    // Ignore revision and id of serialized entity.
     if ($key_revision_id = $entity_type_object->getKey('revision')) {
       unset($file->data[$key_revision_id]);
     }
@@ -823,16 +877,18 @@ class Importer implements ImporterInterface {
   protected function addToImport(object $file): void {
     switch ($file->entity_type_id) {
       case 'path_alias':
-        $this->pathAliasesToImport[$file->uuid] = $file;
+        $this->pathAliasesToImport[$file->sort_key] = $file;
         break;
 
       case 'file':
-        $this->filesToImport[$file->uuid] = $file;
+        $this->filesToImport[$file->sort_key] = $file;
         break;
 
       default:
-        $this->dataToImport[$file->uuid] = $file;
-        $this->dataToCorrect[$file->uuid] = $file;
+        $this->dataToImport[$file->sort_key] = $file;
+        if (!$this->preserveIds) {
+          $this->dataToCorrect[$file->sort_key] = $file;
+        }
         break;
     }
   }

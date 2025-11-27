@@ -24,6 +24,14 @@ interface ImporterInterface {
   public function setFolder(string $folder): void;
 
   /**
+   * Get directory to import.
+   *
+   * @return string
+   *   The content folder.
+   */
+  public function getFolder(): string;
+
+  /**
    * Set option to preserve the original Entity IDs.
    *
    * Note: this might lead to conflicts with existing content.
@@ -85,5 +93,28 @@ interface ImporterInterface {
    * @throws \Exception
    */
   public function decodeFile(object $file): void;
+
+  /**
+   * Returns a list of file objects.
+   *
+   * @param string $directory
+   *   Absolute path to the directory to search.
+   * @param bool $deleted
+   *   List deleted files instead of those to be imported.
+   *
+   * @return object[]
+   *   List of stdClass objects with name and uri properties.
+   */
+  public function scan(string $directory, bool $deleted = FALSE): array;
+
+  /**
+   * Get the state key to track max export timestamps in states.
+   *
+   * @return string
+   *   The last import state key.
+   *
+   * @throws \Exception
+   */
+  public function getStateKey(): string;
 
 }

@@ -46,100 +46,76 @@ class Exporter implements ExporterInterface {
 
   /**
    * Text dependencies option.
-   *
-   * @var bool|null
    */
-  private $includeTextDependencies;
+  private ?bool $includeTextDependencies = NULL;
 
   /**
    * Skip export timestamp option.
-   *
-   * @var bool|null
    */
-  private $skipExportTimestamp;
+  private ?bool $skipExportTimestamp = NULL;
 
   /**
    * Entity type ID.
-   *
-   * @var string
    */
-  private $entityTypeId;
+  private ?string $entityTypeId = NULL;
 
   /**
-   * Type of a entity content.
-   *
-   * @var string
+   * The bundle.
    */
-  private $bundle;
+  private ?string $bundle = NULL;
 
   /**
    * Entity IDs for export.
-   *
-   * @var array
    */
-  private $entityIds;
+  private array $entityIds = [];
 
   /**
    * Directory to export.
-   *
-   * @var string
    */
-  private $folder;
+  private ?string $folder = NULL;
 
   /**
-   * Entity IDs which needs skip.
-   *
-   * @var array
+   * Entity IDs which need to be skipped.
    */
-  private $skipEntityIds;
+  private array $skipEntityIds = [];
 
   /**
-   * Entity type IDs which needs skip.
-   *
-   * @var array
+   * Entity type IDs which need to be skipped.
    */
-  private $skipEntityTypeIds;
+  private array $skipEntityTypeIds = [];
 
   /**
-   * Array of entity types and with there values for export.
-   *
-   * @var array
+   * Array of entity types and with their values for export.
    */
-  private $exportedEntities = [];
+  private array $exportedEntities = [];
 
   /**
    * Type of export.
-   *
-   * @var string
    */
-  private $mode = 'default';
+  private string $mode = 'default';
 
   /**
    * Is remove old content.
-   *
-   * @var bool
    */
-  private $forceUpdate;
+  private bool $forceUpdate = FALSE;
 
   /**
-   * Stores the current date and time for export operations.
-   *
-   * This is used to timestamp the export process and track changes
-   * across different entities.
-   *
-   * @var \DateTimeInterface
+   * Stores the current date and time for export operations (changes since).
    */
-  private $dateTime;
+  private ?\DateTimeInterface $dateTime = NULL;
+
+  /**
+   * Stores the request timestamp when the export (batches) started.
+   */
+  private ?int $requestTime = NULL;
 
   /**
    * Determines whether verbose logging is enabled.
    *
    * If set to TRUE, additional details about the export process
    * will be logged for debugging purposes.
-   *
-   * @var bool
    */
-  protected $verbose = FALSE;
+  protected bool $verbose = FALSE;
 
   /**
    * An admin account, required for full access on export.
@@ -255,6 +231,13 @@ class Exporter implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
+  public function setRequestTime(int $request_time): void {
+    $this->requestTime = $request_time;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setTextDependencies(?bool $text_dependencies = NULL): void {
     if (is_null($text_dependencies)) {
       $config = $this->config->get(SettingsForm::CONFIG);
@@ -293,7 +276,7 @@ class Exporter implements ExporterInterface {
    * {@inheritdoc}
    */
   public function setFolder(string $folder): void {
-    $this->folder = $folder;
+    $this->folder = rtrim($folder, '/');
   }
 
   /**
@@ -305,13 +288,11 @@ class Exporter implements ExporterInterface {
    * @throws \Exception
    */
   protected function getFolder(): string {
-    $folder = $this->folder ?: $this->deployManager->getContentFolder();
-
-    if (!isset($folder)) {
-      throw new \Exception('Directory for content deploy is not set.');
+    if (NULL === $this->folder) {
+      $this->setFolder($this->deployManager->getContentFolder());
     }
 
-    return rtrim($folder, '/');
+    return $this->folder;
   }
 
   /**
@@ -425,7 +406,8 @@ class Exporter implements ExporterInterface {
    *   context.
    *   - The first element is a callable reference to `initializeContext`.
    *   - The second element is an array containing:
-   *     - `dateTime`: The timestamp of the export operation.
+   *   - `dateTime`: The start timestamp to export (changes since).
+   * *   - 'requestTime': The request timestamp when the export (batches) started.
    *     - `folder`: The target directory for export files.
    *     - `includeTextDependencies`: Whether to include text dependencies.
    *     - `skipExportTimestamp`: Whether to exclude the export timestamp.
@@ -438,6 +420,7 @@ class Exporter implements ExporterInterface {
   protected function getInitializeContextOperation(): array {
     $context = [
       'dateTime' => $this->getDateTime(),
+      'requestTime' => $this->time->getRequestTime(),
       'folder' => $this->getFolder(),
       'includeTextDependencies' => $this->getTextDependencies(),
       'skipExportTimestamp' => $this->getSkipExportTimestamp(),
@@ -484,7 +467,8 @@ class Exporter implements ExporterInterface {
    *
    * @param array $context
    *   The context array that contains export-related parameters, including:
-   *   - `dateTime`: The timestamp of the export.
+   *   - `dateTime`: The start timestamp to export (changes since).
+   *   - 'requestTime': The request timestamp when the export (batches) started.
    *   - `folder`: The directory where export files are stored.
    *   - `includeTextDependencies`: Whether to include text dependencies.
    *   - `skipExportTimestamp`: Whether to skip adding export timestamps.
@@ -497,6 +481,7 @@ class Exporter implements ExporterInterface {
    */
   protected function synchronizeContext(array &$context): void {
     $this->dateTime = &$context['results']['dateTime'];
+    $this->requestTime = &$context['results']['requestTime'];
     $this->folder = &$context['results']['folder'];
     $this->includeTextDependencies = &$context['results']['includeTextDependencies'];
     $this->skipExportTimestamp = &$context['results']['skipExportTimestamp'];
@@ -640,6 +625,10 @@ class Exporter implements ExporterInterface {
       $referenced_entities = $this->getEntityReferencesRecursive($entity, $context, 0, $indexed_dependencies);
 
       foreach ($referenced_entities as $uuid => $referenced_entity) {
+        if ($entity->uuid() === $uuid) {
+          continue;
+        }
+
         if ($serialized_entity = $this->getSerializedContent($referenced_entity, TRUE, $context)) {
           $this->writeSerializedEntity($referenced_entity->getEntityTypeId(), $serialized_entity, $uuid);
           $context['results']['exported_entities'][$referenced_entity->getEntityTypeId()][$referenced_entity->id()] = $referenced_entity->uuid();
@@ -891,7 +880,8 @@ class Exporter implements ExporterInterface {
     $type_id = $entity->getEntityTypeId();
     $uuid = $entity->uuid();
 
-    // Do not process entity if it has already been written to the file system.
+    // Do not process the entity if it has already been written to the file
+    // system.
     if (
       !empty($context['results']['exported_entities'][$type_id]) &&
       in_array($uuid, $context['results']['exported_entities'][$type_id])
@@ -899,7 +889,7 @@ class Exporter implements ExporterInterface {
       return TRUE;
     }
 
-    // Do not process entity if it has already been skipped.
+    // Do not process the entity if it has already been skipped.
     if (
       !empty($context['results']['skipped_entities'][$type_id]) &&
       in_array($uuid, $context['results']['skipped_entities'][$type_id])
@@ -924,12 +914,31 @@ class Exporter implements ExporterInterface {
   private function writeSerializedEntity(string $entity_type, string $serialized_entity, string $uuid): void {
     // Ensure that the folder per entity type exists.
     $entity_type_folder = "{$this->getFolder()}/{$entity_type}";
-    if (!$this->fileSystem->prepareDirectory($entity_type_folder, FileSystemInterface::CREATE_DIRECTORY)) {
+    if (!$this->fileSystem->prepareDirectory($entity_type_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
       throw new \Exception("Unable to create folder {$entity_type_folder}.");
     }
 
     if (!file_put_contents("{$entity_type_folder}/{$uuid}.json", $serialized_entity)) {
       throw new \Exception("Unable to write serialized entity {$entity_type_folder}/{$uuid}.json to file system.");
+    }
+
+    $thumbs_entity_type_folder = "{$this->getFolder()}/_thumbs/{$entity_type}";
+    if (!$this->fileSystem->prepareDirectory($thumbs_entity_type_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+      throw new \Exception("Unable to create folder {$thumbs_entity_type_folder}.");
+    }
+
+    $data = json_decode($serialized_entity, TRUE);
+
+    // Extract only the _dcd_metadata property
+    $filtered_data = [];
+    if (array_key_exists('_dcd_metadata', $data)) {
+      $filtered_data['_dcd_metadata'] = $data['_dcd_metadata'];
+    }
+
+    if (!file_put_contents("{$thumbs_entity_type_folder}/{$uuid}.json", $this->serializer->serialize($filtered_data, 'json', [
+      'json_encode_options' => JSON_PRETTY_PRINT,
+    ]))) {
+      throw new \Exception("Unable to write serialized entity {$thumbs_entity_type_folder}/{$uuid}.json to file system.");
     }
   }
 
@@ -979,8 +988,8 @@ class Exporter implements ExporterInterface {
 
       if ($add_metadata) {
         if (!$this->getSkipExportTimestamp()) {
-          $entity_array['_dcd_metadata']['export_timestamp'] = $this->time
-            ->getRequestTime();
+          $entity_array['_dcd_metadata']['export_timestamp'] = $this->requestTime ?? $this->time->getRequestTime();
+          $entity_array['_dcd_metadata']['sort_key'] = (int) $entity->id();
         }
       }
       else {

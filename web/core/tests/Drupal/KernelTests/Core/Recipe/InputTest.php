@@ -17,7 +17,9 @@ use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 /**
@@ -33,6 +35,9 @@ class InputTest extends KernelTestBase {
    */
   protected static $modules = ['system', 'user'];
 
+  /**
+   * The recipe.
+   */
   private readonly Recipe $recipe;
 
   /**
@@ -55,6 +60,9 @@ class InputTest extends KernelTestBase {
     $this->recipe = Recipe::createFromDirectory($this->getDrupalRoot() . '/core/recipes/feedback_contact_form');
   }
 
+  /**
+   * Tests getting the default value from configuration.
+   */
   public function testDefaultValueFromConfig(): void {
     // Collect the input values before processing the recipe, using a mocked
     // collector that will always return the default value.
@@ -70,6 +78,9 @@ class InputTest extends KernelTestBase {
     $this->assertSame(['ben@deep.space'], ContactForm::load('feedback')?->getRecipients());
   }
 
+  /**
+   * Tests input validation.
+   */
   public function testInputIsValidated(): void {
     $collector = $this->createMock(InputCollectorInterface::class);
     $collector->expects($this->atLeastOnce())
@@ -151,6 +162,11 @@ YAML
     $recipe->input->collectAll($collector);
   }
 
+  /**
+   * Tests getting the default value from non-existing configuration.
+   *
+   * @covers \Drupal\Core\Recipe\InputConfigurator::getDefaultValue
+   */
   public function testDefaultValueFromNonExistentConfig(): void {
     $recipe = $this->createRecipe(<<<YAML
 name: 'Default value from non-existent config'
@@ -168,6 +184,9 @@ YAML
     $recipe->input->collectAll($this->createMock(InputCollectorInterface::class));
   }
 
+  /**
+   * Tests input with literals.
+   */
   public function testLiterals(): void {
     $recipe = $this->createRecipe(<<<YAML
 name: Literals as input
@@ -270,6 +289,34 @@ YAML
     $this->expectException(ConfigActionException::class);
     $this->expectExceptionMessage("The entity type for the config name 'node.\${anything}.test' could not be identified.");
     RecipeRunner::processRecipe($recipe);
+  }
+
+  /**
+   * Tests that the askHidden prompt forwards arguments correctly.
+   */
+  public function testAskHiddenPromptArgumentsForwarded(): void {
+    $input = $this->createMock(InputInterface::class);
+    $output = $this->createMock(OutputInterface::class);
+    $io = new SymfonyStyle($input, $output);
+
+    $recipe = $this->createRecipe(<<<YAML
+name: 'Prompt askHidden Test'
+input:
+  foo:
+    data_type: string
+    description: Foo
+    prompt:
+      method: askHidden
+    default:
+      source: value
+      value: bar
+YAML
+    );
+    $collector = new ConsoleInputCollector($input, $io);
+    // askHidden prompt should have an ArgumentCountError rather than a general
+    // error.
+    $this->expectException(\ArgumentCountError::class);
+    $recipe->input->collectAll($collector);
   }
 
 }

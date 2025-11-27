@@ -8,8 +8,10 @@ use Drupal\Core\Database\Database;
 use Drupal\Core\Entity\Query\QueryException;
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\entity_test\Entity\EntityTestMulRev;
+use Drupal\entity_test\EntityTestHelper;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field_test\FieldTestHelper;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -96,7 +98,7 @@ class EntityQueryTest extends EntityKernelTestBase {
       do {
         $bundle = $this->randomMachineName();
       } while ($bundles && strtolower($bundles[0]) >= strtolower($bundle));
-      entity_test_create_bundle($bundle, entity_type: $field_storage->getTargetEntityTypeId());
+      EntityTestHelper::createBundle($bundle, entity_type: $field_storage->getTargetEntityTypeId());
       foreach ($field_storages as $field_storage) {
         FieldConfig::create([
           'field_storage' => $field_storage,
@@ -381,6 +383,33 @@ class EntityQueryTest extends EntityKernelTestBase {
     $assert = [4 => '4', 5 => '5', 6 => '6', 7 => '7', 8 => '8', 9 => '9', 10 => '10', 11 => '11', 12 => '12', 20 => '12', 13 => '13', 21 => '13', 14 => '14', 22 => '14', 15 => '15', 23 => '15'];
     $this->assertSame($assert, $results);
 
+    $results = $this->queryResults = $this->storage
+      ->getQuery()
+      ->latestRevision()
+      ->notExists("$figures.color")
+      ->sort('id')
+      ->accessCheck(TRUE)
+      ->execute();
+    $expected = [16 => '4', 8 => '8', 20 => '12'];
+    $this->assertSame($expected, $results);
+
+    // Update an entity.
+    $entity = EntityTestMulRev::load(4);
+    $entity->setNewRevision();
+    $entity->name->value .= 'x';
+    $entity->save();
+
+    // Updated entity should now have revision ID 24.
+    $results = $this->queryResults = $this->storage
+      ->getQuery()
+      ->latestRevision()
+      ->sort('id')
+      ->notExists("$figures.color")
+      ->accessCheck(TRUE)
+      ->execute();
+    $expected = [24 => '4', 8 => '8', 20 => '12'];
+    $this->assertSame($expected, $results);
+
     // Check that a query on the latest revisions without any condition returns
     // the correct results.
     $results = $this->storage
@@ -390,7 +419,7 @@ class EntityQueryTest extends EntityKernelTestBase {
       ->sort('id')
       ->sort('revision_id')
       ->execute();
-    $expected = [1 => '1', 2 => '2', 3 => '3', 16 => '4', 17 => '5', 18 => '6', 19 => '7', 8 => '8', 9 => '9', 10 => '10', 11 => '11', 20 => '12', 21 => '13', 22 => '14', 23 => '15'];
+    $expected = [1 => '1', 2 => '2', 3 => '3', 24 => '4', 17 => '5', 18 => '6', 19 => '7', 8 => '8', 9 => '9', 10 => '10', 11 => '11', 20 => '12', 21 => '13', 22 => '14', 23 => '15'];
     $this->assertSame($expected, $results);
   }
 
@@ -562,7 +591,7 @@ class EntityQueryTest extends EntityKernelTestBase {
     ]);
     $field_storage->save();
     $bundle = $this->randomMachineName();
-    entity_test_create_bundle($bundle);
+    EntityTestHelper::createBundle($bundle);
     FieldConfig::create([
       'field_storage' => $field_storage,
       'bundle' => $bundle,
@@ -797,7 +826,7 @@ class EntityQueryTest extends EntityKernelTestBase {
    * The tags and metadata should propagate to the SQL query object.
    */
   public function testMetaData(): void {
-    field_test_memorize();
+    FieldTestHelper::memorize();
 
     $query = $this->storage->getQuery()->accessCheck(FALSE);
     $query
@@ -805,7 +834,7 @@ class EntityQueryTest extends EntityKernelTestBase {
       ->addMetaData('foo', 'bar')
       ->execute();
 
-    $mem = field_test_memorize();
+    $mem = FieldTestHelper::memorize();
     $this->assertEquals('bar', $mem['field_test_query_efq_metadata_test_alter'][0], 'Tag and metadata propagated to the SQL query object.');
   }
 
@@ -814,7 +843,7 @@ class EntityQueryTest extends EntityKernelTestBase {
    */
   public function testCaseSensitivity(): void {
     $bundle = $this->randomMachineName();
-    entity_test_create_bundle($bundle, entity_type: 'entity_test_mulrev');
+    EntityTestHelper::createBundle($bundle, entity_type: 'entity_test_mulrev');
 
     $field_storage = FieldStorageConfig::create([
       'field_name' => 'field_ci',

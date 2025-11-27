@@ -34,6 +34,8 @@ class NewDefaultThemeBlocksTest extends KernelTestBase {
 
   /**
    * The default theme.
+   *
+   * @var string
    */
   protected $defaultTheme;
 
@@ -49,7 +51,10 @@ class NewDefaultThemeBlocksTest extends KernelTestBase {
   }
 
   /**
-   * Check the blocks are correctly copied by block_themes_installed().
+   * Check the blocks are correctly copied.
+   *
+   * This tests that blocks are correctly copied by
+   * \Drupal\block\Hook\BlockHooks::themesInstalled().
    */
   public function testNewDefaultThemeBlocks(): void {
     $default_theme = $this->defaultTheme;
@@ -163,9 +168,9 @@ class NewDefaultThemeBlocksTest extends KernelTestBase {
       // unset block.block.olivero_admin.
       unset($new_blocks[str_replace($default_theme . '_', $new_theme . '_', $default_block_name)]);
     }
-    // The test_theme_user_login_block machine name is already in use, so therefore
-    // \Drupal\block\BlockRepository::getUniqueMachineName
-    // appends a counter.
+    // The test_theme_user_login_block machine name is already in use, so
+    // therefore \Drupal\block\BlockRepository::getUniqueMachineName appends a
+    // counter.
     unset($new_blocks[$new_theme . '_user_login_block_2']);
     $this->assertEmpty($new_blocks);
 

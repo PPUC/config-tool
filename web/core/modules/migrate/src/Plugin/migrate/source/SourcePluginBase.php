@@ -105,7 +105,7 @@ use Drupal\migrate\Row;
  * In this example, the constant 'foo' is defined with a value of 'bar'. It is
  * later used in the process pipeline to set the value of the field baz.
  *
- * @see \Drupal\migrate\Annotation\MigrateSource
+ * @see \Drupal\migrate\Attribute\MigrateSource
  * @see \Drupal\migrate\Plugin\MigrateIdMapInterface
  * @see \Drupal\migrate\Plugin\MigratePluginManager
  * @see \Drupal\migrate\Plugin\MigrateSourceInterface
@@ -527,6 +527,7 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
    * Checks if the source is countable or using the iterator_count function.
    *
    * @return int
+   *   The count of available source records.
    */
   protected function doCount() {
     $iterator = $this->getIterator();
@@ -549,8 +550,8 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   /**
    * The current value of the high water mark.
    *
-   * The high water mark defines a timestamp stating the time the import was last
-   * run. If the mark is set, only content with a higher timestamp will be
+   * The high water mark defines a timestamp stating the time the import was
+   * last run. If the mark is set, only content with a higher timestamp will be
    * imported.
    *
    * @return int|null
@@ -608,15 +609,15 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
    * {@inheritdoc}
    */
   public function preRollback(MigrateRollbackEvent $event) {
-    // Nothing to do in this implementation.
+    // Reset the high-water mark.
+    $this->saveHighWater(NULL);
   }
 
   /**
    * {@inheritdoc}
    */
   public function postRollback(MigrateRollbackEvent $event) {
-    // Reset the high-water mark.
-    $this->saveHighWater(NULL);
+    // Nothing to do in this implementation.
   }
 
   /**
@@ -625,9 +626,6 @@ abstract class SourcePluginBase extends PluginBase implements MigrateSourceInter
   public function getSourceModule() {
     if (!empty($this->configuration['source_module'])) {
       return $this->configuration['source_module'];
-    }
-    elseif (!empty($this->pluginDefinition['source_module'])) {
-      return $this->pluginDefinition['source_module'];
     }
     return NULL;
   }

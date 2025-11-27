@@ -70,7 +70,7 @@ class TermTest extends TaxonomyTestBase {
       ],
       'auto_create' => TRUE,
     ];
-    $this->createEntityReferenceField('node', 'article', $field_name, NULL, 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
+    $this->createEntityReferenceField('node', 'article', $field_name, '', 'taxonomy_term', 'default', $handler_settings, FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
     $this->field = FieldConfig::loadByName('node', 'article', $field_name);
 
     /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository */
@@ -138,8 +138,6 @@ class TermTest extends TaxonomyTestBase {
     $term1 = $this->createTerm($this->vocabulary);
     $terms_array = [];
 
-    $taxonomy_storage = $this->container->get('entity_type.manager')->getStorage('taxonomy_term');
-
     // Create 40 terms. Terms 1-12 get parent of $term1. All others are
     // individual terms.
     for ($x = 1; $x <= 40; $x++) {
@@ -152,8 +150,6 @@ class TermTest extends TaxonomyTestBase {
         $edit['parent'] = $term1->id();
       }
       $term = $this->createTerm($this->vocabulary, $edit);
-      $children = $taxonomy_storage->loadChildren($term1->id());
-      $parents = $taxonomy_storage->loadParents($term->id());
       $terms_array[$x] = Term::load($term->id());
     }
 
@@ -706,6 +702,26 @@ class TermTest extends TaxonomyTestBase {
     ];
     $this->assertBreadcrumb('taxonomy/term/' . $term->id() . '/delete', $trail);
     $this->assertSession()->assertEscaped($term->label());
+  }
+
+  /**
+   * Tests the order of primary tabs on the term edit page.
+   */
+  public function testPrimaryTabsOrder(): void {
+    $term = $this->createTerm($this->vocabulary);
+    $this->drupalGet($term->toUrl('edit-form'));
+    $this->assertSession()->statusCodeEquals(200);
+
+    // Getting primary tab items.
+    $tab_links = $this->xpath('//h2[text()[contains(.,"Primary tabs")]]/following-sibling::ul[1]/li/a');
+    $labels = array_map(fn($link) => $link->getText(), $tab_links);
+    $edit_index = array_search('Edit', $labels);
+    $delete_index = array_search('Delete', $labels);
+
+    // Check that "Edit" comes before "Delete".
+    $this->assertIsInt($edit_index, '"Edit" tab found');
+    $this->assertIsInt($delete_index, '"Delete" tab found');
+    $this->assertLessThan($delete_index, $edit_index, '"Edit" tab appears before "Delete" tab');
   }
 
 }

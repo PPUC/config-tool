@@ -7,7 +7,7 @@ A default content deploy solution for Drupal.
 - Install
 - Configuration
 - Drush commands
-- Workflow - how to export and deploy content
+- Workflow - How to export and deploy content
 - Protecting exported content data files
 - Maintainers
 - Sponsor
@@ -16,38 +16,23 @@ A default content deploy solution for Drupal.
 # Introduction
 
 This module (DCD) provides content deployment and allows development
-and building sites without the need to transfer database between the sites.
-The development team can export and deploy all content via Git and content
+and building sites without the need to transfer the database between the sites.
+The development team can export and deploy all content via Git, and content
 can be deployed to the staging servers automatically during common deploy
 processes. Module provides useful drush commands for export/import content.
-Import function can also be ran from administration interface.
+Import function can also be run from the administration interface.
 
 # Requirements
 
-## Modules
-**Better Normalizers** (better_normalizers) - if you need to deploy files,
-  f.e. images, attachments.
-https://www.drupal.org/project/better_normalizers
+This module requires the [HAL module](https://www.drupal.org/project/hal).
+There is a [critical issue](https://www.drupal.org/project/drupal/issues/2329253)
+that module so that it is highly recommended to apply that pending patch.
+Furthermore, it is advisable to apply the patch from this issue:
+[Translated field denormalization creates duplicate values](https://www.drupal.org/files/issues/2023-04-05/2904423-90.patch)
 
-## Sites config synchronization (optional)
-
-If you are sure the export and import sites have the same configuration and you
-need to synchronize only content, you can skip this chapter.
-
-You need identical site UUID for successful syncing configuration between sites.
-If you need to synchronize configuration, use drush **config-set**
-for set Site UUID to identical value.
-
-**Example**
-
-    drush config-set "system.site" uuid 11111111-1111-1111-1111-111111111111
-
-The best practice is to install a drush site from already existing 
-configuration,
-e.g.:
-
-    drush si minimal --existing-config
-
+Using Drupal 10, you should apply a patch to core to avoid that changed timestamps
+get modified on importing entities: https://www.drupal.org/project/drupal/issues/2329253
+Drupal 11 has that feature.
 
 # Install
 
@@ -61,16 +46,16 @@ e.g.:
 
 # Configuration
 
-Set DCD content directory in settings.php. We recommend to place directory
-outside of the document root.
+Set DCD content directory in settings.php. We recommend placing directory
+outside the document root.
 
 **Example**
 
     // Relative path.
-    $config['default_content_deploy.settings']['content_directory'] = 
+    $config['default_content_deploy.settings']['content_directory'] =
     '../content';
     // Absolute path.
-    $config['default_content_deploy.settings']['content_directory'] = 
+    $config['default_content_deploy.settings']['content_directory'] =
     '/var/dcd/content';
 
 
@@ -78,12 +63,12 @@ You can also do this on the `/admin/config/development/dcd` page.
 
 # Drush commands
 
-Module provides many useful shortcuts for export content and one very important
-command for deploy content. You can export only one entity, bunch of entities,
-entities by type or export whole site at once.
+Module provides many useful shortcuts for export content and one crucial
+command for deploy content. You can export only one entity, a bunch of entities,
+entities by type or export the whole site at once.
 
-If a wrong content entity type is entered, module displays a list of all content
-entity types available on the site as hint.
+If a wrong content entity type is entered, the module displays a list of all content
+entity types available on the site as a hint.
 
 ## drush default-content-deploy:export, drush dcde
 
@@ -91,11 +76,11 @@ Exports a single entity or group of entities with no references.
 
 ### Arguments
 
-* **entity_type** - Entity type (e.g. node, user, taxonomy_term,
+* **entity_type** - Entity type (e.g., node, user, taxonomy_term,
   custom_entity_type...)
 
 ### Options
-* **entity_ids** - The IDs of the entities to export (comma-separated list).
+* **entity_ids** - The IDs of the entities to export (a comma-separated list).
 * **bundle** - Entity bundle, e.g. content type for nodes.
 * **skip_entities** - ID of entity to skip.
 * **force-update** - Deletes configurations files that are not used on the site.
@@ -127,8 +112,8 @@ Export all nodes and skip nodes with entity id 5 and 7.
 
 Exports a single entity or group of entities with all references.
 
-If a wrong content entity type is entered, module displays a list of all content
-entity types available on the site as hint.
+If a wrong content entity type is entered, the module displays a list of all content
+entity types available on the site as a hint.
 
 The options are identical in drush dcde.
 
@@ -138,7 +123,7 @@ The options are identical in drush dcde.
 
 ### Options
 
-* **entity_ids** - The IDs of the entities to export (comma-separated list).
+* **entity_ids** - The IDs of the entities to export (a comma-separated list).
 * **bundle** - Entity bundle, e.g. content type for nodes.
 * **skip_entities** - ID of entity to skip.
 * **force-update** - Deletes configurations files that are not used on the site.
@@ -169,13 +154,13 @@ Export all nodes and skip nodes with references with entity id 5 and 7.
 
 ## drush default-content-deploy:export-site, drush dcdes
 
-Exports a whole site content + path aliases. You can exclude entities
-by their type. Use 'drush dcd-entity-list' for list of all content entities
+Exports a whole site content. You can exclude entities by their type.
+Use 'drush dcd-entity-list' for a list of all content entities
 on this system.
 
 ### Options
 
-* **skip_entity_type** - entity types to exclude from export.
+* **skip_entity_type** - Entity types to exclude from export.
 * **force-update** - Deletes configurations files that are not used on the site.
 * **folder** - Path to the export folder.
 
@@ -269,7 +254,7 @@ Go to the `/admin/config/development/dcd/import` page.
 
 Even though the DCD module does not necessarily require that the sites have
 identical site UUID, it is logical that transferring entities from one site to
-another requires identical configuration of entities (e.g. identical fields in
+another requires identical configuration of entities (e.g., identical fields in
 identically named bundles). That is why we include configuration synchronization
 to the team workflow.
 
@@ -284,7 +269,7 @@ provides the first copy of a project. He must:
 
 1. Create Drupal 8 project
 2. Set identical information for the whole development team
-   (e.g. save them to default.settings.php)
+   (e.g., save them to default.settings.php)
   1. Set identical directory for config management ($config_directories['sync'])
   2. Set identical directory for content export/import ($config['content'])
   3. Set identical file or value for Drupal salt ($settings['hash_salt']), e.g.:
@@ -308,12 +293,12 @@ provides the first copy of a project. He must:
 
 **Developer 2 - n-th (pullers)**
 
-install clones of the project. They must:
+Install clones of the project. They must:
 
 1. Clone project from the Git repository
 2. Set identical information (identical setting in settings.php)
   1. Common directory for config management ($config_directories['sync'])
-  2. Common directory for content export/import 
+  2. Common directory for content export/import
   ($config['default_content_deploy']['content_directory'])
   3. Common file or value for Drupal salt ($settings['hash_salt'])
 3. Install Drupal with the same installation profile
@@ -336,7 +321,7 @@ references.
 
 **Developer pusher**
 
-1. Creates some testing content
+1. Create some testing content
 2. Export content. There are many ways to export content via drush,
    from one entity to the entire site (the easiest way).
 
@@ -353,13 +338,13 @@ references.
 
         git pull
 
-2. Simply import content
+2. Import content
 
         drush dcdi
 
   This command warns a user about entities in conflict.
   You can use **--verbose** option (**-v**) for more detailed information.
-  We recommend more aggressive way which ensures that all content entities
+  We recommend a more aggressive way which ensures that all content entities
   will be synchronized with the source. This option also rewrites already
   created content and updates UUID for core user entity. See detailed
   explanation in the **Important Import rules**.
@@ -395,13 +380,13 @@ no interaction capability. His workflow can look like this:
 
 # Protecting exported content data files
 
-We recommend placing the content directory outside of the document root,
-so the exported content is well protected. In this case it will not be
+We recommend placing the content directory outside the document root,
+so the exported content is well protected. In this case, it will not be
 accessible from the web server.
 
 If this is not possible, it could result in a security problem.
 Should any attacker know the UUID of desired content and also where it is
-stored, then he could determine the URL to obtain the desired content without
+stored, then he could determine the URL to get the desired content without
 permission.
 
 Example of attacker’s URL:

@@ -28,6 +28,7 @@ class DefaultContentDeployServiceProvider extends ServiceProviderBase {
       $definition = $container->getDefinition('serializer.entity_resolver.uuid');
       $definition->setClass(UuidResolver::class);
       $definition->addArgument(new Reference('default_content_deploy.metadata'));
+      $definition->addArgument(new Reference('entity_type.manager'));
     }
 
     if ($container->hasDefinition('serialization.entity_resolver.target_id')) {

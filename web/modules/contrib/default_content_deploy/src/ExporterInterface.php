@@ -103,6 +103,14 @@ interface ExporterInterface {
   public function getTime(): int;
 
   /**
+   * Sets the request time for export or delete timestamps.
+   *
+   * @param int $request_time
+   *   The request time.
+   */
+  public function setRequestTime(int $request_time): void;
+
+  /**
    * Sets the value of the text dependencies option.
    *
    * @param bool|null $text_dependencies

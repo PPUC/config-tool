@@ -3,6 +3,7 @@
 namespace Drupal\default_content_deploy\Commands;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\default_content_deploy\DeployManager;
 use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\default_content_deploy\ImporterInterface;
@@ -34,6 +35,7 @@ class DefaultContentDeployCommands extends DrushCommands {
     protected readonly ImporterInterface $importer,
     protected readonly DeployManager $deployManager,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly FileSystemInterface $fileSystem,
   ) {
     parent::__construct();
   }
@@ -342,7 +344,7 @@ class DefaultContentDeployCommands extends DrushCommands {
   ): void {
     $this->importer->setVerbose($this->output()->isVerbose());
 
-    // Perform read only update.
+    // Perform read-only update.
     $this->importer->setForceOverride($options['force-override']);
 
     if (!empty($options['folder'])) {
@@ -359,9 +361,20 @@ class DefaultContentDeployCommands extends DrushCommands {
 
     if ($this->output()->isVerbose()) {
       $table = new Table($this->output());
-      $table->setHeaders(['Entity Type', 'UUID', 'Action']);
-      foreach ($result as $uuid => $file) {
-        $table->addRow([$file->entity_type_id, $uuid, $file->action]);
+      $table->setHeaders(['Entity Type', 'Entity ID', 'UUID', 'Action']);
+      usort($result, function($a, $b) {
+        $typeCompare = strcmp($a->entity_type_id, $b->entity_type_id);
+        if ($typeCompare === 0) {
+          // If types are equal, sort by ID.
+          [$aId,] = str_contains($a->sort_key, '-') ? explode('-', $a->sort_key) : [0];
+          [$bId,] = str_contains($b->sort_key, '-') ? explode('-', $b->sort_key) : [0];
+          return  (int) $aId <=> (int) $bId;
+        }
+        return $typeCompare;
+      });
+      foreach ($result as $file) {
+        [$id,] = str_contains($file->sort_key, '-') ? explode('-', $file->sort_key) : [''];
+        $table->addRow([$file->entity_type_id, $id, $file->uuid, $file->action]);
       }
       $table->render();
     }
@@ -375,6 +388,142 @@ class DefaultContentDeployCommands extends DrushCommands {
       $this->importer->import();
       drush_backend_batch_process();
       $this->io()->success(dt('Content has been imported.'));
+    }
+  }
+
+  /**
+   * Get the last import timestamp for a folder.
+   *
+   * @param array $options
+   *   An associative array of options whose values come
+   *   from cli, aliases, config, etc.
+   *
+   * @command default-content-deploy:get-last-import-timestamp
+   *
+   * @option folder Path to the export folder.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function getLastImportTimestamp(
+    array $options = [
+      'folder' => self::OPT,
+    ],
+  ): void {
+    $this->importer->setVerbose($this->output()->isVerbose());
+
+    if (!empty($options['folder'])) {
+      $this->importer->setFolder($options['folder']);
+    }
+
+    $state_key = $this->importer->getStateKey();
+    $old = \Drupal::state()->get($state_key, 0);
+
+    $this->output()->writeln(dt('Last export timestamp of @state_key is @old.', [
+      '@state_key' => $state_key,
+      '@old' => $old,
+    ]));
+  }
+
+  /**
+   * Set the last import timestamp for a folder.
+   *
+   * @param int $timestamp
+   *   The timestamp to set as last import timestamp.
+   * @param array $options
+   *   An associative array of options whose values come
+   *   from cli, aliases, config, etc.
+   *
+   * @command default-content-deploy:set-last-import-timestamp
+   *
+   * @option folder Path to the export folder.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function setLastImportTimestamp(
+    int $timestamp,
+    array $options = [
+      'folder' => self::OPT,
+    ],
+  ): void {
+    $this->importer->setVerbose($this->output()->isVerbose());
+
+    if (!empty($options['folder'])) {
+      $this->importer->setFolder($options['folder']);
+    }
+
+    $state_key = $this->importer->getStateKey();
+    $old = \Drupal::state()->get($state_key, 0);
+    \Drupal::state()->set($state_key, $timestamp);
+
+    $this->output()->writeln(dt('Changed timestamp of @state_key from @old to @new.', [
+      '@state_key' => $state_key,
+      '@old' => $old,
+      '@new' => $timestamp,
+    ]));
+  }
+
+  /**
+   * Synchronize the thumbs of a content directory.
+   *
+   * @param array $options
+   *   An associative array of options whose values come
+   *   from cli, aliases, config, etc.
+   *
+   * @command default-content-deploy:sync-thumbs
+   *
+   * @option folder Path to the export folder.
+   * @usage drush dcdi
+   *   Import content. Existing older content with matching UUID will be
+   *   updated. Newer content and existing content with different UUID will be
+   *   ignored.
+   * @usage drush default-content-deploy:sync-thumbs --folder='../content'
+   *   Synchronize the thumbs of the specified folder.
+   *
+   * @throws \Exception
+   */
+  public function synchronizeThumbs(
+    array $options = [
+      'folder' => self::OPT,
+    ],
+  ): void {
+    $this->importer->setVerbose($this->output()->isVerbose());
+
+    if (!empty($options['folder'])) {
+      $this->importer->setFolder($options['folder']);
+    }
+
+    $thumbs_folder = $this->importer->getFolder() . '/_thumbs';
+    $this->fileSystem->deleteRecursive($thumbs_folder);
+    if (!$this->fileSystem->prepareDirectory($thumbs_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+      throw new \Exception("Unable to create folder {$thumbs_folder}.");
+    }
+
+    foreach ([FALSE, TRUE] as $deleted) {
+      if ($deleted) {
+        $thumbs_folder .= '/_deleted';
+      }
+
+      foreach ($this->importer->scan($this->importer->getFolder(), $deleted) as $file) {
+        $data = json_decode(file_get_contents($file->uri), TRUE);
+
+        // Extract only the _dcd_metadata property
+        $filtered_data = [];
+        if (array_key_exists('_dcd_metadata', $data)) {
+          $filtered_data['_dcd_metadata'] = $data['_dcd_metadata'];
+        }
+        $thumbs_entity_type_folder = $thumbs_folder . '/' . $file->entity_type_id;
+        if (!$this->fileSystem->prepareDirectory($thumbs_entity_type_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+          throw new \Exception("Unable to create folder {$thumbs_entity_type_folder}.");
+        }
+
+        if (!file_put_contents("{$thumbs_entity_type_folder}/{$file->name}", json_encode($filtered_data, JSON_PRETTY_PRINT))) {
+          throw new \Exception("Unable to write serialized entity {$thumbs_entity_type_folder}/{$file->name} to file system.");
+        }
+      }
     }
   }
 

@@ -16,6 +16,7 @@ use Drupal\Tests\migrate_drupal\Traits\CreateTestContentEntitiesTrait;
  * Tests the migration auditor for ID conflicts.
  *
  * @group migrate_drupal
+ * @group #slow
  */
 class MigrateDrupal7AuditIdsTest extends MigrateDrupal7TestBase {
 
@@ -32,7 +33,14 @@ class MigrateDrupal7AuditIdsTest extends MigrateDrupal7TestBase {
     parent::setUp();
 
     // Install required entity schemas.
-    $this->installEntitySchemas();
+    $this->installEntitySchema('block_content');
+    $this->installEntitySchema('comment');
+    $this->installEntitySchema('file');
+    $this->installEntitySchema('menu_link_content');
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('path_alias');
+    $this->installEntitySchema('taxonomy_term');
+    $this->installEntitySchema('user');
 
     // Install required schemas.
     $this->installSchema('dblog', ['watchdog']);

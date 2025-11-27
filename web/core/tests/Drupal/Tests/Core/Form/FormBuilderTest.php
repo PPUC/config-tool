@@ -678,6 +678,8 @@ class FormBuilderTest extends FormTestBase {
    * Data provider for testChildAccessInheritance.
    *
    * @return array
+   *   An array of test cases, each containing a form element structure and
+   *   its expected access results.
    */
   public static function providerTestChildAccessInheritance() {
     $data = [];
@@ -985,6 +987,8 @@ class FormBuilderTest extends FormTestBase {
    * Data provider for testFormTokenCacheability.
    *
    * @return array
+   *   An array of test cases, each containing a form token, the authentication,
+   *   request method, and expected cacheability outcome.
    */
   public static function providerTestFormTokenCacheability() {
     return [
@@ -998,8 +1002,62 @@ class FormBuilderTest extends FormTestBase {
     ];
   }
 
+  /**
+   * Tests the detection of the triggering element.
+   */
+  public function testTriggeringElement(): void {
+    $form_arg = 'Drupal\Tests\Core\Form\TestForm';
+
+    // No triggering element.
+    $form_state = new FormState();
+    $this->formBuilder->buildForm($form_arg, $form_state);
+    $this->assertNull($form_state->getTriggeringElement());
+
+    // When no op is provided, default to the first button element.
+    $form_state = new FormState();
+    $form_state->setMethod('GET');
+    $form_state->setUserInput(['form_id' => 'test_form']);
+    $this->formBuilder->buildForm($form_arg, $form_state);
+    $triggeringElement = $form_state->getTriggeringElement();
+    $this->assertIsArray($triggeringElement);
+    $this->assertSame('op', $triggeringElement['#name']);
+    $this->assertSame('Submit', $triggeringElement['#value']);
+
+    // A single triggering element.
+    $form_state = new FormState();
+    $form_state->setMethod('GET');
+    $form_state->setUserInput(['form_id' => 'test_form', 'op' => 'Submit']);
+    $this->formBuilder->buildForm($form_arg, $form_state);
+    $triggeringElement = $form_state->getTriggeringElement();
+    $this->assertIsArray($triggeringElement);
+    $this->assertSame('op', $triggeringElement['#name']);
+
+    // A different triggering element.
+    $form_state = new FormState();
+    $form_state->setMethod('GET');
+    $form_state->setUserInput(['form_id' => 'test_form', 'other_action' => 'Other action']);
+    $this->formBuilder->buildForm($form_arg, $form_state);
+    $triggeringElement = $form_state->getTriggeringElement();
+    $this->assertIsArray($triggeringElement);
+    $this->assertSame('other_action', $triggeringElement['#name']);
+
+    // Two triggering elements.
+    $form_state = new FormState();
+    $form_state->setMethod('GET');
+    $form_state->setUserInput(['form_id' => 'test_form', 'op' => 'Submit', 'other_action' => 'Other action']);
+    $this->formBuilder->buildForm($form_arg, $form_state);
+
+    // Verify that only the first triggering element is respected.
+    $triggeringElement = $form_state->getTriggeringElement();
+    $this->assertIsArray($triggeringElement);
+    $this->assertSame('op', $triggeringElement['#name']);
+  }
+
 }
 
+/**
+ * Basic test form with interface implemented.
+ */
 class TestForm implements FormInterface {
 
   public function getFormId() {
@@ -1015,6 +1073,10 @@ class TestForm implements FormInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {}
 
 }
+
+/**
+ * Basic test form with container injection interface implemented.
+ */
 class TestFormInjected extends TestForm implements ContainerInjectionInterface {
 
   public static function create(ContainerInterface $container) {
@@ -1023,7 +1085,9 @@ class TestFormInjected extends TestForm implements ContainerInjectionInterface {
 
 }
 
-
+/**
+ * Basic test form with predefined form set.
+ */
 class TestFormWithPredefinedForm extends TestForm {
 
   /**
