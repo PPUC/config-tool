@@ -36,13 +36,6 @@ class GamesController extends ControllerBase {
     return ($a->field_number->value > $b->field_number->value) ? 1 : -1;
   }
 
-  public function sortEntitiesByMatrixPartAndNumberField($a, $b): int {
-    if ($a->field_matrix_part->target_id == $b->field_matrix_part->target_id) {
-      return $this->sortEntitiesByNumberField($a, $b);
-    }
-    return ($a->field_number->value > $b->field_number->value) ? 1 : -1;
-  }
-
   public function sortEntitiesById($a, $b): int {
     if ($a->id() == $b->id()) {
       return 0;
@@ -136,6 +129,7 @@ class GamesController extends ControllerBase {
                 'number' => (int) ($device->get('field_number')->value),
                 'board' => $i_o_board_number,
                 'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
+                'debounce' => $device->hasField('field_debounce') ? ((int) $device->get('field_debounce')->value) : 10,
               ];
 
               $poll_events = TRUE;
@@ -143,52 +137,39 @@ class GamesController extends ControllerBase {
             break;
 
           case 'switch_matrix':
-            $switch_matrix = [
-              'columns' => [],
-              'rows' => [],
-            ];
-
-            $switch_matrix_parts = $storage->loadByProperties([
+            $switch_matrix_switches = $storage->loadByProperties([
               'field_switch_matrix' => $device->id(),
               $node->getEntityType()
-                ->getKey('bundle') => 'switch_matrix_column_row',
+                ->getKey('bundle') => 'switch_matrix_switch',
             ]);
             uasort($switch_matrix_parts, [
               $this,
-              'sortEntitiesByMatrixPartAndNumberField',
+              'sortEntitiesByNumberField',
             ]);
-            /** @var NodeInterface $switch_matrix_part */
-            foreach ($switch_matrix_parts as $switch_matrix_part) {
-              $objects[] = $switch_matrix_part;
-              $part = '';
-              switch ($switch_matrix_part->get('field_matrix_part')->entity->uuid()) {
-                case '71d21092-dbdc-4741-9894-194b28fd5228':
-                  $part = 'columns';
 
-                  break;
-
-                case '1dc42e0d-2332-4623-a2f2-2d23b1fe9e08':
-                  $part = 'rows';
-
-                  break;
-              }
-
-              if ($switch_matrix_part->isPublished()) {
-                $switch_matrix[$part][] = [
-                  'description' => trim($switch_matrix_part->label()),
-                  'number' => (int) ($switch_matrix_part->get('field_number')->value),
-                  'port' => $i_o_board_gpio_mapping[(int) ($switch_matrix_part->get('field_pin')->value)],
+            $switches = [];
+            /** @var NodeInterface $switch_matrix_switch */
+            foreach ($switch_matrix_switches as $switch_matrix_switch) {
+              $objects[] = $switch_matrix_switch;
+              if ($switch_matrix_switch->isPublished()) {
+                $switches[] = [
+                  'description' => trim($device->label()),
+                  'number' => (int) ($device->get('field_number')->value),
+                  'board' => $i_o_board_number,
+                  'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
+                  'debounce' => (int) $device->get('field_debounce')->value,
                 ];
               }
             }
 
             if ($i_o_board->isPublished() && $device->isPublished()) {
               $yaml['switchMatrix'] = [
-                  'description' => trim($device->label()),
-                  'board' => $i_o_board_number,
-                  'activeLow' => (bool) ($device->get('field_active_low')->value),
-                  'pulseTime' => (int) ($device->get('field_pulse_time')->value),
-                ] + $switch_matrix;
+                'description' => trim($device->label()),
+                'board' => $i_o_board_number,
+                'activeLow' => (bool) ($device->get('field_active_low')->value),
+                'rows' => (int) ($device->get('field_rows')->value),
+                'switches' => $switches,
+              ];
             }
 
             break;

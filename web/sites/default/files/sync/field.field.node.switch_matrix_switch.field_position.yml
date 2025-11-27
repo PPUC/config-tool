@@ -1,0 +1,23 @@
+uuid: 07448344-0b2b-4386-83b6-0c28eab29adc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_position
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_position
+field_name: field_position
+entity_type: node
+bundle: switch_matrix_switch
+label: Position
+description: 'The position in the matrix'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 128
+  prefix: ''
+  suffix: ''
+field_type: integer

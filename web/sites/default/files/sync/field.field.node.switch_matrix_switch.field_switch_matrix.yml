@@ -1,15 +1,15 @@
-uuid: c254a04e-7c2d-45d2-b4e4-ccb46d06f8e7
+uuid: b083df2d-48a8-4ab7-a693-19c01d735990
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_switch_matrix
     - node.type.switch_matrix
-    - node.type.switch_matrix_column_row
-id: node.switch_matrix_column_row.field_switch_matrix
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_switch_matrix
 field_name: field_switch_matrix
 entity_type: node
-bundle: switch_matrix_column_row
+bundle: switch_matrix_switch
 label: 'Switch Matrix'
 description: ''
 required: true

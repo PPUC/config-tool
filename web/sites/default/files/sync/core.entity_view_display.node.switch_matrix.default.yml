@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.switch_matrix.field_active_low
     - field.field.node.switch_matrix.field_i_o_board
     - field.field.node.switch_matrix.field_pulse_time
+    - field.field.node.switch_matrix.field_rows
     - node.type.switch_matrix
   module:
     - user
@@ -40,6 +41,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 102
+    region: content
+  field_rows:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 103
     region: content
   links:
     settings: {  }

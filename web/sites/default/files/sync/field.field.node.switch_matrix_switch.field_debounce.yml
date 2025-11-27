@@ -1,0 +1,25 @@
+uuid: e5085ecd-3eff-48bb-b02f-9380fe622d82
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_debounce
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_debounce
+field_name: field_debounce
+entity_type: node
+bundle: switch_matrix_switch
+label: Debounce
+description: 'Debounce time in milliseconds between 0 and 255.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 10
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer

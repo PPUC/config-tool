@@ -1,16 +1,16 @@
-uuid: d1e857bc-ed3a-4edc-bc94-b5e4b00f062f
+uuid: 2120330c-dfdf-40c4-a785-3f6395072233
 langcode: en
 status: true
 dependencies:
   module:
     - node
-    - taxonomy
-id: node.field_matrix_part
-field_name: field_matrix_part
+id: node.field_debounce
+field_name: field_debounce
 entity_type: node
-type: entity_reference
+type: integer
 settings:
-  target_type: taxonomy_term
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

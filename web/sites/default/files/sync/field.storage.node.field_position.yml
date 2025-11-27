@@ -1,15 +1,16 @@
-uuid: 40e92f0d-849b-4994-8093-b253b603e0c4
+uuid: e3a67be2-2f77-41e0-8b3d-803cb5b6f72f
 langcode: en
 status: true
 dependencies:
   module:
     - node
-id: node.field_switch_matrix
-field_name: field_switch_matrix
+id: node.field_position
+field_name: field_position
 entity_type: node
-type: entity_reference
+type: integer
 settings:
-  target_type: node
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

@@ -1,0 +1,18 @@
+uuid: a0ac66ab-8da2-4aac-878f-ff1f65421d10
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: 'Switch Matrix Switch'
+type: switch_matrix_switch
+description: 'A switch within a switch matrix'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

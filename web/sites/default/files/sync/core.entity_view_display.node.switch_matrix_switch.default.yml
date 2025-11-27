@@ -1,27 +1,28 @@
-uuid: 298c2fed-ce25-4a40-9558-ba1dc9e597c0
+uuid: 1d5218d9-8e1b-41d9-ae5f-d7864367cfc4
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.switch_matrix_column_row.field_matrix_part
-    - field.field.node.switch_matrix_column_row.field_number
-    - field.field.node.switch_matrix_column_row.field_pin
-    - field.field.node.switch_matrix_column_row.field_switch_matrix
-    - node.type.switch_matrix_column_row
+    - field.field.node.switch_matrix_switch.field_debounce
+    - field.field.node.switch_matrix_switch.field_number
+    - field.field.node.switch_matrix_switch.field_position
+    - field.field.node.switch_matrix_switch.field_switch_matrix
+    - node.type.switch_matrix_switch
   module:
     - user
-id: node.switch_matrix_column_row.default
+id: node.switch_matrix_switch.default
 targetEntityType: node
-bundle: switch_matrix_column_row
+bundle: switch_matrix_switch
 mode: default
 content:
-  field_matrix_part:
-    type: entity_reference_label
+  field_debounce:
+    type: number_integer
     label: above
     settings:
-      link: true
+      thousand_separator: ''
+      prefix_suffix: true
     third_party_settings: {  }
-    weight: 103
+    weight: 105
     region: content
   field_number:
     type: number_integer
@@ -32,14 +33,14 @@ content:
     third_party_settings: {  }
     weight: 107
     region: content
-  field_pin:
+  field_position:
     type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 2
+    weight: 108
     region: content
   field_switch_matrix:
     type: entity_reference_label
@@ -47,7 +48,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 102
+    weight: 109
     region: content
   links:
     settings: {  }

@@ -1,0 +1,23 @@
+uuid: 554292a1-f563-4c2c-97bb-463a9e10ff23
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_number
+field_name: field_number
+entity_type: node
+bundle: switch_matrix_switch
+label: Number
+description: "Lamp number, flasher number, GI string <br> \r\n\r\nThe switch number within original switch matrix  according to the manual.<br>\r\nNumbers greater than 200 are custom switches.<br>\r\nNumbers greater than 240 are treated as negative numbers. (243 becomes -3, 251 becomes -11)."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

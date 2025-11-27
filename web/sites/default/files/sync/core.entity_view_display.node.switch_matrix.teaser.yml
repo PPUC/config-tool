@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.switch_matrix.field_active_low
     - field.field.node.switch_matrix.field_i_o_board
     - field.field.node.switch_matrix.field_pulse_time
+    - field.field.node.switch_matrix.field_rows
     - node.type.switch_matrix
   module:
     - user
@@ -24,3 +25,4 @@ hidden:
   field_active_low: true
   field_i_o_board: true
   field_pulse_time: true
+  field_rows: true

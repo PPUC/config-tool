@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.switch.field_debounce
     - field.field.node.switch.field_i_o_board
     - field.field.node.switch.field_number
     - field.field.node.switch.field_pin
@@ -16,6 +17,15 @@ targetEntityType: node
 bundle: switch
 mode: default
 content:
+  field_debounce:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
   field_i_o_board:
     type: entity_reference_label
     label: above

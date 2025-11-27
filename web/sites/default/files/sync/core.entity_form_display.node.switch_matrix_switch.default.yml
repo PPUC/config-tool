@@ -1,82 +1,87 @@
-uuid: 42e424df-3cbb-49c6-89b3-18225e59cbe6
+uuid: dfbe0433-a18d-419f-814e-beb89856d0c0
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.switch_matrix_column_row.field_matrix_part
-    - field.field.node.switch_matrix_column_row.field_number
-    - field.field.node.switch_matrix_column_row.field_pin
-    - field.field.node.switch_matrix_column_row.field_switch_matrix
-    - node.type.switch_matrix_column_row
+    - field.field.node.switch_matrix_switch.field_debounce
+    - field.field.node.switch_matrix_switch.field_number
+    - field.field.node.switch_matrix_switch.field_position
+    - field.field.node.switch_matrix_switch.field_switch_matrix
+    - node.type.switch_matrix_switch
   module:
     - path
-id: node.switch_matrix_column_row.default
+id: node.switch_matrix_switch.default
 targetEntityType: node
-bundle: switch_matrix_column_row
+bundle: switch_matrix_switch
 mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 6
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_matrix_part:
-    type: options_buttons
-    weight: 2
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_number:
+  field_debounce:
     type: number
-    weight: 3
+    weight: 26
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_pin:
+  field_number:
     type: number
-    weight: 4
+    weight: 7
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_position:
+    type: number
+    weight: 121
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_switch_matrix:
-    type: options_select
-    weight: 1
+    type: entity_reference_autocomplete
+    weight: 122
     region: content
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   path:
     type: path
-    weight: 9
+    weight: 30
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 7
+    weight: 15
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 10
+    weight: 120
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 8
+    weight: 16
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: -5
     region: content
     settings:
       size: 60

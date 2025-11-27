@@ -1,0 +1,23 @@
+uuid: cb46ed26-002d-400c-808b-19cbad6b037c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rows
+    - node.type.switch_matrix
+id: node.switch_matrix.field_rows
+field_name: field_rows
+entity_type: node
+bundle: switch_matrix
+label: Rows
+description: "Amount of rows. A switch matrix on IO_16_8_1 has always 4 columns (ports 13-16). On IO_16_8_1 4x4 and 4x8 are supported. So you can select 4 or 8 here.\r\nThe dedicted matrix supports 16."
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 4
+  max: 16
+  prefix: ''
+  suffix: ''
+field_type: integer
