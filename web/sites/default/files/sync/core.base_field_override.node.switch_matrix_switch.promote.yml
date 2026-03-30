@@ -1,0 +1,22 @@
+uuid: e1553471-65bf-44d2-a126-0872b65d76e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.promote
+field_name: promote
+entity_type: node
+bundle: switch_matrix_switch
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
