@@ -414,7 +414,13 @@ class GamesController extends ControllerBase {
    * Streams a tar.gz archive containing a complete game configuration.
    */
   public function streamGameZip(NodeInterface $node): Response {
-    $this->exporter->setFolder($this->fileSystem->getTempDirectory() . '/dcd/content');
+    $export_folder = $this->fileSystem->getTempDirectory() . '/dcd/content';
+
+    // Reuse of the shared temp directory would otherwise leak entities from
+    // previous exports into the current game archive.
+    $this->fileSystem->deleteRecursive($export_folder);
+
+    $this->exporter->setFolder($export_folder);
     $this->exporter->setSkipEntityTypeIds(['user', 'taxonomy_term']);
     $this->exporter->setForceUpdate(TRUE);
     $this->exporter->exportEntity($node, TRUE);
