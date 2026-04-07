@@ -3,7 +3,7 @@
 namespace Drupal\ppuc_games\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\NodeForm;
+use Drupal\node\Form\NodeForm;
 
 /**
  * PPUC form handler for the node edit forms.
