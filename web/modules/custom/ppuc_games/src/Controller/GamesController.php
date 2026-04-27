@@ -50,6 +50,19 @@ class GamesController extends ControllerBase {
     return ($a['number'] > $b['number']) ? 1 : -1;
   }
 
+  protected function getSwitchDebounceMode(NodeInterface $switch): string {
+    if (!$switch->hasField('field_debounce_mode') || $switch->get('field_debounce_mode')->isEmpty()) {
+      return 'standard';
+    }
+
+    return match ($switch->get('field_debounce_mode')->entity?->uuid()) {
+      'a95ab8d7-fd1d-4bd1-94df-d00eee01ec62' => 'fastFlip',
+      'feee34d9-154d-4153-a267-40c815a917e0' => 'fastMomentary',
+      '01d97733-2522-4b50-aec8-862a7fb4f4c5' => 'slowStable',
+      default => 'standard',
+    };
+  }
+
   /**
    * @param \Drupal\node\NodeInterface $node
    * @param array $objects
@@ -130,6 +143,7 @@ class GamesController extends ControllerBase {
                 'board' => $i_o_board_number,
                 'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
                 'debounce' => $device->hasField('field_debounce') ? ((int) $device->get('field_debounce')->value) : 10,
+                'debounceMode' => $this->getSwitchDebounceMode($device),
               ];
 
               $poll_events = TRUE;
