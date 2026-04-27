@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.switch.field_debounce
+    - field.field.node.switch.field_debounce_mode
     - field.field.node.switch.field_i_o_board
     - field.field.node.switch.field_number
     - field.field.node.switch.field_pin
@@ -25,6 +26,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 105
+    region: content
+  field_debounce_mode:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 106
     region: content
   field_i_o_board:
     type: entity_reference_label

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.switch.field_debounce
+    - field.field.node.switch.field_debounce_mode
     - field.field.node.switch.field_i_o_board
     - field.field.node.switch.field_number
     - field.field.node.switch.field_pin
@@ -20,6 +21,16 @@ content:
     weight: 26
     region: content
     settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_debounce_mode:
+    type: entity_reference_autocomplete
+    weight: 27
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   field_i_o_board:

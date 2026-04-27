@@ -1,0 +1,33 @@
+uuid: d259761d-6791-4cb7-bc47-0e79eebdf7b0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_debounce_mode
+    - node.type.switch
+    - taxonomy.vocabulary.switch_debounce_mode
+  content:
+    - 'taxonomy_term:switch_debounce_mode:0d8d70b5-5c4d-486a-a738-cebe3279f67d'
+id: node.switch.field_debounce_mode
+field_name: field_debounce_mode
+entity_type: node
+bundle: switch
+label: 'Debounce Mode'
+description: "<ul>\r\n<li><b>Fast Flip</b> (flipper buttons, maybe magna-save, immediate close, immediate or very-low-latency open, per-direction debounce, preserve rapid close/open/close micro-flips)</li>\r\n<li><b>Fast Momentary</b> (slingshots, bumpers, stand-ups, optos, immediate close, debounced release, reject repeated same-state chatter)</li>\r\n<li></b>Standard</b> (rollovers, lanes, cabinet buttons,normal debounce both directions)</li>\r\n<li><b>Slow Stable</b> (coin door, service, trough-ish mechanical switches, longer debounce, conservative both directions)</li>\r\n</ul>"
+required: true
+translatable: false
+default_value:
+  -
+    target_uuid: 0d8d70b5-5c4d-486a-a738-cebe3279f67d
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      switch_debounce_mode: switch_debounce_mode
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

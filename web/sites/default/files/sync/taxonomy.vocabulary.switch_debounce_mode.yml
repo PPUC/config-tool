@@ -1,0 +1,9 @@
+uuid: 010d2dfd-f729-4309-b9f2-0c62a57cac9a
+langcode: en
+status: true
+dependencies: {  }
+name: 'Switch Debounce Mode'
+vid: switch_debounce_mode
+description: null
+weight: 0
+new_revision: false
