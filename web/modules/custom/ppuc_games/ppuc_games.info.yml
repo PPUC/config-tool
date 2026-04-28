@@ -4,3 +4,4 @@ description: 'Pinball Power-Up Controller'
 core_version_requirement: ^11
 dependencies:
   - default_content_deploy:default_content_deploy
+  - views_bulk_operations:views_bulk_operations

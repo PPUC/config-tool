@@ -4,3 +4,7 @@ services:
     arguments: ['@current_route_match']
     tags:
       - { name: event_subscriber }
+  ppuc_games.route_subscriber:
+    class: Drupal\ppuc_games\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
