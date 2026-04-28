@@ -7,3 +7,8 @@ ppuc_games.yaml:
   route_name: ppuc_games.yaml
   base_route: entity.node.canonical
   title: 'Download Game Config'
+
+ppuc_games.all_switches:
+  route_name: view.game_all_switches.all_switches
+  base_route: entity.node.canonical
+  title: 'All Switches'
