@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'b638066dd00c6ac104c49038e836aad25c0b347a',
+        'reference' => 'd6d1820820f3a8d871fdd55676cf149ead2a977b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -363,6 +363,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'drupal/views_bulk_operations' => array(
+            'pretty_version' => '4.4.4',
+            'version' => '4.4.4.0',
+            'reference' => '4.4.4',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/views_bulk_operations',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'drush/drush' => array(
             'pretty_version' => '13.7.2',
             'version' => '13.7.2.0',
@@ -561,7 +570,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b638066dd00c6ac104c49038e836aad25c0b347a',
+            'reference' => 'd6d1820820f3a8d871fdd55676cf149ead2a977b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
