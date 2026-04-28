@@ -55,7 +55,7 @@
     ],
     "weight": [
         {
-            "value": 0
+            "value": 2
         }
     ],
     "_embedded": {
@@ -65,7 +65,7 @@
     },
     "changed": [
         {
-            "value": "2026-04-27T09:31:51+00:00",
+            "value": "2026-04-28T14:20:08+00:00",
             "lang": "en",
             "format": "Y-m-d\\TH:i:sP"
         }
@@ -83,7 +83,7 @@
         }
     ],
     "_dcd_metadata": {
-        "export_timestamp": 1777283025,
+        "export_timestamp": 1777386209,
         "sort_key": 117
     }
 }
