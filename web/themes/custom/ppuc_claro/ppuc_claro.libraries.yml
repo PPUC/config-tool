@@ -2,3 +2,8 @@ global-styling:
   css:
     theme:
       css/style.css: {}
+  js:
+    js/sidebar.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
