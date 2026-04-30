@@ -12,3 +12,13 @@ ppuc_games.all_switches:
   route_name: view.game_all_switches.all_switches
   base_route: entity.node.canonical
   title: 'All Switches'
+
+ppuc_games.all_coils:
+  route_name: view.game_all_coils.all_coils
+  base_route: entity.node.canonical
+  title: 'All Coils'
+
+ppuc_games.all_lamps:
+  route_name: view.game_all_lamps.all_lamps
+  base_route: entity.node.canonical
+  title: 'All Lamps'
