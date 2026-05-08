@@ -33,6 +33,14 @@ content:
     settings:
       placeholder: ''
     third_party_settings: {  }
+  field_machine_name:
+    type: string_textfield
+    weight: 11
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_max_intensity:
     type: number
     weight: 6
@@ -78,14 +86,6 @@ content:
     weight: 9
     region: content
     settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_machine_name:
-    type: string_textfield
-    weight: 11
-    region: content
-    settings:
-      size: 60
       placeholder: ''
     third_party_settings: {  }
   status:

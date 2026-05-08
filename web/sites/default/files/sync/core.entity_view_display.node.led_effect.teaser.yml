@@ -32,6 +32,7 @@ hidden:
   field_color: true
   field_duration: true
   field_effect: true
+  field_machine_name: true
   field_mode: true
   field_priority: true
   field_repeat: true
@@ -39,4 +40,3 @@ hidden:
   field_segment: true
   field_speed: true
   field_string: true
-  field_machine_name: true

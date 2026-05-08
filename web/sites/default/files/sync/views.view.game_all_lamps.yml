@@ -1,25 +1,24 @@
----
 uuid: f16bc0f0-0a6f-4384-8bc8-f5697ba0c290
 langcode: en
 status: true
 dependencies:
   config:
-  - field.storage.node.field_color
-  - field.storage.node.field_i_o_board
-  - field.storage.node.field_number
-  - field.storage.node.field_pin
-  - field.storage.node.field_role
-  - field.storage.node.field_string
-  - field.storage.node.field_string_position
-  - node.type.addressable_led
-  - node.type.addressable_leds
-  - taxonomy.vocabulary.led_role
+    - field.storage.node.field_color
+    - field.storage.node.field_i_o_board
+    - field.storage.node.field_number
+    - field.storage.node.field_pin
+    - field.storage.node.field_role
+    - field.storage.node.field_string
+    - field.storage.node.field_string_position
+    - node.type.addressable_led
+    - node.type.addressable_leds
+    - taxonomy.vocabulary.led_role
   module:
-  - color_field
-  - node
-  - taxonomy
-  - user
-  - views_bulk_operations
+    - color_field
+    - node
+    - taxonomy
+    - user
+    - views_bulk_operations
 id: game_all_lamps
 label: 'Game: All Lamps'
 module: views
@@ -44,7 +43,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: views_bulk_operations_bulk_form
-          label: Views bulk operations
+          label: 'Views bulk operations'
           exclude: false
           alter:
             alter_text: false
@@ -95,12 +94,14 @@ display:
           show_multipage_selection_box: default
           show_select_all: default
           selected_actions:
-          - action_id: ppuc_games_change_addressable_led_color
-            preconfiguration:
-              add_confirmation: false
-          - action_id: ppuc_games_change_addressable_led_role
-            preconfiguration:
-              add_confirmation: false
+            -
+              action_id: ppuc_games_change_addressable_led_color
+              preconfiguration:
+                add_confirmation: false
+            -
+              action_id: ppuc_games_change_addressable_led_role
+              preconfiguration:
+                add_confirmation: false
         field_number:
           id: field_number
           table: node__field_number
@@ -156,14 +157,14 @@ display:
             thousand_separator: ''
             prefix_suffix: true
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         edit_node:
           id: edit_node
@@ -276,14 +277,14 @@ display:
             format_custom_false: ''
             format_custom_true: ''
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         title:
           id: title
@@ -299,7 +300,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{{ title }} ({{ edit_node }}) {{ status }}"
+            text: '{{ title }} ({{ edit_node }}) {{ status }}'
             make_link: false
             path: ''
             absolute: false
@@ -341,14 +342,14 @@ display:
           settings:
             link_to_entity: false
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_string:
           id: field_string
@@ -404,14 +405,14 @@ display:
           settings:
             link: false
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_string_position:
           id: field_string_position
@@ -421,7 +422,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: String Position
+          label: 'String Position'
           exclude: false
           alter:
             alter_text: false
@@ -468,14 +469,14 @@ display:
             thousand_separator: ''
             prefix_suffix: true
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_color:
           id: field_color
@@ -535,14 +536,14 @@ display:
             opacity: true
             data_attribute: false
           group_column: ''
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_role:
           id: field_role
@@ -598,14 +599,14 @@ display:
           settings:
             link: false
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_i_o_board:
           id: field_i_o_board
@@ -615,7 +616,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: I/O Board
+          label: 'I/O Board'
           exclude: false
           alter:
             alter_text: false
@@ -661,14 +662,14 @@ display:
           settings:
             link: false
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
         field_pin:
           id: field_pin
@@ -725,14 +726,14 @@ display:
             thousand_separator: ''
             prefix_suffix: true
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ", "
+          separator: ', '
           field_api_classes: false
       pager:
         type: none
@@ -745,19 +746,19 @@ display:
           submit_button: Apply
           reset_button: false
           reset_button_label: Reset
-          exposed_sorts_label: Sort by
+          exposed_sorts_label: 'Sort by'
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
         type: perm
         options:
-          perm: access content
+          perm: 'access content'
       cache:
         type: tag
-        options: {}
-      empty: {}
-      sorts: {}
+        options: {  }
+      empty: {  }
+      sorts: {  }
       arguments:
         field_game_target_id:
           id: field_game_target_id
@@ -790,8 +791,8 @@ display:
           specify_validation: false
           validate:
             type: none
-            fail: not found
-          validate_options: {}
+            fail: 'not found'
+          validate_options: {  }
           break_phrase: false
           not: false
       filters:
@@ -805,18 +806,18 @@ display:
           entity_type: node
           entity_field: status
           plugin_id: boolean
-          operator: "="
+          operator: '='
           value: '1'
           group: 1
           exposed: true
           expose:
             operator_id: ''
-            label: Published status
+            label: 'Published status'
             description: ''
             use_operator: false
             operator: status_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: status
             required: true
             remember: false
@@ -833,8 +834,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         type:
           id: type
           table: node_field_data
@@ -855,7 +856,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-          operator: "="
+          operator: '='
           value: ''
           group: 1
           exposed: true
@@ -866,7 +867,7 @@ display:
             use_operator: false
             operator: title_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: title
             required: false
             remember: false
@@ -884,8 +885,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -893,7 +894,7 @@ display:
       style:
         type: table
         options:
-          grouping: {}
+          grouping: {  }
           row_class: ''
           default_row_class: true
           columns:
@@ -1001,7 +1002,7 @@ display:
           disable_sql_rewrite: false
           distinct: false
           replica: false
-          query_tags: {}
+          query_tags: {  }
       relationships:
         field_string:
           id: field_string
@@ -1021,48 +1022,48 @@ display:
           admin_label: 'field_i_o_board: Content'
           plugin_id: standard
           required: true
-      header: {}
-      footer: {}
-      display_extenders: {}
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:
-      - languages:language_content
-      - languages:language_interface
-      - url
-      - url.query_args
-      - user.node_grants:view
-      - user.permissions
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
       tags:
-      - config:field.storage.node.field_color
-      - config:field.storage.node.field_i_o_board
-      - config:field.storage.node.field_number
-      - config:field.storage.node.field_pin
-      - config:field.storage.node.field_role
-      - config:field.storage.node.field_string
-      - config:field.storage.node.field_string_position
+        - 'config:field.storage.node.field_color'
+        - 'config:field.storage.node.field_i_o_board'
+        - 'config:field.storage.node.field_number'
+        - 'config:field.storage.node.field_pin'
+        - 'config:field.storage.node.field_role'
+        - 'config:field.storage.node.field_string'
+        - 'config:field.storage.node.field_string_position'
   all_lamps:
     id: all_lamps
     display_title: Page
     display_plugin: page
     position: 1
     display_options:
-      display_extenders: {}
+      display_extenders: {  }
       path: node/%node/all-lamps
     cache_metadata:
       max-age: 0
       contexts:
-      - languages:language_content
-      - languages:language_interface
-      - url
-      - url.query_args
-      - user.node_grants:view
-      - user.permissions
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
       tags:
-      - config:field.storage.node.field_color
-      - config:field.storage.node.field_i_o_board
-      - config:field.storage.node.field_number
-      - config:field.storage.node.field_pin
-      - config:field.storage.node.field_role
-      - config:field.storage.node.field_string
-      - config:field.storage.node.field_string_position
+        - 'config:field.storage.node.field_color'
+        - 'config:field.storage.node.field_i_o_board'
+        - 'config:field.storage.node.field_number'
+        - 'config:field.storage.node.field_pin'
+        - 'config:field.storage.node.field_role'
+        - 'config:field.storage.node.field_string'
+        - 'config:field.storage.node.field_string_position'

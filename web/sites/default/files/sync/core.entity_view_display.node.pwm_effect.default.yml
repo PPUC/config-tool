@@ -39,6 +39,13 @@ content:
     third_party_settings: {  }
     weight: 103
     region: content
+  field_machine_name:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
   field_max_intensity:
     type: number_integer
     label: above
@@ -99,13 +106,6 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 10
-    region: content
-  field_machine_name:
-    type: basic_string
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 12
     region: content
   links:
     settings: {  }

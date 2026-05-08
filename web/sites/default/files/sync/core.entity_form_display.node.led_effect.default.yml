@@ -42,6 +42,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_machine_name:
+    type: string_textfield
+    weight: 12
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_mode:
     type: number
     weight: 11
@@ -89,14 +97,6 @@ content:
     weight: 2
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_machine_name:
-    type: string_textfield
-    weight: 12
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   status:
     type: boolean_checkbox

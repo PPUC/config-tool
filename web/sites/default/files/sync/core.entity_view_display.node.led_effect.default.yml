@@ -49,6 +49,13 @@ content:
     third_party_settings: {  }
     weight: 6
     region: content
+  field_machine_name:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
   field_mode:
     type: number_integer
     label: above
@@ -111,13 +118,6 @@ content:
       link: true
     third_party_settings: {  }
     weight: 2
-    region: content
-  field_machine_name:
-    type: basic_string
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 12
     region: content
   links:
     settings: {  }

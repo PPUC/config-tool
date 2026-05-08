@@ -282,7 +282,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: Machine Name
+          label: 'Machine Name'
           exclude: false
           alter:
             alter_text: false
