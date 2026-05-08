@@ -230,18 +230,8 @@ class GamesController extends ControllerBase {
               if (!$pwm_effect->isPublished()) {
                 continue;
               }
-              $trigger = [];
-              foreach (explode('/', $pwm_effect->get('field_trigger')->value) as $t) {
-                if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
-                  $trigger[] = [
-                    'source' => $matches[1],
-                    'number' => (int) ($matches[2]),
-                    'value' => ($matches[3] === 'OFF') ? 0 : 1,
-                  ];
-                }
-              }
-
               $effects[] = [
+                'name' => trim((string) $pwm_effect->get('field_machine_name')->value),
                 'description' => trim($pwm_effect->label()),
                 'duration' => (int) ($pwm_effect->get('field_duration')->value),
                 'effect' => (int) ($pwm_effect->get('field_pwm_effect')->entity->field_number->value ?? 0),
@@ -251,7 +241,6 @@ class GamesController extends ControllerBase {
                 'mode' => (int) ($pwm_effect->get('field_mode')->value),
                 'priority' => (int) ($pwm_effect->get('field_priority')->value),
                 'repeat' => (int) ($pwm_effect->get('field_repeat')->value),
-                'trigger' => $trigger,
               ];
             }
 
@@ -330,17 +319,8 @@ class GamesController extends ControllerBase {
               if (!$led_effect->isPublished()) {
                 continue;
               }
-              $trigger = [];
-              foreach (explode('/', $led_effect->get('field_trigger')->value) as $t) {
-                if (preg_match('/([SWLDE])([0-9]+)\s*(ON|OFF)/', $t, $matches)) {
-                  $trigger[] = [
-                    'source' => $matches[1],
-                    'number' => (int) ($matches[2]),
-                    'value' => ($matches[3] === 'OFF') ? 0 : 1,
-                  ];
-                }
-              }
               $effects[] = [
+                'name' => trim((string) $led_effect->get('field_machine_name')->value),
                 'description' => trim($led_effect->label()),
                 'color' => $led_effect->get('field_color')->color,
                 'duration' => (int) ($led_effect->get('field_duration')->value),
@@ -351,7 +331,6 @@ class GamesController extends ControllerBase {
                 'mode' => (int) ($led_effect->get('field_mode')->value),
                 'priority' => (int) ($led_effect->get('field_priority')->value),
                 'repeat' => (int) ($led_effect->get('field_repeat')->value),
-                'trigger' => $trigger,
               ];
             }
 

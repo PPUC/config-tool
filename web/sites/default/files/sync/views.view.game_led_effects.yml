@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_trigger
+    - field.storage.node.field_machine_name
     - node.type.led_effect
   module:
     - node
@@ -274,15 +274,15 @@ display:
           separator: ', '
           field_api_classes: false
           convert_spaces: false
-        field_trigger:
-          id: field_trigger
-          table: node__field_trigger
-          field: field_trigger
+        field_machine_name:
+          id: field_machine_name
+          table: node__field_machine_name
+          field: field_machine_name
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: field
-          label: Trigger
+          label: Machine Name
           exclude: false
           alter:
             alter_text: false
@@ -569,7 +569,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_trigger'
+        - 'config:field.storage.node.field_machine_name'
   led_effects_block:
     id: led_effects_block
     display_title: Block
@@ -586,4 +586,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_trigger'
+        - 'config:field.storage.node.field_machine_name'

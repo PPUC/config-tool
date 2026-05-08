@@ -1,0 +1,19 @@
+uuid: 2ba3e47a-921f-43b0-a66f-2d76265031d8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_machine_name
+    - node.type.led_effect
+id: node.led_effect.field_machine_name
+field_name: field_machine_name
+entity_type: node
+bundle: led_effect
+label: 'Machine Effect Name'
+description: 'Stable effect name used in generated YAML `name:` entries and `F` trigger rules.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -13,7 +13,7 @@ dependencies:
     - field.field.node.led_effect.field_segment
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
-    - field.field.node.led_effect.field_trigger
+    - field.field.node.led_effect.field_machine_name
     - node.type.led_effect
   module:
     - color_field
@@ -112,7 +112,7 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
-  field_trigger:
+  field_machine_name:
     type: basic_string
     label: above
     settings: {  }

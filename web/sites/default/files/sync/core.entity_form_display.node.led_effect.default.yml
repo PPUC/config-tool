@@ -13,7 +13,7 @@ dependencies:
     - field.field.node.led_effect.field_segment
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
-    - field.field.node.led_effect.field_trigger
+    - field.field.node.led_effect.field_machine_name
     - node.type.led_effect
   module:
     - color_field
@@ -90,12 +90,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_trigger:
-    type: string_textarea
+  field_machine_name:
+    type: string_textfield
     weight: 12
     region: content
     settings:
-      rows: 5
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   status:

@@ -12,7 +12,7 @@ dependencies:
     - field.field.node.pwm_effect.field_pwm_device
     - field.field.node.pwm_effect.field_pwm_effect
     - field.field.node.pwm_effect.field_repeat
-    - field.field.node.pwm_effect.field_trigger
+    - field.field.node.pwm_effect.field_machine_name
     - node.type.pwm_effect
   module:
     - user
@@ -100,7 +100,7 @@ content:
     third_party_settings: {  }
     weight: 10
     region: content
-  field_trigger:
+  field_machine_name:
     type: basic_string
     label: above
     settings: {  }
