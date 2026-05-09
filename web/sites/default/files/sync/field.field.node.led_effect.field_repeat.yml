@@ -10,13 +10,13 @@ field_name: field_repeat
 entity_type: node
 bundle: led_effect
 label: Repeat
-description: 'How many times should the effect be repeated? -1 means that the effect runs endlessly or until it gets terminated by an effect with higher priority.'
+description: 'How many times should the effect be repeated? -1 means that the effect runs endlessly or until it gets terminated by an effect with higher priority. -2 means that the effect runs endlessly but gets interrupted by an effect with higher priority. When no higher priority effects are running anymore, that effect continues.'
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  min: -1
+  min: -2
   max: 254
   prefix: ''
   suffix: ''
