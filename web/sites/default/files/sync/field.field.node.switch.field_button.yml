@@ -1,0 +1,23 @@
+uuid: 6a911987-9ee2-42a9-8ac7-cd53143049dd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_button
+    - node.type.switch
+id: node.switch.field_button
+field_name: field_button
+entity_type: node
+bundle: switch
+label: Button
+description: 'Marks cabinet and player-controlled switches such as flipper, start, coin, and service buttons.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

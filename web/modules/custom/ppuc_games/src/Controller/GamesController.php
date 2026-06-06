@@ -62,6 +62,10 @@ class GamesController extends ControllerBase {
     };
   }
 
+  protected function getBooleanFieldValue(NodeInterface $node, string $field_name): bool {
+    return $node->hasField($field_name) && !$node->get($field_name)->isEmpty() && (bool) $node->get($field_name)->value;
+  }
+
   /**
    * @param \Drupal\node\NodeInterface $node
    * @param array $objects
@@ -136,7 +140,7 @@ class GamesController extends ControllerBase {
         switch ($device->bundle()) {
           case 'switch':
             if ($i_o_board->isPublished() && $device->isPublished()) {
-              $yaml['switches'][] = [
+              $switch = [
                 'description' => trim($device->label()),
                 'number' => (int) ($device->get('field_number')->value),
                 'board' => $i_o_board_number,
@@ -144,6 +148,11 @@ class GamesController extends ControllerBase {
                 'debounce' => $device->hasField('field_debounce') ? ((int) $device->get('field_debounce')->value) : 10,
                 'debounceMode' => $this->getSwitchDebounceMode($device),
               ];
+              if ($this->getBooleanFieldValue($device, 'field_button')) {
+                $switch['button'] = TRUE;
+              }
+
+              $yaml['switches'][] = $switch;
 
               $poll_events = TRUE;
             }
@@ -155,7 +164,7 @@ class GamesController extends ControllerBase {
               $node->getEntityType()
                 ->getKey('bundle') => 'switch_matrix_switch',
             ]);
-            uasort($switch_matrix_parts, [
+            uasort($switch_matrix_switches, [
               $this,
               'sortEntitiesByNumberField',
             ]);
@@ -165,13 +174,18 @@ class GamesController extends ControllerBase {
             foreach ($switch_matrix_switches as $switch_matrix_switch) {
               $objects[] = $switch_matrix_switch;
               if ($switch_matrix_switch->isPublished()) {
-                $switches[] = [
+                $switch = [
                   'description' => trim($device->label()),
                   'number' => (int) ($device->get('field_number')->value),
                   'board' => $i_o_board_number,
                   'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
                   'debounce' => (int) $device->get('field_debounce')->value,
                 ];
+                if ($this->getBooleanFieldValue($switch_matrix_switch, 'field_button')) {
+                  $switch['button'] = TRUE;
+                }
+
+                $switches[] = $switch;
               }
             }
 
@@ -245,7 +259,7 @@ class GamesController extends ControllerBase {
             }
 
             if ($i_o_board->isPublished() && $device->isPublished()) {
-              $yaml['pwmOutput'][] = [
+              $pwm_output = [
                 'description' => trim($device->label()),
                 'type' => $type,
                 'number' => (int) ($device->get('field_number')->value),
@@ -259,6 +273,11 @@ class GamesController extends ControllerBase {
                 'fastFlipSwitch' => (int) ($device->get('field_fast_activation_switch')->entity->field_number->value ?? 0),
                 'effects' => $effects,
               ];
+              if ($this->getBooleanFieldValue($device, 'field_ball_search')) {
+                $pwm_output['ballSearch'] = TRUE;
+              }
+
+              $yaml['pwmOutput'][] = $pwm_output;
             }
             break;
 

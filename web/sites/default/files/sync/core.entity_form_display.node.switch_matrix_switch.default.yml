@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.switch_matrix_switch.field_button
     - field.field.node.switch_matrix_switch.field_debounce
     - field.field.node.switch_matrix_switch.field_number
     - field.field.node.switch_matrix_switch.field_position
@@ -20,6 +21,13 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_button:
+    type: boolean_checkbox
+    weight: 27
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_debounce:
     type: number

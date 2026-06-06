@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.switch_matrix_switch.field_button
     - field.field.node.switch_matrix_switch.field_debounce
     - field.field.node.switch_matrix_switch.field_number
     - field.field.node.switch_matrix_switch.field_position
@@ -15,6 +16,16 @@ targetEntityType: node
 bundle: switch_matrix_switch
 mode: default
 content:
+  field_button:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 106
+    region: content
   field_debounce:
     type: number_integer
     label: above

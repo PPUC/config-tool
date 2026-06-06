@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.switch.field_button
     - field.field.node.switch.field_debounce
     - field.field.node.switch.field_debounce_mode
     - field.field.node.switch.field_i_o_board
@@ -16,6 +17,13 @@ targetEntityType: node
 bundle: switch
 mode: default
 content:
+  field_button:
+    type: boolean_checkbox
+    weight: 28
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_debounce:
     type: number
     weight: 26

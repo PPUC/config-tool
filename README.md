@@ -16,6 +16,16 @@ docker run -p 8080:80 -v config-tool-data:/var/www/web/config-tool-data ghcr.io/
 
 Then open `localhost:8080`in a web browser and login as user `ppuc` using the password `ppuc`.
 
+## Game YAML export
+
+The generated game YAML includes optional switch and coil roles used by the
+runtime safety features:
+
+- Switch nodes and switch matrix switch nodes can be marked as `Button`. When
+  checked, the exported switch entry contains `button: true`.
+- PWM device nodes can be marked as `Ball search`. When checked, the exported
+  PWM output entry contains `ballSearch: true`.
+
 ## Development
 
 ### Linux and macOS

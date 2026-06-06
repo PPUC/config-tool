@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.pwm_device.field_ball_search
     - field.field.node.pwm_device.field_fast_activation_switch
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
@@ -23,6 +24,16 @@ targetEntityType: node
 bundle: pwm_device
 mode: default
 content:
+  field_ball_search:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 11
+    region: content
   field_fast_activation_switch:
     type: entity_reference_label
     label: above

@@ -1,0 +1,23 @@
+uuid: e5ee49a5-eea6-497d-916d-9354842a4ead
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ball_search
+    - node.type.pwm_device
+id: node.pwm_device.field_ball_search
+field_name: field_ball_search
+entity_type: node
+bundle: pwm_device
+label: 'Ball search'
+description: 'Marks this output as a host-side ball-search coil.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean
