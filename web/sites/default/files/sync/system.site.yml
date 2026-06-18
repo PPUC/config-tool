@@ -4,7 +4,7 @@ langcode: en
 uuid: 1b923c28-14b0-4fd0-8138-76b453cb5d07
 name: 'PPUC Config Tool'
 mail: admin@example.com
-slogan: v0.1.3
+slogan: v0.1.4-dev-snapshot
 page:
   403: ''
   404: ''
