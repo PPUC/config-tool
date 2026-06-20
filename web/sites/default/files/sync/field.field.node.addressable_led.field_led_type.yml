@@ -1,0 +1,29 @@
+uuid: 101345ac-fba3-464f-9175-08646c2875e5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_led_type
+    - node.type.addressable_led
+    - taxonomy.vocabulary.led_type
+id: node.addressable_led.field_led_type
+field_name: field_led_type
+entity_type: node
+bundle: addressable_led
+label: 'RGB(W) Order'
+description: 'Overrides the RGB(W) order inherited from the LED string for this LED.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      led_type: led_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

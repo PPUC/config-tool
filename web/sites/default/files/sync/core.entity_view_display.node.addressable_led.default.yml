@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.addressable_led.field_color
+    - field.field.node.addressable_led.field_led_type
     - field.field.node.addressable_led.field_number
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
@@ -27,6 +28,14 @@ content:
       opacity: true
     third_party_settings: {  }
     weight: 103
+    region: content
+  field_led_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
     region: content
   field_number:
     type: number_integer

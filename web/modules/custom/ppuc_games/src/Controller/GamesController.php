@@ -69,6 +69,43 @@ class GamesController extends ControllerBase {
     return $node->hasField($field_name) && !$node->get($field_name)->isEmpty() && (bool) $node->get($field_name)->value;
   }
 
+  protected function getLedTypeName(NodeInterface $node): ?string {
+    if (!$node->hasField('field_led_type') || $node->get('field_led_type')->isEmpty()) {
+      return NULL;
+    }
+
+    return $node->get('field_led_type')->entity?->getName();
+  }
+
+  protected function correctLedColorForOrder(string $color, ?string $stripe_order, ?string $led_order): string {
+    if ($stripe_order === NULL || $led_order === NULL || strcasecmp($stripe_order, $led_order) === 0) {
+      return $color;
+    }
+    if (!preg_match('/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $matches)) {
+      return $color;
+    }
+
+    $stripe_order = strtoupper($stripe_order);
+    $led_order = strtoupper($led_order);
+    $desired = [
+      'R' => $matches[1],
+      'G' => $matches[2],
+      'B' => $matches[3],
+    ];
+    $corrected = $desired;
+
+    $positions = min(strlen($stripe_order), strlen($led_order));
+    for ($position = 0; $position < $positions; $position++) {
+      $stripe_channel = $stripe_order[$position];
+      $led_channel = $led_order[$position];
+      if (isset($desired[$stripe_channel], $desired[$led_channel])) {
+        $corrected[$stripe_channel] = $desired[$led_channel];
+      }
+    }
+
+    return '#' . $corrected['R'] . $corrected['G'] . $corrected['B'];
+  }
+
   public function accessAddSwitchMatrixSwitch(NodeInterface $node, AccountInterface $account): AccessResult {
     return AccessResult::allowedIf($node->bundle() === 'switch_matrix')
       ->andIf(AccessResult::allowedIfHasPermission($account, 'create switch_matrix_switch content'))
@@ -299,6 +336,7 @@ class GamesController extends ControllerBase {
             break;
 
           case 'addressable_leds':
+            $stripe_led_type = $this->getLedTypeName($device);
             $leds = [
               'lamps' => [],
               'flashers' => [],
@@ -338,7 +376,11 @@ class GamesController extends ControllerBase {
                 'description' => trim($addressable_led->label()),
                 'number' => (int) ($addressable_led->get('field_number')->value),
                 'ledNumber' => (int) ($addressable_led->get('field_string_position')->value),
-                'color' => $addressable_led->get('field_color')->color,
+                'color' => $this->correctLedColorForOrder(
+                  $addressable_led->get('field_color')->color,
+                  $stripe_led_type,
+                  $this->getLedTypeName($addressable_led)
+                ),
               ];
             }
 
