@@ -10,7 +10,7 @@ field_name: field_position
 entity_type: node
 bundle: switch_matrix_switch
 label: Position
-description: 'The position in the matrix'
+description: 'Zero-based matrix position. Firmware maps position = column * rows + row. Every matrix has 4 columns. The number of rows is adjustable. Example with 4 rows: positions 0-3 are column 0 with rows 0-3, 4-7 are column 1 with rows 0-3, 8-11 are column 2 with rows 0-3, and 12-15 are column 3 with rows 0-3.'
 required: true
 translatable: false
 default_value: {  }

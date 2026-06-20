@@ -14,6 +14,7 @@ dependencies:
     - node.type.pwm_effect
     - node.type.switch
     - node.type.switch_matrix
+    - node.type.switch_matrix_switch
   module:
     - default_content_deploy
     - file
@@ -47,6 +48,7 @@ permissions:
   - 'clone pwm_effect content'
   - 'clone switch content'
   - 'clone switch_matrix content'
+  - 'clone switch_matrix_switch content'
   - 'create addressable_led content'
   - 'create addressable_leds content'
   - 'create dip_switch content'
@@ -58,6 +60,7 @@ permissions:
   - 'create pwm_effect content'
   - 'create switch content'
   - 'create switch_matrix content'
+  - 'create switch_matrix_switch content'
   - 'default content deploy export'
   - 'delete addressable_led revisions'
   - 'delete addressable_leds revisions'
@@ -72,6 +75,7 @@ permissions:
   - 'delete any pwm_effect content'
   - 'delete any switch content'
   - 'delete any switch_matrix content'
+  - 'delete any switch_matrix_switch content'
   - 'delete dip_switch revisions'
   - 'delete game revisions'
   - 'delete i_o_board revisions'
@@ -88,10 +92,12 @@ permissions:
   - 'delete own pwm_effect content'
   - 'delete own switch content'
   - 'delete own switch_matrix content'
+  - 'delete own switch_matrix_switch content'
   - 'delete pwm_device revisions'
   - 'delete pwm_effect revisions'
   - 'delete switch revisions'
   - 'delete switch_matrix revisions'
+  - 'delete switch_matrix_switch revisions'
   - 'edit any addressable_led content'
   - 'edit any addressable_leds content'
   - 'edit any dip_switch content'
@@ -102,6 +108,7 @@ permissions:
   - 'edit any pwm_effect content'
   - 'edit any switch content'
   - 'edit any switch_matrix content'
+  - 'edit any switch_matrix_switch content'
   - 'edit own addressable_led content'
   - 'edit own addressable_leds content'
   - 'edit own dip_switch content'
@@ -112,6 +119,7 @@ permissions:
   - 'edit own pwm_effect content'
   - 'edit own switch content'
   - 'edit own switch_matrix content'
+  - 'edit own switch_matrix_switch content'
   - 'revert addressable_led revisions'
   - 'revert addressable_leds revisions'
   - 'revert all revisions'
@@ -123,6 +131,7 @@ permissions:
   - 'revert pwm_effect revisions'
   - 'revert switch revisions'
   - 'revert switch_matrix revisions'
+  - 'revert switch_matrix_switch revisions'
   - 'update any media'
   - 'update media'
   - 'use text format basic_html'
@@ -140,4 +149,5 @@ permissions:
   - 'view pwm_effect revisions'
   - 'view switch revisions'
   - 'view switch_matrix revisions'
+  - 'view switch_matrix_switch revisions'
   - 'view the administration theme'

@@ -2,11 +2,14 @@
 
 namespace Drupal\ppuc_games\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\File\Event\FileUploadSanitizeNameEvent;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\default_content_deploy\ExporterInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -64,6 +67,21 @@ class GamesController extends ControllerBase {
 
   protected function getBooleanFieldValue(NodeInterface $node, string $field_name): bool {
     return $node->hasField($field_name) && !$node->get($field_name)->isEmpty() && (bool) $node->get($field_name)->value;
+  }
+
+  public function accessAddSwitchMatrixSwitch(NodeInterface $node, AccountInterface $account): AccessResult {
+    return AccessResult::allowedIf($node->bundle() === 'switch_matrix')
+      ->andIf(AccessResult::allowedIfHasPermission($account, 'create switch_matrix_switch content'))
+      ->addCacheableDependency($node);
+  }
+
+  public function addSwitchMatrixSwitch(NodeInterface $node): array {
+    $switch = Node::create([
+      'type' => 'switch_matrix_switch',
+      'field_switch_matrix' => ['target_id' => $node->id()],
+    ]);
+
+    return $this->entityFormBuilder()->getForm($switch);
   }
 
   /**
@@ -164,10 +182,10 @@ class GamesController extends ControllerBase {
               $node->getEntityType()
                 ->getKey('bundle') => 'switch_matrix_switch',
             ]);
-            uasort($switch_matrix_switches, [
-              $this,
-              'sortEntitiesByNumberField',
-            ]);
+            uasort($switch_matrix_switches, static function (NodeInterface $a, NodeInterface $b): int {
+              return ((int) $a->get('field_position')->value <=> (int) $b->get('field_position')->value)
+                ?: ((int) $a->get('field_number')->value <=> (int) $b->get('field_number')->value);
+            });
 
             $switches = [];
             /** @var NodeInterface $switch_matrix_switch */
@@ -175,11 +193,10 @@ class GamesController extends ControllerBase {
               $objects[] = $switch_matrix_switch;
               if ($switch_matrix_switch->isPublished()) {
                 $switch = [
-                  'description' => trim($device->label()),
-                  'number' => (int) ($device->get('field_number')->value),
+                  'description' => trim($switch_matrix_switch->label()),
+                  'number' => (int) ($switch_matrix_switch->get('field_number')->value),
                   'board' => $i_o_board_number,
-                  'port' => $i_o_board_gpio_mapping[(int) ($device->get('field_pin')->value)],
-                  'debounce' => (int) $device->get('field_debounce')->value,
+                  'port' => (int) ($switch_matrix_switch->get('field_position')->value),
                 ];
                 if ($this->getBooleanFieldValue($switch_matrix_switch, 'field_button')) {
                   $switch['button'] = TRUE;
@@ -194,7 +211,7 @@ class GamesController extends ControllerBase {
                 'description' => trim($device->label()),
                 'board' => $i_o_board_number,
                 'activeLow' => (bool) ($device->get('field_active_low')->value),
-                'rows' => (int) ($device->get('field_rows')->value),
+                'numRows' => (int) ($device->get('field_rows')->value),
                 'switches' => $switches,
               ];
             }
