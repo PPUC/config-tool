@@ -1,0 +1,21 @@
+uuid: 596f4f23-6421-41d4-b950-4394f9d8101b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_source
+    - node.type.led_effect
+  module:
+    - options
+id: node.led_effect.field_trigger_source
+field_name: field_trigger_source
+entity_type: node
+bundle: led_effect
+label: 'Simple Trigger Source'
+description: 'Optional local firmware trigger for this effect. Choose Switch for switch closed/open or Lamp for lamp on/off.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

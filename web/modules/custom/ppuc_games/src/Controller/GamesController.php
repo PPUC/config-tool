@@ -86,6 +86,15 @@ class GamesController extends ControllerBase {
     return max(0, min(255, (int) $node->get($field_name)->value));
   }
 
+  protected function getStringFieldValue(NodeInterface $node, string $field_name): ?string {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
+
+    $value = trim((string) $node->get($field_name)->value);
+    return $value !== '' ? $value : NULL;
+  }
+
   protected function getLedTypeName(NodeInterface $node): ?string {
     if (!$node->hasField('field_led_type') || $node->get('field_led_type')->isEmpty()) {
       return NULL;
@@ -305,7 +314,7 @@ class GamesController extends ControllerBase {
               if (!$pwm_effect->isPublished()) {
                 continue;
               }
-              $effects[] = [
+              $effect = [
                 'name' => trim((string) $pwm_effect->get('field_machine_name')->value),
                 'description' => trim($pwm_effect->label()),
                 'duration' => (int) ($pwm_effect->get('field_duration')->value),
@@ -317,6 +326,15 @@ class GamesController extends ControllerBase {
                 'priority' => (int) ($pwm_effect->get('field_priority')->value),
                 'repeat' => (int) ($pwm_effect->get('field_repeat')->value),
               ];
+              $trigger_source = $this->getStringFieldValue($pwm_effect, 'field_trigger_source');
+              if ($trigger_source !== NULL && $pwm_effect->hasField('field_trigger_number') && !$pwm_effect->get('field_trigger_number')->isEmpty()) {
+                $effect['simpleTrigger'] = [
+                  'source' => $trigger_source,
+                  'number' => (int) $pwm_effect->get('field_trigger_number')->value,
+                  'value' => $this->getBooleanFieldValue($pwm_effect, 'field_trigger_value') ? 1 : 0,
+                ];
+              }
+              $effects[] = $effect;
             }
 
             if ($i_o_board->isPublished() && $device->isPublished()) {
@@ -456,6 +474,14 @@ class GamesController extends ControllerBase {
               }
               if ($led_effect->hasField('field_size') && !$led_effect->get('field_size')->isEmpty()) {
                 $effect['size'] = (int) ($led_effect->get('field_size')->value);
+              }
+              $trigger_source = $this->getStringFieldValue($led_effect, 'field_trigger_source');
+              if ($trigger_source !== NULL && $led_effect->hasField('field_trigger_number') && !$led_effect->get('field_trigger_number')->isEmpty()) {
+                $effect['simpleTrigger'] = [
+                  'source' => $trigger_source,
+                  'number' => (int) $led_effect->get('field_trigger_number')->value,
+                  'value' => $this->getBooleanFieldValue($led_effect, 'field_trigger_value') ? 1 : 0,
+                ];
               }
               $effects[] = $effect;
             }

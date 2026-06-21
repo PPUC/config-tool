@@ -1,0 +1,23 @@
+uuid: d0ae0a45-74df-4f3a-a184-89229ec4f0d3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_value
+    - node.type.led_effect
+id: node.led_effect.field_trigger_value
+field_name: field_trigger_value
+entity_type: node
+bundle: led_effect
+label: 'Simple Trigger Value'
+description: 'Enabled means switch closed or lamp on. Disabled means switch open or lamp off.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'Closed / On'
+  off_label: 'Open / Off'
+field_type: boolean

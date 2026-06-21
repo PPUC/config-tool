@@ -1,0 +1,20 @@
+uuid: 5e7fb4d5-a65d-4855-b48a-977f32d9d37c
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_trigger_number
+field_name: field_trigger_number
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

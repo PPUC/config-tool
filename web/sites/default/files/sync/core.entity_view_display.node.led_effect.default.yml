@@ -19,12 +19,16 @@ dependencies:
     - field.field.node.led_effect.field_size
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
+    - field.field.node.led_effect.field_trigger_number
+    - field.field.node.led_effect.field_trigger_source
+    - field.field.node.led_effect.field_trigger_value
     - field.field.node.led_effect.field_white
     - field.field.node.led_effect.field_white_2
     - field.field.node.led_effect.field_white_3
     - node.type.led_effect
   module:
     - color_field
+    - options
     - user
 id: node.led_effect.default
 targetEntityType: node
@@ -172,6 +176,32 @@ content:
       link: true
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_trigger_number:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_trigger_source:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 19
+    region: content
+  field_trigger_value:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 21
     region: content
   field_white:
     type: number_integer

@@ -20,6 +20,9 @@ dependencies:
     - field.field.node.led_effect.field_size
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
+    - field.field.node.led_effect.field_trigger_number
+    - field.field.node.led_effect.field_trigger_source
+    - field.field.node.led_effect.field_trigger_value
     - field.field.node.led_effect.field_white
     - field.field.node.led_effect.field_white_2
     - field.field.node.led_effect.field_white_3
@@ -53,6 +56,9 @@ hidden:
   field_size: true
   field_speed: true
   field_string: true
+  field_trigger_number: true
+  field_trigger_source: true
+  field_trigger_value: true
   field_white: true
   field_white_2: true
   field_white_3: true

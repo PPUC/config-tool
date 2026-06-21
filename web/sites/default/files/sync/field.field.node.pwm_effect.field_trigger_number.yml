@@ -1,0 +1,23 @@
+uuid: 7cae463a-29d6-4aa1-a8af-c47eef9f57e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_number
+    - node.type.pwm_effect
+id: node.pwm_effect.field_trigger_number
+field_name: field_trigger_number
+entity_type: node
+bundle: pwm_effect
+label: 'Simple Trigger Number'
+description: 'Switch or lamp number that should trigger this effect on the IO board firmware.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 65535
+  prefix: ''
+  suffix: ''
+field_type: integer

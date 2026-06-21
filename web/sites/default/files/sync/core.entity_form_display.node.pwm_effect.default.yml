@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.pwm_effect.field_duration
     - field.field.node.pwm_effect.field_frequency
+    - field.field.node.pwm_effect.field_machine_name
     - field.field.node.pwm_effect.field_max_intensity
     - field.field.node.pwm_effect.field_min_intensity
     - field.field.node.pwm_effect.field_mode
@@ -12,7 +13,9 @@ dependencies:
     - field.field.node.pwm_effect.field_pwm_device
     - field.field.node.pwm_effect.field_pwm_effect
     - field.field.node.pwm_effect.field_repeat
-    - field.field.node.pwm_effect.field_machine_name
+    - field.field.node.pwm_effect.field_trigger_number
+    - field.field.node.pwm_effect.field_trigger_source
+    - field.field.node.pwm_effect.field_trigger_value
     - node.type.pwm_effect
 id: node.pwm_effect.default
 targetEntityType: node
@@ -21,21 +24,21 @@ mode: default
 content:
   field_duration:
     type: number
-    weight: 5
+    weight: 4
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_frequency:
     type: number
-    weight: 4
+    weight: 3
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_machine_name:
     type: string_textfield
-    weight: 11
+    weight: 10
     region: content
     settings:
       size: 60
@@ -43,54 +46,74 @@ content:
     third_party_settings: {  }
   field_max_intensity:
     type: number
-    weight: 6
+    weight: 5
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_min_intensity:
     type: number
-    weight: 7
+    weight: 6
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_mode:
     type: number
-    weight: 10
+    weight: 9
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_priority:
     type: number
-    weight: 8
+    weight: 7
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_pwm_device:
     type: options_select
-    weight: 2
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   field_pwm_effect:
     type: options_select
-    weight: 3
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   field_repeat:
     type: number
-    weight: 9
+    weight: 8
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
+  field_trigger_number:
+    type: number
+    weight: 12
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_trigger_source:
+    type: options_select
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_trigger_value:
+    type: boolean_checkbox
+    weight: 13
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 12
+    weight: 14
     region: content
     settings:
       display_label: true

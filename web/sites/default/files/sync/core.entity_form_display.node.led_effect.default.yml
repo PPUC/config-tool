@@ -19,6 +19,9 @@ dependencies:
     - field.field.node.led_effect.field_size
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
+    - field.field.node.led_effect.field_trigger_number
+    - field.field.node.led_effect.field_trigger_source
+    - field.field.node.led_effect.field_trigger_value
     - field.field.node.led_effect.field_white
     - field.field.node.led_effect.field_white_2
     - field.field.node.led_effect.field_white_3
@@ -53,7 +56,7 @@ content:
     third_party_settings: {  }
   field_duration:
     type: number
-    weight: 11
+    weight: 15
     region: content
     settings:
       placeholder: ''
@@ -66,21 +69,21 @@ content:
     third_party_settings: {  }
   field_fade_rate:
     type: number
-    weight: 16
+    weight: 13
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_gamma:
     type: boolean_checkbox
-    weight: 19
+    weight: 14
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_machine_name:
     type: string_textfield
-    weight: 17
+    weight: 19
     region: content
     settings:
       size: 60
@@ -88,28 +91,28 @@ content:
     third_party_settings: {  }
   field_mode:
     type: number
-    weight: 15
+    weight: 18
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_priority:
     type: number
-    weight: 13
+    weight: 16
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_repeat:
     type: number
-    weight: 14
+    weight: 17
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_reverse:
     type: boolean_checkbox
-    weight: 12
+    weight: 11
     region: content
     settings:
       display_label: true
@@ -123,7 +126,7 @@ content:
     third_party_settings: {  }
   field_size:
     type: number
-    weight: 20
+    weight: 12
     region: content
     settings:
       placeholder: ''
@@ -140,6 +143,26 @@ content:
     weight: 1
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_trigger_number:
+    type: number
+    weight: 21
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_trigger_source:
+    type: options_select
+    weight: 20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_trigger_value:
+    type: boolean_checkbox
+    weight: 22
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_white:
     type: number
@@ -164,7 +187,7 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 18
+    weight: 23
     region: content
     settings:
       display_label: true

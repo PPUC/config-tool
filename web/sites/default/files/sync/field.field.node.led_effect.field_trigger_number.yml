@@ -1,0 +1,23 @@
+uuid: 27e28f79-ceb4-4467-81f6-b3b46aac5893
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_number
+    - node.type.led_effect
+id: node.led_effect.field_trigger_number
+field_name: field_trigger_number
+entity_type: node
+bundle: led_effect
+label: 'Simple Trigger Number'
+description: 'Switch or lamp number that should trigger this effect on the IO board firmware.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 65535
+  prefix: ''
+  suffix: ''
+field_type: integer

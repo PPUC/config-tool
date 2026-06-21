@@ -1,0 +1,23 @@
+uuid: 82a97c86-8c6c-4fd3-b139-a9cd153cb57f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_value
+    - node.type.pwm_effect
+id: node.pwm_effect.field_trigger_value
+field_name: field_trigger_value
+entity_type: node
+bundle: pwm_effect
+label: 'Simple Trigger Value'
+description: 'Enabled means switch closed or lamp on. Disabled means switch open or lamp off.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'Closed / On'
+  off_label: 'Open / Off'
+field_type: boolean

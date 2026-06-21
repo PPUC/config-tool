@@ -1,0 +1,21 @@
+uuid: efc9ff0f-7dce-4ad2-b841-1d288d0d1679
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trigger_source
+    - node.type.pwm_effect
+  module:
+    - options
+id: node.pwm_effect.field_trigger_source
+field_name: field_trigger_source
+entity_type: node
+bundle: pwm_effect
+label: 'Simple Trigger Source'
+description: 'Optional local firmware trigger for this effect. Choose Switch for switch closed/open or Lamp for lamp on/off.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string
