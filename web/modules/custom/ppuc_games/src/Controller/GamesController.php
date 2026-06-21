@@ -81,16 +81,17 @@ class GamesController extends ControllerBase {
     if ($stripe_order === NULL || $led_order === NULL || strcasecmp($stripe_order, $led_order) === 0) {
       return $color;
     }
-    if (!preg_match('/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $matches)) {
+    if (!preg_match('/^(#?)(?:([0-9a-f]{2}))?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $matches)) {
       return $color;
     }
 
     $stripe_order = strtoupper($stripe_order);
     $led_order = strtoupper($led_order);
     $desired = [
-      'R' => $matches[1],
-      'G' => $matches[2],
-      'B' => $matches[3],
+      'W' => $matches[2] ?: '00',
+      'R' => $matches[3],
+      'G' => $matches[4],
+      'B' => $matches[5],
     ];
     $corrected = $desired;
 
@@ -103,7 +104,12 @@ class GamesController extends ControllerBase {
       }
     }
 
-    return '#' . $corrected['R'] . $corrected['G'] . $corrected['B'];
+    $prefix = $matches[1];
+    if (str_contains($stripe_order, 'W') || str_contains($led_order, 'W') || $matches[2] !== '') {
+      return $prefix . $corrected['W'] . $corrected['R'] . $corrected['G'] . $corrected['B'];
+    }
+
+    return $prefix . $corrected['R'] . $corrected['G'] . $corrected['B'];
   }
 
   public function accessAddSwitchMatrixSwitch(NodeInterface $node, AccountInterface $account): AccessResult {
