@@ -37,28 +37,28 @@ content:
     third_party_settings: {  }
   field_coin_door_closed_switch:
     type: number
-    weight: 13
+    weight: 12
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_game_on_solenoid:
     type: number
-    weight: 12
+    weight: 11
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_lamp_locations:
     type: media_library_widget
-    weight: 9
+    weight: 8
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_manual:
     type: media_library_widget
-    weight: 8
+    weight: 7
     region: content
     settings:
       media_types: {  }
@@ -71,49 +71,49 @@ content:
     third_party_settings: {  }
   field_rom:
     type: media_library_widget
-    weight: 7
+    weight: 6
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_solenoid_locations:
     type: media_library_widget
-    weight: 11
+    weight: 10
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_switch_locations:
     type: media_library_widget
-    weight: 10
+    weight: 9
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_translite:
     type: media_library_widget
-    weight: 5
+    weight: 4
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   field_translite_in_game:
     type: media_library_widget
-    weight: 6
+    weight: 5
     region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 4
+    weight: 3
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 3
+    weight: 13
     region: content
     settings:
       display_label: true

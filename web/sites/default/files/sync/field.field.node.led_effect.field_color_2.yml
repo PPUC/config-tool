@@ -1,0 +1,22 @@
+uuid: 3c086008-62ac-4815-b1e3-d147aee31308
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_color_2
+    - node.type.led_effect
+  module:
+    - color_field
+id: node.led_effect.field_color_2
+field_name: field_color_2
+entity_type: node
+bundle: led_effect
+label: 'Color 2'
+description: 'Optional second WS2812FX color slot. Used by effects such as Blink, Color Wipe, Breath, Scan, Running Color, Bicolor Chase, TwinkleFox, Rain, Popcorn, and Oscillator.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  opacity: 0
+field_type: color_field_type

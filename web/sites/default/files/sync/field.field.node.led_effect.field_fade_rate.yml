@@ -1,0 +1,23 @@
+uuid: 06bcd834-5ac8-4376-bbc9-5599fe8c0735
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_fade_rate
+    - node.type.led_effect
+id: node.led_effect.field_fade_rate
+field_name: field_fade_rate
+entity_type: node
+bundle: led_effect
+label: 'Fade Rate'
+description: 'WS2812FX option bits 4-6. 0 disables the fade option; 1 is fastest and 7 is slowest. Effects that call fade_out use this value.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 7
+  prefix: ''
+  suffix: ''
+field_type: integer

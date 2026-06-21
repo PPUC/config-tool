@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
+    - field.field.node.addressable_led.field_white
     - node.type.addressable_led
   module:
     - color_field
@@ -70,6 +71,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 106
+    region: content
+  field_white:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 104
     region: content
   links:
     settings: {  }

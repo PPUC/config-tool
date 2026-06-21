@@ -4,16 +4,24 @@ status: true
 dependencies:
   config:
     - field.field.node.led_effect.field_color
+    - field.field.node.led_effect.field_color_2
+    - field.field.node.led_effect.field_color_3
     - field.field.node.led_effect.field_duration
     - field.field.node.led_effect.field_effect
+    - field.field.node.led_effect.field_fade_rate
+    - field.field.node.led_effect.field_gamma
+    - field.field.node.led_effect.field_machine_name
     - field.field.node.led_effect.field_mode
     - field.field.node.led_effect.field_priority
     - field.field.node.led_effect.field_repeat
     - field.field.node.led_effect.field_reverse
     - field.field.node.led_effect.field_segment
+    - field.field.node.led_effect.field_size
     - field.field.node.led_effect.field_speed
     - field.field.node.led_effect.field_string
-    - field.field.node.led_effect.field_machine_name
+    - field.field.node.led_effect.field_white
+    - field.field.node.led_effect.field_white_2
+    - field.field.node.led_effect.field_white_3
     - node.type.led_effect
   module:
     - color_field
@@ -24,27 +32,55 @@ mode: default
 content:
   field_color:
     type: color_field_widget_html5
-    weight: 5
+    weight: 4
+    region: content
+    settings:
+      show_extra: false
+    third_party_settings: {  }
+  field_color_2:
+    type: color_field_widget_html5
+    weight: 6
+    region: content
+    settings:
+      show_extra: false
+    third_party_settings: {  }
+  field_color_3:
+    type: color_field_widget_html5
+    weight: 8
     region: content
     settings:
       show_extra: false
     third_party_settings: {  }
   field_duration:
     type: number
-    weight: 7
+    weight: 11
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_effect:
     type: options_select
-    weight: 4
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_fade_rate:
+    type: number
+    weight: 16
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_gamma:
+    type: boolean_checkbox
+    weight: 19
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_machine_name:
     type: string_textfield
-    weight: 12
+    weight: 17
     region: content
     settings:
       size: 60
@@ -52,55 +88,83 @@ content:
     third_party_settings: {  }
   field_mode:
     type: number
-    weight: 11
+    weight: 15
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_priority:
     type: number
-    weight: 9
+    weight: 13
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_repeat:
     type: number
-    weight: 10
+    weight: 14
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_reverse:
     type: boolean_checkbox
-    weight: 8
+    weight: 12
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_segment:
     type: number
-    weight: 3
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_size:
+    type: number
+    weight: 20
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_speed:
     type: number
-    weight: 6
+    weight: 10
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_string:
     type: options_select
-    weight: 2
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_white:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_white_2:
+    type: number
+    weight: 7
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_white_3:
+    type: number
+    weight: 9
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 13
+    weight: 18
     region: content
     settings:
       display_label: true

@@ -69,6 +69,23 @@ class GamesController extends ControllerBase {
     return $node->hasField($field_name) && !$node->get($field_name)->isEmpty() && (bool) $node->get($field_name)->value;
   }
 
+  protected function getColorFieldValue(NodeInterface $node, string $field_name): ?string {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
+
+    $color = $node->get($field_name)->color;
+    return $color !== '' ? $color : NULL;
+  }
+
+  protected function getWhiteFieldValue(NodeInterface $node, string $field_name): int {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return 0;
+    }
+
+    return max(0, min(255, (int) $node->get($field_name)->value));
+  }
+
   protected function getLedTypeName(NodeInterface $node): ?string {
     if (!$node->hasField('field_led_type') || $node->get('field_led_type')->isEmpty()) {
       return NULL;
@@ -77,39 +94,23 @@ class GamesController extends ControllerBase {
     return $node->get('field_led_type')->entity?->getName();
   }
 
-  protected function correctLedColorForOrder(string $color, ?string $stripe_order, ?string $led_order): string {
-    if ($stripe_order === NULL || $led_order === NULL || strcasecmp($stripe_order, $led_order) === 0) {
+  protected function ledTypeSupportsWhite(?string $led_type): bool {
+    return $led_type !== NULL && str_contains(strtoupper($led_type), 'W');
+  }
+
+  protected function formatLedColorForConfig(string $color, int $white, bool $supports_white): string {
+    if (!preg_match('/^#?(?:([0-9a-f]{2}))?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $matches)) {
       return $color;
     }
-    if (!preg_match('/^(#?)(?:([0-9a-f]{2}))?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i', $color, $matches)) {
-      return $color;
+
+    $red = $matches[2];
+    $green = $matches[3];
+    $blue = $matches[4];
+    if ($supports_white) {
+      return strtoupper(sprintf('%02X%s%s%s', $white, $red, $green, $blue));
     }
 
-    $stripe_order = strtoupper($stripe_order);
-    $led_order = strtoupper($led_order);
-    $desired = [
-      'W' => $matches[2] ?: '00',
-      'R' => $matches[3],
-      'G' => $matches[4],
-      'B' => $matches[5],
-    ];
-    $corrected = $desired;
-
-    $positions = min(strlen($stripe_order), strlen($led_order));
-    for ($position = 0; $position < $positions; $position++) {
-      $stripe_channel = $stripe_order[$position];
-      $led_channel = $led_order[$position];
-      if (isset($desired[$stripe_channel], $desired[$led_channel])) {
-        $corrected[$stripe_channel] = $desired[$led_channel];
-      }
-    }
-
-    $prefix = $matches[1];
-    if (str_contains($stripe_order, 'W') || str_contains($led_order, 'W') || $matches[2] !== '') {
-      return $prefix . $corrected['W'] . $corrected['R'] . $corrected['G'] . $corrected['B'];
-    }
-
-    return $prefix . $corrected['R'] . $corrected['G'] . $corrected['B'];
+    return strtoupper($red . $green . $blue);
   }
 
   public function accessAddSwitchMatrixSwitch(NodeInterface $node, AccountInterface $account): AccessResult {
@@ -382,10 +383,10 @@ class GamesController extends ControllerBase {
                 'description' => trim($addressable_led->label()),
                 'number' => (int) ($addressable_led->get('field_number')->value),
                 'ledNumber' => (int) ($addressable_led->get('field_string_position')->value),
-                'color' => $this->correctLedColorForOrder(
+                'color' => $this->formatLedColorForConfig(
                   $addressable_led->get('field_color')->color,
-                  $stripe_led_type,
-                  $this->getLedTypeName($addressable_led)
+                  $this->getWhiteFieldValue($addressable_led, 'field_white'),
+                  $this->ledTypeSupportsWhite($stripe_led_type)
                 ),
               ];
             }
@@ -403,10 +404,41 @@ class GamesController extends ControllerBase {
               if (!$led_effect->isPublished()) {
                 continue;
               }
-              $effects[] = [
+
+              $supports_white = $this->ledTypeSupportsWhite($stripe_led_type);
+              $color_2 = $this->getColorFieldValue($led_effect, 'field_color_2');
+              $white_2 = $this->getWhiteFieldValue($led_effect, 'field_white_2');
+              $color_3 = $this->getColorFieldValue($led_effect, 'field_color_3');
+              $white_3 = $this->getWhiteFieldValue($led_effect, 'field_white_3');
+              $color_slots = [
+                [
+                  'color' => $this->getColorFieldValue($led_effect, 'field_color') ?? '#000000',
+                  'white' => $this->getWhiteFieldValue($led_effect, 'field_white'),
+                  'present' => TRUE,
+                ],
+                [
+                  'color' => $color_2 ?? '#000000',
+                  'white' => $white_2,
+                  'present' => $color_2 !== NULL || $white_2 > 0,
+                ],
+                [
+                  'color' => $color_3 ?? '#000000',
+                  'white' => $white_3,
+                  'present' => $color_3 !== NULL || $white_3 > 0,
+                ],
+              ];
+              while (count($color_slots) > 1 && end($color_slots)['present'] === FALSE) {
+                array_pop($color_slots);
+              }
+              $colors = array_map(
+                fn (array $slot): string => $this->formatLedColorForConfig($slot['color'], $slot['white'], $supports_white),
+                $color_slots
+              );
+
+              $effect = [
                 'name' => trim((string) $led_effect->get('field_machine_name')->value),
                 'description' => trim($led_effect->label()),
-                'color' => $led_effect->get('field_color')->color,
+                'colors' => $colors,
                 'duration' => (int) ($led_effect->get('field_duration')->value),
                 'effect' => (int) ($led_effect->get('field_effect')->entity->field_number->value ?? 0),
                 'reverse' => (int) ($led_effect->get('field_reverse')->value),
@@ -416,6 +448,16 @@ class GamesController extends ControllerBase {
                 'priority' => (int) ($led_effect->get('field_priority')->value),
                 'repeat' => (int) ($led_effect->get('field_repeat')->value),
               ];
+              if ($led_effect->hasField('field_fade_rate') && !$led_effect->get('field_fade_rate')->isEmpty()) {
+                $effect['fadeRate'] = (int) ($led_effect->get('field_fade_rate')->value);
+              }
+              if ($this->getBooleanFieldValue($led_effect, 'field_gamma')) {
+                $effect['gamma'] = TRUE;
+              }
+              if ($led_effect->hasField('field_size') && !$led_effect->get('field_size')->isEmpty()) {
+                $effect['size'] = (int) ($led_effect->get('field_size')->value);
+              }
+              $effects[] = $effect;
             }
 
             if ($i_o_board->isPublished() && $device->isPublished()) {

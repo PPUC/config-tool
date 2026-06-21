@@ -9,50 +9,42 @@ dependencies:
     - field.field.node.switch_matrix_switch.field_position
     - field.field.node.switch_matrix_switch.field_switch_matrix
     - node.type.switch_matrix_switch
-  module:
-    - path
 id: node.switch_matrix_switch.default
 targetEntityType: node
 bundle: switch_matrix_switch
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 10
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_button:
     type: boolean_checkbox
-    weight: 27
+    weight: 5
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_debounce:
     type: number
-    weight: 26
+    weight: 4
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_number:
     type: number
-    weight: 7
+    weight: 3
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_position:
     type: number
-    weight: 121
+    weight: 2
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_switch_matrix:
     type: entity_reference_autocomplete
-    weight: 122
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
@@ -60,49 +52,24 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  promote:
-    type: boolean_checkbox
-    weight: 15
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    weight: 16
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 5
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

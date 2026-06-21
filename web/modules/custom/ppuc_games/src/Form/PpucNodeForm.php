@@ -3,7 +3,9 @@
 namespace Drupal\ppuc_games\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
 use Drupal\node\Form\NodeForm;
+use Drupal\taxonomy\TermInterface;
 
 /**
  * PPUC form handler for the node edit forms.
@@ -16,7 +18,155 @@ class PpucNodeForm extends NodeForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    return parent::form($form, $form_state);
+    $form = parent::form($form, $form_state);
+    $this->configureWhiteChannelFields($form, $form_state);
+
+    return $form;
+  }
+
+  public function refreshForm(array $form, FormStateInterface $form_state): array {
+    return $form;
+  }
+
+  protected function configureWhiteChannelFields(array &$form, FormStateInterface $form_state): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if (!in_array($entity->bundle(), ['addressable_led', 'led_effect'], TRUE)) {
+      return;
+    }
+
+    $wrapper_id = $form['#id'] ?? 'ppuc-node-form-wrapper';
+    if (!isset($form['#id'])) {
+      $form['#prefix'] = '<div id="' . $wrapper_id . '">' . ($form['#prefix'] ?? '');
+      $form['#suffix'] = ($form['#suffix'] ?? '') . '</div>';
+    }
+
+    if (isset($form['field_string']['widget'])) {
+      $form['field_string']['widget']['#ajax'] = [
+        'callback' => '::refreshForm',
+        'wrapper' => $wrapper_id,
+      ];
+    }
+    if (isset($form['field_effect']['widget'])) {
+      $form['field_effect']['widget']['#ajax'] = [
+        'callback' => '::refreshForm',
+        'wrapper' => $wrapper_id,
+      ];
+    }
+
+    $supports_white = $this->selectedLedStringSupportsWhite($entity, $form_state);
+    $color_slots = $entity->bundle() === 'led_effect'
+      ? $this->selectedLedEffectColorSlots($entity, $form_state)
+      : 1;
+
+    foreach ([2 => 'field_color_2', 3 => 'field_color_3'] as $slot => $field_name) {
+      if (isset($form[$field_name])) {
+        $form[$field_name]['#access'] = $color_slots >= $slot;
+      }
+    }
+
+    foreach ([1 => 'field_white', 2 => 'field_white_2', 3 => 'field_white_3'] as $slot => $field_name) {
+      if (isset($form[$field_name])) {
+        $form[$field_name]['#access'] = $supports_white && $color_slots >= $slot;
+      }
+    }
+  }
+
+  protected function selectedLedStringSupportsWhite(NodeInterface $entity, FormStateInterface $form_state): bool {
+    $target_id = NULL;
+    $value = $form_state->getValue('field_string');
+    if (is_array($value)) {
+      $first = reset($value);
+      if (is_array($first) && isset($first['target_id'])) {
+        $target_id = $first['target_id'];
+      }
+      elseif (isset($value['target_id'])) {
+        $target_id = $value['target_id'];
+      }
+    }
+    elseif ($value) {
+      $target_id = $value;
+    }
+
+    if (!$target_id && $entity->hasField('field_string') && !$entity->get('field_string')->isEmpty()) {
+      $target_id = $entity->get('field_string')->target_id;
+    }
+
+    if (!$target_id) {
+      return FALSE;
+    }
+
+    $string = $this->entityTypeManager->getStorage('node')->load($target_id);
+    if (!$string instanceof NodeInterface || !$string->hasField('field_led_type') || $string->get('field_led_type')->isEmpty()) {
+      return FALSE;
+    }
+
+    return str_contains(strtoupper($string->get('field_led_type')->entity?->getName() ?? ''), 'W');
+  }
+
+  protected function selectedLedEffectColorSlots(NodeInterface $entity, FormStateInterface $form_state): int {
+    $target_id = NULL;
+    $value = $form_state->getValue('field_effect');
+    if (is_array($value)) {
+      $first = reset($value);
+      if (is_array($first) && isset($first['target_id'])) {
+        $target_id = $first['target_id'];
+      }
+      elseif (isset($value['target_id'])) {
+        $target_id = $value['target_id'];
+      }
+    }
+    elseif ($value) {
+      $target_id = $value;
+    }
+
+    if (!$target_id && $entity->hasField('field_effect') && !$entity->get('field_effect')->isEmpty()) {
+      $target_id = $entity->get('field_effect')->target_id;
+    }
+
+    if (!$target_id) {
+      return 1;
+    }
+
+    $effect = $this->entityTypeManager->getStorage('taxonomy_term')->load($target_id);
+    if (!$effect instanceof TermInterface || !$effect->hasField('field_number') || $effect->get('field_number')->isEmpty()) {
+      return 1;
+    }
+
+    $effect_number = (int) $effect->get('field_number')->value;
+    $three_color_effects = [
+      54, // Tricolor Chase.
+      55, // TwinkleFox.
+      56, // Rain.
+      59, // Dual Larson.
+      64, // Trifade.
+      65, // VU Meter.
+      67, // Bits.
+      68, // Multi Comet.
+      71, // Oscillator.
+    ];
+    $two_color_effects = [
+      1, // Blink.
+      2, // Breath.
+      3, // Color Wipe.
+      4, // Color Wipe Inverse.
+      5, // Color Wipe Reverse.
+      6, // Color Wipe Reverse Inverse.
+      13, // Scan.
+      14, // Dual Scan.
+      40, // Running Color.
+      53, // Bicolor Chase.
+      70, // Popcorn.
+    ];
+
+    if (in_array($effect_number, $three_color_effects, TRUE)) {
+      return 3;
+    }
+    if (in_array($effect_number, $two_color_effects, TRUE)) {
+      return 2;
+    }
+
+    return 1;
   }
 
   /**

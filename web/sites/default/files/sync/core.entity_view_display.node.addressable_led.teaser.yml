@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
+    - field.field.node.addressable_led.field_white
     - node.type.addressable_led
   module:
     - user
@@ -32,3 +33,6 @@ hidden:
   field_role: true
   field_string: true
   field_string_position: true
+  field_white: true
+  field_white_2: true
+  field_white_3: true

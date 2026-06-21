@@ -1,0 +1,23 @@
+uuid: 02c14bd9-969a-48dd-8f54-b324781fe629
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_size
+    - node.type.led_effect
+id: node.led_effect.field_size
+field_name: field_size
+entity_type: node
+bundle: led_effect
+label: Size
+description: 'WS2812FX size option bits. 0 is small/default, 1 is medium, 2 is large, and 3 is extra large. Used by effects that read SIZE_OPTION.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 3
+  prefix: ''
+  suffix: ''
+field_type: integer

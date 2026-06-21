@@ -1,0 +1,25 @@
+uuid: f00d4f86-3844-4f98-a54e-f631f0e3dfa0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_white
+    - node.type.addressable_led
+id: node.addressable_led.field_white
+field_name: field_white
+entity_type: node
+bundle: addressable_led
+label: White
+description: 'White channel value 0-255 for four-channel LED strings.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: 255
+  prefix: ''
+  suffix: ''
+field_type: integer
