@@ -53,14 +53,14 @@ For _macOS_ these are the essential steps:
 ```shell
 brew install docker
 brew install orbstack
-brew install drud/ddev/ddev
+brew install ddev/ddev/ddev
 mkcert -install
 ```
 
 For _Linux_ install docker according to https://ddev.readthedocs.io/en/stable/users/install/docker-installation/#linux
 Afterwards install DDEV:
 ```shell
-brew install drud/ddev/ddev
+brew install ddev/ddev/ddev
 mkcert -install
 ```
 
