@@ -2763,6 +2763,753 @@
             "install-path": "../nikic/php-parser"
         },
         {
+            "name": "npm-asset/agent-base",
+            "version": "7.1.4",
+            "version_normalized": "7.1.4.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/agent-base"
+        },
+        {
+            "name": "npm-asset/asamuzakjp--css-color",
+            "version": "3.2.0",
+            "version_normalized": "3.2.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@asamuzakjp/css-color/-/css-color-3.2.0.tgz"
+            },
+            "require": {
+                "npm-asset/csstools--css-calc": ">=2.1.3,<3.0.0",
+                "npm-asset/csstools--css-color-parser": ">=3.0.9,<4.0.0",
+                "npm-asset/csstools--css-parser-algorithms": ">=3.0.4,<4.0.0",
+                "npm-asset/csstools--css-tokenizer": ">=3.0.3,<4.0.0",
+                "npm-asset/lru-cache": ">=10.4.3,<11.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/asamuzakjp--css-color"
+        },
+        {
+            "name": "npm-asset/blockly",
+            "version": "12.5.1",
+            "version_normalized": "12.5.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/blockly/-/blockly-12.5.1.tgz"
+            },
+            "require": {
+                "npm-asset/jsdom": "26.1.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "Apache-2.0"
+            ],
+            "install-path": "../../web/libraries/blockly"
+        },
+        {
+            "name": "npm-asset/cssstyle",
+            "version": "4.6.0",
+            "version_normalized": "4.6.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/cssstyle/-/cssstyle-4.6.0.tgz"
+            },
+            "require": {
+                "npm-asset/asamuzakjp--css-color": ">=3.2.0,<4.0.0",
+                "npm-asset/rrweb-cssom": ">=0.8.0,<0.9.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/cssstyle"
+        },
+        {
+            "name": "npm-asset/csstools--color-helpers",
+            "version": "5.1.0",
+            "version_normalized": "5.1.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@csstools/color-helpers/-/color-helpers-5.1.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT-0"
+            ],
+            "install-path": "../../web/libraries/csstools--color-helpers"
+        },
+        {
+            "name": "npm-asset/csstools--css-calc",
+            "version": "2.1.4",
+            "version_normalized": "2.1.4.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@csstools/css-calc/-/css-calc-2.1.4.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/csstools--css-calc"
+        },
+        {
+            "name": "npm-asset/csstools--css-color-parser",
+            "version": "3.1.0",
+            "version_normalized": "3.1.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@csstools/css-color-parser/-/css-color-parser-3.1.0.tgz"
+            },
+            "require": {
+                "npm-asset/csstools--color-helpers": ">=5.1.0,<6.0.0",
+                "npm-asset/csstools--css-calc": ">=2.1.4,<3.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/csstools--css-color-parser"
+        },
+        {
+            "name": "npm-asset/csstools--css-parser-algorithms",
+            "version": "3.0.5",
+            "version_normalized": "3.0.5.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@csstools/css-parser-algorithms/-/css-parser-algorithms-3.0.5.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/csstools--css-parser-algorithms"
+        },
+        {
+            "name": "npm-asset/csstools--css-tokenizer",
+            "version": "3.0.4",
+            "version_normalized": "3.0.4.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/@csstools/css-tokenizer/-/css-tokenizer-3.0.4.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/csstools--css-tokenizer"
+        },
+        {
+            "name": "npm-asset/data-urls",
+            "version": "5.0.0",
+            "version_normalized": "5.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/data-urls/-/data-urls-5.0.0.tgz"
+            },
+            "require": {
+                "npm-asset/whatwg-mimetype": ">=4.0.0,<5.0.0",
+                "npm-asset/whatwg-url": ">=14.0.0,<15.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/data-urls"
+        },
+        {
+            "name": "npm-asset/debug",
+            "version": "4.4.3",
+            "version_normalized": "4.4.3.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz"
+            },
+            "require": {
+                "npm-asset/ms": ">=2.1.3,<3.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/debug"
+        },
+        {
+            "name": "npm-asset/decimal.js",
+            "version": "10.6.0",
+            "version_normalized": "10.6.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/decimal.js"
+        },
+        {
+            "name": "npm-asset/entities",
+            "version": "6.0.1",
+            "version_normalized": "6.0.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/entities/-/entities-6.0.1.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "install-path": "../../web/libraries/entities"
+        },
+        {
+            "name": "npm-asset/html-encoding-sniffer",
+            "version": "4.0.0",
+            "version_normalized": "4.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/html-encoding-sniffer/-/html-encoding-sniffer-4.0.0.tgz"
+            },
+            "require": {
+                "npm-asset/whatwg-encoding": ">=3.1.1,<4.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/html-encoding-sniffer"
+        },
+        {
+            "name": "npm-asset/http-proxy-agent",
+            "version": "7.0.2",
+            "version_normalized": "7.0.2.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-7.0.2.tgz"
+            },
+            "require": {
+                "npm-asset/agent-base": ">=7.1.0,<8.0.0",
+                "npm-asset/debug": ">=4.3.4,<5.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/http-proxy-agent"
+        },
+        {
+            "name": "npm-asset/https-proxy-agent",
+            "version": "7.0.6",
+            "version_normalized": "7.0.6.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz"
+            },
+            "require": {
+                "npm-asset/agent-base": ">=7.1.2,<8.0.0",
+                "npm-asset/debug": "~4"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/https-proxy-agent"
+        },
+        {
+            "name": "npm-asset/iconv-lite",
+            "version": "0.6.3",
+            "version_normalized": "0.6.3.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
+            },
+            "require": {
+                "npm-asset/safer-buffer": ">=2.1.2,<3.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/iconv-lite"
+        },
+        {
+            "name": "npm-asset/is-potential-custom-element-name",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/is-potential-custom-element-name/-/is-potential-custom-element-name-1.0.1.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/is-potential-custom-element-name"
+        },
+        {
+            "name": "npm-asset/jsdom",
+            "version": "26.1.0",
+            "version_normalized": "26.1.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/jsdom/-/jsdom-26.1.0.tgz"
+            },
+            "require": {
+                "npm-asset/cssstyle": ">=4.2.1,<5.0.0",
+                "npm-asset/data-urls": ">=5.0.0,<6.0.0",
+                "npm-asset/decimal.js": ">=10.5.0,<11.0.0",
+                "npm-asset/html-encoding-sniffer": ">=4.0.0,<5.0.0",
+                "npm-asset/http-proxy-agent": ">=7.0.2,<8.0.0",
+                "npm-asset/https-proxy-agent": ">=7.0.6,<8.0.0",
+                "npm-asset/is-potential-custom-element-name": ">=1.0.1,<2.0.0",
+                "npm-asset/nwsapi": ">=2.2.16,<3.0.0",
+                "npm-asset/parse5": ">=7.2.1,<8.0.0",
+                "npm-asset/rrweb-cssom": ">=0.8.0,<0.9.0",
+                "npm-asset/saxes": ">=6.0.0,<7.0.0",
+                "npm-asset/symbol-tree": ">=3.2.4,<4.0.0",
+                "npm-asset/tough-cookie": ">=5.1.1,<6.0.0",
+                "npm-asset/w3c-xmlserializer": ">=5.0.0,<6.0.0",
+                "npm-asset/webidl-conversions": ">=7.0.0,<8.0.0",
+                "npm-asset/whatwg-encoding": ">=3.1.1,<4.0.0",
+                "npm-asset/whatwg-mimetype": ">=4.0.0,<5.0.0",
+                "npm-asset/whatwg-url": ">=14.1.1,<15.0.0",
+                "npm-asset/ws": ">=8.18.0,<9.0.0",
+                "npm-asset/xml-name-validator": ">=5.0.0,<6.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/jsdom"
+        },
+        {
+            "name": "npm-asset/lru-cache",
+            "version": "10.4.3",
+            "version_normalized": "10.4.3.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/lru-cache/-/lru-cache-10.4.3.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "ISC"
+            ],
+            "install-path": "../../web/libraries/lru-cache"
+        },
+        {
+            "name": "npm-asset/ms",
+            "version": "2.1.3",
+            "version_normalized": "2.1.3.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/ms"
+        },
+        {
+            "name": "npm-asset/nwsapi",
+            "version": "2.2.23",
+            "version_normalized": "2.2.23.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/nwsapi/-/nwsapi-2.2.23.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/nwsapi"
+        },
+        {
+            "name": "npm-asset/parse5",
+            "version": "7.3.0",
+            "version_normalized": "7.3.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/parse5/-/parse5-7.3.0.tgz"
+            },
+            "require": {
+                "npm-asset/entities": ">=6.0.0,<7.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/parse5"
+        },
+        {
+            "name": "npm-asset/punycode",
+            "version": "2.3.1",
+            "version_normalized": "2.3.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/punycode"
+        },
+        {
+            "name": "npm-asset/rrweb-cssom",
+            "version": "0.8.0",
+            "version_normalized": "0.8.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/rrweb-cssom/-/rrweb-cssom-0.8.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/rrweb-cssom"
+        },
+        {
+            "name": "npm-asset/safer-buffer",
+            "version": "2.1.2",
+            "version_normalized": "2.1.2.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/safer-buffer"
+        },
+        {
+            "name": "npm-asset/saxes",
+            "version": "6.0.0",
+            "version_normalized": "6.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/saxes/-/saxes-6.0.0.tgz"
+            },
+            "require": {
+                "npm-asset/xmlchars": ">=2.2.0,<3.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "ISC"
+            ],
+            "install-path": "../../web/libraries/saxes"
+        },
+        {
+            "name": "npm-asset/symbol-tree",
+            "version": "3.2.4",
+            "version_normalized": "3.2.4.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/symbol-tree/-/symbol-tree-3.2.4.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/symbol-tree"
+        },
+        {
+            "name": "npm-asset/tldts",
+            "version": "6.1.86",
+            "version_normalized": "6.1.86.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/tldts/-/tldts-6.1.86.tgz"
+            },
+            "require": {
+                "npm-asset/tldts-core": ">=6.1.86,<7.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/tldts"
+        },
+        {
+            "name": "npm-asset/tldts-core",
+            "version": "6.1.86",
+            "version_normalized": "6.1.86.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/tldts-core/-/tldts-core-6.1.86.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/tldts-core"
+        },
+        {
+            "name": "npm-asset/tough-cookie",
+            "version": "5.1.2",
+            "version_normalized": "5.1.2.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/tough-cookie/-/tough-cookie-5.1.2.tgz"
+            },
+            "require": {
+                "npm-asset/tldts": ">=6.1.32,<7.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "install-path": "../../web/libraries/tough-cookie"
+        },
+        {
+            "name": "npm-asset/tr46",
+            "version": "5.1.1",
+            "version_normalized": "5.1.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/tr46/-/tr46-5.1.1.tgz"
+            },
+            "require": {
+                "npm-asset/punycode": ">=2.3.1,<3.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/tr46"
+        },
+        {
+            "name": "npm-asset/w3c-xmlserializer",
+            "version": "5.0.0",
+            "version_normalized": "5.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz"
+            },
+            "require": {
+                "npm-asset/xml-name-validator": ">=5.0.0,<6.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/w3c-xmlserializer"
+        },
+        {
+            "name": "npm-asset/webidl-conversions",
+            "version": "7.0.0",
+            "version_normalized": "7.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-7.0.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "install-path": "../../web/libraries/webidl-conversions"
+        },
+        {
+            "name": "npm-asset/whatwg-encoding",
+            "version": "3.1.1",
+            "version_normalized": "3.1.1.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/whatwg-encoding/-/whatwg-encoding-3.1.1.tgz"
+            },
+            "require": {
+                "npm-asset/iconv-lite": "0.6.3"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/whatwg-encoding"
+        },
+        {
+            "name": "npm-asset/whatwg-mimetype",
+            "version": "4.0.0",
+            "version_normalized": "4.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-4.0.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/whatwg-mimetype"
+        },
+        {
+            "name": "npm-asset/whatwg-url",
+            "version": "14.2.0",
+            "version_normalized": "14.2.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/whatwg-url/-/whatwg-url-14.2.0.tgz"
+            },
+            "require": {
+                "npm-asset/tr46": ">=5.1.0,<6.0.0",
+                "npm-asset/webidl-conversions": ">=7.0.0,<8.0.0"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/whatwg-url"
+        },
+        {
+            "name": "npm-asset/ws",
+            "version": "8.21.0",
+            "version_normalized": "8.21.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/ws/-/ws-8.21.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/ws"
+        },
+        {
+            "name": "npm-asset/xml-name-validator",
+            "version": "5.0.0",
+            "version_normalized": "5.0.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/xml-name-validator/-/xml-name-validator-5.0.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "Apache-2.0"
+            ],
+            "install-path": "../../web/libraries/xml-name-validator"
+        },
+        {
+            "name": "npm-asset/xmlchars",
+            "version": "2.2.0",
+            "version_normalized": "2.2.0.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/xmlchars"
+        },
+        {
+            "name": "oomphinc/composer-installers-extender",
+            "version": "2.0.1",
+            "version_normalized": "2.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/oomphinc/composer-installers-extender.git",
+                "reference": "cbf4b6f9a24153b785d09eee755b995ba87bd5f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/oomphinc/composer-installers-extender/zipball/cbf4b6f9a24153b785d09eee755b995ba87bd5f9",
+                "reference": "cbf4b6f9a24153b785d09eee755b995ba87bd5f9",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.1 || ^2.0",
+                "composer/installers": "^1.0 || ^2.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "composer/composer": "^2.0",
+                "phpunit/phpunit": "^7.2",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "time": "2021-12-15T12:32:42+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "class": "OomphInc\\ComposerInstallersExtender\\Plugin"
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "OomphInc\\ComposerInstallersExtender\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen Beemsterboer",
+                    "email": "stephen@oomphinc.com",
+                    "homepage": "https://github.com/balbuf"
+                },
+                {
+                    "name": "Nathan Dentzau",
+                    "email": "nate@oomphinc.com",
+                    "homepage": "http://oomph.is/ndentzau"
+                }
+            ],
+            "description": "Extend the composer/installers plugin to accept any arbitrary package type.",
+            "homepage": "http://www.oomphinc.com/",
+            "support": {
+                "issues": "https://github.com/oomphinc/composer-installers-extender/issues",
+                "source": "https://github.com/oomphinc/composer-installers-extender/tree/2.0.1"
+            },
+            "abandoned": true,
+            "install-path": "../oomphinc/composer-installers-extender"
+        },
+        {
             "name": "pear/archive_tar",
             "version": "1.6.0",
             "version_normalized": "1.6.0.0",

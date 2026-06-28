@@ -20,6 +20,7 @@ class PpucNodeForm extends NodeForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $this->configureWhiteChannelFields($form, $form_state);
+    $this->configureRulesFields($form);
 
     return $form;
   }
@@ -70,6 +71,58 @@ class PpucNodeForm extends NodeForm {
         $form[$field_name]['#access'] = $supports_white && $color_slots >= $slot;
       }
     }
+  }
+
+  protected function configureRulesFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if ($entity->bundle() !== 'game') {
+      return;
+    }
+
+    if (!isset($form['field_rules_lua'], $form['field_rules_blocks'])) {
+      return;
+    }
+
+    $form['#attached']['library'][] = 'ppuc_games/rules_editor';
+    $form['#attributes']['class'][] = 'ppuc-rules-form';
+    $form['field_rules_lua']['#group'] = 'ppuc_rules';
+    $form['field_rules_blocks']['#group'] = 'ppuc_rules';
+    $form['field_rules_blocks']['#attributes']['class'][] = 'ppuc-rules-blockly-data';
+    $form['field_rules_blocks']['#wrapper_attributes']['class'][] = 'ppuc-rules-blockly-data-wrapper';
+    $form['field_rules_blocks']['#wrapper_attributes']['style'] = 'display:none;';
+    if (isset($form['field_rules_blocks']['widget'][0]['value'])) {
+      $form['field_rules_blocks']['widget'][0]['value']['#attributes']['class'][] = 'ppuc-rules-blockly-data-value';
+      $form['field_rules_blocks']['widget'][0]['value']['#attributes']['style'] = 'display:none;';
+    }
+
+    $form['ppuc_rules'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Rules'),
+      '#open' => TRUE,
+      '#weight' => 80,
+    ];
+
+    $form['ppuc_rules']['workspace'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['ppuc-rules-workspace'],
+      ],
+      '#weight' => -10,
+    ];
+    $form['ppuc_rules']['workspace']['toolbar'] = [
+      '#markup' => '<div class="ppuc-rules-toolbar"><button type="button" class="button ppuc-rules-blockly-generate">Generate Lua</button></div>',
+    ];
+    $form['ppuc_rules']['workspace']['blockly'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#value' => $this->t('Loading Blockly...'),
+      '#attributes' => [
+        'class' => ['ppuc-rules-blockly'],
+        'data-ppuc-rules-blockly' => '',
+        'style' => 'height:420px;min-height:420px;border:1px solid #d3d4d9;background:#fff;padding:0;',
+      ],
+    ];
   }
 
   protected function selectedLedStringSupportsWhite(NodeInterface $entity, FormStateInterface $form_state): bool {

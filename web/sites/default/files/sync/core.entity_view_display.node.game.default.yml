@@ -10,6 +10,8 @@ dependencies:
     - field.field.node.game.field_manual
     - field.field.node.game.field_platform
     - field.field.node.game.field_rom
+    - field.field.node.game.field_rules_blocks
+    - field.field.node.game.field_rules_lua
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_locations
     - field.field.node.game.field_translite
@@ -62,6 +64,8 @@ hidden:
   field_lamp_locations: true
   field_manual: true
   field_rom: true
+  field_rules_blocks: true
+  field_rules_lua: true
   field_solenoid_locations: true
   field_switch_locations: true
   field_translite: true

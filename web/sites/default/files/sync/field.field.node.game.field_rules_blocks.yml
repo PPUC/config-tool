@@ -1,0 +1,20 @@
+uuid: f85b017e-bc76-463f-80ab-2d966b87457a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rules_blocks
+    - node.type.game
+id: node.game.field_rules_blocks
+field_name: field_rules_blocks
+entity_type: node
+bundle: game
+label: 'Blockly Workspace'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  case_sensitive: false
+field_type: string_long

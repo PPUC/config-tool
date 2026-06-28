@@ -1,0 +1,13 @@
+rules_editor:
+  css:
+    theme:
+      css/rules-editor.css: {}
+  js:
+    /libraries/blockly/blockly_compressed.js: {}
+    /libraries/blockly/blocks_compressed.js: {}
+    /libraries/blockly/lua_compressed.js: {}
+    /libraries/blockly/msg/en.js: {}
+    js/rules-editor.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

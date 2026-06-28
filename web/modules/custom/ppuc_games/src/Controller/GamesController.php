@@ -554,6 +554,37 @@ class GamesController extends ControllerBase {
     );
   }
 
+  public function streamRulesLua(NodeInterface $node): Response {
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '_rules.lua', 'lua');
+    \Drupal::service('event_dispatcher')->dispatch($event);
+    $sanitized_filename = $event->getFilename();
+
+    return new Response(
+      $this->getRulesLua($node),
+      200,
+      [
+        'Content-Type' => 'text/x-lua',
+        'Content-Disposition' => 'attachment; filename=' . $sanitized_filename,
+      ]
+    );
+  }
+
+  protected function getRulesLua(NodeInterface $node): string {
+    if (!$node->hasField('field_rules_lua') || $node->get('field_rules_lua')->isEmpty()) {
+      return '';
+    }
+
+    return (string) $node->get('field_rules_lua')->value;
+  }
+
+  protected function getRulesBlocks(NodeInterface $node): string {
+    if (!$node->hasField('field_rules_blocks') || $node->get('field_rules_blocks')->isEmpty()) {
+      return '';
+    }
+
+    return (string) $node->get('field_rules_blocks')->value;
+  }
+
   /**
    * Streams a tar.gz archive containing a complete game configuration.
    */
@@ -571,9 +602,23 @@ class GamesController extends ControllerBase {
     $this->exporter->setForceUpdate(FALSE);
 
     $objects = [];
-    $this->buildYaml($node, $objects);
+    $yaml = $this->buildYaml($node, $objects);
     foreach ($objects as $object) {
       $this->exporter->exportEntity($object);
+    }
+
+    $project_folder = $export_folder . '/ppuc';
+    $this->fileSystem->prepareDirectory($project_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    file_put_contents($project_folder . '/game.yml', Yaml::encode($yaml));
+
+    $rules_lua = $this->getRulesLua($node);
+    if ($rules_lua !== '') {
+      file_put_contents($project_folder . '/rules.lua', $rules_lua);
+    }
+
+    $rules_blocks = $this->getRulesBlocks($node);
+    if ($rules_blocks !== '') {
+      file_put_contents($project_folder . '/rules.blockly.json', $rules_blocks);
     }
 
     $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.tar.gz', '.tar.gz');

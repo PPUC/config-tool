@@ -56,6 +56,7 @@ return array(
     'PhpTuf\\ComposerStager\\' => array($vendorDir . '/php-tuf/composer-stager/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
     'Peast\\' => array($vendorDir . '/mck89/peast/lib/Peast'),
+    'OomphInc\\ComposerInstallersExtender\\' => array($vendorDir . '/oomphinc/composer-installers-extender/src'),
     'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
     'League\\Container\\' => array($vendorDir . '/league/container/src'),
     'Laravel\\Prompts\\' => array($vendorDir . '/laravel/prompts/src'),

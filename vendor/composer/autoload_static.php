@@ -102,6 +102,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
             'PhpParser\\' => 10,
             'Peast\\' => 6,
         ),
+        'O' =>
+        array (
+            'OomphInc\\ComposerInstallersExtender\\' => 36,
+        ),
         'M' =>
         array (
             'Masterminds\\' => 12,
@@ -354,6 +358,10 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
         'Peast\\' =>
         array (
             0 => __DIR__ . '/..' . '/mck89/peast/lib/Peast',
+        ),
+        'OomphInc\\ComposerInstallersExtender\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
         ),
         'Masterminds\\' =>
         array (

@@ -26,6 +26,17 @@ runtime safety features:
 - PWM device nodes can be marked as `Ball search`. When checked, the exported
   PWM output entry contains `ballSearch: true`.
 
+## Lua rules
+
+Games can store Lua rules and Blockly workspace data. The game export archive
+includes the generated YAML, `rules.lua`, and `rules.blockly.json` when rules
+data exists, so another config-tool instance can import and continue the
+project.
+
+The rules editor always supports direct Lua editing. Blockly integration is
+initialized when Blockly assets are available on the page; otherwise the editor
+falls back to the Lua textarea.
+
 ## Development
 
 ### Linux and macOS
