@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.game.body
+    - field.field.node.game.field_coil_gi_mappings
     - field.field.node.game.field_coin_door_closed_switch
     - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
@@ -12,6 +13,8 @@ dependencies:
     - field.field.node.game.field_platform
     - field.field.node.game.field_rom
     - field.field.node.game.field_solenoid_locations
+    - field.field.node.game.field_switch_group_memberships
+    - field.field.node.game.field_switch_groups
     - field.field.node.game.field_switch_locations
     - field.field.node.game.field_translite
     - field.field.node.game.field_translite_in_game
@@ -35,6 +38,7 @@ content:
     weight: 1
     region: content
 hidden:
+  field_coil_gi_mappings: true
   field_coin_door_closed_switch: true
   field_game_on_solenoid: true
   field_lamp_locations: true
@@ -42,6 +46,8 @@ hidden:
   field_platform: true
   field_rom: true
   field_solenoid_locations: true
+  field_switch_group_memberships: true
+  field_switch_groups: true
   field_switch_locations: true
   field_translite: true
   field_translite_in_game: true

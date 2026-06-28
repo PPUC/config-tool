@@ -21,6 +21,7 @@ class PpucNodeForm extends NodeForm {
     $form = parent::form($form, $form_state);
     $this->configureWhiteChannelFields($form, $form_state);
     $this->configureRulesFields($form);
+    $this->configureSwitchGroupMembershipFields($form);
 
     return $form;
   }
@@ -152,6 +153,192 @@ class PpucNodeForm extends NodeForm {
     ];
   }
 
+  protected function configureSwitchGroupMembershipFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if (!in_array($entity->bundle(), ['switch', 'switch_matrix_switch'], TRUE)) {
+      return;
+    }
+
+    $game = $this->getSwitchGame($entity);
+    if (!$game instanceof NodeInterface || !$game->hasField('field_switch_groups')) {
+      return;
+    }
+
+    $groups = $this->parseSwitchGroupNamesField($game);
+    if ($groups === []) {
+      $form['ppuc_switch_groups'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Switch groups'),
+        '#open' => FALSE,
+        '#weight' => 90,
+        'empty' => [
+          '#markup' => '<p>' . $this->t('Define switch groups on the game edit page first.') . '</p>',
+        ],
+      ];
+      return;
+    }
+
+    $switch_number = $this->getSwitchNumber($entity);
+    $memberships = $this->parseSwitchGroupMembershipsField($game);
+    $default_value = [];
+    if ($switch_number !== NULL) {
+      foreach ($memberships as $name => $numbers) {
+        if (in_array($switch_number, $numbers, TRUE)) {
+          $default_value[] = $name;
+        }
+      }
+    }
+
+    $options = array_combine(array_keys($groups), array_keys($groups));
+    $form['ppuc_switch_groups'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Switch groups'),
+      '#open' => TRUE,
+      '#weight' => 90,
+      'groups' => [
+        '#type' => 'checkboxes',
+        '#title' => $this->t('Groups'),
+        '#options' => $options,
+        '#default_value' => $default_value,
+        '#description' => $this->t('Group names are defined on the game edit page. Saving this switch updates the game switch group list.'),
+      ],
+    ];
+  }
+
+  protected function getSwitchGame(NodeInterface $entity): ?NodeInterface {
+    if ($entity->bundle() === 'switch' && $entity->hasField('field_i_o_board') && !$entity->get('field_i_o_board')->isEmpty()) {
+      $board = $entity->get('field_i_o_board')->entity;
+      if ($board instanceof NodeInterface && $board->hasField('field_game') && !$board->get('field_game')->isEmpty()) {
+        $game = $board->get('field_game')->entity;
+        return $game instanceof NodeInterface ? $game : NULL;
+      }
+    }
+
+    if ($entity->bundle() === 'switch_matrix_switch' && $entity->hasField('field_switch_matrix') && !$entity->get('field_switch_matrix')->isEmpty()) {
+      $matrix = $entity->get('field_switch_matrix')->entity;
+      if ($matrix instanceof NodeInterface && $matrix->hasField('field_i_o_board') && !$matrix->get('field_i_o_board')->isEmpty()) {
+        $board = $matrix->get('field_i_o_board')->entity;
+        if ($board instanceof NodeInterface && $board->hasField('field_game') && !$board->get('field_game')->isEmpty()) {
+          $game = $board->get('field_game')->entity;
+          return $game instanceof NodeInterface ? $game : NULL;
+        }
+      }
+    }
+
+    return NULL;
+  }
+
+  protected function getSwitchNumber(NodeInterface $entity): ?int {
+    if (!$entity->hasField('field_number') || $entity->get('field_number')->isEmpty()) {
+      return NULL;
+    }
+    return (int) $entity->get('field_number')->value;
+  }
+
+  protected function parseSwitchGroupNamesField(NodeInterface $game): array {
+    if (!$game->hasField('field_switch_groups') || $game->get('field_switch_groups')->isEmpty()) {
+      return [];
+    }
+
+    $groups = [];
+    $value = (string) $game->get('field_switch_groups')->value;
+    foreach (preg_split('/\r\n|\r|\n/', $value) ?: [] as $line) {
+      $line = trim(preg_replace('/#.*/', '', $line) ?? '');
+      if ($line === '' || !preg_match('/^([A-Za-z][A-Za-z0-9_-]*)/', $line, $matches)) {
+        continue;
+      }
+      if ($matches[1] === 'buttons') {
+        continue;
+      }
+      $groups[$matches[1]] = [];
+    }
+
+    return $groups;
+  }
+
+  protected function parseSwitchGroupMembershipsField(NodeInterface $game): array {
+    $value = '';
+    if ($game->hasField('field_switch_group_memberships') && !$game->get('field_switch_group_memberships')->isEmpty()) {
+      $value = (string) $game->get('field_switch_group_memberships')->value;
+    }
+    elseif ($game->hasField('field_switch_groups') && !$game->get('field_switch_groups')->isEmpty()) {
+      $value = (string) $game->get('field_switch_groups')->value;
+    }
+
+    if (trim($value) === '') {
+      return [];
+    }
+
+    $groups = [];
+    foreach (preg_split('/\r\n|\r|\n/', $value) ?: [] as $line) {
+      $line = trim(preg_replace('/#.*/', '', $line) ?? '');
+      if ($line === '' || !preg_match('/^([A-Za-z][A-Za-z0-9_-]*)\s*[:=]\s*(.*)$/', $line, $matches)) {
+        continue;
+      }
+      $numbers = [];
+      foreach (preg_split('/[\s,]+/', trim($matches[2])) ?: [] as $part) {
+        if ($part !== '' && preg_match('/^\d+$/', $part)) {
+          $numbers[] = (int) $part;
+        }
+      }
+      $groups[$matches[1]] = array_values(array_unique($numbers));
+    }
+
+    return $groups;
+  }
+
+  protected function formatSwitchGroupMembershipsField(array $groups): string {
+    $lines = [];
+    foreach ($groups as $name => $numbers) {
+      sort($numbers, SORT_NUMERIC);
+      $lines[] = $name . ': ' . implode(', ', array_values(array_unique($numbers)));
+    }
+    return implode("\n", $lines);
+  }
+
+  protected function formatSwitchGroupNamesField(array $groups): string {
+    return implode("\n", array_keys($groups));
+  }
+
+  protected function saveSwitchGroupMemberships(FormStateInterface $form_state): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if (!in_array($entity->bundle(), ['switch', 'switch_matrix_switch'], TRUE)) {
+      return;
+    }
+
+    $value = $form_state->getValue('ppuc_switch_groups');
+    if (!is_array($value) || !isset($value['groups']) || !is_array($value['groups'])) {
+      return;
+    }
+
+    $switch_number = $this->getSwitchNumber($entity);
+    $game = $this->getSwitchGame($entity);
+    if ($switch_number === NULL || !$game instanceof NodeInterface || !$game->hasField('field_switch_group_memberships')) {
+      return;
+    }
+
+    $selected = array_filter($value['groups']);
+    $groups = $this->parseSwitchGroupNamesField($game);
+    $memberships = $this->parseSwitchGroupMembershipsField($game);
+    foreach ($groups as $name => $numbers) {
+      $groups[$name] = $memberships[$name] ?? [];
+    }
+    foreach ($groups as $name => &$numbers) {
+      $numbers = array_values(array_diff($numbers, [$switch_number]));
+      if (isset($selected[$name])) {
+        $numbers[] = $switch_number;
+      }
+      $numbers = array_values(array_unique($numbers));
+    }
+    unset($numbers);
+
+    $game->set('field_switch_groups', $this->formatSwitchGroupNamesField($groups));
+    $game->set('field_switch_group_memberships', $this->formatSwitchGroupMembershipsField($groups));
+    $game->save();
+  }
+
   protected function selectedLedStringSupportsWhite(NodeInterface $entity, FormStateInterface $form_state): bool {
     $target_id = NULL;
     $value = $form_state->getValue('field_string');
@@ -258,6 +445,15 @@ class PpucNodeForm extends NodeForm {
     unset($element['preview']);
 
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    $status = parent::save($form, $form_state);
+    $this->saveSwitchGroupMemberships($form_state);
+    return $status;
   }
 
   /**

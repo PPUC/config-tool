@@ -1,0 +1,19 @@
+uuid: 930a32b3-acde-4ce5-ba94-5209e7de5a66
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_coil_gi_mappings
+field_name: field_coil_gi_mappings
+entity_type: node
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

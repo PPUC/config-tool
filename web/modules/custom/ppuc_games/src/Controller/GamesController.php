@@ -104,6 +104,97 @@ class GamesController extends ControllerBase {
     return $node->get('field_led_type')->entity?->getName();
   }
 
+  protected function parseIntegerList(string $value): array {
+    $numbers = [];
+    foreach (preg_split('/[\s,]+/', trim($value)) ?: [] as $part) {
+      if ($part === '') {
+        continue;
+      }
+      if (!preg_match('/^\d+$/', $part)) {
+        continue;
+      }
+      $numbers[] = (int) $part;
+    }
+    return array_values(array_unique($numbers));
+  }
+
+  protected function getLineConfigField(NodeInterface $node, string $field_name): array {
+    $value = $this->getStringFieldValue($node, $field_name);
+    if ($value === NULL) {
+      return [];
+    }
+
+    $lines = [];
+    foreach (preg_split('/\r\n|\r|\n/', $value) ?: [] as $line) {
+      $line = trim(preg_replace('/#.*/', '', $line) ?? '');
+      if ($line !== '') {
+        $lines[] = $line;
+      }
+    }
+    return $lines;
+  }
+
+  protected function parseSwitchGroups(NodeInterface $node): array {
+    $group_names = $this->parseSwitchGroupNames($node);
+    if ($group_names === []) {
+      return [];
+    }
+
+    $groups = [];
+    $membership_lines = $this->getLineConfigField($node, 'field_switch_group_memberships');
+    if ($membership_lines === []) {
+      $membership_lines = $this->getLineConfigField($node, 'field_switch_groups');
+    }
+    foreach ($membership_lines as $line) {
+      if (!preg_match('/^([A-Za-z][A-Za-z0-9_-]*)\s*[:=]\s*(.*)$/', $line, $matches)) {
+        continue;
+      }
+      $name = $matches[1];
+      if (!isset($group_names[$name])) {
+        continue;
+      }
+      $switches = $this->parseIntegerList($matches[2]);
+      if ($switches !== []) {
+        $groups[$name] = ['switches' => $switches];
+      }
+    }
+    return $groups;
+  }
+
+  protected function parseSwitchGroupNames(NodeInterface $node): array {
+    $groups = [];
+    foreach ($this->getLineConfigField($node, 'field_switch_groups') as $line) {
+      if (preg_match('/^([A-Za-z][A-Za-z0-9_-]*)/', $line, $matches) && $matches[1] !== 'buttons') {
+        $groups[$matches[1]] = TRUE;
+      }
+    }
+    return $groups;
+  }
+
+  protected function parseCoilGiMappings(NodeInterface $node): array {
+    $mappings = [];
+    foreach ($this->getLineConfigField($node, 'field_coil_gi_mappings') as $line) {
+      if (!preg_match('/^(\d+)\s*:\s*([0-9,\s]+)\s*=\s*(\d+)(?:\s*\/\s*(\d+))?$/', $line, $matches)) {
+        continue;
+      }
+      $coil = (int) $matches[1];
+      $on_brightness = max(0, min(8, (int) $matches[3]));
+      $off_brightness = isset($matches[4]) && $matches[4] !== '' ? max(0, min(8, (int) $matches[4])) : 0;
+      foreach ($this->parseIntegerList($matches[2]) as $gi) {
+        if ($gi < 1) {
+          continue;
+        }
+        $mappings[] = [
+          'coil' => $coil,
+          'gi' => $gi,
+          'onBrightness' => $on_brightness,
+          'offBrightness' => $off_brightness,
+        ];
+      }
+    }
+    return $mappings;
+  }
+
   protected function ledTypeSupportsWhite(?string $led_type): bool {
     return $led_type !== NULL && str_contains(strtoupper($led_type), 'W');
   }
@@ -166,6 +257,16 @@ class GamesController extends ControllerBase {
       'pwmOutput' => [],
       'mechs' => [],
     ];
+
+    $switch_groups = $this->parseSwitchGroups($node);
+    if ($switch_groups !== []) {
+      $yaml['switchGroups'] = $switch_groups;
+    }
+
+    $coil_gi_mappings = $this->parseCoilGiMappings($node);
+    if ($coil_gi_mappings !== []) {
+      $yaml['coilGiMappings'] = $coil_gi_mappings;
+    }
 
     $storage = $this->entityTypeManager()->getStorage($node->getEntityTypeId());
 

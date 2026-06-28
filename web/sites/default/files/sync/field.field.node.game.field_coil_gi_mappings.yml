@@ -1,0 +1,19 @@
+uuid: fd623c89-fcf8-410f-a88a-31fd651cbade
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_coil_gi_mappings
+    - node.type.game
+id: node.game.field_coil_gi_mappings
+field_name: field_coil_gi_mappings
+entity_type: node
+bundle: game
+label: 'Coil GI mappings'
+description: 'SYS11 coil-driven GI mapping, one line per mapping. Format: coil: gi[,gi...] = onBrightness/offBrightness. Example: 12: 1,2 = 8/0.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,19 @@
+uuid: 26470adb-9828-44b7-8610-4556d1953044
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_switch_group_memberships
+    - node.type.game
+id: node.game.field_switch_group_memberships
+field_name: field_switch_group_memberships
+entity_type: node
+bundle: game
+label: 'Switch group memberships'
+description: 'Internal storage for switch group membership selected on switch edit forms.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
