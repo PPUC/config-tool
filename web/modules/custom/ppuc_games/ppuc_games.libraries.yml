@@ -1,5 +1,5 @@
 rules_editor:
-  version: 2026.06.28.8
+  version: 2026.06.28.22
   css:
     theme:
       /libraries/codemirror/lib/codemirror.css: {}
