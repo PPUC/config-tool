@@ -13,6 +13,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -569,6 +570,29 @@ class GamesController extends ControllerBase {
     );
   }
 
+  public function streamRuleLua(NodeInterface $node): Response {
+    if ($node->bundle() !== 'rule') {
+      throw $this->createNotFoundException();
+    }
+
+    return new Response(
+      $this->getRulesLua($node),
+      200,
+      [
+        'Content-Type' => 'text/x-lua',
+        'Content-Disposition' => 'attachment; filename=' . $this->buildRuleFilename($node, 'lua', false),
+      ]
+    );
+  }
+
+  public function addRule(NodeInterface $node): RedirectResponse {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    return $this->redirect('node.add', ['node_type' => 'rule'], ['query' => ['game' => $node->id()]]);
+  }
+
   protected function getRulesLua(NodeInterface $node): string {
     if (!$node->hasField('field_rules_lua') || $node->get('field_rules_lua')->isEmpty()) {
       return '';
@@ -583,6 +607,111 @@ class GamesController extends ControllerBase {
     }
 
     return (string) $node->get('field_rules_blocks')->value;
+  }
+
+  protected function getRuleNodes(NodeInterface $game, bool $enabled_only = false): array {
+    if ($game->bundle() !== 'game') {
+      return [];
+    }
+
+    $query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'rule')
+      ->condition('field_game.target_id', $game->id())
+      ->sort('field_weight.value', 'ASC')
+      ->sort('title', 'ASC');
+
+    if ($enabled_only) {
+      $query->condition('field_enabled.value', 1);
+    }
+
+    $ids = $query->execute();
+    if (empty($ids)) {
+      return [];
+    }
+
+    return Node::loadMultiple($ids);
+  }
+
+  protected function ruleIsEnabled(NodeInterface $rule): bool {
+    return !$rule->hasField('field_enabled') || $rule->get('field_enabled')->isEmpty() || (bool) $rule->get('field_enabled')->value;
+  }
+
+  protected function getRuleWeight(NodeInterface $rule): int {
+    return $rule->hasField('field_weight') && !$rule->get('field_weight')->isEmpty() ? (int) $rule->get('field_weight')->value : 0;
+  }
+
+  protected function getRuleEditorMode(NodeInterface $rule): string {
+    return $rule->hasField('field_rules_editor_mode') && !$rule->get('field_rules_editor_mode')->isEmpty()
+      ? (string) $rule->get('field_rules_editor_mode')->value
+      : 'blockly';
+  }
+
+  protected function buildRuleFilename(NodeInterface $rule, string $extension, bool $include_weight = true): string {
+    $base = preg_replace('/[^a-z0-9]+/', '-', strtolower($rule->getTitle()));
+    $base = trim($base ?: 'rule', '-');
+    $filename = ($include_weight ? sprintf('%04d-', $this->getRuleWeight($rule)) : '') . $base . '.' . $extension;
+    $event = new FileUploadSanitizeNameEvent($filename, $extension);
+    \Drupal::service('event_dispatcher')->dispatch($event);
+    return $event->getFilename();
+  }
+
+  protected function writeRuleFiles(NodeInterface $game, string $rules_folder): void {
+    $directory = $rules_folder;
+    $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+    foreach ($this->getRuleNodes($game, TRUE) as $rule) {
+      $rules_lua = $this->getRulesLua($rule);
+      if ($rules_lua === '') {
+        continue;
+      }
+
+      file_put_contents($rules_folder . '/' . $this->buildRuleFilename($rule, 'lua'), $rules_lua);
+
+      if ($this->getRuleEditorMode($rule) === 'blockly') {
+        $rules_blocks = $this->getRulesBlocks($rule);
+        if ($rules_blocks !== '') {
+          file_put_contents($rules_folder . '/' . $this->buildRuleFilename($rule, 'blockly.json'), $rules_blocks);
+        }
+      }
+    }
+  }
+
+  public function streamRulesArchive(NodeInterface $node): Response {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    $tmp = $this->fileSystem->getTempDirectory() . '/ppuc-rules-' . $node->id();
+    $this->fileSystem->deleteRecursive($tmp);
+    $rules_folder = $tmp . '/rules';
+    $this->fileSystem->prepareDirectory($rules_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $this->writeRuleFiles($node, $rules_folder);
+
+    $tar = $tmp . '/rules.tar';
+    $gz = $tar . '.gz';
+    if (file_exists($tar)) {
+      unlink($tar);
+    }
+    if (file_exists($gz)) {
+      unlink($gz);
+    }
+
+    $archive = new \PharData($tar);
+    $archive->buildFromDirectory($rules_folder);
+    $archive->compress(\Phar::GZ);
+
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '_rules.tar.gz', 'tar.gz');
+    \Drupal::service('event_dispatcher')->dispatch($event);
+
+    return new Response(
+      file_get_contents($gz),
+      200,
+      [
+        'Content-Type' => 'application/gzip',
+        'Content-Disposition' => 'attachment; filename=' . $event->getFilename(),
+      ]
+    );
   }
 
   /**
@@ -611,15 +740,10 @@ class GamesController extends ControllerBase {
     $this->fileSystem->prepareDirectory($project_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     file_put_contents($project_folder . '/game.yml', Yaml::encode($yaml));
 
-    $rules_lua = $this->getRulesLua($node);
-    if ($rules_lua !== '') {
-      file_put_contents($project_folder . '/rules.lua', $rules_lua);
+    foreach ($this->getRuleNodes($node) as $rule) {
+      $this->exporter->exportEntity($rule, TRUE);
     }
-
-    $rules_blocks = $this->getRulesBlocks($node);
-    if ($rules_blocks !== '') {
-      file_put_contents($project_folder . '/rules.blockly.json', $rules_blocks);
-    }
+    $this->writeRuleFiles($node, $project_folder . '/rules');
 
     $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.tar.gz', '.tar.gz');
     \Drupal::service('event_dispatcher')->dispatch($event);

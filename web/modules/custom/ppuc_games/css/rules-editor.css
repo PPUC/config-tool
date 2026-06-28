@@ -2,24 +2,77 @@
   margin-bottom: 1rem;
 }
 
+.ppuc-rules-form .ppuc-rules-details {
+  clear: both;
+}
+
+@media (min-width: 61rem) {
+  .ppuc-rules-form .layout-region--main,
+  .ppuc-rules-form .layout-region--main > .layout-region__content {
+    display: contents;
+  }
+
+  .ppuc-rules-form .ppuc-rules-details,
+  .ppuc-rules-form .layout-region--footer {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  .ppuc-rules-form .layout-region--footer .layout-region__content {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.with-sidebar:has(.ppuc-rules-form),
+.with-sidebar.ppuc-rules-page-layout {
+  display: block;
+}
+
+.with-sidebar:has(.ppuc-rules-form) .page-content,
+.with-sidebar.ppuc-rules-page-layout .page-content {
+  width: 100%;
+}
+
+.with-sidebar:has(.ppuc-rules-form) > .sidebar,
+.with-sidebar.ppuc-rules-page-layout > .sidebar {
+  display: none;
+}
+
 .ppuc-rules-blockly-data-wrapper,
 .ppuc-rules-blockly-data {
   display: none !important;
 }
 
 .ppuc-rules-toolbar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
   margin-bottom: .5rem;
+}
+
+.ppuc-rules-status {
+  color: #55565b;
 }
 
 .ppuc-rules-blockly {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 420px;
-  min-height: 420px;
+  height: 80vh;
+  min-height: 560px;
   border: 1px solid #d3d4d9;
   background: #fff;
   padding: 0;
+}
+
+@media (max-height: 760px) {
+  .ppuc-rules-blockly {
+    min-height: 420px;
+  }
 }
 
 .ppuc-rules-blockly.is-unavailable {
@@ -28,4 +81,17 @@
   padding: .75rem;
   color: #55565b;
   background: #f7f7f8;
+}
+
+.ppuc-rules-form .CodeMirror {
+  border: 1px solid #d3d4d9;
+  min-height: 320px;
+}
+
+.ppuc-rules-form.is-blockly-mode .CodeMirror {
+  background: #f7f7f8;
+}
+
+.ppuc-rules-form.is-lua-mode .ppuc-rules-workspace {
+  margin-bottom: 0;
 }

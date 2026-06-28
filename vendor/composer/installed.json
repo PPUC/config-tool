@@ -2818,6 +2818,21 @@
             "install-path": "../../web/libraries/blockly"
         },
         {
+            "name": "npm-asset/codemirror",
+            "version": "5.65.21",
+            "version_normalized": "5.65.21.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/codemirror/-/codemirror-5.65.21.tgz"
+            },
+            "type": "npm-asset",
+            "installation-source": "dist",
+            "license": [
+                "MIT"
+            ],
+            "install-path": "../../web/libraries/codemirror"
+        },
+        {
             "name": "npm-asset/cssstyle",
             "version": "4.6.0",
             "version_normalized": "4.6.0.0",

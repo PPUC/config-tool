@@ -1,0 +1,19 @@
+uuid: 3f60de85-5a1f-49fb-9dca-c8b6499a77c1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rules_blocks
+    - node.type.rule
+id: node.rule.field_rules_blocks
+field_name: field_rules_blocks
+entity_type: node
+bundle: rule
+label: 'Blockly Workspace'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

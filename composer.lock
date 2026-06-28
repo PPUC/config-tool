@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc268a6208736b4d6b564a14b3e35af3",
+    "content-hash": "6188e257278b637c0e01a95d8a7f49b7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2697,6 +2697,18 @@
             "type": "npm-asset",
             "license": [
                 "Apache-2.0"
+            ]
+        },
+        {
+            "name": "npm-asset/codemirror",
+            "version": "5.65.21",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/codemirror/-/codemirror-5.65.21.tgz"
+            },
+            "type": "npm-asset",
+            "license": [
+                "MIT"
             ]
         },
         {

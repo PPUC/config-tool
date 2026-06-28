@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a2100aef4218677d27d145004683eb03aac8fd85',
+        'reference' => '388212066dff774b46b7cb2cc7bc3035f3d52ab1',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -516,6 +516,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'npm-asset/codemirror' => array(
+            'pretty_version' => '5.65.21',
+            'version' => '5.65.21.0',
+            'reference' => null,
+            'type' => 'npm-asset',
+            'install_path' => __DIR__ . '/../../web/libraries/codemirror',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'npm-asset/cssstyle' => array(
             'pretty_version' => '4.6.0',
             'version' => '4.6.0.0',
@@ -939,7 +948,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a2100aef4218677d27d145004683eb03aac8fd85',
+            'reference' => '388212066dff774b46b7cb2cc7bc3035f3d52ab1',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

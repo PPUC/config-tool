@@ -1,0 +1,58 @@
+uuid: e332504a-1104-492b-9cfe-405ac223b7e4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.rule.field_enabled
+    - field.field.node.rule.field_game
+    - field.field.node.rule.field_rules_blocks
+    - field.field.node.rule.field_rules_editor_mode
+    - field.field.node.rule.field_rules_lua
+    - field.field.node.rule.field_weight
+    - node.type.rule
+  module:
+    - options
+    - user
+id: node.rule.default
+targetEntityType: node
+bundle: rule
+mode: default
+content:
+  field_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_game:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_rules_editor_mode:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_weight:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  field_rules_blocks: true
+  field_rules_lua: true
+  links: true

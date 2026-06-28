@@ -1,0 +1,18 @@
+uuid: 15aabd4e-65e8-44bf-88e2-0c468554aadd
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: Rule
+type: rule
+description: 'Lua or Blockly rules for a game.'
+help: null
+new_revision: false
+preview_mode: 1
+display_submitted: false

@@ -12,6 +12,12 @@ ppuc_games.import_game:
     - view.frontpage.page_1
   title: 'Import Game'
 
+ppuc_games.add_rule:
+  route_name: ppuc_games.add_rule
+  appears_on:
+    - view.game_rules.rules
+  title: 'Add Rule'
+
 ppuc_games.add_i_o_board:
   route_name: node.add
   route_parameters:

@@ -1,0 +1,27 @@
+uuid: 80fec8a1-ef51-4310-b46c-6480f9091c67
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_rules_editor_mode
+field_name: field_rules_editor_mode
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: blockly
+      label: Blockly
+    -
+      value: lua
+      label: Lua
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -9,7 +9,12 @@ ppuc_games.yaml:
   title: 'Download Game Config'
 
 ppuc_games.rules:
-  route_name: ppuc_games.rules
+  route_name: view.game_rules.rules
+  base_route: entity.node.canonical
+  title: 'Rules'
+
+ppuc_games.rules_download:
+  route_name: ppuc_games.rules_download
   base_route: entity.node.canonical
   title: 'Download Rules'
 

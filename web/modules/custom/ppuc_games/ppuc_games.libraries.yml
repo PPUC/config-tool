@@ -1,8 +1,12 @@
 rules_editor:
+  version: 2026.06.28.8
   css:
     theme:
+      /libraries/codemirror/lib/codemirror.css: {}
       css/rules-editor.css: {}
   js:
+    /libraries/codemirror/lib/codemirror.js: {}
+    /libraries/codemirror/mode/lua/lua.js: {}
     /libraries/blockly/blockly_compressed.js: {}
     /libraries/blockly/blocks_compressed.js: {}
     /libraries/blockly/lua_compressed.js: {}

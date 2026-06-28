@@ -76,18 +76,43 @@ class PpucNodeForm extends NodeForm {
   protected function configureRulesFields(array &$form): void {
     /** @var \Drupal\node\NodeInterface $entity */
     $entity = $this->getEntity();
-    if ($entity->bundle() !== 'game') {
+    if ($entity->bundle() !== 'rule') {
       return;
     }
 
-    if (!isset($form['field_rules_lua'], $form['field_rules_blocks'])) {
+    if (!isset($form['field_rules_lua'], $form['field_rules_blocks'], $form['field_rules_editor_mode'])) {
       return;
     }
 
     $form['#attached']['library'][] = 'ppuc_games/rules_editor';
     $form['#attributes']['class'][] = 'ppuc-rules-form';
+    $mode = $entity->hasField('field_rules_editor_mode') && !$entity->get('field_rules_editor_mode')->isEmpty()
+      ? (string) $entity->get('field_rules_editor_mode')->value
+      : 'blockly';
+    $form['#attributes']['data-ppuc-rules-mode'] = $mode;
+
+    if ($entity->isNew() && isset($form['field_game']['widget'][0]['target_id'])) {
+      $game_id = \Drupal::request()->query->get('game');
+      if (is_numeric($game_id)) {
+        $game = $this->entityTypeManager->getStorage('node')->load((int) $game_id);
+        if ($game instanceof NodeInterface && $game->bundle() === 'game') {
+          $form['field_game']['widget'][0]['target_id']['#default_value'] = $game;
+        }
+      }
+    }
+
     $form['field_rules_lua']['#group'] = 'ppuc_rules';
     $form['field_rules_blocks']['#group'] = 'ppuc_rules';
+    $form['field_rules_editor_mode']['#group'] = 'ppuc_rules';
+    $form['field_rules_editor_mode']['#wrapper_attributes']['style'] = 'display:none;';
+    if (isset($form['field_rules_editor_mode']['widget'])) {
+      $form['field_rules_editor_mode']['widget']['#required'] = FALSE;
+      foreach (['blockly', 'lua'] as $mode_value) {
+        if (isset($form['field_rules_editor_mode']['widget'][$mode_value])) {
+          $form['field_rules_editor_mode']['widget'][$mode_value]['#required'] = FALSE;
+        }
+      }
+    }
     $form['field_rules_blocks']['#attributes']['class'][] = 'ppuc-rules-blockly-data';
     $form['field_rules_blocks']['#wrapper_attributes']['class'][] = 'ppuc-rules-blockly-data-wrapper';
     $form['field_rules_blocks']['#wrapper_attributes']['style'] = 'display:none;';
@@ -101,6 +126,9 @@ class PpucNodeForm extends NodeForm {
       '#title' => $this->t('Rules'),
       '#open' => TRUE,
       '#weight' => 80,
+      '#attributes' => [
+        'class' => ['ppuc-rules-details'],
+      ],
     ];
 
     $form['ppuc_rules']['workspace'] = [
@@ -111,7 +139,7 @@ class PpucNodeForm extends NodeForm {
       '#weight' => -10,
     ];
     $form['ppuc_rules']['workspace']['toolbar'] = [
-      '#markup' => '<div class="ppuc-rules-toolbar"><button type="button" class="button ppuc-rules-blockly-generate">Generate Lua</button></div>',
+      '#markup' => '<div class="ppuc-rules-toolbar"><button type="button" class="button ppuc-rules-blockly-generate">Generate Lua</button><button type="button" class="button ppuc-rules-edit-lua">Edit Lua directly</button><button type="button" class="button ppuc-rules-use-blockly">Use Blockly</button><span class="ppuc-rules-status" aria-live="polite"></span></div>',
     ];
     $form['ppuc_rules']['workspace']['blockly'] = [
       '#type' => 'html_tag',
@@ -120,7 +148,6 @@ class PpucNodeForm extends NodeForm {
       '#attributes' => [
         'class' => ['ppuc-rules-blockly'],
         'data-ppuc-rules-blockly' => '',
-        'style' => 'height:420px;min-height:420px;border:1px solid #d3d4d9;background:#fff;padding:0;',
       ],
     ];
   }

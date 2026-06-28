@@ -1,0 +1,29 @@
+uuid: 00c64c85-018b-4733-8331-de82cb3d5235
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game
+    - node.type.game
+    - node.type.rule
+id: node.rule.field_game
+field_name: field_game
+entity_type: node
+bundle: rule
+label: Game
+description: 'The game this rule belongs to.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      game: game
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

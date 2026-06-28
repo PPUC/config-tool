@@ -34,10 +34,37 @@ ppuc_games.yaml:
       node:
         type: entity:node
 
-ppuc_games.rules:
-  path: '/node/{node}/rules.lua'
+ppuc_games.add_rule:
+  path: '/node/{node}/rules/add'
   defaults:
-    _controller: '\Drupal\ppuc_games\Controller\GamesController::streamRulesLua'
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::addRule'
+    _title: 'Add Rule'
+  requirements:
+    _permission: 'create rule content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+ppuc_games.rules_download:
+  path: '/node/{node}/rules.tar.gz'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::streamRulesArchive'
+    _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
+  requirements:
+    _permission: 'access content'
+    node: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+ppuc_games.rule_lua:
+  path: '/node/{node}/rule.lua'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::streamRuleLua'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
     _permission: 'access content'

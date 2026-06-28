@@ -10,8 +10,6 @@ dependencies:
     - field.field.node.game.field_manual
     - field.field.node.game.field_platform
     - field.field.node.game.field_rom
-    - field.field.node.game.field_rules_blocks
-    - field.field.node.game.field_rules_lua
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_locations
     - field.field.node.game.field_translite
@@ -77,22 +75,6 @@ content:
     region: content
     settings:
       media_types: {  }
-    third_party_settings: {  }
-  field_rules_blocks:
-    type: string_textarea
-    weight: 15
-    region: content
-    settings:
-      rows: 8
-      placeholder: ''
-    third_party_settings: {  }
-  field_rules_lua:
-    type: string_textarea
-    weight: 14
-    region: content
-    settings:
-      rows: 24
-      placeholder: ''
     third_party_settings: {  }
   field_solenoid_locations:
     type: media_library_widget

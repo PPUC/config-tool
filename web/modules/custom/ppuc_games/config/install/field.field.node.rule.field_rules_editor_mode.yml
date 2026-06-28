@@ -1,0 +1,23 @@
+uuid: dd38c254-f105-459b-a163-1b072082579d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rules_editor_mode
+    - node.type.rule
+  module:
+    - options
+id: node.rule.field_rules_editor_mode
+field_name: field_rules_editor_mode
+entity_type: node
+bundle: rule
+label: 'Rules Editor Mode'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: blockly
+default_value_callback: ''
+settings: {  }
+field_type: list_string

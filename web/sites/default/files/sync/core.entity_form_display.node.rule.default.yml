@@ -1,0 +1,91 @@
+uuid: 37130745-c7aa-4c2b-8655-f457d8d56705
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.rule.field_enabled
+    - field.field.node.rule.field_game
+    - field.field.node.rule.field_rules_blocks
+    - field.field.node.rule.field_rules_editor_mode
+    - field.field.node.rule.field_rules_lua
+    - field.field.node.rule.field_weight
+    - node.type.rule
+  module:
+    - options
+id: node.rule.default
+targetEntityType: node
+bundle: rule
+mode: default
+content:
+  field_enabled:
+    type: boolean_checkbox
+    weight: 4
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_game:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_rules_blocks:
+    type: string_textarea
+    weight: 7
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  field_rules_editor_mode:
+    type: options_buttons
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_rules_lua:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 24
+      placeholder: ''
+    third_party_settings: {  }
+  field_weight:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 8
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  promote: true
+  sticky: true
+  uid: true

@@ -28,6 +28,7 @@
         "drupal/views_bulk_operations": "^4.4",
         "drush/drush": "^13.3",
         "npm-asset/blockly": "^12.0",
+        "npm-asset/codemirror": "^5.65",
         "oomphinc/composer-installers-extender": "^2.0",
         "roave/security-advisories": "dev-latest"
     },
