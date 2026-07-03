@@ -1,0 +1,20 @@
+uuid: 769dd8d8-4f26-4336-a716-3cd3766756f6
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_speech_pitch
+field_name: field_ini_speech_pitch
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

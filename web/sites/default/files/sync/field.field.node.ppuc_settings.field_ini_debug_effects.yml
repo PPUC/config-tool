@@ -1,0 +1,23 @@
+uuid: 6b0f128a-1154-4d75-8f26-2f575847fefc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_debug_effects
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_debug_effects
+field_name: field_ini_debug_effects
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: DebugEffects'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

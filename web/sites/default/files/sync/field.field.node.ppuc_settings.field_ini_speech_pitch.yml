@@ -1,0 +1,23 @@
+uuid: da6580a6-fc34-4a4c-b208-429201aaa4df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_speech_pitch
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_speech_pitch
+field_name: field_ini_speech_pitch
+entity_type: node
+bundle: ppuc_settings
+label: 'Speech: Pitch'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

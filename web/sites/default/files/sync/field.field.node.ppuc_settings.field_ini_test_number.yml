@@ -1,0 +1,25 @@
+uuid: e48d4e4c-1068-4802-80b0-b707d370b474
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_test_number
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_test_number
+field_name: field_ini_test_number
+entity_type: node
+bundle: ppuc_settings
+label: 'BenchTest: Number'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

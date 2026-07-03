@@ -1,0 +1,21 @@
+uuid: d1b91270-fbfd-4480-9e96-d865927edcdc
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_translite_attract
+field_name: field_ini_translite_attract
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

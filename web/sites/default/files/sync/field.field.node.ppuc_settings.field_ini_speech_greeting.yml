@@ -1,0 +1,23 @@
+uuid: bb185c16-7c5f-444b-a16d-42634e6af7f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_speech_greeting
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_speech_greeting
+field_name: field_ini_speech_greeting
+entity_type: node
+bundle: ppuc_settings
+label: 'Speech: Greeting'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

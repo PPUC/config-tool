@@ -1,0 +1,19 @@
+uuid: 1281bd6d-ecd5-4f93-9fba-64c2d719052c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_translite
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_translite
+field_name: field_ini_translite
+entity_type: node
+bundle: ppuc_settings
+label: 'Paths: Translite'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

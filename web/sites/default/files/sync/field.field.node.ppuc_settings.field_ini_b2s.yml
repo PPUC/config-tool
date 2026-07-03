@@ -1,0 +1,23 @@
+uuid: b45c4472-ef97-4a8a-bb27-33369e233a60
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_b2s
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_b2s
+field_name: field_ini_b2s
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: B2S'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

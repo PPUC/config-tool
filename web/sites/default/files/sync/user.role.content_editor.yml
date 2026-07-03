@@ -10,6 +10,7 @@ dependencies:
     - node.type.game
     - node.type.i_o_board
     - node.type.led_effect
+    - node.type.ppuc_settings
     - node.type.pwm_device
     - node.type.pwm_effect
     - node.type.rule
@@ -51,6 +52,7 @@ permissions:
   - 'clone own game content'
   - 'clone own i_o_board content'
   - 'clone own led_effect content'
+  - 'clone own ppuc_settings content'
   - 'clone own pwm_device content'
   - 'clone own pwm_effect content'
   - 'clone own rule content'
@@ -70,6 +72,7 @@ permissions:
   - 'create i_o_board content'
   - 'create led_effect content'
   - 'create media'
+  - 'create ppuc_settings content'
   - 'create pwm_device content'
   - 'create pwm_effect content'
   - 'create rule content'
@@ -86,6 +89,7 @@ permissions:
   - 'delete any i_o_board content'
   - 'delete any led_effect content'
   - 'delete any media'
+  - 'delete any ppuc_settings content'
   - 'delete any pwm_device content'
   - 'delete any pwm_effect content'
   - 'delete any rule content'
@@ -104,12 +108,14 @@ permissions:
   - 'delete own game content'
   - 'delete own i_o_board content'
   - 'delete own led_effect content'
+  - 'delete own ppuc_settings content'
   - 'delete own pwm_device content'
   - 'delete own pwm_effect content'
   - 'delete own rule content'
   - 'delete own switch content'
   - 'delete own switch_matrix content'
   - 'delete own switch_matrix_switch content'
+  - 'delete ppuc_settings revisions'
   - 'delete pwm_device revisions'
   - 'delete pwm_effect revisions'
   - 'delete rule revisions'
@@ -122,6 +128,7 @@ permissions:
   - 'edit any game content'
   - 'edit any i_o_board content'
   - 'edit any led_effect content'
+  - 'edit any ppuc_settings content'
   - 'edit any pwm_device content'
   - 'edit any pwm_effect content'
   - 'edit any rule content'
@@ -134,6 +141,7 @@ permissions:
   - 'edit own game content'
   - 'edit own i_o_board content'
   - 'edit own led_effect content'
+  - 'edit own ppuc_settings content'
   - 'edit own pwm_device content'
   - 'edit own pwm_effect content'
   - 'edit own rule content'
@@ -147,6 +155,7 @@ permissions:
   - 'revert game revisions'
   - 'revert i_o_board revisions'
   - 'revert led_effect revisions'
+  - 'revert ppuc_settings revisions'
   - 'revert pwm_device revisions'
   - 'revert pwm_effect revisions'
   - 'revert rule revisions'
@@ -166,6 +175,7 @@ permissions:
   - 'view led_effect revisions'
   - 'view own unpublished content'
   - 'view own unpublished media'
+  - 'view ppuc_settings revisions'
   - 'view pwm_device revisions'
   - 'view pwm_effect revisions'
   - 'view rule revisions'

@@ -1,0 +1,23 @@
+uuid: 34dc459e-cebf-4664-b664-e9adfd3ce756
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_b2s_smoothing
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_b2s_smoothing
+field_name: field_ini_b2s_smoothing
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: B2SSegmentSmoothing'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

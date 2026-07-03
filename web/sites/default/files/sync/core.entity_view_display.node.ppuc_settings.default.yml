@@ -1,0 +1,937 @@
+uuid: 891b6fc6-3ebb-4521-ad50-b7fd17fdd065
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ppuc_settings.field_game
+    - field.field.node.ppuc_settings.field_ini_alt_color
+    - field.field.node.ppuc_settings.field_ini_alt_sound
+    - field.field.node.ppuc_settings.field_ini_altsound_folder
+    - field.field.node.ppuc_settings.field_ini_b2s
+    - field.field.node.ppuc_settings.field_ini_b2s_angle
+    - field.field.node.ppuc_settings.field_ini_b2s_glow
+    - field.field.node.ppuc_settings.field_ini_b2s_smoothing
+    - field.field.node.ppuc_settings.field_ini_backbox_address
+    - field.field.node.ppuc_settings.field_ini_backbox_port
+    - field.field.node.ppuc_settings.field_ini_ball_search
+    - field.field.node.ppuc_settings.field_ini_ball_search_delay
+    - field.field.node.ppuc_settings.field_ini_ball_search_round
+    - field.field.node.ppuc_settings.field_ini_close_coin_door
+    - field.field.node.ppuc_settings.field_ini_coil_hold_frames
+    - field.field.node.ppuc_settings.field_ini_coil_test
+    - field.field.node.ppuc_settings.field_ini_config_file
+    - field.field.node.ppuc_settings.field_ini_console_display
+    - field.field.node.ppuc_settings.field_ini_debug
+    - field.field.node.ppuc_settings.field_ini_debug_coils
+    - field.field.node.ppuc_settings.field_ini_debug_effects
+    - field.field.node.ppuc_settings.field_ini_debug_errors
+    - field.field.node.ppuc_settings.field_ini_debug_lamps
+    - field.field.node.ppuc_settings.field_ini_debug_switches
+    - field.field.node.ppuc_settings.field_ini_dump_display
+    - field.field.node.ppuc_settings.field_ini_flasher_test
+    - field.field.node.ppuc_settings.field_ini_game_rom
+    - field.field.node.ppuc_settings.field_ini_gi_test
+    - field.field.node.ppuc_settings.field_ini_hard_reset
+    - field.field.node.ppuc_settings.field_ini_interactive_test
+    - field.field.node.ppuc_settings.field_ini_lamp_test
+    - field.field.node.ppuc_settings.field_ini_music_files
+    - field.field.node.ppuc_settings.field_ini_music_gap_ms
+    - field.field.node.ppuc_settings.field_ini_no_serial
+    - field.field.node.ppuc_settings.field_ini_no_sound
+    - field.field.node.ppuc_settings.field_ini_output_frame_ms
+    - field.field.node.ppuc_settings.field_ini_paths_rom
+    - field.field.node.ppuc_settings.field_ini_pin2dmd_enabled
+    - field.field.node.ppuc_settings.field_ini_pinmame_path
+    - field.field.node.ppuc_settings.field_ini_pixelcade_device
+    - field.field.node.ppuc_settings.field_ini_pixelcade_enabled
+    - field.field.node.ppuc_settings.field_ini_plugin_dir
+    - field.field.node.ppuc_settings.field_ini_pup
+    - field.field.node.ppuc_settings.field_ini_pup_folder
+    - field.field.node.ppuc_settings.field_ini_rounded_corners
+    - field.field.node.ppuc_settings.field_ini_rules_path
+    - field.field.node.ppuc_settings.field_ini_runtime_rules
+    - field.field.node.ppuc_settings.field_ini_serial
+    - field.field.node.ppuc_settings.field_ini_serum_skip_frames
+    - field.field.node.ppuc_settings.field_ini_serum_timeout
+    - field.field.node.ppuc_settings.field_ini_skip_boards
+    - field.field.node.ppuc_settings.field_ini_speech_backend
+    - field.field.node.ppuc_settings.field_ini_speech_enabled
+    - field.field.node.ppuc_settings.field_ini_speech_greeting
+    - field.field.node.ppuc_settings.field_ini_speech_pitch
+    - field.field.node.ppuc_settings.field_ini_speech_rate
+    - field.field.node.ppuc_settings.field_ini_speech_voice
+    - field.field.node.ppuc_settings.field_ini_switch_refresh_ms
+    - field.field.node.ppuc_settings.field_ini_switch_reply_us
+    - field.field.node.ppuc_settings.field_ini_switch_test
+    - field.field.node.ppuc_settings.field_ini_test_number
+    - field.field.node.ppuc_settings.field_ini_translite
+    - field.field.node.ppuc_settings.field_ini_translite_attract
+    - field.field.node.ppuc_settings.field_ini_translite_height
+    - field.field.node.ppuc_settings.field_ini_translite_screen
+    - field.field.node.ppuc_settings.field_ini_translite_width
+    - field.field.node.ppuc_settings.field_ini_translite_window
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_hd
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_height
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_renderer
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_rotation
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_screen
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_width
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_window
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_x
+    - field.field.node.ppuc_settings.field_ini_virtual_dmd_y
+    - field.field.node.ppuc_settings.field_ini_zedmd_brightness
+    - field.field.node.ppuc_settings.field_ini_zedmd_debug
+    - field.field.node.ppuc_settings.field_ini_zedmd_device
+    - field.field.node.ppuc_settings.field_ini_zedmd_enabled
+    - field.field.node.ppuc_settings.field_ini_zedmd_spi_enabled
+    - field.field.node.ppuc_settings.field_ini_zedmd_spi_height
+    - field.field.node.ppuc_settings.field_ini_zedmd_spi_pause
+    - field.field.node.ppuc_settings.field_ini_zedmd_spi_speed
+    - field.field.node.ppuc_settings.field_ini_zedmd_spi_width
+    - field.field.node.ppuc_settings.field_ini_zedmd_wifi_addr
+    - field.field.node.ppuc_settings.field_ini_zedmd_wifi_enabled
+    - node.type.ppuc_settings
+  module:
+    - user
+id: node.ppuc_settings.default
+targetEntityType: node
+bundle: ppuc_settings
+mode: default
+content:
+  field_game:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_ini_alt_color:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 22
+    region: content
+  field_ini_alt_sound:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 26
+    region: content
+  field_ini_altsound_folder:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 33
+    region: content
+  field_ini_b2s:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 27
+    region: content
+  field_ini_b2s_angle:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 28
+    region: content
+  field_ini_b2s_glow:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 29
+    region: content
+  field_ini_b2s_smoothing:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 30
+    region: content
+  field_ini_backbox_address:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_ini_backbox_port:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_ini_ball_search:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 40
+    region: content
+  field_ini_ball_search_delay:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 41
+    region: content
+  field_ini_ball_search_round:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 42
+    region: content
+  field_ini_close_coin_door:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 44
+    region: content
+  field_ini_coil_hold_frames:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 43
+    region: content
+  field_ini_coil_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 68
+    region: content
+  field_ini_config_file:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_ini_console_display:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 34
+    region: content
+  field_ini_debug:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 15
+    region: content
+  field_ini_debug_coils:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 18
+    region: content
+  field_ini_debug_effects:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_ini_debug_errors:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 16
+    region: content
+  field_ini_debug_lamps:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 19
+    region: content
+  field_ini_debug_switches:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 17
+    region: content
+  field_ini_dump_display:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 35
+    region: content
+  field_ini_flasher_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 71
+    region: content
+  field_ini_game_rom:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_ini_gi_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 70
+    region: content
+  field_ini_hard_reset:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 45
+    region: content
+  field_ini_interactive_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 72
+    region: content
+  field_ini_lamp_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 69
+    region: content
+  field_ini_music_files:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_ini_music_gap_ms:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_ini_no_serial:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 13
+    region: content
+  field_ini_no_sound:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_ini_output_frame_ms:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 39
+    region: content
+  field_ini_paths_rom:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_ini_pin2dmd_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 60
+    region: content
+  field_ini_pinmame_path:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_ini_pixelcade_device:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 59
+    region: content
+  field_ini_pixelcade_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 58
+    region: content
+  field_ini_plugin_dir:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 31
+    region: content
+  field_ini_pup:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 25
+    region: content
+  field_ini_pup_folder:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 32
+    region: content
+  field_ini_rounded_corners:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 46
+    region: content
+  field_ini_rules_path:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_ini_runtime_rules:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 21
+    region: content
+  field_ini_serial:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_ini_serum_skip_frames:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 24
+    region: content
+  field_ini_serum_timeout:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 23
+    region: content
+  field_ini_skip_boards:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 36
+    region: content
+  field_ini_speech_backend:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 63
+    region: content
+  field_ini_speech_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 61
+    region: content
+  field_ini_speech_greeting:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 62
+    region: content
+  field_ini_speech_pitch:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 66
+    region: content
+  field_ini_speech_rate:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 65
+    region: content
+  field_ini_speech_voice:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 64
+    region: content
+  field_ini_switch_refresh_ms:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 38
+    region: content
+  field_ini_switch_reply_us:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 37
+    region: content
+  field_ini_switch_test:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 67
+    region: content
+  field_ini_test_number:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 73
+    region: content
+  field_ini_translite:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_ini_translite_attract:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_ini_translite_height:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 76
+    region: content
+  field_ini_translite_screen:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 77
+    region: content
+  field_ini_translite_width:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 75
+    region: content
+  field_ini_translite_window:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 74
+    region: content
+  field_ini_virtual_dmd:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 78
+    region: content
+  field_ini_virtual_dmd_hd:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 79
+    region: content
+  field_ini_virtual_dmd_height:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 82
+    region: content
+  field_ini_virtual_dmd_renderer:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 87
+    region: content
+  field_ini_virtual_dmd_rotation:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 86
+    region: content
+  field_ini_virtual_dmd_screen:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 83
+    region: content
+  field_ini_virtual_dmd_width:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 81
+    region: content
+  field_ini_virtual_dmd_window:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 80
+    region: content
+  field_ini_virtual_dmd_x:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 84
+    region: content
+  field_ini_virtual_dmd_y:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 85
+    region: content
+  field_ini_zedmd_brightness:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 50
+    region: content
+  field_ini_zedmd_debug:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 49
+    region: content
+  field_ini_zedmd_device:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 48
+    region: content
+  field_ini_zedmd_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 47
+    region: content
+  field_ini_zedmd_spi_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 53
+    region: content
+  field_ini_zedmd_spi_height:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 57
+    region: content
+  field_ini_zedmd_spi_pause:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 55
+    region: content
+  field_ini_zedmd_spi_speed:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 54
+    region: content
+  field_ini_zedmd_spi_width:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 56
+    region: content
+  field_ini_zedmd_wifi_addr:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 52
+    region: content
+  field_ini_zedmd_wifi_enabled:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 51
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

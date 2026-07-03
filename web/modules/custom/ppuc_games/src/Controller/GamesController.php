@@ -96,6 +96,195 @@ class GamesController extends ControllerBase {
     return $value !== '' ? $value : NULL;
   }
 
+  protected function getIniSettingsNode(NodeInterface $game): ?NodeInterface {
+    if ($game->bundle() !== 'game') {
+      return NULL;
+    }
+
+    $ids = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'ppuc_settings')
+      ->condition('field_game.target_id', $game->id())
+      ->sort('created', 'DESC')
+      ->range(0, 1)
+      ->execute();
+
+    if ($ids === []) {
+      return NULL;
+    }
+
+    $node = Node::load(reset($ids));
+    return $node instanceof NodeInterface ? $node : NULL;
+  }
+
+  protected function getIniFieldValue(NodeInterface $settings, string $field_name): string {
+    if (!$settings->hasField($field_name) || $settings->get($field_name)->isEmpty()) {
+      return '';
+    }
+
+    $field = $settings->get($field_name);
+    $definition = $field->getFieldDefinition();
+    if ($definition->getType() === 'boolean') {
+      return (bool) $field->value ? 'true' : 'false';
+    }
+
+    return trim((string) $field->value);
+  }
+
+  protected function getIniBool01Value(NodeInterface $settings, string $field_name): string {
+    if (!$settings->hasField($field_name) || $settings->get($field_name)->isEmpty()) {
+      return '0';
+    }
+
+    return (bool) $settings->get($field_name)->value ? '1' : '0';
+  }
+
+  protected function buildPpucIni(NodeInterface $game): string {
+    $settings = $this->getIniSettingsNode($game);
+
+    $value = function (string $field_name, string $default = '') use ($settings): string {
+      if (!$settings instanceof NodeInterface) {
+        return $default;
+      }
+      $field_value = $this->getIniFieldValue($settings, $field_name);
+      return $field_value !== '' ? $field_value : $default;
+    };
+    $bool01 = function (string $field_name, string $default = '0') use ($settings): string {
+      return $settings instanceof NodeInterface ? $this->getIniBool01Value($settings, $field_name) : $default;
+    };
+
+    $rom = $value('field_ini_game_rom', $this->getStringFieldValue($game, 'field_machine_name') ?? $game->getTitle());
+
+    $sections = [
+      'Game' => [
+        'Rom' => $rom,
+      ],
+      'Paths' => [
+        'ConfigFile' => $value('field_ini_config_file'),
+        'Rom' => $value('field_ini_paths_rom'),
+        'Serial' => $value('field_ini_serial'),
+        'PinmamePath' => $value('field_ini_pinmame_path'),
+        'Rules' => $value('field_ini_rules_path'),
+        'MusicFiles' => $value('field_ini_music_files'),
+        'MusicGapMs' => $value('field_ini_music_gap_ms', '2000'),
+        'Translite' => $value('field_ini_translite'),
+        'TransliteAttract' => $value('field_ini_translite_attract'),
+      ],
+      'Backbox' => [
+        'Address' => $value('field_ini_backbox_address'),
+        'Port' => $value('field_ini_backbox_port', '6789'),
+      ],
+      'Runtime' => [
+        'NoSerial' => $value('field_ini_no_serial', 'false'),
+        'NoSound' => $value('field_ini_no_sound', 'false'),
+        'Debug' => $value('field_ini_debug', 'false'),
+        'DebugErrors' => $value('field_ini_debug_errors', 'false'),
+        'DebugSwitches' => $value('field_ini_debug_switches', 'false'),
+        'DebugCoils' => $value('field_ini_debug_coils', 'false'),
+        'DebugLamps' => $value('field_ini_debug_lamps', 'false'),
+        'DebugEffects' => $value('field_ini_debug_effects', 'false'),
+        'Rules' => $value('field_ini_runtime_rules', 'false'),
+        'AltColor' => $value('field_ini_alt_color', 'false'),
+        'SerumTimeout' => $value('field_ini_serum_timeout', '0'),
+        'SerumSkipFrames' => $value('field_ini_serum_skip_frames', '0'),
+        'PUP' => $value('field_ini_pup', 'false'),
+        'AltSound' => $value('field_ini_alt_sound', 'false'),
+        'B2S' => $value('field_ini_b2s', 'false'),
+        'B2SSegmentAngleDegrees' => $value('field_ini_b2s_angle', '18.0'),
+        'B2SSegmentGlow' => $value('field_ini_b2s_glow', '80.0'),
+        'B2SSegmentSmoothing' => $value('field_ini_b2s_smoothing', 'true'),
+        'PluginDir' => $value('field_ini_plugin_dir'),
+        'PUPFolder' => $value('field_ini_pup_folder'),
+        'AltSoundFolder' => $value('field_ini_altsound_folder'),
+        'ConsoleDisplay' => $value('field_ini_console_display', 'false'),
+        'DumpDisplay' => $value('field_ini_dump_display', 'false'),
+        'SkipBoards' => $value('field_ini_skip_boards'),
+        'SwitchReplyDelayUs' => $value('field_ini_switch_reply_us', '2000'),
+        'SwitchRefreshIdleMs' => $value('field_ini_switch_refresh_ms', '15000'),
+        'OutputFrameIntervalMs' => $value('field_ini_output_frame_ms', '4'),
+        'BallSearch' => $value('field_ini_ball_search', 'false'),
+        'BallSearchDelayMs' => $value('field_ini_ball_search_delay', '15000'),
+        'BallSearchRoundDelayMs' => $value('field_ini_ball_search_round', '5000'),
+        'CoilHoldFrames' => $value('field_ini_coil_hold_frames', '3'),
+        'CloseCoinDoor' => $value('field_ini_close_coin_door', 'false'),
+        'HardReset' => $value('field_ini_hard_reset', 'false'),
+      ],
+      'OutputFilters' => [
+        'RoundedCorners' => $value('field_ini_rounded_corners', '0'),
+      ],
+      'ZeDMD' => [
+        'Enabled' => $bool01('field_ini_zedmd_enabled', '1'),
+        'Device' => $value('field_ini_zedmd_device'),
+        'Debug' => $bool01('field_ini_zedmd_debug', '0'),
+        'Brightness' => $value('field_ini_zedmd_brightness', '-1'),
+      ],
+      'ZeDMD-WiFi' => [
+        'Enabled' => $bool01('field_ini_zedmd_wifi_enabled', '0'),
+        'WiFiAddr' => $value('field_ini_zedmd_wifi_addr'),
+      ],
+      'ZeDMD-SPI' => [
+        'Enabled' => $bool01('field_ini_zedmd_spi_enabled', '0'),
+        'Speed' => $value('field_ini_zedmd_spi_speed', '72000000'),
+        'FramePause' => $value('field_ini_zedmd_spi_pause', '2'),
+        'Width' => $value('field_ini_zedmd_spi_width', '128'),
+        'Height' => $value('field_ini_zedmd_spi_height', '32'),
+      ],
+      'Pixelcade' => [
+        'Enabled' => $bool01('field_ini_pixelcade_enabled', '0'),
+        'Device' => $value('field_ini_pixelcade_device'),
+      ],
+      'PIN2DMD' => [
+        'Enabled' => $bool01('field_ini_pin2dmd_enabled', '0'),
+      ],
+      'Speech' => [
+        'Enabled' => $value('field_ini_speech_enabled', 'false'),
+        'Greeting' => $value('field_ini_speech_greeting', 'false'),
+        'Backend' => $value('field_ini_speech_backend', 'auto'),
+        'Voice' => $value('field_ini_speech_voice'),
+        'Rate' => $value('field_ini_speech_rate'),
+        'Pitch' => $value('field_ini_speech_pitch'),
+      ],
+      'BenchTest' => [
+        'SwitchTest' => $value('field_ini_switch_test', 'false'),
+        'CoilTest' => $value('field_ini_coil_test', 'false'),
+        'LampTest' => $value('field_ini_lamp_test', 'false'),
+        'GITest' => $value('field_ini_gi_test', 'false'),
+        'FlasherTest' => $value('field_ini_flasher_test', 'false'),
+        'Interactive' => $value('field_ini_interactive_test', 'false'),
+        'Number' => $value('field_ini_test_number', '0'),
+      ],
+      'Translite' => [
+        'Window' => $value('field_ini_translite_window', 'false'),
+        'Width' => $value('field_ini_translite_width', '1920'),
+        'Height' => $value('field_ini_translite_height', '1080'),
+        'Screen' => $value('field_ini_translite_screen', '-1'),
+      ],
+      'VirtualDMD' => [
+        'Enabled' => $value('field_ini_virtual_dmd', 'false'),
+        'HD' => $value('field_ini_virtual_dmd_hd', 'false'),
+        'Window' => $value('field_ini_virtual_dmd_window', 'false'),
+        'Width' => $value('field_ini_virtual_dmd_width', '1280'),
+        'Height' => $value('field_ini_virtual_dmd_height', '320'),
+        'Screen' => $value('field_ini_virtual_dmd_screen', '-1'),
+        'X' => $value('field_ini_virtual_dmd_x', '0'),
+        'Y' => $value('field_ini_virtual_dmd_y', '0'),
+        'Rotation' => $value('field_ini_virtual_dmd_rotation', '0'),
+        'Renderer' => $value('field_ini_virtual_dmd_renderer', 'dots'),
+      ],
+    ];
+
+    $lines = [];
+    foreach ($sections as $section => $pairs) {
+      $lines[] = '[' . $section . ']';
+      foreach ($pairs as $key => $field_value) {
+        $lines[] = $key . '=' . $field_value;
+      }
+      $lines[] = '';
+    }
+
+    return implode("\n", $lines);
+  }
+
   protected function getLedTypeName(NodeInterface $node): ?string {
     if (!$node->hasField('field_led_type') || $node->get('field_led_type')->isEmpty()) {
       return NULL;
@@ -671,6 +860,24 @@ class GamesController extends ControllerBase {
     );
   }
 
+  public function streamPpucIni(NodeInterface $node): Response {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '_ppuc.ini', 'ini');
+    \Drupal::service('event_dispatcher')->dispatch($event);
+
+    return new Response(
+      $this->buildPpucIni($node),
+      200,
+      [
+        'Content-Type' => 'text/plain',
+        'Content-Disposition' => 'attachment; filename=' . $event->getFilename(),
+      ]
+    );
+  }
+
   public function streamRuleLua(NodeInterface $node): Response {
     if ($node->bundle() !== 'rule') {
       throw $this->createNotFoundException();
@@ -692,6 +899,19 @@ class GamesController extends ControllerBase {
     }
 
     return $this->redirect('node.add', ['node_type' => 'rule'], ['query' => ['game' => $node->id()]]);
+  }
+
+  public function addPpucSettings(NodeInterface $node): RedirectResponse {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    $settings = $this->getIniSettingsNode($node);
+    if ($settings instanceof NodeInterface) {
+      return $this->redirect('entity.node.edit_form', ['node' => $settings->id()]);
+    }
+
+    return $this->redirect('node.add', ['node_type' => 'ppuc_settings'], ['query' => ['game' => $node->id()]]);
   }
 
   protected function getRulesLua(NodeInterface $node): string {
@@ -840,9 +1060,14 @@ class GamesController extends ControllerBase {
     $project_folder = $export_folder . '/ppuc';
     $this->fileSystem->prepareDirectory($project_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
     file_put_contents($project_folder . '/game.yml', Yaml::encode($yaml));
+    file_put_contents($project_folder . '/ppuc.ini', $this->buildPpucIni($node));
 
     foreach ($this->getRuleNodes($node) as $rule) {
       $this->exporter->exportEntity($rule, TRUE);
+    }
+    $settings = $this->getIniSettingsNode($node);
+    if ($settings instanceof NodeInterface) {
+      $this->exporter->exportEntity($settings, TRUE);
     }
     $this->writeRuleFiles($node, $project_folder . '/rules');
 

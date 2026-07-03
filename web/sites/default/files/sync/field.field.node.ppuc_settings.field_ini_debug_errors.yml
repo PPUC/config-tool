@@ -1,0 +1,23 @@
+uuid: 39a55396-0b62-4e18-ba3a-13652dcf84d6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_debug_errors
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_debug_errors
+field_name: field_ini_debug_errors
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: DebugErrors'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

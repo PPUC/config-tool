@@ -1,0 +1,21 @@
+uuid: fb766fe7-b92e-45a7-a16a-843d4c5514c0
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_plugin_dir
+field_name: field_ini_plugin_dir
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

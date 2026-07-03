@@ -1,0 +1,25 @@
+uuid: ade19eac-8f72-4c92-8ba8-ea8878bf96e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_ball_search_round
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_ball_search_round
+field_name: field_ini_ball_search_round
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: BallSearchRoundDelayMs'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 5000
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

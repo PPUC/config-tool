@@ -1,0 +1,25 @@
+uuid: 5ddf7538-b360-417c-9633-2b883d470070
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_music_gap_ms
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_music_gap_ms
+field_name: field_ini_music_gap_ms
+entity_type: node
+bundle: ppuc_settings
+label: 'Paths: MusicGapMs'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 2000
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

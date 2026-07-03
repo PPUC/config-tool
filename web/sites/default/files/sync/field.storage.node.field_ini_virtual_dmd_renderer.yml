@@ -1,0 +1,21 @@
+uuid: 42950426-1cb3-402f-969c-969e2f707d2d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_virtual_dmd_renderer
+field_name: field_ini_virtual_dmd_renderer
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

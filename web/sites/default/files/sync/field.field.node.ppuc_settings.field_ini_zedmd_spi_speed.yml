@@ -1,0 +1,25 @@
+uuid: 108b392b-de22-42eb-b1cd-b906da6df911
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_spi_speed
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_spi_speed
+field_name: field_ini_zedmd_spi_speed
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD-SPI: Speed'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 72000000
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,0 +1,25 @@
+uuid: ebbaff23-663d-4523-8e73-9ce93bccdd9d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_backbox_port
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_backbox_port
+field_name: field_ini_backbox_port
+entity_type: node
+bundle: ppuc_settings
+label: 'Backbox: Port'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 6789
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

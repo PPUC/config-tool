@@ -1,0 +1,23 @@
+uuid: b725b8db-d7e2-4236-99b2-4f00f96907f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_pup
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_pup
+field_name: field_ini_pup
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: PUP'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,25 @@
+uuid: 11e83ef9-bd7d-430b-80f0-384f60bf8341
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_rounded_corners
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_rounded_corners
+field_name: field_ini_rounded_corners
+entity_type: node
+bundle: ppuc_settings
+label: 'OutputFilters: RoundedCorners'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

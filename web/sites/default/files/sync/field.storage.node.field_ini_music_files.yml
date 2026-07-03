@@ -1,0 +1,19 @@
+uuid: 8ff2ca32-48ed-4238-a21a-38a2678352f0
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_music_files
+field_name: field_ini_music_files
+entity_type: node
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

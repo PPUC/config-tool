@@ -1,0 +1,25 @@
+uuid: 6f55f1f3-658f-4c2b-893a-a87bd7059f86
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_serum_skip_frames
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_serum_skip_frames
+field_name: field_ini_serum_skip_frames
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: SerumSkipFrames'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,0 +1,19 @@
+uuid: e49e96ee-9d26-401a-a850-11e9cb9d14f2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_rules_path
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_rules_path
+field_name: field_ini_rules_path
+entity_type: node
+bundle: ppuc_settings
+label: 'Paths: Rules'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

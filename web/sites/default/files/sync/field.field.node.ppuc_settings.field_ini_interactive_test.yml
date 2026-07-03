@@ -1,0 +1,23 @@
+uuid: 2526f96f-effb-41e6-a3aa-0beb9e9ec8fd
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_interactive_test
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_interactive_test
+field_name: field_ini_interactive_test
+entity_type: node
+bundle: ppuc_settings
+label: 'BenchTest: Interactive'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

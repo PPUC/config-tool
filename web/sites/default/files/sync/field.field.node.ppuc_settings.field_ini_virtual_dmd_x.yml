@@ -1,0 +1,25 @@
+uuid: 9764cdf6-0b5e-4f22-bb4c-44477bac5c7d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_virtual_dmd_x
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_virtual_dmd_x
+field_name: field_ini_virtual_dmd_x
+entity_type: node
+bundle: ppuc_settings
+label: 'VirtualDMD: X'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

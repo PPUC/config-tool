@@ -1,0 +1,19 @@
+uuid: 7b16f8fb-47d6-4727-9204-8c8e21d7af45
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_wifi_addr
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_wifi_addr
+field_name: field_ini_zedmd_wifi_addr
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD-WiFi: WiFiAddr'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

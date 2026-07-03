@@ -1,0 +1,29 @@
+uuid: 49e1b83f-7849-4569-a66a-89c685328829
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game
+    - node.type.game
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_game
+field_name: field_game
+entity_type: node
+bundle: ppuc_settings
+label: Game
+description: 'The game this ppuc.ini belongs to.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      game: game
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

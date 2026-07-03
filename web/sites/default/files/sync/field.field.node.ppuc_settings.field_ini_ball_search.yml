@@ -1,0 +1,23 @@
+uuid: 34f51ee5-d49c-425b-b1f4-b3d2200de1b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_ball_search
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_ball_search
+field_name: field_ini_ball_search
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: BallSearch'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

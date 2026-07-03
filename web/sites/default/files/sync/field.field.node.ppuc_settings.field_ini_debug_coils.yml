@@ -1,0 +1,23 @@
+uuid: 6528d32a-2669-4f2e-8c5e-25c6d3b1d2fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_debug_coils
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_debug_coils
+field_name: field_ini_debug_coils
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: DebugCoils'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

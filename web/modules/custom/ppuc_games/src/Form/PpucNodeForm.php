@@ -21,6 +21,7 @@ class PpucNodeForm extends NodeForm {
     $form = parent::form($form, $form_state);
     $this->configureWhiteChannelFields($form, $form_state);
     $this->configureRulesFields($form);
+    $this->configurePpucSettingsFields($form);
     $this->configureSwitchGroupMembershipFields($form);
 
     return $form;
@@ -28,6 +29,14 @@ class PpucNodeForm extends NodeForm {
 
   public function refreshForm(array $form, FormStateInterface $form_state): array {
     return $form;
+  }
+
+  public function applyPpucIniDescriptionAfterBuild(array $element, FormStateInterface $form_state): array {
+    if (isset($element['#ppuc_ini_description'])) {
+      $this->applyDescriptionToFormElement($element, $element['#ppuc_ini_description']);
+    }
+
+    return $element;
   }
 
   protected function configureWhiteChannelFields(array &$form, FormStateInterface $form_state): void {
@@ -150,6 +159,346 @@ class PpucNodeForm extends NodeForm {
         'class' => ['ppuc-rules-blockly'],
         'data-ppuc-rules-blockly' => '',
       ],
+    ];
+  }
+
+  protected function configurePpucSettingsFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if ($entity->bundle() !== 'ppuc_settings') {
+      return;
+    }
+
+    if (isset($form['title']['widget'][0]['value'])) {
+      $form['title']['widget'][0]['value']['#description'] = $this->t('Administrative title for this settings record. It is not written to ppuc.ini.');
+    }
+
+    if ($entity->isNew() && isset($form['field_game']['widget'][0]['target_id'])) {
+      $game_id = \Drupal::request()->query->get('game');
+      if (is_numeric($game_id)) {
+        $game = $this->entityTypeManager->getStorage('node')->load((int) $game_id);
+        if ($game instanceof NodeInterface && $game->bundle() === 'game') {
+          $form['field_game']['widget'][0]['target_id']['#default_value'] = $game;
+        }
+      }
+    }
+
+    $form['field_game']['#description'] = $this->t('Game this ppuc.ini file belongs to.');
+
+    $sections = $this->ppucIniFormSections();
+    $descriptions = $this->ppucIniFieldDescriptions();
+    $weight = 20;
+    foreach ($sections as $section_id => $section) {
+      $form[$section_id] = [
+        '#type' => 'details',
+        '#title' => $section['title'],
+        '#description' => $section['description'],
+        '#open' => in_array($section_id, ['ppuc_ini_game', 'ppuc_ini_paths', 'ppuc_ini_runtime'], TRUE),
+        '#weight' => $weight++,
+      ];
+
+      foreach ($section['fields'] as $field_name) {
+        if (!isset($form[$field_name])) {
+          continue;
+        }
+        $form[$field_name]['#group'] = $section_id;
+        if (isset($descriptions[$field_name])) {
+          $form[$field_name]['#description'] = $descriptions[$field_name];
+          $form[$field_name]['#ppuc_ini_description'] = $descriptions[$field_name];
+          $form[$field_name]['#after_build'][] = [
+            $this,
+            'applyPpucIniDescriptionAfterBuild',
+          ];
+          $this->applyDescriptionToFormElement($form[$field_name], $descriptions[$field_name]);
+        }
+      }
+    }
+  }
+
+  protected function applyDescriptionToFormElement(array &$element, mixed $description): void {
+    $element['#description'] = $description;
+    if (isset($element['#type']) && in_array($element['#type'], [
+      'checkbox',
+      'entity_autocomplete',
+      'number',
+      'textarea',
+      'textfield',
+    ], TRUE)) {
+      $element['#description'] = $description;
+    }
+
+    foreach ($element as $key => &$child) {
+      if (is_array($child) && (is_int($key) || !str_starts_with((string) $key, '#'))) {
+        $this->applyDescriptionToFormElement($child, $description);
+      }
+    }
+  }
+
+  protected function ppucIniFormSections(): array {
+    return [
+      'ppuc_ini_game' => [
+        'title' => $this->t('Game'),
+        'description' => $this->t('Values written to the [Game] section.'),
+        'fields' => [
+          'field_ini_game_rom',
+        ],
+      ],
+      'ppuc_ini_paths' => [
+        'title' => $this->t('Paths'),
+        'description' => $this->t('Files and folders used by ppuc-pinmame. Relative paths are resolved by the runtime environment.'),
+        'fields' => [
+          'field_ini_config_file',
+          'field_ini_paths_rom',
+          'field_ini_serial',
+          'field_ini_pinmame_path',
+          'field_ini_rules_path',
+          'field_ini_music_files',
+          'field_ini_music_gap_ms',
+          'field_ini_translite',
+          'field_ini_translite_attract',
+        ],
+      ],
+      'ppuc_ini_backbox' => [
+        'title' => $this->t('Backbox'),
+        'description' => $this->t('Optional network backbox or DMD server connection.'),
+        'fields' => [
+          'field_ini_backbox_address',
+          'field_ini_backbox_port',
+        ],
+      ],
+      'ppuc_ini_runtime' => [
+        'title' => $this->t('Runtime'),
+        'description' => $this->t('Runtime behavior, diagnostics, media plugins, transport timing, and board startup options.'),
+        'fields' => [
+          'field_ini_no_serial',
+          'field_ini_no_sound',
+          'field_ini_debug',
+          'field_ini_debug_errors',
+          'field_ini_debug_switches',
+          'field_ini_debug_coils',
+          'field_ini_debug_lamps',
+          'field_ini_debug_effects',
+          'field_ini_runtime_rules',
+          'field_ini_alt_color',
+          'field_ini_serum_timeout',
+          'field_ini_serum_skip_frames',
+          'field_ini_pup',
+          'field_ini_alt_sound',
+          'field_ini_b2s',
+          'field_ini_b2s_angle',
+          'field_ini_b2s_glow',
+          'field_ini_b2s_smoothing',
+          'field_ini_plugin_dir',
+          'field_ini_pup_folder',
+          'field_ini_altsound_folder',
+          'field_ini_console_display',
+          'field_ini_dump_display',
+          'field_ini_skip_boards',
+          'field_ini_switch_reply_us',
+          'field_ini_switch_refresh_ms',
+          'field_ini_output_frame_ms',
+          'field_ini_ball_search',
+          'field_ini_ball_search_delay',
+          'field_ini_ball_search_round',
+          'field_ini_coil_hold_frames',
+          'field_ini_close_coin_door',
+          'field_ini_hard_reset',
+        ],
+      ],
+      'ppuc_ini_output_filters' => [
+        'title' => $this->t('Output Filters'),
+        'description' => $this->t('Display-output postprocessing applied by ppuc-pinmame.'),
+        'fields' => [
+          'field_ini_rounded_corners',
+        ],
+      ],
+      'ppuc_ini_zedmd' => [
+        'title' => $this->t('ZeDMD'),
+        'description' => $this->t('USB ZeDMD display settings.'),
+        'fields' => [
+          'field_ini_zedmd_enabled',
+          'field_ini_zedmd_device',
+          'field_ini_zedmd_debug',
+          'field_ini_zedmd_brightness',
+        ],
+      ],
+      'ppuc_ini_zedmd_wifi' => [
+        'title' => $this->t('ZeDMD-WiFi'),
+        'description' => $this->t('Network ZeDMD display settings.'),
+        'fields' => [
+          'field_ini_zedmd_wifi_enabled',
+          'field_ini_zedmd_wifi_addr',
+        ],
+      ],
+      'ppuc_ini_zedmd_spi' => [
+        'title' => $this->t('ZeDMD-SPI'),
+        'description' => $this->t('SPI-connected ZeDMD panel settings.'),
+        'fields' => [
+          'field_ini_zedmd_spi_enabled',
+          'field_ini_zedmd_spi_speed',
+          'field_ini_zedmd_spi_pause',
+          'field_ini_zedmd_spi_width',
+          'field_ini_zedmd_spi_height',
+        ],
+      ],
+      'ppuc_ini_pixelcade' => [
+        'title' => $this->t('Pixelcade'),
+        'description' => $this->t('Pixelcade display settings.'),
+        'fields' => [
+          'field_ini_pixelcade_enabled',
+          'field_ini_pixelcade_device',
+        ],
+      ],
+      'ppuc_ini_pin2dmd' => [
+        'title' => $this->t('PIN2DMD'),
+        'description' => $this->t('PIN2DMD display settings.'),
+        'fields' => [
+          'field_ini_pin2dmd_enabled',
+        ],
+      ],
+      'ppuc_ini_speech' => [
+        'title' => $this->t('Speech'),
+        'description' => $this->t('Speech callout and startup greeting settings.'),
+        'fields' => [
+          'field_ini_speech_enabled',
+          'field_ini_speech_greeting',
+          'field_ini_speech_backend',
+          'field_ini_speech_voice',
+          'field_ini_speech_rate',
+          'field_ini_speech_pitch',
+        ],
+      ],
+      'ppuc_ini_bench_test' => [
+        'title' => $this->t('Bench Test'),
+        'description' => $this->t('Optional startup test modes for switches, coils, lamps, GI, and flashers.'),
+        'fields' => [
+          'field_ini_switch_test',
+          'field_ini_coil_test',
+          'field_ini_lamp_test',
+          'field_ini_gi_test',
+          'field_ini_flasher_test',
+          'field_ini_interactive_test',
+          'field_ini_test_number',
+        ],
+      ],
+      'ppuc_ini_translite' => [
+        'title' => $this->t('Translite'),
+        'description' => $this->t('Window placement and sizing for the translite display.'),
+        'fields' => [
+          'field_ini_translite_window',
+          'field_ini_translite_width',
+          'field_ini_translite_height',
+          'field_ini_translite_screen',
+        ],
+      ],
+      'ppuc_ini_virtual_dmd' => [
+        'title' => $this->t('Virtual DMD'),
+        'description' => $this->t('Window placement, sizing, and rendering mode for the virtual DMD.'),
+        'fields' => [
+          'field_ini_virtual_dmd',
+          'field_ini_virtual_dmd_hd',
+          'field_ini_virtual_dmd_window',
+          'field_ini_virtual_dmd_width',
+          'field_ini_virtual_dmd_height',
+          'field_ini_virtual_dmd_screen',
+          'field_ini_virtual_dmd_x',
+          'field_ini_virtual_dmd_y',
+          'field_ini_virtual_dmd_rotation',
+          'field_ini_virtual_dmd_renderer',
+        ],
+      ],
+    ];
+  }
+
+  protected function ppucIniFieldDescriptions(): array {
+    return [
+      'field_ini_game_rom' => $this->t('ROM name passed to PinMAME, written as Game.Rom. Leave empty to use the generated fallback.'),
+      'field_ini_config_file' => $this->t('Optional path to the machine YAML config file.'),
+      'field_ini_paths_rom' => $this->t('Optional ROM override in the Paths section.'),
+      'field_ini_serial' => $this->t('Serial device used for RS485 communication, or dummy for no physical serial port.'),
+      'field_ini_pinmame_path' => $this->t('Optional PinMAME base folder.'),
+      'field_ini_rules_path' => $this->t('Optional Lua rules file or directory override.'),
+      'field_ini_music_files' => $this->t('Comma-separated list of music files for gameplay background music.'),
+      'field_ini_music_gap_ms' => $this->t('Delay between background music tracks, in milliseconds.'),
+      'field_ini_translite' => $this->t('Image path used for the in-game translite.'),
+      'field_ini_translite_attract' => $this->t('Image path used for the attract-mode translite.'),
+      'field_ini_backbox_address' => $this->t('Optional DMD/backbox host name or IP address.'),
+      'field_ini_backbox_port' => $this->t('TCP port for the DMD/backbox connection.'),
+      'field_ini_no_serial' => $this->t('Skip serial communication to PPUC boards entirely.'),
+      'field_ini_no_sound' => $this->t('Disable game audio output.'),
+      'field_ini_debug' => $this->t('Enable full debug output.'),
+      'field_ini_debug_errors' => $this->t('Enable communication and protocol error details without full debug output.'),
+      'field_ini_debug_switches' => $this->t('Enable switch debug output.'),
+      'field_ini_debug_coils' => $this->t('Enable coil debug output.'),
+      'field_ini_debug_lamps' => $this->t('Enable lamp debug output.'),
+      'field_ini_debug_effects' => $this->t('Enable effect trigger debug output.'),
+      'field_ini_runtime_rules' => $this->t('Enable Lua rules at runtime.'),
+      'field_ini_alt_color' => $this->t('Enable Serum or AltColor DMD colorization.'),
+      'field_ini_serum_timeout' => $this->t('Serum timeout in milliseconds for ignoring unknown frames.'),
+      'field_ini_serum_skip_frames' => $this->t('Number of unknown Serum frames to skip.'),
+      'field_ini_pup' => $this->t('Enable PUP backglass video capture and matching.'),
+      'field_ini_alt_sound' => $this->t('Enable AltSound through the media plugin host.'),
+      'field_ini_b2s' => $this->t('Enable B2S backglass rendering.'),
+      'field_ini_b2s_angle' => $this->t('B2S segment rendering angle in degrees.'),
+      'field_ini_b2s_glow' => $this->t('B2S segment glow intensity.'),
+      'field_ini_b2s_smoothing' => $this->t('Enable B2S segment smoothing.'),
+      'field_ini_plugin_dir' => $this->t('Optional VPX plugin directory.'),
+      'field_ini_pup_folder' => $this->t('Optional PinUp Player folder containing pupvideos.'),
+      'field_ini_altsound_folder' => $this->t('Optional AltSound folder or base folder.'),
+      'field_ini_console_display' => $this->t('Render the DMD in the terminal.'),
+      'field_ini_dump_display' => $this->t('Write DMD text dump files.'),
+      'field_ini_skip_boards' => $this->t('Comma-separated configured board numbers to skip.'),
+      'field_ini_switch_reply_us' => $this->t('Per-board switch reply delay in microseconds.'),
+      'field_ini_switch_refresh_ms' => $this->t('Re-read all switches after this many milliseconds without non-button switch updates.'),
+      'field_ini_output_frame_ms' => $this->t('Runtime output frame interval in milliseconds. Lower values increase switch polling cadence.'),
+      'field_ini_ball_search' => $this->t('Enable host-side ball search for older ROMs without native ball search.'),
+      'field_ini_ball_search_delay' => $this->t('Idle time in milliseconds before ball search starts while a game is running.'),
+      'field_ini_ball_search_round' => $this->t('Delay in milliseconds between complete ball-search coil rounds.'),
+      'field_ini_coil_hold_frames' => $this->t('Number of runtime frames a coil hold stays asserted in libppuc.'),
+      'field_ini_close_coin_door' => $this->t('Force the configured coin-door-closed switch closed when it is virtualized.'),
+      'field_ini_hard_reset' => $this->t('Use hard reset instead of soft restart on board startup.'),
+      'field_ini_rounded_corners' => $this->t('Radius in pixels for black rounded corners on local DMD outputs.'),
+      'field_ini_zedmd_enabled' => $this->t('Enable a USB ZeDMD display.'),
+      'field_ini_zedmd_device' => $this->t('Optional fixed ZeDMD serial device. Leave empty for auto-detection.'),
+      'field_ini_zedmd_debug' => $this->t('Enable ZeDMD debug mode.'),
+      'field_ini_zedmd_brightness' => $this->t('Override ZeDMD brightness from 0 to 15. Use -1 to leave the device setting unchanged.'),
+      'field_ini_zedmd_wifi_enabled' => $this->t('Enable a ZeDMD-WiFi display.'),
+      'field_ini_zedmd_wifi_addr' => $this->t('ZeDMD-WiFi network address, such as a fixed IP or resolvable host name.'),
+      'field_ini_zedmd_spi_enabled' => $this->t('Enable a ZeDMD-SPI display.'),
+      'field_ini_zedmd_spi_speed' => $this->t('SPI speed in Hz.'),
+      'field_ini_zedmd_spi_pause' => $this->t('Forced pause between frames in milliseconds.'),
+      'field_ini_zedmd_spi_width' => $this->t('SPI panel width in pixels.'),
+      'field_ini_zedmd_spi_height' => $this->t('SPI panel height in pixels.'),
+      'field_ini_pixelcade_enabled' => $this->t('Enable Pixelcade output.'),
+      'field_ini_pixelcade_device' => $this->t('Optional fixed Pixelcade serial device. Leave empty for auto-detection.'),
+      'field_ini_pin2dmd_enabled' => $this->t('Enable PIN2DMD output.'),
+      'field_ini_speech_enabled' => $this->t('Enable speech callouts.'),
+      'field_ini_speech_greeting' => $this->t('Speak a startup greeting for speech debugging.'),
+      'field_ini_speech_backend' => $this->t('Speech backend: auto, flite, or espeak-ng.'),
+      'field_ini_speech_voice' => $this->t('Optional speech voice name.'),
+      'field_ini_speech_rate' => $this->t('Optional speech rate in words per minute, mainly for espeak-ng.'),
+      'field_ini_speech_pitch' => $this->t('Optional speech pitch from 0 to 100, mainly for espeak-ng.'),
+      'field_ini_switch_test' => $this->t('Start in switch test mode.'),
+      'field_ini_coil_test' => $this->t('Start in coil test mode.'),
+      'field_ini_lamp_test' => $this->t('Start in lamp test mode.'),
+      'field_ini_gi_test' => $this->t('Start in GI test mode.'),
+      'field_ini_flasher_test' => $this->t('Start in flasher test mode.'),
+      'field_ini_interactive_test' => $this->t('Enable interactive selection mode for coil, lamp, and flasher tests.'),
+      'field_ini_test_number' => $this->t('Optional specific coil, lamp, GI, or flasher number for bench tests.'),
+      'field_ini_translite_window' => $this->t('Show the translite in a window instead of fullscreen.'),
+      'field_ini_translite_width' => $this->t('Translite window width in pixels.'),
+      'field_ini_translite_height' => $this->t('Translite window height in pixels.'),
+      'field_ini_translite_screen' => $this->t('Target screen index, or -1 for default placement.'),
+      'field_ini_virtual_dmd' => $this->t('Enable the virtual DMD window.'),
+      'field_ini_virtual_dmd_hd' => $this->t('Use 256x64 HD virtual DMD output instead of 128x32.'),
+      'field_ini_virtual_dmd_window' => $this->t('Show the virtual DMD in a window instead of fullscreen.'),
+      'field_ini_virtual_dmd_width' => $this->t('Virtual DMD window width in pixels.'),
+      'field_ini_virtual_dmd_height' => $this->t('Virtual DMD window height in pixels.'),
+      'field_ini_virtual_dmd_screen' => $this->t('Target screen index, or -1 for default placement.'),
+      'field_ini_virtual_dmd_x' => $this->t('X position relative to the selected screen.'),
+      'field_ini_virtual_dmd_y' => $this->t('Y position relative to the selected screen.'),
+      'field_ini_virtual_dmd_rotation' => $this->t('Virtual DMD rotation in degrees: 0, 90, 180, or 270.'),
+      'field_ini_virtual_dmd_renderer' => $this->t('Renderer name, such as dots, squares, smooth, or xbrz.'),
     ];
   }
 

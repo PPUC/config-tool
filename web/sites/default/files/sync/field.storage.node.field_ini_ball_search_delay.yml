@@ -1,0 +1,20 @@
+uuid: 6a79bd49-65d8-43a2-a677-d6e9b9b51bb7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_ball_search_delay
+field_name: field_ini_ball_search_delay
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

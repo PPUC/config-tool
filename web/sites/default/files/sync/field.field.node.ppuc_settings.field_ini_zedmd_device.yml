@@ -1,0 +1,19 @@
+uuid: 1f197ad9-8e17-4040-bece-2ecc12d02912
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_device
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_device
+field_name: field_ini_zedmd_device
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD: Device'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

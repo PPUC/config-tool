@@ -1,0 +1,25 @@
+uuid: 08c4afe5-65d6-4c41-a609-db2a2e21285a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_switch_reply_us
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_switch_reply_us
+field_name: field_ini_switch_reply_us
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: SwitchReplyDelayUs'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 2000
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

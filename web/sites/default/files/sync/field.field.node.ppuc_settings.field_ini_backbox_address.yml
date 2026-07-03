@@ -1,0 +1,19 @@
+uuid: 5f4ee6dd-89a8-4e0f-9455-05e914a6e763
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_backbox_address
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_backbox_address
+field_name: field_ini_backbox_address
+entity_type: node
+bundle: ppuc_settings
+label: 'Backbox: Address'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,18 @@
+uuid: 42a7e794-1cb7-4279-8baf-6ea8e3f6b704
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_interactive_test
+field_name: field_ini_interactive_test
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

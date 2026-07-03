@@ -1,0 +1,25 @@
+uuid: 55323cde-a761-45e0-9cbd-468178b3c8b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_translite_width
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_translite_width
+field_name: field_ini_translite_width
+entity_type: node
+bundle: ppuc_settings
+label: 'Translite: Width'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1920
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

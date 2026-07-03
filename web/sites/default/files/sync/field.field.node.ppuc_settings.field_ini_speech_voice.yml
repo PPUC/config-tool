@@ -1,0 +1,19 @@
+uuid: 53d35b8b-88a3-4237-a773-a2b10dbaa4f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_speech_voice
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_speech_voice
+field_name: field_ini_speech_voice
+entity_type: node
+bundle: ppuc_settings
+label: 'Speech: Voice'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

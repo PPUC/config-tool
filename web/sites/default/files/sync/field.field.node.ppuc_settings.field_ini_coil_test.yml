@@ -1,0 +1,23 @@
+uuid: ae97e221-a120-4493-8f58-366e13894c66
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_coil_test
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_coil_test
+field_name: field_ini_coil_test
+entity_type: node
+bundle: ppuc_settings
+label: 'BenchTest: CoilTest'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,25 @@
+uuid: da2ce8f3-970f-48c9-b189-75023093b556
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_b2s_angle
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_b2s_angle
+field_name: field_ini_b2s_angle
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: B2SSegmentAngleDegrees'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 18.0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: decimal

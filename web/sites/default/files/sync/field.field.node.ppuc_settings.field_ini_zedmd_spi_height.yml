@@ -1,0 +1,25 @@
+uuid: cc6beb0f-76d8-4e2e-9056-70bcf9b9e288
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_spi_height
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_spi_height
+field_name: field_ini_zedmd_spi_height
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD-SPI: Height'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 32
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

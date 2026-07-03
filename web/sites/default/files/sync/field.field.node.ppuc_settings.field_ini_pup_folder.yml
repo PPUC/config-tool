@@ -1,0 +1,19 @@
+uuid: 81ccd8b4-30ac-4544-80d6-3c242e26e0fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_pup_folder
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_pup_folder
+field_name: field_ini_pup_folder
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: PUPFolder'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

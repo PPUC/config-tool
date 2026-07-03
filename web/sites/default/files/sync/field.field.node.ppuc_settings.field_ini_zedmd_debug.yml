@@ -1,0 +1,23 @@
+uuid: 365b044b-e5f3-41be-beff-b099f6817a8a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_debug
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_debug
+field_name: field_ini_zedmd_debug
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD: Debug'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

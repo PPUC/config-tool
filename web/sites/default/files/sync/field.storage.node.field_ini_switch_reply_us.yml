@@ -1,0 +1,20 @@
+uuid: d9c7b618-3aea-4873-974b-d1a8e77b2e7d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_switch_reply_us
+field_name: field_ini_switch_reply_us
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,18 @@
+uuid: 7229912b-3d2b-4c46-9889-e4cf780d31c2
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_coil_test
+field_name: field_ini_coil_test
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

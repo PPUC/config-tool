@@ -18,6 +18,12 @@ ppuc_games.add_rule:
     - view.game_rules.rules
   title: 'Add Rule'
 
+ppuc_games.add_settings:
+  route_name: ppuc_games.add_settings
+  appears_on:
+    - entity.node.canonical
+  title: 'Add PPUC Settings'
+
 ppuc_games.add_i_o_board:
   route_name: node.add
   route_parameters:

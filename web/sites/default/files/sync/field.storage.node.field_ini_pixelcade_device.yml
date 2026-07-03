@@ -1,0 +1,21 @@
+uuid: 856a63a2-c4df-4f15-bc73-bd0f5f00147c
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_pixelcade_device
+field_name: field_ini_pixelcade_device
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

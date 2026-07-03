@@ -1,0 +1,20 @@
+uuid: e5e76d52-c386-453a-aec4-f138c0fbe7d3
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_test_number
+field_name: field_ini_test_number
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

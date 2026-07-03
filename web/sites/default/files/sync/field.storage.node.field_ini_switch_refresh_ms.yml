@@ -1,0 +1,20 @@
+uuid: f94eaa2c-793f-4dd0-a175-6edbfd42da59
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_switch_refresh_ms
+field_name: field_ini_switch_refresh_ms
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

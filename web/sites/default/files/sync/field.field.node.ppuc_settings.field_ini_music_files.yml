@@ -1,0 +1,19 @@
+uuid: 514a1085-f733-4d59-9b5d-2fa8eff61368
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_music_files
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_music_files
+field_name: field_ini_music_files
+entity_type: node
+bundle: ppuc_settings
+label: 'Paths: MusicFiles'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

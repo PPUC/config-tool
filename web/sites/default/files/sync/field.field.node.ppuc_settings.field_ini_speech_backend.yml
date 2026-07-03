@@ -1,0 +1,21 @@
+uuid: 63d932b2-aee4-4e06-ae59-596e6d641d0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_speech_backend
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_speech_backend
+field_name: field_ini_speech_backend
+entity_type: node
+bundle: ppuc_settings
+label: 'Speech: Backend'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: auto
+default_value_callback: ''
+settings: {  }
+field_type: string

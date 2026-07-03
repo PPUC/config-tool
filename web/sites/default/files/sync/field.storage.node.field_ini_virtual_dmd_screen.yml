@@ -1,0 +1,20 @@
+uuid: 964ad89e-bfb9-46fb-b7e3-b7a1fd68d71a
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_virtual_dmd_screen
+field_name: field_ini_virtual_dmd_screen
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,25 @@
+uuid: 814d26c0-0d47-4f3e-a3d4-192b56d12d74
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_virtual_dmd_height
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_virtual_dmd_height
+field_name: field_ini_virtual_dmd_height
+entity_type: node
+bundle: ppuc_settings
+label: 'VirtualDMD: Height'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 320
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

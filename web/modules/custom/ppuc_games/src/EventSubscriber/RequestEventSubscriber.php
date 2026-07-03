@@ -48,6 +48,7 @@ class RequestEventSubscriber implements EventSubscriberInterface {
       case 'entity.node.canonical':
       case 'ppuc_games.zip':
       case 'ppuc_games.yaml':
+      case 'ppuc_games.ini':
         $node = $this->routeMatch->getParameter('node');
 
         if ($node instanceof NodeInterface) {

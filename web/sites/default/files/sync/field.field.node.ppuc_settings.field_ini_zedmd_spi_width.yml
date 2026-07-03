@@ -1,0 +1,25 @@
+uuid: 99054e69-17ed-40fc-9b7c-d3b7b68b5809
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_spi_width
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_spi_width
+field_name: field_ini_zedmd_spi_width
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD-SPI: Width'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 128
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

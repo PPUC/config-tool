@@ -1,0 +1,23 @@
+uuid: ea4bec17-cedc-48ca-b5fe-b64a78baafa2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_zedmd_enabled
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_zedmd_enabled
+field_name: field_ini_zedmd_enabled
+entity_type: node
+bundle: ppuc_settings
+label: 'ZeDMD: Enabled'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

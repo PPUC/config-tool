@@ -1,0 +1,20 @@
+uuid: 6168510e-de64-424e-883c-79a9fb6bb1c3
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_coil_hold_frames
+field_name: field_ini_coil_hold_frames
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

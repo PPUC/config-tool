@@ -1,0 +1,23 @@
+uuid: bace61dd-7854-4e36-bcc5-4b5a439ac19e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_pin2dmd_enabled
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_pin2dmd_enabled
+field_name: field_ini_pin2dmd_enabled
+entity_type: node
+bundle: ppuc_settings
+label: 'PIN2DMD: Enabled'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

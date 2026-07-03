@@ -1,0 +1,20 @@
+uuid: e08e1b40-895e-44a1-bc98-297087e47571
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_b2s_angle
+field_name: field_ini_b2s_angle
+entity_type: node
+type: decimal
+settings:
+  precision: 10
+  scale: 2
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

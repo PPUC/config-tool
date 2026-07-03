@@ -1,0 +1,23 @@
+uuid: 4d63f155-74e2-455a-8a9d-6b01f269550a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_no_sound
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_no_sound
+field_name: field_ini_no_sound
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: NoSound'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

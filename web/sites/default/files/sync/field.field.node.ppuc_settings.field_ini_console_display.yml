@@ -1,0 +1,23 @@
+uuid: c3a9e8b6-8033-4922-bcb6-f00de825fce2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_console_display
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_console_display
+field_name: field_ini_console_display
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: ConsoleDisplay'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

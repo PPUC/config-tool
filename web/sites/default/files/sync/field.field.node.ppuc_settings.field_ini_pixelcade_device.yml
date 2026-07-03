@@ -1,0 +1,19 @@
+uuid: fd3cc984-a6d6-4bda-9995-ea76dcbaabec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_pixelcade_device
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_pixelcade_device
+field_name: field_ini_pixelcade_device
+entity_type: node
+bundle: ppuc_settings
+label: 'Pixelcade: Device'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
