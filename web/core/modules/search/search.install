@@ -122,3 +122,10 @@ function search_schema(): array {
 
   return $schema;
 }
+
+/**
+ * Install Search Node and Search and Node are installed.
+ */
+function search_update_11400(): void {
+  // Moved to system_update_11401().
+}
