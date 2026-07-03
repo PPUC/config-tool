@@ -366,7 +366,7 @@ class GamesController extends ControllerBase {
                 'description' => trim($device->label()),
                 'board' => $i_o_board_number,
                 'activeLow' => (bool) ($device->get('field_active_low')->value),
-                'numRows' => (int) ($device->get('field_rows')->value),
+                'rows' => (int) ($device->get('field_rows')->value),
                 'switches' => $switches,
               ];
             }
