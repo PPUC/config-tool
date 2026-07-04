@@ -11,7 +11,7 @@ field_name: field_translite_in_game
 entity_type: node
 bundle: game
 label: 'Translite in-game'
-description: ''
+description: 'In-game or on-state translite image. It is exported as translite-on when downloading a game folder.'
 required: false
 translatable: false
 default_value: {  }

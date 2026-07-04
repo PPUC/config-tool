@@ -11,7 +11,7 @@ field_name: field_translite
 entity_type: node
 bundle: game
 label: Translite
-description: ''
+description: 'Attract or off-state translite image. It is exported as translite-off when downloading a game folder.'
 required: false
 translatable: false
 default_value: {  }

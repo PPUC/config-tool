@@ -18,6 +18,11 @@ ppuc_games.rules_download:
   base_route: entity.node.canonical
   title: 'Download Rules'
 
+ppuc_games.game_folder:
+  route_name: ppuc_games.game_folder
+  base_route: entity.node.canonical
+  title: 'Download Game Folder'
+
 ppuc_games.ini:
   route_name: ppuc_games.ini
   base_route: entity.node.canonical

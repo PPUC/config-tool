@@ -20,6 +20,7 @@ class PpucNodeForm extends NodeForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $this->configureWhiteChannelFields($form, $form_state);
+    $this->configureGameFields($form);
     $this->configureRulesFields($form);
     $this->configurePpucSettingsFields($form);
     $this->configureSwitchGroupMembershipFields($form);
@@ -29,6 +30,24 @@ class PpucNodeForm extends NodeForm {
 
   public function refreshForm(array $form, FormStateInterface $form_state): array {
     return $form;
+  }
+
+  protected function configureGameFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if ($entity->bundle() !== 'game') {
+      return;
+    }
+
+    if (isset($form['field_rom'])) {
+      $form['field_rom']['#description'] = $this->t('PinMAME ROM zip file. Upload or select the ROM media item used by this game.');
+    }
+    if (isset($form['field_translite'])) {
+      $form['field_translite']['#description'] = $this->t('Attract or off-state translite image. It is exported as translite-off when downloading a game folder.');
+    }
+    if (isset($form['field_translite_in_game'])) {
+      $form['field_translite_in_game']['#description'] = $this->t('In-game or on-state translite image. It is exported as translite-on when downloading a game folder.');
+    }
   }
 
   public function applyPpucIniDescriptionAfterBuild(array $element, FormStateInterface $form_state): array {

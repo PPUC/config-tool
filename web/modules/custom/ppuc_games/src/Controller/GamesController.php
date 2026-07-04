@@ -9,6 +9,8 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\default_content_deploy\ExporterInterface;
+use Drupal\file\FileInterface;
+use Drupal\media\MediaInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
@@ -129,6 +131,16 @@ class GamesController extends ControllerBase {
     }
 
     return trim((string) $field->value);
+  }
+
+  protected function getIniSettingValue(NodeInterface $game, string $field_name, string $default = ''): string {
+    $settings = $this->getIniSettingsNode($game);
+    if (!$settings instanceof NodeInterface) {
+      return $default;
+    }
+
+    $value = $this->getIniFieldValue($settings, $field_name);
+    return $value !== '' ? $value : $default;
   }
 
   protected function getIniBool01Value(NodeInterface $settings, string $field_name): string {
@@ -434,7 +446,7 @@ class GamesController extends ControllerBase {
     $yaml = [
       'ppucVersion' => 1,
       'rom' => 'dummy',
-      'serialPort' => $node->field_serial_port->value ?? 'dummy',
+      'serialPort' => $this->getIniSettingValue($node, 'field_ini_serial', 'dummy'),
       'platform' => $platform->getName(),
       'coinDoorClosedSwitch' => (int) ($node->field_coin_door_closed_switch->value ?? 0),
       'gameOnSolenoid' => (int) ($node->field_game_on_solenoid->value ?? 0),
@@ -922,14 +934,6 @@ class GamesController extends ControllerBase {
     return (string) $node->get('field_rules_lua')->value;
   }
 
-  protected function getRulesBlocks(NodeInterface $node): string {
-    if (!$node->hasField('field_rules_blocks') || $node->get('field_rules_blocks')->isEmpty()) {
-      return '';
-    }
-
-    return (string) $node->get('field_rules_blocks')->value;
-  }
-
   protected function getRuleNodes(NodeInterface $game, bool $enabled_only = false): array {
     if ($game->bundle() !== 'game') {
       return [];
@@ -988,13 +992,6 @@ class GamesController extends ControllerBase {
       }
 
       file_put_contents($rules_folder . '/' . $this->buildRuleFilename($rule, 'lua'), $rules_lua);
-
-      if ($this->getRuleEditorMode($rule) === 'blockly') {
-        $rules_blocks = $this->getRulesBlocks($rule);
-        if ($rules_blocks !== '') {
-          file_put_contents($rules_folder . '/' . $this->buildRuleFilename($rule, 'blockly.json'), $rules_blocks);
-        }
-      }
     }
   }
 
@@ -1031,6 +1028,224 @@ class GamesController extends ControllerBase {
       [
         'Content-Type' => 'application/gzip',
         'Content-Disposition' => 'attachment; filename=' . $event->getFilename(),
+      ]
+    );
+  }
+
+  protected function sanitizeGeneratedFilename(string $filename, string $extension): string {
+    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $filename), $extension);
+    \Drupal::service('event_dispatcher')->dispatch($event);
+    return $event->getFilename();
+  }
+
+  protected function sanitizeGameFolderName(NodeInterface $game): string {
+    $filename = $this->sanitizeGeneratedFilename($game->getTitle() . '.folder', 'folder');
+    $folder = preg_replace('/\.folder$/', '', $filename);
+    $folder = trim((string) $folder, " .\t\n\r\0\x0B/");
+    return $folder !== '' ? $folder : 'game';
+  }
+
+  protected function getGameRomName(NodeInterface $game): string {
+    $rom = $this->getIniSettingValue($game, 'field_ini_game_rom');
+    if ($rom === '') {
+      $rom = $this->getStringFieldValue($game, 'field_machine_name') ?? '';
+    }
+    if ($rom === '') {
+      $rom = $this->getFirstReferencedMediaSourceFilename($game, 'field_rom');
+    }
+    if ($rom === '') {
+      $rom = $game->getTitle();
+    }
+
+    $rom = preg_replace('/\.zip$/i', '', trim($rom));
+    $filename = $this->sanitizeGeneratedFilename($rom . '.folder', 'folder');
+    $rom = preg_replace('/\.folder$/', '', $filename);
+    $rom = trim((string) $rom, " .\t\n\r\0\x0B/");
+    return $rom !== '' ? $rom : 'rom';
+  }
+
+  protected function getGameFolderSkeletonFolders(?string $rom = NULL): array {
+    $folders = [
+      '',
+      'music',
+      'pinmame',
+      'pinmame/altcolor',
+      'pinmame/altsound',
+      'pinmame/cfg',
+      'pinmame/nvram',
+      'pinmame/roms',
+      'pinmame/snap',
+      'pinmame/sta',
+      'pup',
+      'pup/pupvideos',
+      'rules',
+    ];
+
+    if ($rom !== NULL && $rom !== '') {
+      $folders[] = 'pinmame/altcolor/' . $rom;
+      $folders[] = 'pinmame/altsound/' . $rom;
+    }
+
+    return $folders;
+  }
+
+  protected function prepareGameFolderSkeleton(string $game_folder, ?string $rom = NULL): void {
+    foreach ($this->getGameFolderSkeletonFolders($rom) as $folder) {
+      $directory = $game_folder . ($folder !== '' ? '/' . $folder : '');
+      $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    }
+  }
+
+  protected function writeGameFolderReadme(string $game_folder): void {
+    $readme = <<<TXT
+This folder contains the generated PPUC configuration and assets known to the config-tool.
+
+After extracting it, add optional runtime assets directly into this folder:
+- directb2s backglass files into this top-level game folder
+- PUP packs into pup/pupvideos/
+- AltSound packages into pinmame/altsound/<rom-name>/
+- background music files into music/
+- ROM colorization files into pinmame/altcolor/<rom-name>/
+- additional PinMAME files, nvram, cfg, snapshots, or state files into the matching pinmame/ subfolders
+
+TXT;
+    file_put_contents($game_folder . '/README.txt', $readme);
+  }
+
+  protected function getFirstReferencedMediaSourceFilename(NodeInterface $node, string $field_name): string {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return '';
+    }
+
+    foreach ($node->get($field_name)->referencedEntities() as $media) {
+      if (!$media instanceof MediaInterface) {
+        continue;
+      }
+
+      $media_type = \Drupal::entityTypeManager()
+        ->getStorage('media_type')
+        ->load($media->bundle());
+      $source_field = $media_type?->getSource()
+        ->getConfiguration()['source_field'] ?? NULL;
+      if ($source_field === NULL || !$media->hasField($source_field) || $media->get($source_field)->isEmpty()) {
+        continue;
+      }
+
+      $file = $media->get($source_field)->entity ?? NULL;
+      if ($file instanceof FileInterface) {
+        return pathinfo($file->getFilename(), PATHINFO_FILENAME);
+      }
+    }
+
+    return '';
+  }
+
+  protected function copyReferencedMediaFiles(NodeInterface $node, string $field_name, string $target_folder, ?string $target_basename = NULL): void {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return;
+    }
+
+    $this->fileSystem->prepareDirectory($target_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    foreach ($node->get($field_name)->referencedEntities() as $media) {
+      if (!$media instanceof MediaInterface) {
+        continue;
+      }
+
+      $media_type = \Drupal::entityTypeManager()
+        ->getStorage('media_type')
+        ->load($media->bundle());
+      $source_field = $media_type?->getSource()
+        ->getConfiguration()['source_field'] ?? NULL;
+      $fields = $source_field !== NULL && $media->hasField($source_field)
+        ? [$media->get($source_field)]
+        : array_filter($media->getFields(), static function ($field): bool {
+          $type = $field->getFieldDefinition()->getType();
+          return in_array($type, ['file', 'image'], TRUE) && $field->getName() !== 'thumbnail';
+        });
+
+      foreach ($fields as $field) {
+        if ($field->isEmpty()) {
+          continue;
+        }
+
+        foreach ($field as $item) {
+          $file = $item->entity ?? NULL;
+          if (!$file instanceof FileInterface) {
+            continue;
+          }
+
+          $extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+          $filename = $target_basename !== NULL && $extension !== ''
+            ? $target_basename . '.' . $extension
+            : $file->getFilename();
+          $extension = $extension !== '' ? $extension : pathinfo($filename, PATHINFO_EXTENSION);
+          $filename = $this->sanitizeGeneratedFilename($filename, $extension);
+          $this->fileSystem->copy($file->getFileUri(), $target_folder . '/' . $filename, FileSystemInterface::EXISTS_REPLACE);
+        }
+      }
+    }
+  }
+
+  protected function copyGameFolderAssets(NodeInterface $game, string $game_folder): void {
+    $this->copyReferencedMediaFiles($game, 'field_rom', $game_folder . '/pinmame/roms');
+    $this->copyReferencedMediaFiles($game, 'field_translite_in_game', $game_folder, 'translite-on');
+    $this->copyReferencedMediaFiles($game, 'field_translite', $game_folder, 'translite-off');
+  }
+
+  /**
+   * Streams a tar.gz archive containing a runnable game folder.
+   */
+  public function streamGameFolderArchive(NodeInterface $node): Response {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    $folder_name = $this->sanitizeGameFolderName($node);
+    $tmp = $this->fileSystem->getTempDirectory() . '/ppuc-game-folder-' . $node->id();
+    $this->fileSystem->deleteRecursive($tmp);
+    $this->fileSystem->prepareDirectory($tmp, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+    $game_folder = $tmp . '/' . $folder_name;
+    $rom = $this->getGameRomName($node);
+    $this->prepareGameFolderSkeleton($game_folder, $rom);
+
+    $objects = [];
+    file_put_contents($game_folder . '/io-boards.yaml', Yaml::encode($this->buildYaml($node, $objects)));
+    file_put_contents($game_folder . '/ppuc.ini', $this->buildPpucIni($node));
+    $this->writeRuleFiles($node, $game_folder . '/rules');
+    $this->copyGameFolderAssets($node, $game_folder);
+    $this->writeGameFolderReadme($game_folder);
+
+    $tar = $this->fileSystem->getTempDirectory() . '/' . $folder_name . '-' . $node->id() . '.tar';
+    $gz = $tar . '.gz';
+    if (file_exists($tar)) {
+      unlink($tar);
+    }
+    if (file_exists($gz)) {
+      unlink($gz);
+    }
+
+    $archive = new \PharData($tar);
+    $archive->buildFromDirectory($tmp);
+    foreach ($this->getGameFolderSkeletonFolders($rom) as $folder) {
+      if ($folder === '') {
+        continue;
+      }
+      try {
+        $archive->addEmptyDir($folder_name . '/' . $folder);
+      }
+      catch (\Exception) {
+        // The directory may already have been added implicitly with files.
+      }
+    }
+    $archive->compress(\Phar::GZ);
+
+    return new Response(
+      file_get_contents($gz),
+      200,
+      [
+        'Content-Type' => 'application/gzip',
+        'Content-Disposition' => 'attachment; filename=' . $this->sanitizeGeneratedFilename($folder_name . '.tar.gz', 'tar.gz'),
       ]
     );
   }
