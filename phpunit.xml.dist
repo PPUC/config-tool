@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Unit tests for this site's own code.
+
+  Scope is deliberately narrow: logic that runs without a database, so the
+  suite stays fast enough to run on every change. Anything needing entities,
+  fields or config is a Kernel test and runs through web/core/phpunit.xml.dist
+  instead.
+
+  PHPUnit itself is not a dependency of this project. vendor/ is committed
+  here, and pulling the test tooling in would add a couple of thousand files
+  to the repository for something only developers run. Run it from a phpunit
+  phar instead, either installed locally or inside a throwaway php:8.3-cli
+  container with the project mounted at /app. See tests/README.md for the
+  exact command.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache"
+         failOnWarning="true"
+         failOnRisky="true"
+         beStrictAboutOutputDuringTests="true">
+  <testsuites>
+    <testsuite name="ppuc-unit">
+      <directory>web/modules/custom/*/tests/src/Unit</directory>
+      <directory>web/profiles/custom/*/tests/src/Unit</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">web/modules/custom</directory>
+      <directory suffix=".php">web/profiles/custom</directory>
+    </include>
+  </source>
+</phpunit>
