@@ -30,10 +30,27 @@ final class GameWizardForm extends FormBase {
   private const STEP_INPUT = 'input';
   private const STEP_REVIEW = 'review';
 
+  /**
+   * Protected and not readonly, both deliberately.
+   *
+   * A multi-step form is serialized into the form cache between requests, and
+   * DependencySerializationTrait is what puts the services back: __sleep()
+   * records them by service id and __wakeup() assigns them again. Both run in
+   * FormBase's scope, so a *private* property here is invisible to
+   * get_object_vars() and never stored, and a *readonly* one cannot be
+   * assigned from that scope. Either way the property comes back uninitialized
+   * and the next method to touch it fails at runtime, not in a test.
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+  protected GameBuilder $gameBuilder;
+
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly GameBuilder $gameBuilder,
-  ) {}
+    EntityTypeManagerInterface $entityTypeManager,
+    GameBuilder $gameBuilder,
+  ) {
+    $this->entityTypeManager = $entityTypeManager;
+    $this->gameBuilder = $gameBuilder;
+  }
 
   public static function create(ContainerInterface $container): static {
     return new static(
