@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.pwm_device.field_pin
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
+    - field.field.node.pwm_device.field_stop_switches
     - node.type.pwm_device
 _core:
   default_config_hash: fjGYYOtj621yvs9XzoOn--Po6Xb6mBetK0zEViTDRqQ
@@ -116,6 +117,12 @@ content:
   field_pwm_type:
     type: options_select
     weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_stop_switches:
+    type: options_select
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }

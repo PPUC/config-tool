@@ -196,6 +196,18 @@ final class GameBuilder {
       $values['field_fast_activation_switch'] = ['target_id' => $switchesByNumber[$fastFlip]->id()];
     }
 
+    // Switches that cut this output when they close, as opposed to the one
+    // above that runs it while closed.
+    $stops = [];
+    foreach ($coil['stopSwitches'] ?? [] as $number) {
+      if (isset($switchesByNumber[$number])) {
+        $stops[] = ['target_id' => $switchesByNumber[$number]->id()];
+      }
+    }
+    if ($stops) {
+      $values['field_stop_switches'] = $stops;
+    }
+
     $node = Node::create($values);
     $node->save();
     return $node;

@@ -606,6 +606,10 @@ class WizardHardwareAllocatorTest extends TestCase {
 
   /**
    * What is left to do by hand has to be said, not left to be discovered.
+   *
+   * The end switches stop the motor now, so what remains is the travel time:
+   * the default pulse time is shorter than a traverse, and left alone the
+   * assembly stops part way.
    */
   public function testAMotorIsReportedWithWhatItStillNeeds(): void {
     [, $plan] = $this->allocate(self::document([
@@ -616,8 +620,8 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     $notes = implode("\n", array_map('strval', $plan['notes']));
     $this->assertStringContainsString('Gun Motor', $notes);
-    $this->assertStringContainsString('nothing stops it when they close yet', $notes);
-    $this->assertStringContainsString('Time the travel and set it', $notes);
+    $this->assertStringContainsString('stop it the moment it reaches either end', $notes);
+    $this->assertStringContainsString('time the travel and set it', $notes);
   }
 
   public function testAMotorWithoutEndSwitchesSaysSo(): void {
@@ -672,6 +676,69 @@ class WizardHardwareAllocatorTest extends TestCase {
     // Its partner is an ordinary coil and still needs a bound.
     $this->assertGreaterThan(0, self::coil($plan, 8)['maxPulseTime']);
     $this->assertFalse(self::coil($plan, 8)['holdWinding']);
+  }
+
+  // --- stop switches ---------------------------------------------------------
+
+  /**
+   * The EOS cuts the power winding, and only that one.
+   */
+  public function testTheEosStopsThePowerWindingButNotTheHold(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [
+        ['number' => 29, 'description' => 'LR Power', 'class' => 'highPower'],
+        ['number' => 30, 'description' => 'LR Hold', 'class' => 'lowPower'],
+      ],
+      'flippers' => [
+        ['name' => 'Lower Right', 'position' => 'lowerRight', 'powerCoil' => 29, 'holdCoil' => 30],
+      ],
+    ]));
+
+    $eos = NULL;
+    foreach ($plan['switches'] as $switch) {
+      if (($switch['role'] ?? '') === 'flipperEos') {
+        $eos = $switch['number'];
+      }
+    }
+    $this->assertNotNull($eos);
+
+    $this->assertSame([$eos], self::coil($plan, 29)['stopSwitches']);
+    // Cutting the hold winding would drop the finger the moment it arrived.
+    $this->assertSame([], self::coil($plan, 30)['stopSwitches']);
+  }
+
+  /**
+   * A stop switch only works from the board that owns the output.
+   */
+  public function testAStopSwitchSharesItsOutputsBoard(): void {
+    $switches = [
+      ['number' => 76, 'description' => 'Gun Position'],
+      ['number' => 77, 'description' => 'Gun Lockup'],
+    ];
+    $coils = [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+               'type' => 'motor', 'endSwitches' => [76, 77]]];
+    for ($n = 100; $n < 120; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $motor = self::coil($plan, 20);
+    $this->assertSame([76, 77], $motor['stopSwitches']);
+    foreach ($motor['stopSwitches'] as $number) {
+      $this->assertSame($motor['board'], self::boardOfSwitch($plan, $number));
+    }
+  }
+
+  /**
+   * An ordinary coil gets none, so nothing changes for the rest of a machine.
+   */
+  public function testAnOrdinaryCoilHasNoStopSwitches(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [['number' => 1, 'description' => 'Ball Release', 'class' => 'highPower']],
+    ]));
+
+    $this->assertSame([], self::coil($plan, 1)['stopSwitches']);
   }
 
   /**

@@ -107,7 +107,7 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
 | `holdWinding` | This output is the hold half of a pair driven as two outputs. Flippers are declared in `flippers` instead; use this for anything else, such as a trap door driven as "high" and "hold". |
 | `position` | Optional. Where the device is, as `{"x": 0.5, "y": 0.2}`. See below. |
-| `endSwitches` | The switches at an assembly's end positions, as `[76, 77]`. The wizard puts them on the same board as the coil. See motors below. |
+| `endSwitches` | The switches at an assembly's end positions, as `[76, 77]`. They become stop switches and go on the coil's board. See motors below. |
 | `position` | Which flipper this is, which selects the button number. |
 
 Rows the manual marks "Not Used" are simply left out. So are switches called
@@ -134,14 +134,13 @@ into its own stop. List them:
   "type": "motor", "endSwitches": [76, 77] }
 ```
 
-The wizard puts them on the motor's board, because a switch can only act on a
-coil locally when the board owns both. **It does not wire them to anything
-yet:** PPUC can start a coil from a switch but not stop one, which is the same
-inverted association the Fliptronic EOS needs and is planned with it. Until
-then the maximum pulse time is the only thing ending the run, and at its default
-the motor stops short of its travel - the safe way round to be wrong. Time the
-travel and set it. The wizard says all of this in its summary rather than
-leaving it to be found.
+These become the output's **stop switches**: the board cuts the motor the moment
+one closes, without waiting for the host. That only works from the board that
+owns the output, so the wizard puts them there.
+
+The maximum pulse time stays as the backstop for a switch that never closes, and
+its default is shorter than a traverse - time the travel and set it, or the
+assembly stops part way. The wizard says so in its summary.
 
 Do not put an end switch in `fastFlipSwitch`. The polarity is the other way
 round: a fast-flip switch runs the coil *while* it is closed, so that would
@@ -254,15 +253,21 @@ ended by whichever comes first:
   it loses strength: a heavy ball can push the finger down, and the hold winding
   alone cannot raise it again until the button is released and pressed.
 
-**PPUC does not act on the EOS contact yet.** The maximum pulse time is
-therefore the only thing ending the pulse, so it fires on every flip rather than
-only on failed ones. The wizard sets **40 ms**, which clears the slowest stroke
-so no flip is cut short, and stays inside the range WPC itself considered safe
-for the winding. Setting it below 30 ms cuts the flip off before the finger
-arrives.
+PPUC now does both. The wizard creates the EOS as a switch, makes it a **stop
+switch** of the power winding, and puts it on the same board so the board acts
+on it itself. The maximum pulse time is set to **40 ms** as the backstop for a
+contact that never closes - it clears the slowest stroke, so no flip is cut
+short, and stays inside the range WPC itself considered safe for the winding.
+Below 30 ms it would cut the flip off before the finger arrives.
 
-The wizard still creates the EOS switch, so it is wired and ready for when PPUC
-can act on it.
+Nothing stops the hold winding: that is what keeps the finger up once it is
+there.
+
+One behaviour worth knowing, because it is the reason the EOS is read rather
+than just recorded. If a ball heavy enough pushes the finger back down, the EOS
+opens; the hold winding alone cannot lift it, so the board fires the power
+winding again while the button is still held. Without that the flipper stays
+down until the player releases and presses again.
 
 ## Game YAML export
 

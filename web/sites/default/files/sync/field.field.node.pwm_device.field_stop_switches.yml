@@ -1,0 +1,29 @@
+uuid: 268e0f2e-5c09-43bf-a688-3d233d6e7410
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_stop_switches
+    - node.type.pwm_device
+    - node.type.switch
+id: node.pwm_device.field_stop_switches
+field_name: field_stop_switches
+entity_type: node
+bundle: pwm_device
+label: 'Stop switches'
+description: 'Switches that cut this output the moment they close. The opposite of "Fast activation switch", which runs the output while its switch is closed. Two cases need it: the end-of-stroke contact of a flipper whose power and hold windings are driven separately, and the switches at each end of a motor-driven assembly''s travel, which stop it before it drives into its own stop. The board acts on these itself, so a stop switch must be on the same I/O board as the output. Up to two. It does not replace a maximum pulse time: a contact can be unplugged or misadjusted, and the original machines paired one with a timeout rather than trusting it alone.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      switch: switch
+    sort:
+      field: field_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -93,6 +93,34 @@ class GamesController extends ControllerBase {
     return $number === NULL ? NULL : (int) $number;
   }
 
+  /**
+   * The numbers of every switch a multi-value reference field points at.
+   *
+   * Skips anything dangling for the same reason getSwitchNumberFieldValue()
+   * returns NULL for one: exporting 0 would name switch 0, which a game can
+   * really have.
+   *
+   * @return int[]
+   */
+  protected function getSwitchNumbersFieldValue(NodeInterface $node, string $field_name): array {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return [];
+    }
+
+    $numbers = [];
+    foreach ($node->get($field_name)->referencedEntities() as $switch) {
+      if (!$switch instanceof NodeInterface || !$switch->hasField('field_number')) {
+        continue;
+      }
+      $number = $switch->get('field_number')->value;
+      if ($number !== NULL) {
+        $numbers[] = (int) $number;
+      }
+    }
+
+    return $numbers;
+  }
+
   protected function getColorFieldValue(NodeInterface $node, string $field_name): ?string {
     if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
       return NULL;
@@ -700,6 +728,13 @@ class GamesController extends ControllerBase {
               // which would otherwise be reported as an unprotected coil.
               if ($this->getBooleanFieldValue($device, 'field_hold_winding')) {
                 $pwm_output['holdWinding'] = TRUE;
+              }
+              // Switches that cut this output when they close - a flipper's
+              // EOS, or the ends of a motor's travel. The board acts on them
+              // itself, which is why they have to be on its own I/O board.
+              $stop_switches = $this->getSwitchNumbersFieldValue($device, 'field_stop_switches');
+              if ($stop_switches) {
+                $pwm_output['stopSwitches'] = $stop_switches;
               }
 
               $yaml['pwmOutput'][] = $pwm_output;

@@ -255,6 +255,8 @@ final class HardwareAllocator {
    * Every coil, with the flipper windings resolved into settings.
    */
   private function expandCoils(array $devices): array {
+    // The EOS numbers are assigned while expanding the switches; this walks the
+    // same order to find them again.
     $flipperByCoil = [];
     foreach ($devices['flippers'] as $flipper) {
       $flipperByCoil[$flipper['powerCoil']] = ['flipper' => $flipper, 'winding' => 'power'];
@@ -273,6 +275,8 @@ final class HardwareAllocator {
           'power' => DeviceDefaults::powerFor($coil['class'], $coil['type']),
           'maxPulseTime' => $holdWinding ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
           'holdWinding' => $holdWinding,
+          // A motor's end-position switches are what cut it when it arrives.
+          'stopSwitches' => $coil['endSwitches'] ?? [],
           'role' => $holdWinding ? 'holdWinding' : 'coil',
         ]);
         continue;
@@ -280,7 +284,12 @@ final class HardwareAllocator {
 
       $flipper = $winding['flipper'];
       $isHold = $winding['winding'] === 'hold';
+      // The EOS cuts the power winding once the finger has arrived. Not the
+      // hold winding: that is what keeps the finger up afterwards, and cutting
+      // it would drop the flipper the moment it got there.
+      $eos = $isHold ? [] : [$this->eosNumberFor($devices, $flipper['name'])];
       $coils[] = array_merge($coil, [
+        'stopSwitches' => array_values(array_filter($eos)),
         'power' => $isHold ? DeviceDefaults::FLIPPER_HOLD : DeviceDefaults::FLIPPER_POWER,
         // The hold winding is wound to sit energised, so it gets no bound and
         // says so with holdWinding instead.
@@ -293,6 +302,26 @@ final class HardwareAllocator {
       ]);
     }
     return $coils;
+  }
+
+  /**
+   * The custom switch number given to a flipper's EOS, or NULL.
+   *
+   * Assigned in expandSwitches() in the order the flippers are listed, so this
+   * walks the same order rather than guessing.
+   */
+  private function eosNumberFor(array $devices, string $flipperName): ?int {
+    $next = PlatformNumbers::CUSTOM_NUMBER_BASE;
+    foreach ($devices['flippers'] as $flipper) {
+      if ($next > PlatformNumbers::CUSTOM_NUMBER_LIMIT) {
+        return NULL;
+      }
+      if ($flipper['name'] === $flipperName) {
+        return $next;
+      }
+      $next++;
+    }
+    return NULL;
   }
 
   /**
@@ -314,8 +343,12 @@ final class HardwareAllocator {
         $wanted[] = $coil['fastFlipSwitch'];
       }
 
-      // End-position switches stop a motor. They cannot do that from another
-      // board any more than a fast-flip switch can start a coil from one.
+      // A stop switch cuts the output from the board itself, which it can only
+      // do when the board owns both. Covers a motor's end positions and a
+      // flipper's EOS.
+      foreach ($coil['stopSwitches'] ?? [] as $number) {
+        $wanted[] = $number;
+      }
       foreach ($coil['endSwitches'] ?? [] as $number) {
         $wanted[] = $number;
       }
@@ -508,13 +541,13 @@ final class HardwareAllocator {
    * Says what still has to be done by hand for each motor.
    *
    * A motor drives an assembly - a gun, a cannon - between two end positions,
-   * and the switches at those positions are what should cut it the instant it
-   * arrives. PPUC cannot do that yet: a switch can start a coil locally but not
-   * stop one, which is the same inverted association the Fliptronic EOS needs
-   * and is planned with it. The switches are put on the motor's board so they
-   * are ready, and until then the maximum pulse time is the only thing ending
-   * the run - at its default the motor will stop short of its travel, which is
-   * the safe way round to be wrong.
+   * and the switches at those positions cut it the instant it arrives. That is
+   * board-local, which is why they are on the motor's board.
+   *
+   * What is still left to do is the travel time. The maximum pulse time is the
+   * backstop for a switch that never closes, and at its default the motor stops
+   * short of a normal traverse - the safe way round to be wrong, but it has to
+   * be set to the real travel or the assembly never gets there.
    */
   private function reportMotors(array $coils): void {
     foreach ($coils as $coil) {
@@ -526,17 +559,19 @@ final class HardwareAllocator {
       $this->notes[] = $ends
         ? sprintf(
           '"%s" (coil %d) is a motor, driven at %d of 255 for a low-voltage motor on a '
-          . 'high-voltage rail. Its end-position switches (%s) are on board %d with it, but '
-          . 'nothing stops it when they close yet - a switch can start a coil locally, not '
-          . 'stop one. Until that exists the maximum pulse time is the only limit, and at '
-          . '%d ms the motor will stop short of its travel. Time the travel and set it.',
+          . 'high-voltage rail. Switches %s stop it the moment it reaches either end of its '
+          . 'travel, and are on board %d with it so the board can act on them itself. Its '
+          . 'maximum pulse time is the backstop for a switch that never closes, and %d ms is '
+          . 'shorter than a traverse - time the travel and set it, or the assembly will stop '
+          . 'part way.',
           $coil['description'], $coil['number'], $coil['power'],
           implode(' and ', $ends), $coil['board'], $coil['maxPulseTime']
         )
         : sprintf(
           '"%s" (coil %d) is a motor, driven at %d of 255. It has no end-position switches: '
-          . 'if the assembly has any, name them in endSwitches so they land on its board. '
-          . 'The maximum pulse time (%d ms) is the only thing ending the run.',
+          . 'if the assembly has any, name them in endSwitches so they stop it when it '
+          . 'arrives. Without them the maximum pulse time (%d ms) is the only thing ending '
+          . 'the run.',
           $coil['description'], $coil['number'], $coil['power'], $coil['maxPulseTime']
         );
     }

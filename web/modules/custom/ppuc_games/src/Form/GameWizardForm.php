@@ -190,11 +190,11 @@ final class GameWizardForm extends FormBase {
       $notes[] = $this->t('Not created: @entry.', ['@entry' => $skipped]);
     }
     $notes[] = $this->t(
-      'The flipper power windings are set to @ms ms, which is the timeout WPC '
-      . 'itself used when the end-of-stroke contact could not end the pulse. '
-      . 'PPUC does not act on the EOS contact yet, so this ends every flip '
-      . 'rather than only the failed ones. The EOS switches are created and '
-      . 'ready for when it can.',
+      'Each flipper power winding is cut by its end-of-stroke contact, on the '
+      . 'same board so the board acts on it itself. The @ms ms maximum pulse '
+      . 'time is the backstop for a contact that never closes, which is what WPC '
+      . 'used it for too. Nothing cuts the hold winding: that is what keeps the '
+      . 'finger up once it is there.',
       ['@ms' => DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS]
     );
 

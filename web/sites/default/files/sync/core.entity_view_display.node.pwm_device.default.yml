@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.pwm_device.field_pin
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
+    - field.field.node.pwm_device.field_stop_switches
     - node.type.pwm_device
   module:
     - user
@@ -151,6 +152,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 7
+    region: content
+  field_stop_switches:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 15
     region: content
   links:
     settings: {  }
