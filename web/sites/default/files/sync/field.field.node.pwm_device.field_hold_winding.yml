@@ -1,0 +1,23 @@
+uuid: cb1fcae0-2ebb-4047-8f9e-14d22d0287cb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hold_winding
+    - node.type.pwm_device
+id: node.pwm_device.field_hold_winding
+field_name: field_hold_winding
+entity_type: node
+bundle: pwm_device
+label: 'Hold winding'
+description: 'Set this if this output is the hold winding of a flipper whose power and hold windings are driven as two separate outputs, as on WPC Fliptronic. A hold winding is wound to stay energised for as long as the player holds the button, so it needs no maximum pulse time - setting one would drop the flipper mid-game. Do not confuse it with "Dual-wound coil", which describes a single coil that transfers to its own hold winding through an EOS contact.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

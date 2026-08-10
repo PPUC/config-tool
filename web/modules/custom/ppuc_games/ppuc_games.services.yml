@@ -4,6 +4,9 @@ services:
     arguments: ['@current_route_match']
     tags:
       - { name: event_subscriber }
+  ppuc_games.game_builder:
+    class: Drupal\ppuc_games\Wizard\GameBuilder
+    arguments: ['@entity_type.manager']
   ppuc_games.route_subscriber:
     class: Drupal\ppuc_games\Routing\RouteSubscriber
     tags:

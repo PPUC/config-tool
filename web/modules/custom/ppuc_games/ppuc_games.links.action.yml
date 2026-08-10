@@ -6,6 +6,12 @@ ppuc_games.add_game:
     - view.frontpage.page_1
   title: 'Add Game'
 
+ppuc_games.game_wizard:
+  route_name: ppuc_games.wizard
+  appears_on:
+    - view.frontpage.page_1
+  title: 'Create Game from Manual'
+
 ppuc_games.import_game:
   route_name: ppuc_games.import
   appears_on:

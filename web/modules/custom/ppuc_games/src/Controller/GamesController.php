@@ -694,6 +694,13 @@ class GamesController extends ControllerBase {
               if ($eos_switch !== NULL) {
                 $pwm_output['eosSwitch'] = $eos_switch;
               }
+              // A separately driven hold winding, as on WPC Fliptronic. It is
+              // wound to sit energised, so libppuc accepts it with no maximum
+              // pulse time - which is the only correct setting for it, and
+              // which would otherwise be reported as an unprotected coil.
+              if ($this->getBooleanFieldValue($device, 'field_hold_winding')) {
+                $pwm_output['holdWinding'] = TRUE;
+              }
 
               $yaml['pwmOutput'][] = $pwm_output;
             }

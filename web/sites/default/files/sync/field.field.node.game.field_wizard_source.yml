@@ -1,0 +1,19 @@
+uuid: 0144b964-5c34-49d9-bc70-c4026951b876
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_wizard_source
+    - node.type.game
+id: node.game.field_wizard_source
+field_name: field_wizard_source
+entity_type: node
+bundle: game
+label: 'Wizard source data'
+description: 'The JSON this game was created from, kept so the wizard can be run again against a corrected version instead of starting over. Not used at runtime and not exported to the game YAML.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,3 +1,11 @@
+ppuc_games.wizard:
+  path: '/game/wizard'
+  defaults:
+    _form: '\Drupal\ppuc_games\Form\GameWizardForm'
+    _title: 'Create a game from its manual'
+  requirements:
+    _permission: 'create game content'
+
 ppuc_games.zip:
   path: '/node/{node}/zip'
   defaults:

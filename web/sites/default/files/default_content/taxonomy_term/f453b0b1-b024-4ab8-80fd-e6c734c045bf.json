@@ -1,0 +1,90 @@
+{
+ "_links": {
+  "type": {
+   "href": "taxonomy_term/i_o_board"
+  },
+  "self": {
+   "href": "_dcd/taxonomy_term/118"
+  }
+ },
+ "tid": [
+  {
+   "value": 118
+  }
+ ],
+ "uuid": [
+  {
+   "value": "f453b0b1-b024-4ab8-80fd-e6c734c045bf"
+  }
+ ],
+ "langcode": [
+  {
+   "value": "en",
+   "lang": "en"
+  }
+ ],
+ "vid": [
+  {
+   "target_id": "i_o_board"
+  }
+ ],
+ "revision_created": [
+  {
+   "value": "2024-08-06T09:48:24+00:00",
+   "format": "Y-m-d\\TH:i:sP"
+  }
+ ],
+ "status": [
+  {
+   "value": true,
+   "lang": "en"
+  }
+ ],
+ "name": [
+  {
+   "value": "Opto_16",
+   "lang": "en"
+  }
+ ],
+ "description": [
+  {
+   "value": "<p><a href=\"https://github.com/PPUC/Hardware_Opto_16\">https://github.com/PPUC/Hardware_Opto_16</a></p>\n<p>16 opto-isolated inputs, on the same GPIOs as the IO_16_8_1's. No outputs, so it carries no PWM devices and no LED stripes.</p>",
+   "format": "basic_html",
+   "lang": "en"
+  }
+ ],
+ "weight": [
+  {
+   "value": 0
+  }
+ ],
+ "_embedded": {
+  "relation/taxonomy_term/i_o_board/parent": [
+   null
+  ]
+ },
+ "changed": [
+  {
+   "value": "2024-08-06T09:48:24+00:00",
+   "lang": "en",
+   "format": "Y-m-d\\TH:i:sP"
+  }
+ ],
+ "default_langcode": [
+  {
+   "value": true,
+   "lang": "en"
+  }
+ ],
+ "revision_translation_affected": [
+  {
+   "value": true,
+   "lang": "en"
+  }
+ ],
+ "field_gpio_mapping": [
+  {
+   "value": "a:16:{i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:6;i:5;i:7;i:6;i:8;i:7;i:9;i:8;i:10;i:9;i:11;i:10;i:12;i:11;i:13;i:12;i:14;i:13;i:15;i:14;i:16;i:15;i:17;i:16;i:18;}"
+  }
+ ]
+}

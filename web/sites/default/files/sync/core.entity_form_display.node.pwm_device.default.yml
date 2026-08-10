@@ -4,11 +4,12 @@ status: true
 dependencies:
   config:
     - field.field.node.pwm_device.field_ball_search
-    - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_dual_winding
+    - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
+    - field.field.node.pwm_device.field_hold_winding
     - field.field.node.pwm_device.field_i_o_board
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
@@ -63,6 +64,13 @@ content:
     region: content
     settings:
       placeholder: ''
+    third_party_settings: {  }
+  field_hold_winding:
+    type: boolean_checkbox
+    weight: 14
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_i_o_board:
     type: options_select
