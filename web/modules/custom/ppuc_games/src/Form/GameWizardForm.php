@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ppuc_games\Wizard\BoardCapacity;
 use Drupal\ppuc_games\Wizard\DeviceDataParser;
+use Drupal\ppuc_games\Wizard\DeviceDefaults;
 use Drupal\ppuc_games\Wizard\GameBuilder;
 use Drupal\ppuc_games\Wizard\HardwareAllocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -169,10 +170,12 @@ final class GameWizardForm extends FormBase {
 
     $notes = $plan['notes'];
     $notes[] = $this->t(
-      'The flipper power windings are set to @ms ms. That is a conservative '
-      . 'starting value, not something the manual states - check it on a bench '
-      . 'before relying on it.',
-      ['@ms' => \Drupal\ppuc_games\Wizard\DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS]
+      'The flipper power windings are set to @ms ms, which is the timeout WPC '
+      . 'itself used when the end-of-stroke contact could not end the pulse. '
+      . 'PPUC does not act on the EOS contact yet, so this ends every flip '
+      . 'rather than only the failed ones. The EOS switches are created and '
+      . 'ready for when it can.',
+      ['@ms' => DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS]
     );
 
     $form['notes'] = [

@@ -133,4 +133,32 @@ class WizardPlatformNumbersTest extends TestCase {
     );
   }
 
+  /**
+   * The power winding must outlast the stroke and stay inside WPC's own timeout.
+   *
+   * Below the stroke time the flip is cut off before the finger arrives; above
+   * 40 ms it is longer than the timeout WPC used to stop the winding burning,
+   * and with no EOS cutoff yet this runs on every flip rather than only when
+   * the EOS has failed.
+   */
+  public function testTheFlipperTimeoutClearsTheStrokeAndStaysInsideWpcRange(): void {
+    $timeout = DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS;
+
+    $this->assertLessThan(
+      DeviceDefaults::FLIPPER_STROKE_MAX_MS,
+      DeviceDefaults::FLIPPER_STROKE_MIN_MS,
+      'the stroke range is the wrong way round'
+    );
+    $this->assertGreaterThan(
+      DeviceDefaults::FLIPPER_STROKE_MAX_MS,
+      $timeout,
+      'a timeout at or below the slowest stroke cuts the flip off before the finger arrives'
+    );
+    // WPC's own range for the safety timeout. Outside it we are either weaker
+    // than the machine was, or holding the winding longer than its designers
+    // thought safe.
+    $this->assertGreaterThanOrEqual(30, $timeout);
+    $this->assertLessThanOrEqual(40, $timeout);
+  }
+
 }

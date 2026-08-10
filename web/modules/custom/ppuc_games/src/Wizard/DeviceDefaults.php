@@ -59,12 +59,35 @@ final class DeviceDefaults {
   /**
    * The flipper power winding.
    *
-   * Held only long enough to throw the flipper up; the hold winding keeps it
-   * there. This is the one number worth checking on a bench before trusting it,
-   * which is why the wizard says so in its summary rather than burying it here.
+   * On a real WPC Fliptronic machine the power winding is cut by whichever
+   * comes first:
+   *
+   *  - the EOS contact closing, which is the normal path. The flipper finger
+   *    reaches its stop in about 15 to 30 ms, and the CPU drops the power
+   *    winding the moment the contact closes, leaving the hold winding on.
+   *  - a fixed software timeout of 30 to 40 ms, which is the safety net for an
+   *    EOS that is broken, misadjusted or unplugged. Without it the winding
+   *    burns.
+   *
+   * PPUC has no EOS cutoff yet - that is the separate Fliptronic feature - so
+   * maxPulseTime is the *only* thing ending the pulse, and it therefore runs on
+   * every flip rather than only when the EOS fails. 40 ms is used because it
+   * clears the 15-30 ms mechanical travel with margin, so no flip is cut short,
+   * and because it is the top of the range WPC itself considered safe for the
+   * winding. Once the EOS cutoff exists this becomes the safety net it is on a
+   * real machine, and the normal flip will end sooner.
    */
   public const FLIPPER_POWER = 255;
-  public const FLIPPER_POWER_MAX_PULSE_TIME_MS = 50;
+  public const FLIPPER_POWER_MAX_PULSE_TIME_MS = 40;
+
+  /**
+   * How long the flipper stroke itself takes, for documentation and checks.
+   *
+   * The timeout has to clear this, or a flip is cut off before the finger
+   * arrives.
+   */
+  public const FLIPPER_STROKE_MIN_MS = 15;
+  public const FLIPPER_STROKE_MAX_MS = 30;
 
   /**
    * The flipper hold winding.

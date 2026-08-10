@@ -113,10 +113,34 @@ Boards are allocated automatically under three rules:
    on the cabinet board, the rest on boards under the playfield.
 3. One LED stripe per board, on the LED connector.
 
-Two things are worth checking afterwards. **LED string positions** are filled in
-matrix order, which is a starting point rather than a claim about how the string
-runs around the playfield. And the **flipper power winding** pulse time is a
-conservative default, not something the manual states - check it on a bench.
+**LED string positions** are filled in matrix order, which is a starting point
+rather than a claim about how the string runs around the playfield. Reorder them
+to match the wiring.
+
+### Flipper timing on WPC Fliptronic
+
+A Fliptronic flipper has two windings driven as two separate outputs, both
+switched on by the flipper button. On the original machine the power winding is
+ended by whichever comes first:
+
+- **The EOS contact closing** - the normal path. The finger reaches its stop
+  after roughly 15 to 30 ms of travel, the CPU drops the power winding the
+  moment the contact closes, and the hold winding keeps the finger up.
+- **A fixed 30 to 40 ms timeout** - the safety net, for an EOS contact that is
+  broken, misadjusted or unplugged. Without it the power winding burns. The
+  finger still stays up on the hold winding afterwards, but with no working EOS
+  it loses strength: a heavy ball can push the finger down, and the hold winding
+  alone cannot raise it again until the button is released and pressed.
+
+**PPUC does not act on the EOS contact yet.** The maximum pulse time is
+therefore the only thing ending the pulse, so it fires on every flip rather than
+only on failed ones. The wizard sets **40 ms**, which clears the slowest stroke
+so no flip is cut short, and stays inside the range WPC itself considered safe
+for the winding. Setting it below 30 ms cuts the flip off before the finger
+arrives.
+
+The wizard still creates the EOS switch, so it is wired and ready for when PPUC
+can act on it.
 
 ## Game YAML export
 

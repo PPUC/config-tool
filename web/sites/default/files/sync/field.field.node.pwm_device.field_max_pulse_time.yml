@@ -12,7 +12,7 @@ field_name: field_max_pulse_time
 entity_type: node
 bundle: pwm_device
 label: 'Max Pulse Time'
-description: 'Maximum pulse time of the PWM device in milliseconds. 0 means no maximum pulse time and full control by the CPU. If a positive value is provided, the device gets deactivated after this period regardless if the CPU already stopped that device.'
+description: 'Maximum pulse time of the PWM device in milliseconds. 0 means no maximum pulse time, which leaves nothing stopping the coil if the CPU never turns it off. For a flipper power winding on WPC Fliptronic, use 30-40 ms: the original CPU cut the power winding when the end-of-stroke contact closed, typically after 15-30 ms of travel, and fell back to a fixed 30-40 ms timeout if that contact was broken, misadjusted or unplugged. PPUC does not act on the EOS contact yet, so this timeout ends every flip rather than only the failed ones - below 30 ms the flip is cut off before the finger reaches its stop.'
 required: false
 translatable: false
 default_value:
