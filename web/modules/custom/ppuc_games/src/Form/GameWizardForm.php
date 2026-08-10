@@ -186,6 +186,9 @@ final class GameWizardForm extends FormBase {
     }
 
     $notes = $plan['notes'];
+    foreach ($form_state->get('skipped') ?? [] as $skipped) {
+      $notes[] = $this->t('Not created: @entry.', ['@entry' => $skipped]);
+    }
     $notes[] = $this->t(
       'The flipper power windings are set to @ms ms, which is the timeout WPC '
       . 'itself used when the end-of-stroke contact could not end the pulse. '
@@ -251,6 +254,7 @@ final class GameWizardForm extends FormBase {
 
     $form_state->set('json', $json);
     $form_state->set('devices', $devices);
+    $form_state->set('skipped', $parser->skipped());
     $form_state->set('plan', (new HardwareAllocator(
       $mappings[BoardCapacity::IO_16_8_1],
       $mappings[BoardCapacity::OPTO_16]

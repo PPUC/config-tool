@@ -529,6 +529,128 @@ class WizardHardwareAllocatorTest extends TestCase {
     $this->assertSame(DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS, self::coil($plan, 29)['maxPulseTime']);
   }
 
+  // --- motors ----------------------------------------------------------------
+  //
+  // A gun or cannon is turned by a small motor, 12 V on a 48 V rail, and driven
+  // between two end positions. The switches at those positions are what should
+  // cut it the moment it arrives, which they can only do from its own board.
+
+  public function testAMotorIsDrivenAtItsOwnVoltageNotACoils(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [
+        ['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower', 'type' => 'motor'],
+        ['number' => 1, 'description' => 'Ball Release', 'class' => 'lowPower'],
+      ],
+    ]));
+
+    $this->assertSame(DeviceDefaults::MOTOR_POWER, self::coil($plan, 20)['power']);
+    $this->assertLessThan(
+      self::coil($plan, 1)['power'],
+      self::coil($plan, 20)['power'],
+      'a motor at coil power is four times its rated voltage'
+    );
+  }
+
+  /**
+   * High Power on the driver does not make the motor a high-power device.
+   */
+  public function testAMotorsPowerIgnoresTheSolenoidType(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [
+        ['number' => 20, 'description' => 'Gun Motor', 'class' => 'highPower', 'type' => 'motor'],
+      ],
+    ]));
+
+    $this->assertSame(DeviceDefaults::MOTOR_POWER, self::coil($plan, 20)['power']);
+  }
+
+  /**
+   * An end switch cannot stop a motor from another board.
+   */
+  public function testEndSwitchesShareTheMotorsBoard(): void {
+    $switches = [
+      ['number' => 76, 'description' => 'Gun Position'],
+      ['number' => 77, 'description' => 'Gun Lockup'],
+    ];
+    // Enough other coils to fill several boards, so the motor could easily end
+    // up somewhere else.
+    $coils = [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+               'type' => 'motor', 'endSwitches' => [76, 77]]];
+    for ($n = 100; $n < 120; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $motorBoard = self::coil($plan, 20)['board'];
+    $this->assertSame($motorBoard, self::boardOfSwitch($plan, 76));
+    $this->assertSame($motorBoard, self::boardOfSwitch($plan, 77));
+  }
+
+  /**
+   * An end switch must not be wired as a fast-flip switch.
+   *
+   * The polarity is the other way round: a fast-flip switch runs the coil while
+   * it is closed, so using one here would drive the motor whenever it was
+   * already at the end of its travel.
+   */
+  public function testAnEndSwitchDoesNotDriveTheMotor(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [['number' => 76, 'description' => 'Gun Position']],
+      'coils' => [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+                   'type' => 'motor', 'endSwitches' => [76]]],
+    ]));
+
+    $this->assertNull(self::coil($plan, 20)['fastFlipSwitch']);
+  }
+
+  /**
+   * What is left to do by hand has to be said, not left to be discovered.
+   */
+  public function testAMotorIsReportedWithWhatItStillNeeds(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [['number' => 76, 'description' => 'Gun Position']],
+      'coils' => [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+                   'type' => 'motor', 'endSwitches' => [76]]],
+    ]));
+
+    $notes = implode("\n", array_map('strval', $plan['notes']));
+    $this->assertStringContainsString('Gun Motor', $notes);
+    $this->assertStringContainsString('nothing stops it when they close yet', $notes);
+    $this->assertStringContainsString('Time the travel and set it', $notes);
+  }
+
+  public function testAMotorWithoutEndSwitchesSaysSo(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower', 'type' => 'motor']],
+    ]));
+
+    $this->assertStringContainsString(
+      'no end-position switches',
+      implode("\n", array_map('strval', $plan['notes']))
+    );
+  }
+
+  /**
+   * Two coils sharing a switch are one group, however they came to share it.
+   */
+  public function testCoilsSharingASwitchAreMergedIntoOneGroup(): void {
+    $switches = [['number' => 76, 'description' => 'Shared End Position']];
+    $coils = [
+      ['number' => 20, 'description' => 'Motor A', 'class' => 'lowPower', 'type' => 'motor', 'endSwitches' => [76]],
+      ['number' => 21, 'description' => 'Motor B', 'class' => 'lowPower', 'type' => 'motor', 'endSwitches' => [76]],
+    ];
+    for ($n = 100; $n < 118; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $board = self::boardOfSwitch($plan, 76);
+    $this->assertSame($board, self::coil($plan, 20)['board']);
+    $this->assertSame($board, self::coil($plan, 21)['board']);
+  }
+
   /**
    * A hold winding that is not a flipper's.
    *

@@ -107,9 +107,45 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
 | `holdWinding` | This output is the hold half of a pair driven as two outputs. Flippers are declared in `flippers` instead; use this for anything else, such as a trap door driven as "high" and "hold". |
 | `position` | Optional. Where the device is, as `{"x": 0.5, "y": 0.2}`. See below. |
+| `endSwitches` | The switches at an assembly's end positions, as `[76, 77]`. The wizard puts them on the same board as the coil. See motors below. |
 | `position` | Which flipper this is, which selects the button number. |
 
-Rows the manual marks "Not Used" are simply left out. The flipper column beside
+Rows the manual marks "Not Used" are simply left out. So are switches called
+**"Always Closed"** if you do leave them in: the original CPU used one to prove
+it was reading the matrix, nothing in PPUC reads it, and an input pin spent on
+one is a pin wasted. The wizard says which entries it left out.
+
+### Motors
+
+A gun or cannon assembly is turned by a motor rather than thrown by a coil, and
+that changes two things.
+
+**Power.** Such a motor is usually a low-voltage one - 12 V is typical - on a
+machine whose driver rail is 48 V. `"type": "motor"` therefore drives it at 64
+of 255, about a quarter, whatever solenoid type the table gives its driver. The
+type describes the transistor; this is about what is on the end of it.
+
+**End positions.** A motor normally has two switches marking the ends of its
+travel, and those should cut it the instant it arrives, or the assembly drives
+into its own stop. List them:
+
+```json
+{ "number": 20, "description": "Gun Motor", "class": "lowPower",
+  "type": "motor", "endSwitches": [76, 77] }
+```
+
+The wizard puts them on the motor's board, because a switch can only act on a
+coil locally when the board owns both. **It does not wire them to anything
+yet:** PPUC can start a coil from a switch but not stop one, which is the same
+inverted association the Fliptronic EOS needs and is planned with it. Until
+then the maximum pulse time is the only thing ending the run, and at its default
+the motor stops short of its travel - the safe way round to be wrong. Time the
+travel and set it. The wizard says all of this in its summary rather than
+leaving it to be found.
+
+Do not put an end switch in `fastFlipSwitch`. The polarity is the other way
+round: a fast-flip switch runs the coil *while* it is closed, so that would
+drive the motor whenever it had already arrived. The flipper column beside
 the switch matrix is a generic Fliptronic template - on Dirty Harry it lists an
 upper left flipper the game does not have - so the wizard ignores it and takes
 the flippers from the solenoid table instead.

@@ -114,7 +114,7 @@ final class HardwareAllocator {
     // fire in bursts can be dealt out across them - see step 3.
     $this->reserveBoardsForCoils($coils, $assignedCoils);
 
-    // 3. Fast-flip groups, spread across those boards.
+    // 3. Groups that have to share a board, spread across those boards.
     //
     // These are the devices that fire in quick succession: a ball rattling
     // between three jet bumpers, or bouncing off both slingshots, drains a
@@ -128,7 +128,7 @@ final class HardwareAllocator {
     // board. Choosing early also matters for a second reason: a fast-flip
     // coil's board is fixed by its switch, so it has to pick before capacity
     // packing fills what it needs.
-    foreach ($this->fastFlipGroups($switches, $coils) as $group) {
+    foreach ($this->coLocatedGroups($switches, $coils) as $group) {
       $board = $this->boardWithRoom(
         $group['location'],
         BoardCapacity::IO_16_8_1,
@@ -179,6 +179,7 @@ final class HardwareAllocator {
 
     $this->nameBoards();
     $this->reportBoardsCarryingNoDevices($assignedSwitches, $assignedCoils);
+    $this->reportMotors($assignedCoils);
 
     if ($this->positionsUsed > 0) {
       $this->notes[] = sprintf(
@@ -269,7 +270,7 @@ final class HardwareAllocator {
         // is wound to sit energised, and cutting it drops whatever it holds.
         $holdWinding = !empty($coil['holdWinding']);
         $coils[] = array_merge($coil, [
-          'power' => DeviceDefaults::power($coil['class']),
+          'power' => DeviceDefaults::powerFor($coil['class'], $coil['type']),
           'maxPulseTime' => $holdWinding ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
           'holdWinding' => $holdWinding,
           'role' => $holdWinding ? 'holdWinding' : 'coil',
@@ -297,47 +298,90 @@ final class HardwareAllocator {
   /**
    * Coils that must share a board with a switch, grouped by that switch.
    */
-  private function fastFlipGroups(array $switches, array $coils): array {
+  private function coLocatedGroups(array $switches, array $coils): array {
     $switchByNumber = [];
     foreach ($switches as $switch) {
       $switchByNumber[$switch['number']] = $switch;
     }
 
-    $groups = [];
+    // What each coil has to sit next to, and why.
+    $needs = [];
     foreach ($coils as $coil) {
-      $number = $coil['fastFlipSwitch'] ?? NULL;
-      if ($number === NULL || !isset($switchByNumber[$number])) {
-        continue;
-      }
-      if (!isset($groups[$number])) {
-        $groups[$number] = [
-          'switches' => [$switchByNumber[$number]],
-          'coils' => [],
-          // The switch decides the group's location: it is the thing that must
-          // be next to the coil, and a flipper button is deliberately marked
-          // playfield for this reason.
-          'location' => $this->groupOf($switchByNumber[$number]['location']),
-        ];
-      }
-      $groups[$number]['coils'][] = $coil;
-    }
+      $wanted = [];
 
-    // A flipper's EOS is not a fast-flip switch, but it belongs to the same
-    // finger and there is no reason to put it on another board.
-    foreach ($groups as $number => &$group) {
-      $flipper = $group['switches'][0]['flipper'] ?? NULL;
-      if ($flipper === NULL) {
-        continue;
+      // A fast-flip switch drives the coil from the board itself.
+      if (($coil['fastFlipSwitch'] ?? NULL) !== NULL) {
+        $wanted[] = $coil['fastFlipSwitch'];
       }
-      foreach ($switches as $switch) {
-        if (($switch['role'] ?? '') === 'flipperEos' && ($switch['flipper'] ?? NULL) === $flipper) {
-          $group['switches'][] = $switch;
+
+      // End-position switches stop a motor. They cannot do that from another
+      // board any more than a fast-flip switch can start a coil from one.
+      foreach ($coil['endSwitches'] ?? [] as $number) {
+        $wanted[] = $number;
+      }
+
+      // A flipper's EOS belongs to the same finger. Nothing acts on it yet, but
+      // it is the switch the Fliptronic work will read, and it costs nothing to
+      // put it where it will be needed.
+      if (($coil['flipper'] ?? NULL) !== NULL) {
+        foreach ($switches as $switch) {
+          if (($switch['role'] ?? '') === 'flipperEos' && ($switch['flipper'] ?? NULL) === $coil['flipper']) {
+            $wanted[] = $switch['number'];
+          }
         }
       }
-    }
-    unset($group);
 
-    return array_values($groups);
+      $wanted = array_values(array_unique(array_filter(
+        $wanted,
+        static fn ($number) => isset($switchByNumber[$number])
+      )));
+      if ($wanted) {
+        $needs[$coil['number']] = $wanted;
+      }
+    }
+
+    // Merge anything that shares a switch. Two coils driven by one switch - a
+    // flipper's two windings, say - are one group, and so are two coils that
+    // happen to share an end-position switch.
+    $groups = [];
+    foreach ($needs as $coilNumber => $switchNumbers) {
+      $merged = ['switches' => $switchNumbers, 'coils' => [$coilNumber]];
+      foreach ($groups as $index => $group) {
+        if (array_intersect($group['switches'], $merged['switches'])) {
+          $merged['switches'] = array_unique(array_merge($group['switches'], $merged['switches']));
+          $merged['coils'] = array_merge($group['coils'], $merged['coils']);
+          unset($groups[$index]);
+        }
+      }
+      $groups[] = $merged;
+    }
+
+    $coilByNumber = [];
+    foreach ($coils as $coil) {
+      $coilByNumber[$coil['number']] = $coil;
+    }
+
+    $resolved = [];
+    foreach ($groups as $group) {
+      $groupSwitches = [];
+      foreach ($group['switches'] as $number) {
+        $groupSwitches[] = $switchByNumber[$number];
+      }
+      $groupCoils = [];
+      foreach ($group['coils'] as $number) {
+        $groupCoils[] = $coilByNumber[$number];
+      }
+      $resolved[] = [
+        'switches' => $groupSwitches,
+        'coils' => $groupCoils,
+        // The switch decides where the group goes: it is the thing that has to
+        // be next to the coil, and a flipper button is marked playfield for
+        // exactly this reason even though it is cabinet hardware.
+        'location' => $this->groupOf($groupSwitches[0]['location']),
+      ];
+    }
+
+    return $resolved;
   }
 
   /**
@@ -458,6 +502,44 @@ final class HardwareAllocator {
       'orderedByPosition' => $orderedByPosition && $leds !== [],
       'leds' => $leds,
     ];
+  }
+
+  /**
+   * Says what still has to be done by hand for each motor.
+   *
+   * A motor drives an assembly - a gun, a cannon - between two end positions,
+   * and the switches at those positions are what should cut it the instant it
+   * arrives. PPUC cannot do that yet: a switch can start a coil locally but not
+   * stop one, which is the same inverted association the Fliptronic EOS needs
+   * and is planned with it. The switches are put on the motor's board so they
+   * are ready, and until then the maximum pulse time is the only thing ending
+   * the run - at its default the motor will stop short of its travel, which is
+   * the safe way round to be wrong.
+   */
+  private function reportMotors(array $coils): void {
+    foreach ($coils as $coil) {
+      if (($coil['type'] ?? '') !== 'motor') {
+        continue;
+      }
+
+      $ends = $coil['endSwitches'] ?? [];
+      $this->notes[] = $ends
+        ? sprintf(
+          '"%s" (coil %d) is a motor, driven at %d of 255 for a low-voltage motor on a '
+          . 'high-voltage rail. Its end-position switches (%s) are on board %d with it, but '
+          . 'nothing stops it when they close yet - a switch can start a coil locally, not '
+          . 'stop one. Until that exists the maximum pulse time is the only limit, and at '
+          . '%d ms the motor will stop short of its travel. Time the travel and set it.',
+          $coil['description'], $coil['number'], $coil['power'],
+          implode(' and ', $ends), $coil['board'], $coil['maxPulseTime']
+        )
+        : sprintf(
+          '"%s" (coil %d) is a motor, driven at %d of 255. It has no end-position switches: '
+          . 'if the assembly has any, name them in endSwitches so they land on its board. '
+          . 'The maximum pulse time (%d ms) is the only thing ending the run.',
+          $coil['description'], $coil['number'], $coil['power'], $coil['maxPulseTime']
+        );
+    }
   }
 
   /**

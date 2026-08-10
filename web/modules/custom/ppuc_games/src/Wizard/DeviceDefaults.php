@@ -57,6 +57,19 @@ final class DeviceDefaults {
   public const MAX_PULSE_TIME_MS = 150;
 
   /**
+   * Drive power for a motor, whatever the solenoid table calls its driver.
+   *
+   * A gun or cannon assembly is turned by a small motor - 12 V is typical - on
+   * a machine whose driver rail is 48 V. Running it at a coil's power would put
+   * four times its rated voltage across it. 64 of 255 is about a quarter, which
+   * is the ratio those two voltages want.
+   *
+   * This overrides the solenoid type, because the type describes the driver
+   * transistor while this is about what is on the end of it.
+   */
+  public const MOTOR_POWER = 64;
+
+  /**
    * The flipper power winding.
    *
    * On a real WPC Fliptronic machine the power winding is cut by whichever
@@ -107,6 +120,13 @@ final class DeviceDefaults {
    *   If the class is not one the manual defines. Better than defaulting: a
    *   coil driven at a power nobody chose is how a winding burns.
    */
+  /**
+   * Drive power for a device of this solenoid type and device type.
+   */
+  public static function powerFor(string $class, string $type): int {
+    return $type === 'motor' ? self::MOTOR_POWER : self::power($class);
+  }
+
   public static function power(string $class): int {
     if (!isset(self::POWER[$class])) {
       throw new \InvalidArgumentException(sprintf(

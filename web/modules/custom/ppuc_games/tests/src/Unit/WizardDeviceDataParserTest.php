@@ -242,6 +242,65 @@ class WizardDeviceDataParserTest extends TestCase {
     $this->assertFalse($result['coils'][0]['holdWinding']);
   }
 
+  /**
+   * An always-closed switch existed to prove the original CPU was reading the
+   * matrix. Nothing in PPUC reads it, so a pin spent on one is a pin wasted.
+   */
+  public function testAnAlwaysClosedSwitchIsSkippedRatherThanCreated(): void {
+    $document = self::document();
+    $document['switches'][] = ['number' => 24, 'description' => 'Always Closed'];
+
+    $result = $this->parse($document);
+    $this->assertNotNull($result, implode("\n", $this->parser->errors()));
+    $this->assertSame([11, 61], array_column($result['switches'], 'number'));
+    $this->assertStringContainsString('Always Closed', implode("\n", $this->parser->skipped()));
+  }
+
+  public function testTheAlwaysClosedNameIsMatchedWhateverItsCase(): void {
+    $document = self::document();
+    $document['switches'][] = ['number' => 24, 'description' => 'always closed'];
+
+    $result = $this->parse($document);
+    $this->assertCount(2, $result['switches']);
+  }
+
+  /**
+   * Skipping it does not stop it being a duplicate.
+   *
+   * Two entries claiming one number is a transcription error whichever of them
+   * would have been created, and the whole point of the parser is to catch
+   * those before 150 nodes exist.
+   */
+  public function testASkippedSwitchStillCountsAsTakingItsNumber(): void {
+    $document = self::document();
+    $document['switches'][] = ['number' => 24, 'description' => 'Always Closed'];
+    $document['switches'][] = ['number' => 24, 'description' => 'Something Real'];
+
+    $this->assertRejectedMentioning($document, 'reuses switch number 24');
+  }
+
+  public function testEndSwitchesMustExist(): void {
+    $document = self::document();
+    $document['coils'][] = [
+      'number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+      'type' => 'motor', 'endSwitches' => [999],
+    ];
+
+    $this->assertRejectedMentioning($document, 'switch 999 as an end position');
+  }
+
+  public function testEndSwitchesAreAccepted(): void {
+    $document = self::document();
+    $document['coils'][] = [
+      'number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
+      'type' => 'motor', 'endSwitches' => [11, 61],
+    ];
+
+    $result = $this->parse($document);
+    $this->assertNotNull($result, implode("\n", $this->parser->errors()));
+    $this->assertSame([11, 61], end($result['coils'])['endSwitches']);
+  }
+
   public function testAnUnknownLocationIsRejected(): void {
     $document = self::document();
     $document['switches'][0]['location'] = 'apron';

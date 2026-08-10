@@ -43,7 +43,7 @@ final class DeviceDataParser {
 
   private const GAME_KEYS = ['title', 'platform', 'rom'];
   private const SWITCH_KEYS = ['number', 'description', 'opto', 'direct', 'location', 'button', 'position'];
-  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch', 'holdWinding', 'position'];
+  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch', 'holdWinding', 'position', 'endSwitches'];
   private const FLIPPER_KEYS = ['name', 'position', 'powerCoil', 'holdCoil'];
   private const LED_KEYS = ['number', 'description', 'location', 'position'];
 
@@ -55,6 +55,13 @@ final class DeviceDataParser {
   private array $errors = [];
 
   /**
+   * Entries left out on purpose, for the wizard to report.
+   *
+   * @var string[]
+   */
+  private array $skipped = [];
+
+  /**
    * Parses a JSON document into a normalised device list.
    *
    * @return array|null
@@ -63,6 +70,7 @@ final class DeviceDataParser {
    */
   public function parse(string $json): ?array {
     $this->errors = [];
+    $this->skipped = [];
 
     $data = json_decode($json, TRUE);
     if (!is_array($data)) {
@@ -102,6 +110,15 @@ final class DeviceDataParser {
    */
   public function errors(): array {
     return $this->errors;
+  }
+
+  /**
+   * Entries that parsed but were deliberately not created.
+   *
+   * @return string[]
+   */
+  public function skipped(): array {
+    return $this->skipped;
   }
 
   private function parseGame($game): ?array {
@@ -175,6 +192,14 @@ final class DeviceDataParser {
 
       $location = $this->parseLocation($item, $path, $direct ? self::LOCATION_CABINET : self::LOCATION_PLAYFIELD);
       if ($location === NULL) {
+        continue;
+      }
+
+      // The original CPU used an always-closed switch to prove the matrix was
+      // being read. Nothing in PPUC reads it, so creating it would be a pin
+      // spent on a device with no purpose.
+      if (strcasecmp($description, 'Always Closed') === 0) {
+        $this->skipped[] = sprintf('%s ("%s"), which ppuc-pinmame does not use', $path, $description);
         continue;
       }
 
@@ -255,6 +280,21 @@ final class DeviceDataParser {
         }
       }
 
+      $endSwitches = [];
+      $badEndSwitch = FALSE;
+      foreach ((array) ($item['endSwitches'] ?? []) as $endSwitch) {
+        $endSwitchNumber = $this->toNumber($endSwitch);
+        if ($endSwitchNumber === NULL) {
+          $this->errors[] = sprintf('%s ("%s") has a non-numeric endSwitches entry.', $path, $description);
+          $badEndSwitch = TRUE;
+          break;
+        }
+        $endSwitches[] = $endSwitchNumber;
+      }
+      if ($badEndSwitch) {
+        continue;
+      }
+
       $position = $this->parsePosition($item, $path, $description);
       if ($position === FALSE) {
         continue;
@@ -267,6 +307,7 @@ final class DeviceDataParser {
         'type' => $type,
         'location' => $location,
         'fastFlipSwitch' => $fastFlip,
+        'endSwitches' => $endSwitches,
         'position' => $position,
         // The hold half of a pair the CPU drives as two outputs. Flippers are
         // the common case and are declared in the flippers section, but they
@@ -418,6 +459,14 @@ final class DeviceDataParser {
           'Coil %d ("%s") uses switch %d for fast flip, which is not in the switches section.',
           $coil['number'], $coil['description'], $coil['fastFlipSwitch']
         );
+      }
+      foreach ($coil['endSwitches'] as $endSwitch) {
+        if (!in_array($endSwitch, $numbers, TRUE)) {
+          $this->errors[] = sprintf(
+            'Coil %d ("%s") names switch %d as an end position, which is not in the switches section.',
+            $coil['number'], $coil['description'], $endSwitch
+          );
+        }
       }
     }
   }
