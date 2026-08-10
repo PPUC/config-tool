@@ -16078,6 +16078,24 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/modules/help/src/HelpTopicTwigLoader.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\help\\\\Plugin\\\\Search\\\\HelpSearch\\:\\:indexClear\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/help/src/Plugin/Search/HelpSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\help\\\\Plugin\\\\Search\\\\HelpSearch\\:\\:markForReindex\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/help/src/Plugin/Search/HelpSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\help\\\\Plugin\\\\Search\\\\HelpSearch\\:\\:updateIndex\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/help/src/Plugin/Search/HelpSearch.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\help\\\\Kernel\\\\HelpTopicTest\\:\\:assertBreadcrumb\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
@@ -23130,6 +23148,36 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/modules/node/src/NodeViewBuilder.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:\\:indexClear\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/node/src/Plugin/Search/NodeSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:\\:indexStatus\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/node/src/Plugin/Search/NodeSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:\\:markForReindex\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/node/src/Plugin/Search/NodeSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:\\:submitConfigurationForm\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/node/src/Plugin/Search/NodeSearch.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:\\:updateIndex\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/node/src/Plugin/Search/NodeSearch.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Call to method __construct\\(\\) of deprecated class Drupal\\\\migrate_drupal\\\\Plugin\\\\migrate\\\\source\\\\DrupalSqlBase\\:
 in drupal\\:11\\.3\\.0 and is removed from drupal\\:12\\.0\\.0\\. There is no
 replacement\\.$#',
@@ -25204,6 +25252,30 @@ $ignoreErrors[] = [
 	'identifier' => 'missingType.return',
 	'count' => 1,
 	'path' => __DIR__ . '/modules/search/tests/src/Functional/SearchCommentTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Call to method execute\\(\\) of deprecated class Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:
+in drupal\\:11\\.4\\.0 and is removed from drupal\\:12\\.0\\.0\\. Instead, use
+  \\\\Drupal\\\\search_node\\\\Plugin\\\\Search\\\\SearchNode\\.$#',
+	'identifier' => 'method.deprecatedClass',
+	'count' => 4,
+	'path' => __DIR__ . '/modules/search/tests/src/Functional/SearchMultilingualEntityTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Call to method indexStatus\\(\\) of deprecated class Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:
+in drupal\\:11\\.4\\.0 and is removed from drupal\\:12\\.0\\.0\\. Instead, use
+  \\\\Drupal\\\\search_node\\\\Plugin\\\\Search\\\\SearchNode\\.$#',
+	'identifier' => 'method.deprecatedClass',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/search/tests/src/Functional/SearchMultilingualEntityTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Call to method updateIndex\\(\\) of deprecated class Drupal\\\\node\\\\Plugin\\\\Search\\\\NodeSearch\\:
+in drupal\\:11\\.4\\.0 and is removed from drupal\\:12\\.0\\.0\\. Instead, use
+  \\\\Drupal\\\\search_node\\\\Plugin\\\\Search\\\\SearchNode\\.$#',
+	'identifier' => 'method.deprecatedClass',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/search/tests/src/Functional/SearchMultilingualEntityTest.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\search\\\\Functional\\\\SearchNumberMatchingTest\\:\\:cronRun\\(\\) has no return type specified\\.$#',
@@ -27488,12 +27560,6 @@ $ignoreErrors[] = [
 	'identifier' => 'missingType.return',
 	'count' => 1,
 	'path' => __DIR__ . '/modules/system/tests/modules/form_test/src/Form/FormTestDescriptionForm.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\form_test\\\\Form\\\\FormTestDetailsContainsRequiredTextfieldForm\\:\\:submitForm\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/system/tests/modules/form_test/src/Form/FormTestDetailsContainsRequiredTextfieldForm.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\form_test\\\\Form\\\\FormTestDetailsForm\\:\\:submitForm\\(\\) has no return type specified\\.$#',
@@ -30166,72 +30232,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTest.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationFieldViewTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationFieldViewTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationFieldViewTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationFieldViewTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationFieldViewTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationFieldViewTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:assertBreadcrumb\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:assertBreadcrumbParts\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:assertMenuActiveTrail\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Variable \\$parts in empty\\(\\) always exists and is always falsy\\.$#',
-	'identifier' => 'empty.variable',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Variable \\$trail in empty\\(\\) always exists and is always falsy\\.$#',
-	'identifier' => 'empty.variable',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/TermTranslationTest.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\TermTranslationUITest\\:\\:getEditValues\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
@@ -30250,24 +30250,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/Views/TaxonomyTestBase.php',
 ];
 $ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\Views\\\\TermTranslationViewsTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/Views/TermTranslationViewsTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\Views\\\\TermTranslationViewsTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/Views/TermTranslationViewsTest.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Functional\\\\Views\\\\TermTranslationViewsTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
-	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/taxonomy/tests/src/Functional/Views/TermTranslationViewsTest.php',
-];
-$ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\Migrate\\\\MigrateTaxonomyTermStubTest\\:\\:performStubTest\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
@@ -30280,10 +30262,94 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/PendingRevisionTest.php',
 ];
 $ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationFieldViewTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationFieldViewTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationFieldViewTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationFieldViewTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationFieldViewTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationFieldViewTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:assertBreadcrumb\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:assertBreadcrumbParts\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:assertMenuActiveTrail\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\TermTranslationTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Variable \\$parts in empty\\(\\) always exists and is always falsy\\.$#',
+	'identifier' => 'empty.variable',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Variable \\$trail in empty\\(\\) always exists and is always falsy\\.$#',
+	'identifier' => 'empty.variable',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/TermTranslationTest.php',
+];
+$ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\Views\\\\TaxonomyTestBase\\:\\:mockStandardInstall\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
 	'count' => 1,
 	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/Views/TaxonomyTestBase.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\Views\\\\TermTranslationViewsTest\\:\\:enableTranslation\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/Views/TermTranslationViewsTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\Views\\\\TermTranslationViewsTest\\:\\:setUpTermReferenceField\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/Views/TermTranslationViewsTest.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Kernel\\\\Views\\\\TermTranslationViewsTest\\:\\:setupLanguages\\(\\) has no return type specified\\.$#',
+	'identifier' => 'missingType.return',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/taxonomy/tests/src/Kernel/Views/TermTranslationViewsTest.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\Tests\\\\taxonomy\\\\Unit\\\\Menu\\\\TaxonomyLocalTasksTest\\:\\:getTaxonomyPageRoutes\\(\\) has no return type specified\\.$#',
@@ -40135,12 +40201,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Method Drupal\\\\workspaces\\\\WorkspaceMerger\\:\\:merge\\(\\) has no return type specified\\.$#',
 	'identifier' => 'missingType.return',
-	'count' => 1,
-	'path' => __DIR__ . '/modules/workspaces/src/WorkspaceMerger.php',
-];
-$ignoreErrors[] = [
-	'message' => '#^Variable \\$transaction in isset\\(\\) always exists and is not nullable\\.$#',
-	'identifier' => 'isset.variable',
 	'count' => 1,
 	'path' => __DIR__ . '/modules/workspaces/src/WorkspaceMerger.php',
 ];
