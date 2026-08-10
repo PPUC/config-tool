@@ -72,6 +72,27 @@ class GamesController extends ControllerBase {
     return $node->hasField($field_name) && !$node->get($field_name)->isEmpty() && (bool) $node->get($field_name)->value;
   }
 
+  /**
+   * The number of the switch an entity reference field points at.
+   *
+   * NULL when the field is absent, empty, or references a node that has been
+   * deleted - a dangling reference must not export as switch 0, which is a
+   * real switch number.
+   */
+  protected function getSwitchNumberFieldValue(NodeInterface $node, string $field_name): ?int {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
+
+    $switch = $node->get($field_name)->entity;
+    if (!$switch instanceof NodeInterface || !$switch->hasField('field_number')) {
+      return NULL;
+    }
+
+    $number = $switch->get('field_number')->value;
+    return $number === NULL ? NULL : (int) $number;
+  }
+
   protected function getColorFieldValue(NodeInterface $node, string $field_name): ?string {
     if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
       return NULL;
@@ -657,6 +678,21 @@ class GamesController extends ControllerBase {
               ];
               if ($this->getBooleanFieldValue($device, 'field_ball_search')) {
                 $pwm_output['ballSearch'] = TRUE;
+              }
+              // Declares that the coil bounds itself: it has a hold winding
+              // and an EOS contact that transfers to it. libppuc warns about a
+              // coil with no maxPulseTime, no hold power and no this, because
+              // nothing then stops the ROM leaving it energised.
+              if ($this->getBooleanFieldValue($device, 'field_dual_winding')) {
+                $pwm_output['dualWinding'] = TRUE;
+              }
+              // Only when the contact is wired back to an input. Referenced as
+              // a switch node so it cannot name a switch that does not exist,
+              // and exported as that switch's number, which is what the
+              // firmware addresses.
+              $eos_switch = $this->getSwitchNumberFieldValue($device, 'field_eos_switch');
+              if ($eos_switch !== NULL) {
+                $pwm_output['eosSwitch'] = $eos_switch;
               }
 
               $yaml['pwmOutput'][] = $pwm_output;

@@ -1,0 +1,23 @@
+uuid: 0be9f4b1-5025-4d1c-a8a4-10879238a3b9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_dual_winding
+    - node.type.pwm_device
+id: node.pwm_device.field_dual_winding
+field_name: field_dual_winding
+entity_type: node
+bundle: pwm_device
+label: 'Dual-wound coil'
+description: 'Set this if the coil has a separate hold winding and an end-of-stroke contact that transfers to it mechanically. Such a coil bounds itself, so it does not need a maximum pulse time or hold power. Do not set it on a single-winding coil: it turns off the warning that is the only thing standing between a stuck-on coil and a burnt winding.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

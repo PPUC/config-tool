@@ -88,4 +88,78 @@ class GamesControllerBoardFlagsTest extends TestCase {
     $this->assertTrue($this->read($this->node(TRUE, FALSE, TRUE), 'field_slow_switches'));
   }
 
+  // --- referenced switch numbers ---------------------------------------------
+  //
+  // eosSwitch is exported from a reference to a switch node. A dangling or
+  // absent reference has to come out as "no switch", not as switch 0, which is
+  // a switch a game can really have.
+
+  private function readSwitchNumber(NodeInterface $node, string $field): ?int {
+    $method = (new ReflectionClass(GamesController::class))
+      ->getMethod('getSwitchNumberFieldValue');
+    $method->setAccessible(TRUE);
+    return $method->invoke($this->controller, $node, $field);
+  }
+
+  private function nodeReferencing(bool $hasField, bool $isEmpty, mixed $target): NodeInterface {
+    $node = $this->createMock(NodeInterface::class);
+    $node->method('hasField')->willReturn($hasField);
+
+    $item = $this->createMock(FieldItemListInterface::class);
+    $item->method('isEmpty')->willReturn($isEmpty);
+    $item->method('__get')->with('entity')->willReturn($target);
+    $node->method('get')->willReturn($item);
+
+    return $node;
+  }
+
+  private function switchNumbered(string|int|null $number, bool $hasNumberField = TRUE): NodeInterface {
+    $switch = $this->createMock(NodeInterface::class);
+    $switch->method('hasField')->willReturn($hasNumberField);
+
+    $item = $this->createMock(FieldItemListInterface::class);
+    $item->method('__get')->with('value')->willReturn($number);
+    $switch->method('get')->willReturn($item);
+
+    return $switch;
+  }
+
+  public function testAnAbsentReferenceFieldIsNoSwitch(): void {
+    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(FALSE, FALSE, NULL), 'field_eos_switch'));
+  }
+
+  public function testAnEmptyReferenceIsNoSwitch(): void {
+    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, TRUE, NULL), 'field_eos_switch'));
+  }
+
+  /**
+   * The referenced node was deleted. Exporting 0 here would name a real switch.
+   */
+  public function testADanglingReferenceIsNoSwitch(): void {
+    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, NULL), 'field_eos_switch'));
+  }
+
+  /**
+   * The field exists but was never filled in.
+   */
+  public function testAReferencedSwitchWithAnEmptyNumberIsNoSwitch(): void {
+    $target = $this->switchNumbered(NULL);
+    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, $target), 'field_eos_switch'));
+  }
+
+  public function testAReferencedSwitchWithoutANumberIsNoSwitch(): void {
+    $target = $this->switchNumbered('7', FALSE);
+    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, $target), 'field_eos_switch'));
+  }
+
+  /**
+   * Numbers arrive from the database as strings.
+   */
+  public function testAReferencedSwitchExportsItsNumber(): void {
+    $this->assertSame(7, $this->readSwitchNumber(
+      $this->nodeReferencing(TRUE, FALSE, $this->switchNumbered('7')), 'field_eos_switch'));
+    $this->assertSame(0, $this->readSwitchNumber(
+      $this->nodeReferencing(TRUE, FALSE, $this->switchNumbered(0)), 'field_eos_switch'));
+  }
+
 }

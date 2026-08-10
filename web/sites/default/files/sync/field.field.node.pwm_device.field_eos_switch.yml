@@ -1,0 +1,29 @@
+uuid: f25590f0-c238-4159-8853-2b1a276751a8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_eos_switch
+    - node.type.pwm_device
+    - node.type.switch
+id: node.pwm_device.field_eos_switch
+field_name: field_eos_switch
+entity_type: node
+bundle: pwm_device
+label: 'End-of-stroke switch'
+description: 'The end-of-stroke contact, when it is wired back to an input as well as breaking the power winding. Optional, including on a dual-wound coil - many are wired so the contact only switches the windings and is not readable.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      switch: switch
+    sort:
+      field: field_number
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.pwm_device.field_ball_search
+    - field.field.node.pwm_device.field_eos_switch
+    - field.field.node.pwm_device.field_dual_winding
     - field.field.node.pwm_device.field_fast_activation_switch
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
@@ -28,6 +30,19 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  field_dual_winding:
+    type: boolean_checkbox
+    weight: 12
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_eos_switch:
+    type: options_select
+    weight: 13
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_fast_activation_switch:
     type: options_select
