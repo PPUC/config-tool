@@ -48,7 +48,7 @@
  ],
  "description": [
   {
-   "value": "<p><a href=\"https://github.com/PPUC/Hardware_Opto_16\">https://github.com/PPUC/Hardware_Opto_16</a></p>\n<p>16 opto-isolated inputs, on the same GPIOs as the IO_16_8_1's. No outputs, so it carries no PWM devices and no LED stripes.</p>",
+   "value": "<p><a href=\"https://github.com/PPUC/Hardware_Opto_16\">https://github.com/PPUC/Hardware_Opto_16</a></p>\n<p>16 opto-isolated inputs, on the same GPIOs as the IO_16_8_1's, plus the WS2812 connector every board carries. It has no PWM output stage, so it holds no coils - but it can drive an LED string.</p>",
    "format": "basic_html",
    "lang": "en"
   }
@@ -84,7 +84,7 @@
  ],
  "field_gpio_mapping": [
   {
-   "value": "a:16:{i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:6;i:5;i:7;i:6;i:8;i:7;i:9;i:8;i:10;i:9;i:11;i:10;i:12;i:11;i:13;i:12;i:14;i:13;i:15;i:14;i:16;i:15;i:17;i:16;i:18;}"
+   "value": "a:17:{i:1;i:3;i:2;i:4;i:3;i:5;i:4;i:6;i:5;i:7;i:6;i:8;i:7;i:9;i:8;i:10;i:9;i:11;i:10;i:12;i:11;i:13;i:12;i:14;i:13;i:15;i:14;i:16;i:15;i:17;i:16;i:18;i:25;i:29;}"
   }
  ]
 }

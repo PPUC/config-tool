@@ -29,12 +29,13 @@ final class BoardCapacity {
    * 25 the dedicated LED connector (GPIO 29), which is where every existing
    * game puts its LED stripes - one per board.
    *
-   * Opto_16: 16 opto-isolated inputs and nothing else. No outputs means no PWM
-   * devices and no LED stripe.
+   * Opto_16: 16 opto-isolated inputs and the same LED connector. No outputs
+   * means no PWM devices, but a WS2812 string needs a connector rather than a
+   * driver, so an opto board can carry one.
    */
   private const RANGES = [
     self::IO_16_8_1 => ['input' => [1, 16], 'output' => [17, 24], 'led' => [25, 25]],
-    self::OPTO_16 => ['input' => [1, 16], 'output' => NULL, 'led' => NULL],
+    self::OPTO_16 => ['input' => [1, 16], 'output' => NULL, 'led' => [25, 25]],
   ];
 
   private string $type;

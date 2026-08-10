@@ -107,12 +107,34 @@ final class HardwareAllocator {
     // the last one holding the remainder - one coil, on a board that then looks
     // like it is there for spare IO. The count is the same either way; only the
     // distribution changes.
+    // 2. Everything in the cabinet, before any playfield coil. The cabinet's
+    // boards - and therefore its spare outputs - have to be known before
+    // deciding how many playfield boards to add, and cabinet switches are what
+    // create most of those boards.
+    foreach ($coils as $coil) {
+      if (isset($assignedCoils[$coil['number']]) || $this->groupOf($coil['location']) !== self::GROUP_CABINET) {
+        continue;
+      }
+      $board = $this->boardWithRoom(self::GROUP_CABINET, BoardCapacity::IO_16_8_1, 0, 1);
+      $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
+    }
+
+    foreach ($switches as $switch) {
+      if (isset($assignedSwitches[$switch['number']])
+          || $switch['opto']
+          || $this->groupOf($switch['location']) !== self::GROUP_CABINET) {
+        continue;
+      }
+      $board = $this->boardWithRoom(self::GROUP_CABINET, BoardCapacity::IO_16_8_1, 1, 0);
+      $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
+    }
+
     $this->reserveBoardsForCoils($coils, $assignedCoils);
     foreach ($coils as $coil) {
       if (isset($assignedCoils[$coil['number']])) {
         continue;
       }
-      $board = $this->boardWithRoom($this->groupOf($coil['location']), BoardCapacity::IO_16_8_1, 0, 1);
+      $board = $this->boardForPlayfieldCoil($coil);
       $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
     }
 
@@ -377,38 +399,110 @@ final class HardwareAllocator {
   }
 
   /**
-   * Creates the boards each group's coils will need, before placing any.
+   * Creates the playfield boards the remaining coils will need.
    *
-   * Only ever creates boards that are needed: the count is what the outputs
-   * demand once the free outputs on existing boards are used up, which is the
-   * same number the on-demand path would have reached.
+   * Only creates what is needed, and counts spare cabinet outputs against the
+   * total first: a board under a playfield costs space that is not there, while
+   * a coil driven from a spare output in the cabinet costs a wire. See
+   * borrowableCabinetOutputs().
    */
   private function reserveBoardsForCoils(array $coils, array $assigned): void {
-    $needed = [];
+    $remaining = 0;
+    $relocatable = 0;
     foreach ($coils as $coil) {
-      if (isset($assigned[$coil['number']])) {
+      if (isset($assigned[$coil['number']]) || $this->groupOf($coil['location']) !== self::GROUP_PLAYFIELD) {
         continue;
       }
-      $group = $this->groupOf($coil['location']);
-      $needed[$group] = ($needed[$group] ?? 0) + 1;
+      $remaining++;
+      if ($this->isRelocatable($coil)) {
+        $relocatable++;
+      }
+    }
+    if ($remaining < 1) {
+      return;
     }
 
-    foreach ($needed as $group => $count) {
-      $free = 0;
-      foreach ($this->boards as $board) {
-        if ($board['group'] === $group && $board['type'] === BoardCapacity::IO_16_8_1) {
-          $free += count($board['freeOutputs']);
-        }
-      }
-      $perBoard = count((new BoardCapacity(BoardCapacity::IO_16_8_1, $this->ioGpioMapping))->outputPins());
-      if ($perBoard < 1) {
-        continue;
-      }
-      $additional = (int) ceil(max(0, $count - $free) / $perBoard);
-      for ($i = 0; $i < $additional; $i++) {
-        $this->addBoard($group, BoardCapacity::IO_16_8_1);
+    $free = 0;
+    foreach ($this->boards as $board) {
+      if ($board['group'] === self::GROUP_PLAYFIELD && $board['type'] === BoardCapacity::IO_16_8_1) {
+        $free += count($board['freeOutputs']);
       }
     }
+
+    $perBoard = count((new BoardCapacity(BoardCapacity::IO_16_8_1, $this->ioGpioMapping))->outputPins());
+    if ($perBoard < 1) {
+      return;
+    }
+
+    $borrowed = min($this->borrowableCabinetOutputs(), $relocatable, max(0, $remaining - $free));
+    $additional = (int) ceil(max(0, $remaining - $free - $borrowed) / $perBoard);
+    for ($i = 0; $i < $additional; $i++) {
+      $this->addBoard(self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1);
+    }
+  }
+
+  /**
+   * A board for one playfield coil, borrowing a cabinet output if it must.
+   *
+   * Playfield boards first. Only when none has an output left does a coil go to
+   * a spare output in the cabinet, and only a coil that can stand the wire run.
+   */
+  private function &boardForPlayfieldCoil(array $coil): array {
+    foreach ($this->boards as $index => $board) {
+      if ($board['group'] === self::GROUP_PLAYFIELD
+          && $board['type'] === BoardCapacity::IO_16_8_1
+          && $board['freeOutputs']) {
+        return $this->boardWithRoom(self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1, 0, 1);
+      }
+    }
+
+    if ($this->isRelocatable($coil)) {
+      foreach ($this->boards as $index => $board) {
+        if ($board['group'] === self::GROUP_CABINET
+            && $board['type'] === BoardCapacity::IO_16_8_1
+            && $board['freeOutputs']) {
+          $this->notes[] = sprintf(
+            '"%s" (coil %d) is driven from board %d in the cabinet, using an output that '
+            . 'was going spare. Run the wires to the playfield rather than adding a board: '
+            . 'it has no fast-flip switch, so nothing is waiting on it locally.',
+            $coil['description'],
+            $coil['number'],
+            $board['index']
+          );
+          return $this->boards[$index];
+        }
+      }
+    }
+
+    return $this->boardWithRoom(self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1, 0, 1);
+  }
+
+  /**
+   * Whether this coil can be driven from the cabinet instead.
+   *
+   * Only a coil with no fast-flip switch. One that has a fast-flip switch has
+   * to be on the board that owns the switch, or the board cannot react to it
+   * locally and the whole arrangement is pointless - and that covers every
+   * flipper winding, since both are driven by the button.
+   */
+  private function isRelocatable(array $coil): bool {
+    return ($coil['fastFlipSwitch'] ?? NULL) === NULL;
+  }
+
+  /**
+   * Spare outputs on cabinet boards that already exist.
+   *
+   * Never creates a cabinet board to hold playfield coils: the point is to use
+   * outputs that are already going spare, not to move the problem.
+   */
+  private function borrowableCabinetOutputs(): int {
+    $spare = 0;
+    foreach ($this->boards as $board) {
+      if ($board['group'] === self::GROUP_CABINET && $board['type'] === BoardCapacity::IO_16_8_1) {
+        $spare += count($board['freeOutputs']);
+      }
+    }
+    return $spare;
   }
 
   /**

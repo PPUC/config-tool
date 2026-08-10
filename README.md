@@ -111,7 +111,18 @@ Boards are allocated automatically under three rules:
    cabinet hardware.
 2. Everything else stays where it is wired: cabinet devices (and backbox ones)
    on the cabinet board, the rest on boards under the playfield.
-3. One LED stripe per board, on the LED connector.
+3. One LED stripe per board, on the LED connector. An `Opto_16` has that
+   connector too, so a string can sit on a board that is already there for its
+   inputs.
+
+Space under a playfield is the real constraint, so the wizard adds as few boards
+as the device counts allow and spreads the load across them rather than filling
+each to the brim. Where a handful of coils would otherwise force one more board,
+it uses **outputs already going spare on the cabinet board** instead - a few
+wires from the cabinet to the playfield cost less than a board that has nowhere
+to go. It only does this for a coil with no fast-flip switch, never for a
+flipper winding, and it says which coils are affected so the wiring is not a
+surprise.
 
 **LED string positions** are filled in matrix order, which is a starting point
 rather than a claim about how the string runs around the playfield. Reorder them

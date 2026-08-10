@@ -35,10 +35,10 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
-   * Opto_16: 16 inputs on the same GPIOs, and nothing else.
+   * Opto_16: 16 inputs on the same GPIOs, plus the LED connector every board has.
    */
   private static function optoMapping(): array {
-    return array_combine(range(1, 16), range(3, 18));
+    return array_combine(range(1, 16), range(3, 18)) + [25 => 29];
   }
 
   private function allocate(array $document): array {
@@ -551,6 +551,209 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     $notes = implode("\n", array_map('strval', $plan['notes']));
     $this->assertStringNotContainsString('carries no switches or coils', $notes);
+  }
+
+  // --- borrowing spare cabinet outputs ---------------------------------------
+  //
+  // A board under a playfield costs space there is none of. A coil driven from
+  // an output already going spare in the cabinet costs a few wires, and wires
+  // are cheap. So the cabinet's leftovers are spent before a board is added -
+  // but only on coils that can stand being far from their switch.
+
+  /**
+   * One coil short of a full board is a whole board, unless the cabinet has room.
+   */
+  public function testASpareCabinetOutputIsUsedBeforeAddingAPlayfieldBoard(): void {
+    // 8 cabinet switches force a cabinet board, whose 8 outputs are then spare
+    // apart from the knocker. 9 playfield coils would otherwise need two
+    // playfield boards for the sake of the ninth.
+    $switches = [];
+    foreach (range(1, 8) as $n) {
+      $switches[] = ['number' => $n, 'description' => 'Direct ' . $n, 'direct' => TRUE];
+    }
+    $coils = [['number' => 7, 'description' => 'Knocker', 'class' => 'highPower', 'location' => 'backbox']];
+    for ($n = 10; $n < 19; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $playfieldBoards = array_filter(
+      $plan['boards'],
+      static fn ($b) => $b['group'] === HardwareAllocator::GROUP_PLAYFIELD
+    );
+    $this->assertCount(1, $playfieldBoards, 'a second playfield board was added for one coil');
+
+    $inCabinet = array_filter($plan['coils'], static fn ($c) => self::boardGroup($plan, $c['board']) === HardwareAllocator::GROUP_CABINET);
+    $this->assertCount(2, $inCabinet, 'expected the knocker plus one borrowed coil');
+  }
+
+  /**
+   * Borrowing is reported, because it is a wire somebody has to run.
+   */
+  public function testBorrowingACabinetOutputIsReported(): void {
+    $switches = [];
+    foreach (range(1, 8) as $n) {
+      $switches[] = ['number' => $n, 'description' => 'Direct ' . $n, 'direct' => TRUE];
+    }
+    $coils = [];
+    for ($n = 10; $n < 19; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $notes = implode("\n", array_map('strval', $plan['notes']));
+    $this->assertStringContainsString('driven from board', $notes);
+    $this->assertStringContainsString('Run the wires', $notes);
+  }
+
+  /**
+   * A fast-flip coil must never be borrowed: the point of its placement is that
+   * its switch is on the same board.
+   */
+  public function testAFastFlipCoilIsNeverDrivenFromTheCabinet(): void {
+    $switches = [];
+    foreach (range(1, 8) as $n) {
+      $switches[] = ['number' => $n, 'description' => 'Direct ' . $n, 'direct' => TRUE];
+    }
+    $switches[] = ['number' => 61, 'description' => 'Left Sling'];
+    // Nine playfield coils, and the one that would be left over has a fast-flip
+    // switch, so it has to stay with it.
+    $coils = [];
+    for ($n = 10; $n < 18; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+    $coils[] = ['number' => 9, 'description' => 'Left Sling', 'class' => 'lowPower', 'fastFlipSwitch' => 61];
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $sling = self::coil($plan, 9);
+    $this->assertSame(
+      HardwareAllocator::GROUP_PLAYFIELD,
+      self::boardGroup($plan, $sling['board']),
+      'a fast-flip coil in the cabinet cannot react to its switch locally'
+    );
+    $this->assertSame(self::boardOfSwitch($plan, 61), $sling['board']);
+  }
+
+  /**
+   * Flipper windings are fast-flip coils, so the rule covers them already - but
+   * this is the case that would hurt most, so it is stated on its own.
+   */
+  public function testFlipperWindingsAreNeverDrivenFromTheCabinet(): void {
+    $switches = [];
+    foreach (range(1, 8) as $n) {
+      $switches[] = ['number' => $n, 'description' => 'Direct ' . $n, 'direct' => TRUE];
+    }
+    $coils = [];
+    for ($n = 10; $n < 17; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+    $coils[] = ['number' => 29, 'description' => 'LR Power', 'class' => 'highPower'];
+    $coils[] = ['number' => 30, 'description' => 'LR Hold', 'class' => 'lowPower'];
+
+    [, $plan] = $this->allocate(self::document([
+      'switches' => $switches,
+      'coils' => $coils,
+      'flippers' => [
+        ['name' => 'Lower Right', 'position' => 'lowerRight', 'powerCoil' => 29, 'holdCoil' => 30],
+      ],
+    ]));
+
+    foreach ([29, 30] as $number) {
+      $this->assertSame(
+        HardwareAllocator::GROUP_PLAYFIELD,
+        self::boardGroup($plan, self::coil($plan, $number)['board']),
+        'a flipper winding was moved away from its button'
+      );
+    }
+  }
+
+  /**
+   * The backstop that keeps a fast-flip coil out of the cabinet.
+   *
+   * In normal use it never fires: a coil whose fast-flip switch resolves is
+   * placed with that switch before borrowing is considered at all, and the
+   * parser guarantees it resolves. This calls the allocator directly with a
+   * coil whose switch is missing, which is the one path that reaches the guard,
+   * so the rule is pinned by something other than the ordering that currently
+   * makes it unreachable.
+   */
+  public function testACoilWithAFastFlipSwitchIsNeverBorrowedEvenWithoutItsSwitch(): void {
+    $devices = [
+      'game' => ['title' => 'Test', 'platform' => 'WPC', 'rom' => ''],
+      'switches' => [],
+      'coils' => [],
+      'flippers' => [],
+      'flashers' => [],
+      'lamps' => [],
+      'gi' => [],
+    ];
+    // A cabinet board with outputs going spare.
+    foreach (range(1, 8) as $n) {
+      $devices['switches'][] = [
+        'number' => $n, 'description' => 'Direct ' . $n, 'opto' => FALSE,
+        'direct' => TRUE, 'button' => FALSE, 'location' => DeviceDataParser::LOCATION_CABINET,
+      ];
+    }
+    // Nine playfield coils, so one would otherwise be borrowed - and the ninth
+    // names a fast-flip switch that is not in the list, so it is not placed
+    // with a group first.
+    for ($n = 10; $n < 18; $n++) {
+      $devices['coils'][] = [
+        'number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower',
+        'type' => 'coil', 'location' => DeviceDataParser::LOCATION_PLAYFIELD,
+        'fastFlipSwitch' => NULL,
+      ];
+    }
+    $devices['coils'][] = [
+      'number' => 9, 'description' => 'Orphaned Sling', 'class' => 'lowPower',
+      'type' => 'coil', 'location' => DeviceDataParser::LOCATION_PLAYFIELD,
+      'fastFlipSwitch' => 61,
+    ];
+
+    $plan = (new HardwareAllocator(self::ioMapping(), self::optoMapping()))->allocate($devices);
+
+    $this->assertSame(
+      HardwareAllocator::GROUP_PLAYFIELD,
+      self::boardGroup($plan, self::coil($plan, 9)['board']),
+      'a coil with a fast-flip switch must not be driven from the cabinet'
+    );
+  }
+
+  /**
+   * Borrowing spends outputs that are already spare; it never adds a cabinet
+   * board to create them.
+   */
+  public function testNoCabinetBoardIsAddedToHoldPlayfieldCoils(): void {
+    $coils = [];
+    for ($n = 10; $n < 19; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['coils' => $coils]));
+
+    $cabinet = array_filter(
+      $plan['boards'],
+      static fn ($b) => $b['group'] === HardwareAllocator::GROUP_CABINET
+    );
+    $this->assertCount(0, $cabinet, 'a cabinet board was created for playfield coils');
+  }
+
+  /**
+   * An opto board has the same LED connector, so a string can sit on it rather
+   * than forcing another board under the playfield.
+   */
+  public function testAnOptoBoardCanCarryAnLedStripe(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [['number' => 31, 'description' => 'Trough Jam', 'opto' => TRUE]],
+      'lamps' => [['number' => 11, 'description' => 'Lamp']],
+    ]));
+
+    $this->assertCount(1, $plan['boards'], 'the opto board should have carried the string');
+    $this->assertSame(BoardCapacity::OPTO_16, self::boardType($plan, $plan['stripes'][0]['board']));
+    $this->assertSame(25, $plan['stripes'][0]['pin']);
   }
 
   public function testBoardsAreNamedAfterTheirGroup(): void {
