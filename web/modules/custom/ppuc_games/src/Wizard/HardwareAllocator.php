@@ -81,36 +81,9 @@ final class HardwareAllocator {
     $assignedSwitches = [];
     $assignedCoils = [];
 
-    // 1. Fast-flip groups first. They are the only devices whose board is
-    // decided by something other than capacity, so they choose before the
-    // packing has a chance to fill the boards they need.
-    foreach ($this->fastFlipGroups($switches, $coils) as $group) {
-      $board = $this->boardWithRoom(
-        $group['location'],
-        BoardCapacity::IO_16_8_1,
-        count($group['switches']),
-        count($group['coils'])
-      );
-      foreach ($group['switches'] as $switch) {
-        $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
-      }
-      foreach ($group['coils'] as $coil) {
-        $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
-      }
-    }
-
-    // 2. Remaining coils. Before the remaining switches, because outputs are
-    // the scarcer resource - 8 per board against 16 inputs.
-    //
-    // The boards a group needs are created before any of its coils are placed.
-    // Creating them on demand instead fills each board to the brim and leaves
-    // the last one holding the remainder - one coil, on a board that then looks
-    // like it is there for spare IO. The count is the same either way; only the
-    // distribution changes.
-    // 2. Everything in the cabinet, before any playfield coil. The cabinet's
-    // boards - and therefore its spare outputs - have to be known before
-    // deciding how many playfield boards to add, and cabinet switches are what
-    // create most of those boards.
+    // 1. The cabinet, before anything on the playfield. Its boards - and so
+    // its spare outputs - have to be known before deciding how many playfield
+    // boards to add, and cabinet switches are what create most of them.
     foreach ($coils as $coil) {
       if (isset($assignedCoils[$coil['number']]) || $this->groupOf($coil['location']) !== self::GROUP_CABINET) {
         continue;
@@ -129,7 +102,43 @@ final class HardwareAllocator {
       $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
     }
 
+    // 2. Reserve every playfield board the coils will need, before placing any
+    // of them. Two things depend on the boards existing first: the load is
+    // spread instead of filling each board to the brim, and the devices that
+    // fire in bursts can be dealt out across them - see step 3.
     $this->reserveBoardsForCoils($coils, $assignedCoils);
+
+    // 3. Fast-flip groups, spread across those boards.
+    //
+    // These are the devices that fire in quick succession: a ball rattling
+    // between three jet bumpers, or bouncing off both slingshots, drains a
+    // driver board's capacitor faster than it recharges. All three bumpers on
+    // one board is the case to avoid.
+    //
+    // Taking the emptiest board each time does that, but only because the
+    // boards already exist - which is why step 2 comes first. Placing them
+    // before reserving is what put every jet, both slings and a flipper on
+    // board 1: with one board created so far, the emptiest board is the only
+    // board. Choosing early also matters for a second reason: a fast-flip
+    // coil's board is fixed by its switch, so it has to pick before capacity
+    // packing fills what it needs.
+    foreach ($this->fastFlipGroups($switches, $coils) as $group) {
+      $board = $this->boardWithRoom(
+        $group['location'],
+        BoardCapacity::IO_16_8_1,
+        count($group['switches']),
+        count($group['coils'])
+      );
+      foreach ($group['switches'] as $switch) {
+        $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
+      }
+      foreach ($group['coils'] as $coil) {
+        $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
+      }
+    }
+
+    // 4. The rest of the coils, before the remaining switches, because outputs
+    // are the scarcer resource - 8 per board against 16 inputs.
     foreach ($coils as $coil) {
       if (isset($assignedCoils[$coil['number']])) {
         continue;
@@ -138,7 +147,7 @@ final class HardwareAllocator {
       $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
     }
 
-    // 3. Opto switches, on their own board type.
+    // 5. Opto switches, on their own board type.
     foreach ($switches as $switch) {
       if (isset($assignedSwitches[$switch['number']]) || !$switch['opto']) {
         continue;
@@ -147,7 +156,7 @@ final class HardwareAllocator {
       $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
     }
 
-    // 4. Everything else.
+    // 6. Everything else.
     foreach ($switches as $switch) {
       if (isset($assignedSwitches[$switch['number']])) {
         continue;
@@ -235,12 +244,16 @@ final class HardwareAllocator {
     foreach ($devices['coils'] as $coil) {
       $winding = $flipperByCoil[$coil['number']] ?? NULL;
       if ($winding === NULL) {
-        $coils[] = $coil + [
+        // A hold winding declared on its own - a trap door, say, rather than a
+        // flipper - gets no bound for the same reason a flipper's does not: it
+        // is wound to sit energised, and cutting it drops whatever it holds.
+        $holdWinding = !empty($coil['holdWinding']);
+        $coils[] = array_merge($coil, [
           'power' => DeviceDefaults::power($coil['class']),
-          'maxPulseTime' => DeviceDefaults::MAX_PULSE_TIME_MS,
-          'holdWinding' => FALSE,
-          'role' => 'coil',
-        ];
+          'maxPulseTime' => $holdWinding ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
+          'holdWinding' => $holdWinding,
+          'role' => $holdWinding ? 'holdWinding' : 'coil',
+        ]);
         continue;
       }
 

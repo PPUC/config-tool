@@ -105,6 +105,7 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `direct` | A D-column switch. Its number must be one the platform defines. |
 | `location` | `playfield` (default), `cabinet` or `backbox`. Backbox devices share the cabinet board. Valid on switches, coils *and* LEDs. |
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
+| `holdWinding` | This output is the hold half of a pair driven as two outputs. Flippers are declared in `flippers` instead; use this for anything else, such as a trap door driven as "high" and "hold". |
 | `position` | Which flipper this is, which selects the button number. |
 
 Rows the manual marks "Not Used" are simply left out. The flipper column beside
@@ -128,6 +129,9 @@ Boards are allocated automatically under three rules:
    cabinet hardware.
 2. Everything else stays where it is wired: cabinet devices (and backbox ones)
    on the cabinet board, the rest on boards under the playfield.
+   Coils that fire in bursts are spread across boards rather than packed onto
+   one: a ball rattling between three jet bumpers, or bouncing off both
+   slingshots, drains a driver board's capacitor faster than it recharges.
 3. One LED stripe per board, on the LED connector. An `Opto_16` has that
    connector too, so a string can sit on a board that is already there for its
    inputs.

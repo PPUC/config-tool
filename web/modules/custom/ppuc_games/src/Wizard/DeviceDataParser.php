@@ -43,7 +43,7 @@ final class DeviceDataParser {
 
   private const GAME_KEYS = ['title', 'platform', 'rom'];
   private const SWITCH_KEYS = ['number', 'description', 'opto', 'direct', 'location', 'button'];
-  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch'];
+  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch', 'holdWinding'];
   private const FLIPPER_KEYS = ['name', 'position', 'powerCoil', 'holdCoil'];
   private const LED_KEYS = ['number', 'description', 'location'];
 
@@ -256,6 +256,11 @@ final class DeviceDataParser {
         'type' => $type,
         'location' => $location,
         'fastFlipSwitch' => $fastFlip,
+        // The hold half of a pair the CPU drives as two outputs. Flippers are
+        // the common case and are declared in the flippers section, but they
+        // are not the only one: a trap door on Dirty Harry is the same coil
+        // assembly driven as "high" and "hold".
+        'holdWinding' => (bool) ($item['holdWinding'] ?? FALSE),
       ];
     }
     return $parsed;

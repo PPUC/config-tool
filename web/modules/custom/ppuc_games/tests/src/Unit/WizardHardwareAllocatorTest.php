@@ -145,6 +145,130 @@ class WizardHardwareAllocatorTest extends TestCase {
     );
   }
 
+  // --- spreading the devices that fire in bursts -----------------------------
+  //
+  // A jet bumper fires again the moment the ball comes back. Three of them
+  // around one ball, or a ball trapped between the slingshots, will drain a
+  // driver board's capacitor faster than it recharges. Which board a fast-flip
+  // group lands on has no other consequence - its switch travels with it - so
+  // spreading them is free.
+
+  /**
+   * Three bumpers must not end up on one board.
+   */
+  public function testBurstyCoilsAreSpreadAcrossBoards(): void {
+    $switches = [];
+    $coils = [];
+    foreach ([63 => 'Left Jet', 64 => 'Middle Jet', 65 => 'Right Jet'] as $number => $name) {
+      $switches[] = ['number' => $number, 'description' => $name];
+      $coils[] = [
+        'number' => $number - 52, 'description' => $name, 'class' => 'lowPower',
+        'fastFlipSwitch' => $number,
+      ];
+    }
+    // Enough other coils that more than one board exists to spread over.
+    for ($n = 100; $n < 118; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $boards = [];
+    foreach ($plan['coils'] as $coil) {
+      if (str_contains($coil['description'], 'Jet')) {
+        $boards[] = $coil['board'];
+      }
+    }
+
+    $this->assertCount(3, $boards);
+    $this->assertCount(3, array_unique($boards), sprintf(
+      'the bumpers share boards (%s); a ball between them drains one capacitor',
+      implode('/', $boards)
+    ));
+  }
+
+  /**
+   * Slingshots too, for the same reason.
+   */
+  public function testSlingshotsDoNotShareABoard(): void {
+    $switches = [
+      ['number' => 61, 'description' => 'Left Slingshot'],
+      ['number' => 62, 'description' => 'Right Slingshot'],
+    ];
+    $coils = [
+      ['number' => 9, 'description' => 'Left Slingshot', 'class' => 'lowPower', 'fastFlipSwitch' => 61],
+      ['number' => 10, 'description' => 'Right Slingshot', 'class' => 'lowPower', 'fastFlipSwitch' => 62],
+    ];
+    for ($n = 100; $n < 110; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $this->assertNotSame(
+      self::coil($plan, 9)['board'],
+      self::coil($plan, 10)['board'],
+      'both slingshots on one board'
+    );
+  }
+
+  /**
+   * Spreading must not cost a board: it chooses among those that will exist.
+   */
+  public function testSpreadingDoesNotAddBoards(): void {
+    $switches = [];
+    $coils = [];
+    foreach ([61, 62, 63, 64, 65] as $i => $number) {
+      $switches[] = ['number' => $number, 'description' => 'Switch ' . $number];
+      $coils[] = [
+        'number' => $i + 1, 'description' => 'Bursty ' . $number, 'class' => 'lowPower',
+        'fastFlipSwitch' => $number,
+      ];
+    }
+    for ($n = 100; $n < 111; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    // 16 coils over 8 outputs is 2 boards, plus the cabinet's for its string.
+    $this->assertCount(3, $plan['boards']);
+  }
+
+  /**
+   * Each flipper on its own board where there is room, for the same reason:
+   * both windings fire together, and both flippers are often held at once.
+   */
+  public function testFlippersAreSpreadAcrossBoards(): void {
+    $coils = [];
+    $flippers = [];
+    foreach ([
+      ['Lower Right', 'lowerRight', 29, 30],
+      ['Lower Left', 'lowerLeft', 31, 32],
+      ['Upper Right', 'upperRight', 33, 34],
+    ] as [$name, $position, $power, $hold]) {
+      $coils[] = ['number' => $power, 'description' => $name . ' Power', 'class' => 'highPower'];
+      $coils[] = ['number' => $hold, 'description' => $name . ' Hold', 'class' => 'lowPower'];
+      $flippers[] = ['name' => $name, 'position' => $position, 'powerCoil' => $power, 'holdCoil' => $hold];
+    }
+    for ($n = 100; $n < 118; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['coils' => $coils, 'flippers' => $flippers]));
+
+    $boards = [];
+    foreach ([29, 31, 33] as $power) {
+      $boards[] = self::coil($plan, $power)['board'];
+    }
+    $this->assertCount(3, array_unique($boards), 'two flippers share a board');
+
+    // Each flipper's own four devices still travel together.
+    foreach ([[29, 30], [31, 32], [33, 34]] as [$power, $hold]) {
+      $this->assertSame(self::coil($plan, $power)['board'], self::coil($plan, $hold)['board']);
+    }
+  }
+
   /**
    * A flipper is four devices that must not be split.
    */
@@ -403,6 +527,29 @@ class WizardHardwareAllocatorTest extends TestCase {
     $this->assertTrue(self::coil($plan, 30)['holdWinding']);
     $this->assertFalse(self::coil($plan, 29)['holdWinding']);
     $this->assertSame(DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS, self::coil($plan, 29)['maxPulseTime']);
+  }
+
+  /**
+   * A hold winding that is not a flipper's.
+   *
+   * Dirty Harry's trap door is one coil assembly driven as two outputs, "high"
+   * and "hold", with no button and no EOS. It needs the same treatment as a
+   * flipper's hold winding: no bound, because cutting it drops the door.
+   */
+  public function testAHoldWindingOutsideAFlipperIsUnbounded(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [
+        ['number' => 8, 'description' => 'Trap Door High', 'class' => 'lowPower'],
+        ['number' => 16, 'description' => 'Trap Door Hold', 'class' => 'lowPower', 'holdWinding' => TRUE],
+      ],
+    ]));
+
+    $this->assertSame(0, self::coil($plan, 16)['maxPulseTime']);
+    $this->assertTrue(self::coil($plan, 16)['holdWinding']);
+
+    // Its partner is an ordinary coil and still needs a bound.
+    $this->assertGreaterThan(0, self::coil($plan, 8)['maxPulseTime']);
+    $this->assertFalse(self::coil($plan, 8)['holdWinding']);
   }
 
   /**

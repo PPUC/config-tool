@@ -227,6 +227,21 @@ class WizardDeviceDataParserTest extends TestCase {
     $this->assertNotNull($this->parse($document), implode("\n", $this->parser->errors()));
   }
 
+  public function testAHoldWindingMayBeDeclaredOnAnyCoil(): void {
+    // Not every power/hold pair is a flipper: a trap door is one coil assembly
+    // driven as two outputs.
+    $document = self::document();
+    $document['coils'][] = [
+      'number' => 16, 'description' => 'Trap Door Hold',
+      'class' => 'lowPower', 'holdWinding' => TRUE,
+    ];
+
+    $result = $this->parse($document);
+    $this->assertNotNull($result, implode("\n", $this->parser->errors()));
+    $this->assertTrue(end($result['coils'])['holdWinding']);
+    $this->assertFalse($result['coils'][0]['holdWinding']);
+  }
+
   public function testAnUnknownLocationIsRejected(): void {
     $document = self::document();
     $document['switches'][0]['location'] = 'apron';
