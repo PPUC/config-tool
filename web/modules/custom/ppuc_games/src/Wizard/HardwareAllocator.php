@@ -101,6 +101,13 @@ final class HardwareAllocator {
 
     // 2. Remaining coils. Before the remaining switches, because outputs are
     // the scarcer resource - 8 per board against 16 inputs.
+    //
+    // The boards a group needs are created before any of its coils are placed.
+    // Creating them on demand instead fills each board to the brim and leaves
+    // the last one holding the remainder - one coil, on a board that then looks
+    // like it is there for spare IO. The count is the same either way; only the
+    // distribution changes.
+    $this->reserveBoardsForCoils($coils, $assignedCoils);
     foreach ($coils as $coil) {
       if (isset($assignedCoils[$coil['number']])) {
         continue;
@@ -130,6 +137,7 @@ final class HardwareAllocator {
     $stripes = $this->allocateStripes($devices);
 
     $this->nameBoards();
+    $this->reportBoardsCarryingNoDevices($assignedSwitches, $assignedCoils);
 
     return [
       'boards' => array_values($this->boards),
@@ -327,6 +335,35 @@ final class HardwareAllocator {
     return $stripes;
   }
 
+  /**
+   * Says so when a board ended up holding nothing but an LED stripe.
+   *
+   * Every board has exactly one LED connector, so three stripes need three
+   * boards. On a machine with few enough switches and coils to fit on fewer
+   * than that, the extra boards exist for their connector alone - which is a
+   * board taking up space under the playfield for one wire, and worth saying
+   * out loud rather than leaving to be discovered during the build.
+   */
+  private function reportBoardsCarryingNoDevices(array $switches, array $coils): void {
+    $carrying = [];
+    foreach (array_merge(array_values($switches), array_values($coils)) as $device) {
+      $carrying[$device['board']] = TRUE;
+    }
+
+    foreach ($this->boards as $board) {
+      if (isset($carrying[$board['index']])) {
+        continue;
+      }
+      $this->notes[] = sprintf(
+        'Board %d ("%s") carries no switches or coils - it is there for its LED '
+        . 'connector, since each board has only one. Moving those LEDs onto '
+        . 'another string would save a board.',
+        $board['index'],
+        $board['description']
+      );
+    }
+  }
+
   private function placeSwitch(array &$board, array $switch): array {
     $pin = array_shift($board['freeInputs']);
     $this->boards[$board['index']] = $board;
@@ -340,17 +377,78 @@ final class HardwareAllocator {
   }
 
   /**
-   * An existing board of this group and type with room, or a new one.
+   * Creates the boards each group's coils will need, before placing any.
+   *
+   * Only ever creates boards that are needed: the count is what the outputs
+   * demand once the free outputs on existing boards are used up, which is the
+   * same number the on-demand path would have reached.
+   */
+  private function reserveBoardsForCoils(array $coils, array $assigned): void {
+    $needed = [];
+    foreach ($coils as $coil) {
+      if (isset($assigned[$coil['number']])) {
+        continue;
+      }
+      $group = $this->groupOf($coil['location']);
+      $needed[$group] = ($needed[$group] ?? 0) + 1;
+    }
+
+    foreach ($needed as $group => $count) {
+      $free = 0;
+      foreach ($this->boards as $board) {
+        if ($board['group'] === $group && $board['type'] === BoardCapacity::IO_16_8_1) {
+          $free += count($board['freeOutputs']);
+        }
+      }
+      $perBoard = count((new BoardCapacity(BoardCapacity::IO_16_8_1, $this->ioGpioMapping))->outputPins());
+      if ($perBoard < 1) {
+        continue;
+      }
+      $additional = (int) ceil(max(0, $count - $free) / $perBoard);
+      for ($i = 0; $i < $additional; $i++) {
+        $this->addBoard($group, BoardCapacity::IO_16_8_1);
+      }
+    }
+  }
+
+  /**
+   * The emptiest board of this group and type with room, or a new one.
+   *
+   * Emptiest rather than first-fit, which matters for two reasons. Space under a
+   * playfield is tight, so the wizard must never add a board that is not needed
+   * - and it does not: a new one appears only when no existing board has room
+   * at all, which is the same condition either way, so the board count is the
+   * minimum for the device counts.
+   *
+   * What changes is how full each one is. First-fit filled boards to the brim in
+   * order and left the last with whatever was left over - one coil, on a board
+   * that then looked like it was there for spare IO. Spreading the load gives
+   * every board the same headroom for the device somebody adds later, at no cost
+   * in boards.
    */
   private function &boardWithRoom(string $group, string $type, int $inputs, int $outputs): array {
+    $best = NULL;
+    $bestFree = -1;
     foreach ($this->boards as $index => $board) {
       if ($board['group'] !== $group || $board['type'] !== $type) {
         continue;
       }
-      if (count($board['freeInputs']) >= $inputs && count($board['freeOutputs']) >= $outputs) {
-        return $this->boards[$index];
+      if (count($board['freeInputs']) < $inputs || count($board['freeOutputs']) < $outputs) {
+        continue;
+      }
+      // Rank by whichever resource is being asked for; outputs are the scarcer
+      // of the two, so they decide when both are wanted.
+      $free = $outputs > 0 ? count($board['freeOutputs']) : count($board['freeInputs']);
+      if ($free > $bestFree) {
+        $best = $index;
+        $bestFree = $free;
       }
     }
+
+    if ($best !== NULL) {
+      return $this->boards[$best];
+    }
+
     $index = $this->addBoard($group, $type);
     return $this->boards[$index];
   }

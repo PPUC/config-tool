@@ -452,6 +452,107 @@ class WizardHardwareAllocatorTest extends TestCase {
     }
   }
 
+  /**
+   * Space under a playfield is tight, so a board must never be there for
+   * headroom.
+   *
+   * The minimum is set by whichever resource runs out first: 8 outputs or 16
+   * inputs per board, counted separately for the cabinet and the playfield
+   * because a device cannot cross between them.
+   */
+  public function testTheBoardCountIsTheMinimumTheDevicesNeed(): void {
+    $switches = [];
+    for ($n = 11; $n <= 68; $n++) {
+      $switches[] = ['number' => $n, 'description' => 'Switch ' . $n];
+    }
+    $coils = [];
+    for ($n = 1; $n <= 25; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
+
+    $expected = (int) max(ceil(count($coils) / 8), ceil(count($switches) / 16));
+    $this->assertCount($expected, $plan['boards'], sprintf(
+      '%d coils and %d switches need %d boards',
+      count($coils), count($switches), $expected
+    ));
+  }
+
+  /**
+   * The leftover board is what made the allocation look wasteful.
+   *
+   * Filling boards to the brim in order leaves the last one holding whatever
+   * did not fit - one coil, on a board that then reads as spare IO even though
+   * it is needed. Spreading costs no boards and leaves every one with the same
+   * headroom for a device added later.
+   */
+  public function testTheLoadIsSpreadRatherThanFillingBoardsInOrder(): void {
+    $coils = [];
+    for ($n = 1; $n <= 25; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document(['coils' => $coils]));
+
+    $perBoard = [];
+    foreach ($plan['boards'] as $board) {
+      $perBoard[$board['index']] = 0;
+    }
+    foreach ($plan['coils'] as $coil) {
+      $perBoard[$coil['board']]++;
+    }
+
+    // 25 coils over 4 boards is 7/6/6/6, not 8/8/8/1.
+    $this->assertSame(4, count($perBoard));
+    $this->assertLessThanOrEqual(1, max($perBoard) - min($perBoard), sprintf(
+      'boards carry %s, which is not an even spread', implode('/', $perBoard)
+    ));
+  }
+
+  /**
+   * Three stripes need three boards, since each board has one LED connector.
+   * On a small machine those boards carry nothing else, and that is worth
+   * saying rather than leaving to be found during the build.
+   */
+  public function testABoardCarryingOnlyAStripeIsReported(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [['number' => 11, 'description' => 'One']],
+      'lamps' => [['number' => 11, 'description' => 'Lamp']],
+      'flashers' => [['number' => 17, 'description' => 'Flasher']],
+      'gi' => [['number' => 1, 'description' => 'GI']],
+    ]));
+
+    $notes = implode("\n", array_map('strval', $plan['notes']));
+    $this->assertStringContainsString('carries no switches or coils', $notes);
+    $this->assertStringContainsString('would save a board', $notes);
+  }
+
+  /**
+   * And is not reported when every board is doing real work.
+   */
+  public function testNoSuchNoteWhenEveryBoardCarriesDevices(): void {
+    $switches = [];
+    for ($n = 11; $n <= 68; $n++) {
+      $switches[] = ['number' => $n, 'description' => 'Switch ' . $n];
+    }
+    $coils = [];
+    for ($n = 1; $n <= 25; $n++) {
+      $coils[] = ['number' => $n, 'description' => 'Coil ' . $n, 'class' => 'lowPower'];
+    }
+
+    [, $plan] = $this->allocate(self::document([
+      'switches' => $switches,
+      'coils' => $coils,
+      'lamps' => [['number' => 11, 'description' => 'Lamp']],
+      'flashers' => [['number' => 17, 'description' => 'Flasher']],
+      'gi' => [['number' => 1, 'description' => 'GI']],
+    ]));
+
+    $notes = implode("\n", array_map('strval', $plan['notes']));
+    $this->assertStringNotContainsString('carries no switches or coils', $notes);
+  }
+
   public function testBoardsAreNamedAfterTheirGroup(): void {
     [, $plan] = $this->allocate(self::document([
       'switches' => [
