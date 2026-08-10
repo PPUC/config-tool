@@ -33,6 +33,35 @@ themselves. It is a contract: the pages can be transcribed by hand, extracted
 by an AI, or produced by another tool entirely, and what the wizard does with
 the result is the same either way.
 
+### Getting the JSON from the manual
+
+The wizard has a collapsed **"I have the manual, not the JSON"** section holding
+a prompt to paste into ChatGPT, Gemini, Claude or whatever chat you use, along
+with scans of the manual pages. It names the pages to attach, gives the format
+and the rules, and states the numbers this platform's ROM expects, so the answer
+comes back in the form the wizard accepts.
+
+Attach these three, which carry the numbers:
+
+- Switch Matrix
+- Lamp Matrix
+- Solenoid/Flashlamp Table
+
+and these three if the manual has them, which add positions:
+
+- Switch Locations
+- Lamp Locations
+- Solenoid/Flashlamp Locations
+
+Nothing is sent anywhere by config-tool itself. It reads JSON, and it does not
+care where the JSON came from.
+
+**Check the result.** Reading a scanned table is exactly the sort of thing these
+tools get subtly wrong, and a misread number is a device wired to the wrong
+hardware. The wizard refuses anything it cannot make sense of - unknown keys,
+duplicate numbers, a direct switch on a number the ROM does not read - but it
+cannot tell a plausible wrong number from a right one.
+
 ### Before the first run
 
 The wizard needs the field definitions and the `Opto_16` board type to be in the

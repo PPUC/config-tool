@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\ppuc_games\Wizard\BoardCapacity;
 use Drupal\ppuc_games\Wizard\DeviceDataParser;
 use Drupal\ppuc_games\Wizard\DeviceDefaults;
+use Drupal\ppuc_games\Wizard\ExtractionPrompt;
 use Drupal\ppuc_games\Wizard\GameBuilder;
 use Drupal\ppuc_games\Wizard\HardwareAllocator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -80,6 +81,46 @@ final class GameWizardForm extends FormBase {
         . 'README for the format. Nothing is created until you have seen what '
         . 'the allocation looks like.'
       ) . '</p>',
+    ];
+
+    // Folded away by default: it is a wall of text, and somebody who already
+    // has the JSON does not need it.
+    $form['prompt'] = [
+      '#type' => 'details',
+      '#title' => $this->t('I have the manual, not the JSON'),
+      '#open' => FALSE,
+    ];
+
+    $form['prompt']['how'] = [
+      '#markup' => '<p>' . $this->t(
+        'Scan or photograph these pages of the operator manual: <em>@required</em>. '
+        . 'If the manual also has the location pages - <em>@optional</em> - include '
+        . 'those and every device will get a position, which the wizard uses to keep '
+        . 'wire runs short and to order the LED strings sensibly.',
+        [
+          '@required' => implode(', ', ExtractionPrompt::REQUIRED_PAGES),
+          '@optional' => implode(', ', ExtractionPrompt::OPTIONAL_PAGES),
+        ]
+      ) . '</p><p>' . $this->t(
+        'Then paste the text below into ChatGPT, Gemini, Claude or whichever AI chat '
+        . 'you use, attach the pages, and paste what comes back into the field below. '
+        . 'Nothing is sent anywhere by this tool - the JSON is the only thing it reads, '
+        . 'so it does not matter how you produce it.'
+      ) . '</p><p>' . $this->t(
+        'Check the result before creating the game. Reading a scanned table is exactly '
+        . 'the kind of thing these tools get subtly wrong, and a misread number is wired '
+        . 'to the wrong device. The wizard refuses anything it cannot make sense of, but '
+        . 'it cannot tell a plausible wrong number from a right one.'
+      ) . '</p>',
+    ];
+
+    $form['prompt']['text'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Prompt'),
+      '#rows' => 20,
+      '#default_value' => ExtractionPrompt::text(),
+      '#attributes' => ['readonly' => 'readonly', 'onclick' => 'this.select();'],
+      '#description' => $this->t('Click to select it all.'),
     ];
 
     $form['json'] = [
