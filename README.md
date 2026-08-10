@@ -103,7 +103,7 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `type` | PWM device type: `coil` (default), `lamp`, `motor`, `shaker`. Not `flasher` - a flasher is an LED. |
 | `opto` | Puts the switch on an `Opto_16` board. |
 | `direct` | A D-column switch. Its number must be one the platform defines. |
-| `location` | `playfield` (default), `cabinet` or `backbox`. Backbox devices share the cabinet board. |
+| `location` | `playfield` (default), `cabinet` or `backbox`. Backbox devices share the cabinet board. Valid on switches, coils *and* LEDs. |
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
 | `position` | Which flipper this is, which selects the button number. |
 
@@ -131,6 +131,25 @@ Boards are allocated automatically under three rules:
 3. One LED stripe per board, on the LED connector. An `Opto_16` has that
    connector too, so a string can sit on a board that is already there for its
    inputs.
+
+### LED strings
+
+Under the playfield there is one string per role — lamps, flashers, GI — since
+those are separate runs. The cabinet gets **one string carrying all of its
+roles together**, because a role belongs to each LED rather than to the string,
+and splitting a handful of cabinet LEDs across three strings would cost three
+boards.
+
+The cabinet string is always planned, even when the input mentions nothing for
+it. A machine's matrices describe the playfield; the cabinet has illumination
+they never mention:
+
+- Button lamps that *are* in the lamp matrix but sit on the cabinet — start and
+  buy-in on Dirty Harry — marked with `"location": "cabinet"`.
+- On WPC, a GI string often drives the backbox: `"location": "backbox"`.
+- Lights that are simply on with the machine, such as the coin return buttons
+  in the coin door. These are in no matrix, so number them from 100 as the LED
+  number field describes, and mark them `"location": "cabinet"`.
 
 Space under a playfield is the real constraint, so the wizard adds as few boards
 as the device counts allow and spreads the load across them rather than filling

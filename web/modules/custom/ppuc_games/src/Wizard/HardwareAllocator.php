@@ -308,53 +308,89 @@ final class HardwareAllocator {
   }
 
   /**
-   * One LED stripe per role, each on its own board's LED pin.
+   * LED strings: one per role under the playfield, one for the cabinet.
+   *
+   * Roles live on each LED rather than on the string, so a string can carry a
+   * mix - which is what the cabinet needs. A start button lamp is a lamp, a
+   * backbox GI string is GI, and the light behind a coin return button is on
+   * whenever the machine is. Splitting those across three cabinet strings would
+   * cost three boards for a handful of LEDs.
+   *
+   * The cabinet string is created even when the manual lists nothing for it. A
+   * cabinet always has some illumination; the matrices just do not describe it.
    */
   private function allocateStripes(array $devices): array {
-    $roles = [
-      ['role' => 'Lamp', 'label' => 'Lamps', 'leds' => $devices['lamps']],
-      ['role' => 'Flasher', 'label' => 'Flashers', 'leds' => $devices['flashers']],
-      ['role' => 'GI', 'label' => 'GI', 'leds' => $devices['gi']],
-    ];
+    $byGroup = [self::GROUP_PLAYFIELD => [], self::GROUP_CABINET => []];
+    foreach ([['Lamp', 'lamps'], ['Flasher', 'flashers'], ['GI', 'gi']] as [$role, $key]) {
+      foreach ($devices[$key] as $led) {
+        $group = $this->groupOf($led['location'] ?? DeviceDataParser::LOCATION_PLAYFIELD);
+        $byGroup[$group][$role][] = $led;
+      }
+    }
 
     $stripes = [];
-    foreach ($roles as $role) {
-      if (!$role['leds']) {
+
+    // Under the playfield, one string per role: 64 lamps and 8 flashers are
+    // wired as separate runs.
+    foreach (['Lamp' => 'Lamps', 'Flasher' => 'Flashers', 'GI' => 'GI'] as $role => $label) {
+      $leds = $byGroup[self::GROUP_PLAYFIELD][$role] ?? [];
+      if (!$leds) {
         continue;
       }
-      $board = $this->boardWithFreeLedPin();
-      $capacity = $this->capacityOf($board);
-      $board['ledUsed'] = TRUE;
-      $this->boards[$board['index']] = $board;
+      $stripes[] = $this->buildStripe($label, self::GROUP_PLAYFIELD, [$role => $leds]);
+    }
 
-      $leds = [];
-      $position = 0;
-      foreach ($role['leds'] as $led) {
+    // One for the cabinet, always, carrying every role it has.
+    $cabinet = $byGroup[self::GROUP_CABINET];
+    $stripes[] = $this->buildStripe('Cabinet', self::GROUP_CABINET, $cabinet);
+
+    if (!$cabinet) {
+      $this->notes[] =
+        'The cabinet string was created empty: nothing in the input is marked as '
+        . 'being in the cabinet or backbox. Add the LEDs that are there anyway - '
+        . 'start and buy-in button lamps, coin return button lights, backbox '
+        . 'illumination - numbering anything outside the lamp matrix from 100.';
+    }
+
+    $this->notes[] =
+      'LED string positions are in the order the LEDs were listed. That is a '
+      . 'starting point, not the wiring: reorder them to match how each string '
+      . 'actually runs.';
+
+    return $stripes;
+  }
+
+  /**
+   * Places one string on a board of its group and numbers its LEDs.
+   *
+   * @param array<string, array> $ledsByRole
+   *   Role name to the LEDs carrying it, in the order they were listed.
+   */
+  private function buildStripe(string $label, string $group, array $ledsByRole): array {
+    $board = $this->boardWithFreeLedPin($group);
+    $capacity = $this->capacityOf($board);
+    $board['ledUsed'] = TRUE;
+    $this->boards[$board['index']] = $board;
+
+    $leds = [];
+    $position = 0;
+    foreach ($ledsByRole as $role => $roleLeds) {
+      foreach ($roleLeds as $led) {
         $leds[] = [
           'number' => $led['number'],
           'description' => $led['description'],
-          'role' => $role['role'],
+          'role' => $role,
           'position' => $position++,
         ];
       }
-
-      $stripes[] = [
-        'label' => $role['label'],
-        'board' => $board['index'],
-        'pin' => $capacity->ledPin(),
-        'role' => $role['role'],
-        'leds' => $leds,
-      ];
     }
 
-    if ($stripes) {
-      $this->notes[] =
-        'LED string positions are in matrix order. That is a starting point, not '
-        . 'the wiring: reorder them to match how the string actually runs around '
-        . 'the playfield.';
-    }
-
-    return $stripes;
+    return [
+      'label' => $label,
+      'board' => $board['index'],
+      'pin' => $capacity->ledPin(),
+      'leds' => $leds,
+    ];
   }
 
   /**
@@ -548,17 +584,18 @@ final class HardwareAllocator {
   }
 
   /**
-   * A board whose LED pin is still free, preferring playfield boards.
+   * A board in this group whose LED pin is still free, or a new one.
+   *
+   * The group is not negotiable: a string in the cabinet has to be driven from
+   * a board in the cabinet, or it is a run of data wire across the machine.
    */
-  private function boardWithFreeLedPin(): array {
-    foreach ([self::GROUP_PLAYFIELD, self::GROUP_CABINET] as $group) {
-      foreach ($this->boards as $board) {
-        if ($board['group'] === $group && !$board['ledUsed'] && $this->capacityOf($board)->ledPin() !== NULL) {
-          return $board;
-        }
+  private function boardWithFreeLedPin(string $group): array {
+    foreach ($this->boards as $board) {
+      if ($board['group'] === $group && !$board['ledUsed'] && $this->capacityOf($board)->ledPin() !== NULL) {
+        return $board;
       }
     }
-    return $this->boards[$this->addBoard(self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1)];
+    return $this->boards[$this->addBoard($group, BoardCapacity::IO_16_8_1)];
   }
 
   private function addBoard(string $group, string $type): int {

@@ -244,7 +244,7 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
-   * Every existing game does one stripe per board, on the LED pin.
+   * Each board has one LED connector, so each string needs its own board.
    */
   public function testEachStripeGetsItsOwnBoardAndTheLedPin(): void {
     [, $plan] = $this->allocate(self::document([
@@ -253,21 +253,95 @@ class WizardHardwareAllocatorTest extends TestCase {
       'gi' => [['number' => 1, 'description' => 'Right String']],
     ]));
 
-    $this->assertCount(3, $plan['stripes']);
+    // Three under the playfield, plus the cabinet's.
+    $this->assertCount(4, $plan['stripes']);
     $boards = array_column($plan['stripes'], 'board');
-    $this->assertCount(3, array_unique($boards), 'two stripes were put on one board');
+    $this->assertCount(4, array_unique($boards), 'two strings were put on one board');
     foreach ($plan['stripes'] as $stripe) {
       $this->assertSame(25, $stripe['pin']);
     }
   }
 
-  public function testAnEmptyRoleGetsNoStripe(): void {
+  public function testAnEmptyPlayfieldRoleGetsNoStripe(): void {
     [, $plan] = $this->allocate(self::document([
       'lamps' => [['number' => 11, 'description' => 'Lamp 11']],
     ]));
 
-    $this->assertCount(1, $plan['stripes']);
-    $this->assertSame('Lamps', $plan['stripes'][0]['label']);
+    $labels = array_column($plan['stripes'], 'label');
+    $this->assertSame(['Lamps', 'Cabinet'], $labels);
+  }
+
+  /**
+   * A cabinet has illumination the manual's matrices do not describe - coin
+   * return button lights, backbox lamps - so the string is planned for whether
+   * or not the input mentions any.
+   */
+  public function testTheCabinetAlwaysGetsAStripe(): void {
+    [, $plan] = $this->allocate(self::document([
+      'lamps' => [['number' => 11, 'description' => 'Lamp 11']],
+    ]));
+
+    $cabinet = array_values(array_filter($plan['stripes'], static fn ($s) => $s['label'] === 'Cabinet'));
+    $this->assertCount(1, $cabinet);
+    $this->assertSame([], $cabinet[0]['leds']);
+    $this->assertSame(
+      HardwareAllocator::GROUP_CABINET,
+      self::boardGroup($plan, $cabinet[0]['board']),
+      'a cabinet string driven from a playfield board is a data wire across the machine'
+    );
+
+    $notes = implode("\n", array_map('strval', $plan['notes']));
+    $this->assertStringContainsString('cabinet string was created empty', $notes);
+  }
+
+  /**
+   * The cabinet string carries whatever roles the cabinet has, together.
+   *
+   * Splitting a start button lamp, a backbox GI string and a coin door light
+   * across three strings would cost three boards for a handful of LEDs.
+   */
+  public function testTheCabinetStripeCarriesMixedRoles(): void {
+    [, $plan] = $this->allocate(self::document([
+      'lamps' => [
+        ['number' => 11, 'description' => 'Left Rollover'],
+        ['number' => 88, 'description' => 'Start Button', 'location' => 'cabinet'],
+        ['number' => 100, 'description' => 'Coin Return Light', 'location' => 'cabinet'],
+      ],
+      'gi' => [['number' => 5, 'description' => 'Backbox', 'location' => 'backbox']],
+    ]));
+
+    $cabinet = array_values(array_filter($plan['stripes'], static fn ($s) => $s['label'] === 'Cabinet'));
+    $this->assertCount(1, $cabinet);
+
+    $numbers = array_column($cabinet[0]['leds'], 'number');
+    sort($numbers);
+    $this->assertSame([5, 88, 100], $numbers, 'a cabinet or backbox LED belongs on the cabinet string');
+
+    $roles = array_unique(array_column($cabinet[0]['leds'], 'role'));
+    sort($roles);
+    $this->assertSame(['GI', 'Lamp'], $roles);
+
+    // And the playfield lamp stayed where it was.
+    $lamps = array_values(array_filter($plan['stripes'], static fn ($s) => $s['label'] === 'Lamps'));
+    $this->assertSame([11], array_column($lamps[0]['leds'], 'number'));
+  }
+
+  /**
+   * Positions run from zero within each string, not across all of them.
+   */
+  public function testEachStripeNumbersItsOwnPositionsFromZero(): void {
+    [, $plan] = $this->allocate(self::document([
+      'lamps' => [
+        ['number' => 11, 'description' => 'A'],
+        ['number' => 88, 'description' => 'Start Button', 'location' => 'cabinet'],
+      ],
+      'gi' => [['number' => 1, 'description' => 'Backbox', 'location' => 'cabinet']],
+    ]));
+
+    foreach ($plan['stripes'] as $stripe) {
+      $positions = array_column($stripe['leds'], 'position');
+      $this->assertSame(range(0, count($positions) - 1), $positions, $stripe['label']);
+    }
   }
 
   public function testLedsAreNumberedInMatrixOrderFromPositionZero(): void {
@@ -472,7 +546,9 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     [, $plan] = $this->allocate(self::document(['switches' => $switches, 'coils' => $coils]));
 
-    $expected = (int) max(ceil(count($coils) / 8), ceil(count($switches) / 16));
+    // Playfield boards for the devices, plus the one the cabinet string needs -
+    // this machine has nothing else in the cabinet.
+    $expected = (int) max(ceil(count($coils) / 8), ceil(count($switches) / 16)) + 1;
     $this->assertCount($expected, $plan['boards'], sprintf(
       '%d coils and %d switches need %d boards',
       count($coils), count($switches), $expected
@@ -497,13 +573,15 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     $perBoard = [];
     foreach ($plan['boards'] as $board) {
-      $perBoard[$board['index']] = 0;
+      if ($board['group'] === HardwareAllocator::GROUP_PLAYFIELD) {
+        $perBoard[$board['index']] = 0;
+      }
     }
     foreach ($plan['coils'] as $coil) {
       $perBoard[$coil['board']]++;
     }
 
-    // 25 coils over 4 boards is 7/6/6/6, not 8/8/8/1.
+    // 25 coils over 4 playfield boards is 7/6/6/6, not 8/8/8/1.
     $this->assertSame(4, count($perBoard));
     $this->assertLessThanOrEqual(1, max($perBoard) - min($perBoard), sprintf(
       'boards carry %s, which is not an even spread', implode('/', $perBoard)
@@ -550,7 +628,13 @@ class WizardHardwareAllocatorTest extends TestCase {
     ]));
 
     $notes = implode("\n", array_map('strval', $plan['notes']));
-    $this->assertStringNotContainsString('carries no switches or coils', $notes);
+    // The cabinet board carries the cabinet string and nothing else here, which
+    // is exactly what the note is for, so it is expected to name that one only.
+    $this->assertSame(
+      1,
+      substr_count($notes, 'carries no switches or coils'),
+      'only the cabinet board should be reported as carrying no devices'
+    );
   }
 
   // --- borrowing spare cabinet outputs ---------------------------------------
@@ -734,11 +818,16 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     [, $plan] = $this->allocate(self::document(['coils' => $coils]));
 
-    $cabinet = array_filter(
-      $plan['boards'],
-      static fn ($b) => $b['group'] === HardwareAllocator::GROUP_CABINET
-    );
-    $this->assertCount(0, $cabinet, 'a cabinet board was created for playfield coils');
+    // A cabinet board exists for the cabinet string, but no playfield coil may
+    // have been put on it: borrowing spends outputs that were already spare, it
+    // does not create a board to make some.
+    foreach ($plan['coils'] as $coil) {
+      $this->assertSame(
+        HardwareAllocator::GROUP_PLAYFIELD,
+        self::boardGroup($plan, $coil['board']),
+        sprintf('coil %d was put in the cabinet, which had no spare outputs to begin with', $coil['number'])
+      );
+    }
   }
 
   /**
@@ -751,9 +840,18 @@ class WizardHardwareAllocatorTest extends TestCase {
       'lamps' => [['number' => 11, 'description' => 'Lamp']],
     ]));
 
-    $this->assertCount(1, $plan['boards'], 'the opto board should have carried the string');
-    $this->assertSame(BoardCapacity::OPTO_16, self::boardType($plan, $plan['stripes'][0]['board']));
-    $this->assertSame(25, $plan['stripes'][0]['pin']);
+    // One playfield board - the opto board, carrying the lamp string - plus the
+    // cabinet board its own string needs.
+    $playfield = array_filter(
+      $plan['boards'],
+      static fn ($b) => $b['group'] === HardwareAllocator::GROUP_PLAYFIELD
+    );
+    $this->assertCount(1, $playfield, 'the opto board should have carried the string');
+
+    $lamps = array_values(array_filter($plan['stripes'], static fn ($s) => $s['label'] === 'Lamps'));
+    $this->assertCount(1, $lamps);
+    $this->assertSame(BoardCapacity::OPTO_16, self::boardType($plan, $lamps[0]['board']));
+    $this->assertSame(25, $lamps[0]['pin']);
   }
 
   public function testBoardsAreNamedAfterTheirGroup(): void {

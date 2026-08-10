@@ -223,7 +223,10 @@ final class GameBuilder {
     $node = Node::create($values);
     $node->save();
 
-    $role = $this->term('led_role', $stripe['role']);
+    // The role belongs to each LED, not to the string: a cabinet string carries
+    // button lamps, backbox GI and always-on illumination together, and the
+    // export groups them by role from here.
+    $roles = [];
     foreach ($stripe['leds'] as $led) {
       $ledValues = [
         'type' => 'addressable_led',
@@ -232,8 +235,9 @@ final class GameBuilder {
         'field_number' => ['value' => $led['number']],
         'field_string_position' => ['value' => $led['position']],
       ];
-      if ($role !== NULL) {
-        $ledValues['field_role'] = ['target_id' => $role];
+      $roles[$led['role']] ??= $this->term('led_role', $led['role']);
+      if ($roles[$led['role']] !== NULL) {
+        $ledValues['field_role'] = ['target_id' => $roles[$led['role']]];
       }
       Node::create($ledValues)->save();
     }

@@ -45,7 +45,7 @@ final class DeviceDataParser {
   private const SWITCH_KEYS = ['number', 'description', 'opto', 'direct', 'location', 'button'];
   private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch'];
   private const FLIPPER_KEYS = ['name', 'position', 'powerCoil', 'holdCoil'];
-  private const LED_KEYS = ['number', 'description'];
+  private const LED_KEYS = ['number', 'description', 'location'];
 
   /**
    * Problems found, each naming the entry it came from.
@@ -347,7 +347,16 @@ final class DeviceDataParser {
       }
       $seen[$number] = $description;
 
-      $parsed[] = ['number' => $number, 'description' => $description];
+      $location = $this->parseLocation($item, $path, self::LOCATION_PLAYFIELD);
+      if ($location === NULL) {
+        continue;
+      }
+
+      $parsed[] = [
+        'number' => $number,
+        'description' => $description,
+        'location' => $location,
+      ];
     }
     return $parsed;
   }
