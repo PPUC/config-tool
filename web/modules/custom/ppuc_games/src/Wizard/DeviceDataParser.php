@@ -42,10 +42,10 @@ final class DeviceDataParser {
   private const COIL_TYPES = ['coil', 'lamp', 'motor', 'shaker'];
 
   private const GAME_KEYS = ['title', 'platform', 'rom'];
-  private const SWITCH_KEYS = ['number', 'description', 'opto', 'direct', 'location', 'button'];
-  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch', 'holdWinding'];
+  private const SWITCH_KEYS = ['number', 'description', 'opto', 'direct', 'location', 'button', 'position'];
+  private const COIL_KEYS = ['number', 'description', 'class', 'type', 'location', 'fastFlipSwitch', 'holdWinding', 'position'];
   private const FLIPPER_KEYS = ['name', 'position', 'powerCoil', 'holdCoil'];
-  private const LED_KEYS = ['number', 'description', 'location'];
+  private const LED_KEYS = ['number', 'description', 'location', 'position'];
 
   /**
    * Problems found, each naming the entry it came from.
@@ -178,6 +178,11 @@ final class DeviceDataParser {
         continue;
       }
 
+      $position = $this->parsePosition($item, $path, $description);
+      if ($position === FALSE) {
+        continue;
+      }
+
       $parsed[] = [
         'number' => $number,
         'description' => $description,
@@ -185,6 +190,7 @@ final class DeviceDataParser {
         'direct' => $direct,
         'button' => (bool) ($item['button'] ?? FALSE),
         'location' => $location,
+        'position' => $position,
       ];
     }
     return $parsed;
@@ -249,6 +255,11 @@ final class DeviceDataParser {
         }
       }
 
+      $position = $this->parsePosition($item, $path, $description);
+      if ($position === FALSE) {
+        continue;
+      }
+
       $parsed[] = [
         'number' => $number,
         'description' => $description,
@@ -256,6 +267,7 @@ final class DeviceDataParser {
         'type' => $type,
         'location' => $location,
         'fastFlipSwitch' => $fastFlip,
+        'position' => $position,
         // The hold half of a pair the CPU drives as two outputs. Flippers are
         // the common case and are declared in the flippers section, but they
         // are not the only one: a trap door on Dirty Harry is the same coil
@@ -357,10 +369,16 @@ final class DeviceDataParser {
         continue;
       }
 
+      $position = $this->parsePosition($item, $path, $description);
+      if ($position === FALSE) {
+        continue;
+      }
+
       $parsed[] = [
         'number' => $number,
         'description' => $description,
         'location' => $location,
+        'position' => $position,
       ];
     }
     return $parsed;
@@ -401,6 +419,26 @@ final class DeviceDataParser {
           $coil['number'], $coil['description'], $coil['fastFlipSwitch']
         );
       }
+    }
+  }
+
+  /**
+   * Reads an optional position.
+   *
+   * Returns NULL when the entry has none - which is the common case, since
+   * plenty of manuals have no location diagram - and FALSE when it has one that
+   * makes no sense, which is an error the caller reports and skips.
+   */
+  private function parsePosition(array $item, string $path, string $description): Position|NULL|FALSE {
+    if (!array_key_exists('position', $item)) {
+      return NULL;
+    }
+    try {
+      return Position::fromArray($item['position']);
+    }
+    catch (\InvalidArgumentException $e) {
+      $this->errors[] = sprintf('%s ("%s") has a bad position: %s.', $path, $description, $e->getMessage());
+      return FALSE;
     }
   }
 

@@ -106,6 +106,7 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `location` | `playfield` (default), `cabinet` or `backbox`. Backbox devices share the cabinet board. Valid on switches, coils *and* LEDs. |
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
 | `holdWinding` | This output is the hold half of a pair driven as two outputs. Flippers are declared in `flippers` instead; use this for anything else, such as a trap door driven as "high" and "hold". |
+| `position` | Optional. Where the device is, as `{"x": 0.5, "y": 0.2}`. See below. |
 | `position` | Which flipper this is, which selects the button number. |
 
 Rows the manual marks "Not Used" are simply left out. The flipper column beside
@@ -167,6 +168,40 @@ surprise.
 **LED string positions** are filled in matrix order, which is a starting point
 rather than a claim about how the string runs around the playfield. Reorder them
 to match the wiring.
+
+### Positions, if the manual has them
+
+Some manuals include location pages - a playfield outline with each item number
+called out on it, alongside the switch, lamp and solenoid tables. **Plenty do
+not**, so every position is optional and the wizard works exactly as before
+without them. Mixing is fine too: position what the diagram shows and leave the
+rest.
+
+```json
+{ "number": 63, "description": "Left Jet Bumper", "position": { "x": 0.4, "y": 0.78 } }
+```
+
+`x` runs left to right and `y` from the flipper end upwards, both as a fraction
+of the playfield from 0 to 1. Fractions rather than measurements, because a
+diagram is the source and its scale is arbitrary. A coordinate outside 0 to 1 is
+refused - that is a transcription error, not a device hanging off the playfield.
+
+Positions buy two things:
+
+- **Shorter wire runs.** A device goes to the board nearest the ones already
+  placed around it, so a board tends to serve its own region of the playfield.
+- **A usable LED string order.** Without positions, a string is ordered by lamp
+  number, which says nothing about where the lamps are. With them, the wizard
+  walks nearest-to-nearest from the bottom left, which is roughly the path
+  somebody laying the string would take. Still a guess at the wiring, but one
+  worth correcting rather than starting from. A string where only some LEDs have
+  positions keeps the listed order - half a path and half a matrix is worse than
+  either - and the wizard says which strings got which.
+
+**Proximity never overrides the capacitor rule.** Three jet bumpers are inches
+apart, so nearest-board would put all three together, which is exactly the
+arrangement to avoid. Coils with a fast-flip switch are spread across boards
+whatever they are near.
 
 ### Flipper timing on WPC Fliptronic
 

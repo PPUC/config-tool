@@ -54,6 +54,11 @@ final class HardwareAllocator {
   private array $notes = [];
 
   /**
+   * How many placed devices had a position, for the summary.
+   */
+  private int $positionsUsed = 0;
+
+  /**
    * @param array<int, int> $ioGpioMapping
    *   IO_16_8_1's field_gpio_mapping, unserialised.
    * @param array<int, int> $optoGpioMapping
@@ -74,6 +79,7 @@ final class HardwareAllocator {
   public function allocate(array $devices): array {
     $this->boards = [];
     $this->notes = [];
+    $this->positionsUsed = 0;
 
     $switches = $this->expandSwitches($devices);
     $coils = $this->expandCoils($devices);
@@ -152,7 +158,9 @@ final class HardwareAllocator {
       if (isset($assignedSwitches[$switch['number']]) || !$switch['opto']) {
         continue;
       }
-      $board = $this->boardWithRoom($this->groupOf($switch['location']), BoardCapacity::OPTO_16, 1, 0);
+      $board = $this->nearestBoardWithRoom(
+        $this->groupOf($switch['location']), BoardCapacity::OPTO_16, 1, 0, $switch['position'] ?? NULL
+      );
       $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
     }
 
@@ -161,7 +169,9 @@ final class HardwareAllocator {
       if (isset($assignedSwitches[$switch['number']])) {
         continue;
       }
-      $board = $this->boardWithRoom($this->groupOf($switch['location']), BoardCapacity::IO_16_8_1, 1, 0);
+      $board = $this->nearestBoardWithRoom(
+        $this->groupOf($switch['location']), BoardCapacity::IO_16_8_1, 1, 0, $switch['position'] ?? NULL
+      );
       $assignedSwitches[$switch['number']] = $this->placeSwitch($board, $switch);
     }
 
@@ -169,6 +179,16 @@ final class HardwareAllocator {
 
     $this->nameBoards();
     $this->reportBoardsCarryingNoDevices($assignedSwitches, $assignedCoils);
+
+    if ($this->positionsUsed > 0) {
+      $this->notes[] = sprintf(
+        '%d device(s) had a position from the manual\'s location diagrams, so they '
+        . 'were put on the nearest board with room. Jet bumpers and slingshots are '
+        . 'the exception: those are spread across boards on purpose, whatever they '
+        . 'are near.',
+        $this->positionsUsed
+      );
+    }
 
     return [
       'boards' => array_values($this->boards),
@@ -365,10 +385,35 @@ final class HardwareAllocator {
         . 'illumination - numbering anything outside the lamp matrix from 100.';
     }
 
-    $this->notes[] =
-      'LED string positions are in the order the LEDs were listed. That is a '
-      . 'starting point, not the wiring: reorder them to match how each string '
-      . 'actually runs.';
+    $byPath = [];
+    $byList = [];
+    foreach ($stripes as $stripe) {
+      if (!$stripe['leds']) {
+        continue;
+      }
+      if ($stripe['orderedByPosition']) {
+        $byPath[] = $stripe['label'];
+      }
+      else {
+        $byList[] = $stripe['label'];
+      }
+    }
+
+    if ($byPath) {
+      $this->notes[] = sprintf(
+        'The %s string(s) are ordered along a path from the bottom left through the '
+        . 'positions in the manual, nearest to nearest. That is a guess at how the '
+        . 'string runs, not the wiring itself.',
+        implode(' and ', $byPath)
+      );
+    }
+    if ($byList) {
+      $this->notes[] = sprintf(
+        'The %s string(s) are in the order the LEDs were listed, because not all of '
+        . 'them have a position. Reorder them to match how the string actually runs.',
+        implode(' and ', $byList)
+      );
+    }
 
     return $stripes;
   }
@@ -385,23 +430,32 @@ final class HardwareAllocator {
     $board['ledUsed'] = TRUE;
     $this->boards[$board['index']] = $board;
 
-    $leds = [];
-    $position = 0;
+    $flat = [];
     foreach ($ledsByRole as $role => $roleLeds) {
       foreach ($roleLeds as $led) {
-        $leds[] = [
-          'number' => $led['number'],
-          'description' => $led['description'],
-          'role' => $role,
-          'position' => $position++,
-        ];
+        $flat[] = $led + ['role' => $role];
       }
+    }
+    $ordered = $this->orderAlongString($flat);
+    $orderedByPosition = $ordered !== $flat || $this->allPositioned($flat);
+    $flat = $ordered;
+
+    $leds = [];
+    $index = 0;
+    foreach ($flat as $led) {
+      $leds[] = [
+        'number' => $led['number'],
+        'description' => $led['description'],
+        'role' => $led['role'],
+        'position' => $index++,
+      ];
     }
 
     return [
       'label' => $label,
       'board' => $board['index'],
       'pin' => $capacity->ledPin(),
+      'orderedByPosition' => $orderedByPosition && $leds !== [],
       'leds' => $leds,
     ];
   }
@@ -437,14 +491,65 @@ final class HardwareAllocator {
 
   private function placeSwitch(array &$board, array $switch): array {
     $pin = array_shift($board['freeInputs']);
+    $this->rememberPosition($board, $switch);
     $this->boards[$board['index']] = $board;
     return $switch + ['board' => $board['index'], 'pin' => $pin];
   }
 
   private function placeCoil(array &$board, array $coil): array {
     $pin = array_shift($board['freeOutputs']);
+    $this->rememberPosition($board, $coil);
     $this->boards[$board['index']] = $board;
     return $coil + ['board' => $board['index'], 'pin' => $pin];
+  }
+
+  private function rememberPosition(array &$board, array $device): void {
+    if (($device['position'] ?? NULL) instanceof Position) {
+      $board['positions'][] = $device['position'];
+      $this->positionsUsed++;
+    }
+  }
+
+  /**
+   * The board of this group and type nearest to where the device sits.
+   *
+   * Falls back to boardWithRoom() whenever proximity cannot decide: no position
+   * on the device, no positioned device on any candidate board, or no manual
+   * with a location diagram at all. That fallback is the normal case, not an
+   * edge case - most manuals have no such page.
+   *
+   * Used for devices that sit still. It is deliberately *not* used for coils
+   * with a fast-flip switch: jet bumpers are inches apart, so nearest would put
+   * all three on one board, which is the arrangement that empties a driver
+   * board's capacitor. Spreading those wins over wire length.
+   */
+  private function &nearestBoardWithRoom(string $group, string $type, int $inputs, int $outputs, ?Position $position): array {
+    if ($position !== NULL) {
+      $best = NULL;
+      $bestDistance = NULL;
+      foreach ($this->boards as $index => $board) {
+        if ($board['group'] !== $group || $board['type'] !== $type) {
+          continue;
+        }
+        if (count($board['freeInputs']) < $inputs || count($board['freeOutputs']) < $outputs) {
+          continue;
+        }
+        $centre = Position::centre($board['positions']);
+        if ($centre === NULL) {
+          continue;
+        }
+        $distance = $position->distanceTo($centre);
+        if ($bestDistance === NULL || $distance < $bestDistance) {
+          $best = $index;
+          $bestDistance = $distance;
+        }
+      }
+      if ($best !== NULL) {
+        return $this->boards[$best];
+      }
+    }
+
+    return $this->boardWithRoom($group, $type, $inputs, $outputs);
   }
 
   /**
@@ -501,7 +606,9 @@ final class HardwareAllocator {
       if ($board['group'] === self::GROUP_PLAYFIELD
           && $board['type'] === BoardCapacity::IO_16_8_1
           && $board['freeOutputs']) {
-        return $this->boardWithRoom(self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1, 0, 1);
+        return $this->nearestBoardWithRoom(
+          self::GROUP_PLAYFIELD, BoardCapacity::IO_16_8_1, 0, 1, $coil['position'] ?? NULL
+        );
       }
     }
 
@@ -597,6 +704,67 @@ final class HardwareAllocator {
   }
 
   /**
+   * Orders LEDs the way a string is likely to run.
+   *
+   * A WS2812 string is one run of wire, and its position numbers follow that
+   * run. Matrix order does not: lamp 11 and lamp 12 are in the same column of
+   * the lamp matrix, which says nothing about where they are.
+   *
+   * With positions from a location diagram, walking nearest-to-nearest from the
+   * bottom-left corner approximates the path somebody would actually take
+   * laying the string. Not the real wiring - nobody can know that from a
+   * diagram - but close enough to be worth correcting rather than starting
+   * from.
+   *
+   * Without positions, or with only some, the listed order is kept: half a path
+   * and half a matrix would be worse than either.
+   */
+  private function orderAlongString(array $leds): array {
+    if (!$leds) {
+      return $leds;
+    }
+    if (!$this->allPositioned($leds)) {
+      return $leds;
+    }
+
+    // Start at the bottom left, which is where a run of wire from a board under
+    // the playfield tends to begin.
+    $origin = new Position(0.0, 0.0);
+    $remaining = $leds;
+    $ordered = [];
+    $current = $origin;
+
+    while ($remaining) {
+      $bestKey = NULL;
+      $bestDistance = NULL;
+      foreach ($remaining as $key => $led) {
+        $distance = $current->distanceTo($led['position']);
+        if ($bestDistance === NULL || $distance < $bestDistance) {
+          $bestKey = $key;
+          $bestDistance = $distance;
+        }
+      }
+      $ordered[] = $remaining[$bestKey];
+      $current = $remaining[$bestKey]['position'];
+      unset($remaining[$bestKey]);
+    }
+
+    return $ordered;
+  }
+
+  /**
+   * Whether every one of these has a position.
+   */
+  private function allPositioned(array $devices): bool {
+    foreach ($devices as $device) {
+      if (!(($device['position'] ?? NULL) instanceof Position)) {
+        return FALSE;
+      }
+    }
+    return $devices !== [];
+  }
+
+  /**
    * A board in this group whose LED pin is still free, or a new one.
    *
    * The group is not negotiable: a string in the cabinet has to be driven from
@@ -621,6 +789,9 @@ final class HardwareAllocator {
       'freeInputs' => $capacity->inputPins(),
       'freeOutputs' => $capacity->outputPins(),
       'ledUsed' => FALSE,
+      // Positions of the devices placed here, for working out which board a
+      // device is nearest. Empty when the manual had no location diagram.
+      'positions' => [],
       'description' => '',
     ];
     return $index;
