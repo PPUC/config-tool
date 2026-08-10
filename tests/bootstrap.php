@@ -19,8 +19,13 @@ $loader = require __DIR__ . '/../vendor/autoload.php';
 
 $loader->addPsr4('Drupal\\ppuc_games\\', __DIR__ . '/../web/modules/custom/ppuc_games/src');
 
-// Contrib namespaces referenced from custom module signatures.
-foreach (glob(__DIR__ . '/../web/modules/contrib/*/src', GLOB_ONLYDIR) ?: [] as $src) {
-  $module = basename(dirname($src));
-  $loader->addPsr4('Drupal\\' . $module . '\\', $src);
+// Core and contrib namespaces referenced from custom module signatures -
+// NodeInterface and the field item interfaces, mostly. Registering them is
+// enough to type-hint against and to build test doubles for; nothing here
+// boots Drupal.
+foreach (['/../web/core/modules/*/src', '/../web/modules/contrib/*/src'] as $pattern) {
+  foreach (glob(__DIR__ . $pattern, GLOB_ONLYDIR) ?: [] as $src) {
+    $module = basename(dirname($src));
+    $loader->addPsr4('Drupal\\' . $module . '\\', $src);
+  }
 }

@@ -821,11 +821,19 @@ class GamesController extends ControllerBase {
         usort($yaml['switches'], [$this, 'sortArrayByNumberValues']);
         usort($yaml['pwmOutput'], [$this, 'sortArrayByNumberValues']);
 
-        $yaml['boards'][] = [
+        $board = [
           'description' => trim($i_o_board->label()),
           'number' => $i_o_board_number,
           'pollEvents' => $poll_events,
         ];
+        // Only emitted when set. A board with no latency-critical switches is
+        // polled every eighth cycle instead of every one, so the boards that
+        // drive flipper coils get their replies back sooner. Pointless on a
+        // board nothing polls, and writing it there would suggest otherwise.
+        if ($poll_events && $this->getBooleanFieldValue($i_o_board, 'field_slow_switches')) {
+          $board['slowSwitches'] = TRUE;
+        }
+        $yaml['boards'][] = $board;
       }
     }
 
