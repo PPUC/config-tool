@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for ppuc_games.
+ */
+
+declare(strict_types=1);
+
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * The Opto_16 board type, as shipped in default content.
+ *
+ * Kept in step with
+ * web/sites/default/files/default_content/taxonomy_term/f453b0b1-b024-4ab8-80fd-e6c734c045bf.json
+ * - the uuid is deliberately the same, so a later default content import treats
+ * this as the entity it already knows rather than creating a second one.
+ */
+const PPUC_GAMES_OPTO_16_UUID = 'f453b0b1-b024-4ab8-80fd-e6c734c045bf';
+
+/**
+ * Connector pin to GPIO for an Opto_16.
+ *
+ * 16 opto-isolated inputs on the same GPIOs as the IO_16_8_1's, plus pin 25,
+ * the WS2812 connector every board carries.
+ */
+function _ppuc_games_opto_16_gpio_mapping(): array {
+  $mapping = [];
+  for ($pin = 1; $pin <= 16; $pin++) {
+    $mapping[$pin] = 2 + $pin;
+  }
+  $mapping[25] = 29;
+  return $mapping;
+}
+
+/**
+ * Adds the Opto_16 board type to sites that already exist.
+ *
+ * A fresh install gets it from default content. An existing one does not, and
+ * cannot: the import runs with --preserve-ids, and the file carries a term id
+ * that any site with a hand-created taxonomy term will already have used. The
+ * importer skips an entity whose id is taken, silently, so the board type never
+ * arrives and the game wizard refuses to allocate opto switches.
+ *
+ * Creating it here sidesteps ids entirely. Matching on uuid keeps a later
+ * default content import from adding a second one.
+ */
+function ppuc_games_update_11001(): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  $existing = $storage->loadByProperties(['uuid' => PPUC_GAMES_OPTO_16_UUID]);
+  if ($existing) {
+    return 'Opto_16 board type already present, nothing to do.';
+  }
+
+  // Also by name: a site may have created it by hand to get the wizard working.
+  $byName = $storage->loadByProperties(['vid' => 'i_o_board', 'name' => 'Opto_16']);
+  if ($byName) {
+    return 'A board type called Opto_16 already exists, left as it is.';
+  }
+
+  $term = Term::create([
+    'vid' => 'i_o_board',
+    'uuid' => PPUC_GAMES_OPTO_16_UUID,
+    'name' => 'Opto_16',
+    'description' => [
+      'value' => '<p><a href="https://github.com/PPUC/Hardware_Opto_16">https://github.com/PPUC/Hardware_Opto_16</a></p>'
+      . '<p>16 opto-isolated inputs, on the same GPIOs as the IO_16_8_1\'s, plus the WS2812 '
+      . 'connector every board carries. It has no PWM output stage, so it holds no coils - but '
+      . 'it can drive an LED string.</p>',
+      'format' => 'basic_html',
+    ],
+    'field_gpio_mapping' => serialize(_ppuc_games_opto_16_gpio_mapping()),
+  ]);
+  $term->save();
+
+  return sprintf('Created the Opto_16 board type (term %s).', $term->id());
+}

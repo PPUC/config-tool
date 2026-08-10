@@ -33,6 +33,23 @@ themselves. It is a contract: the pages can be transcribed by hand, extracted
 by an AI, or produced by another tool entirely, and what the wizard does with
 the result is the same either way.
 
+### Before the first run
+
+The wizard needs the field definitions and the `Opto_16` board type to be in the
+database. On an existing site:
+
+```sh
+drush deploy   # database updates and configuration, including the new fields
+drush dcdi --folder=sites/default/files/default_content --preserve-ids --yes
+```
+
+Under DDEV, prefix both with `ddev`. The Docker image runs them on start, so a
+container restart is enough there.
+
+If the wizard reports that no `Opto_16` board type exists, `drush deploy` is what
+adds it - the default content import cannot, on a site whose taxonomy already
+uses the term id in the file.
+
 ### Numbers come from the manual
 
 Switches, coils and lamps use the numbers printed in the manual - a matrix
