@@ -16,6 +16,108 @@ docker run -p 8080:80 -v config-tool-data:/var/www/web/config-tool-data ghcr.io/
 
 Then open `localhost:8080`in a web browser and login as user `ppuc` using the password `ppuc`.
 
+## Creating a game from its manual
+
+Setting up a machine by hand means creating every switch, coil and lamp one
+node at a time - about 150 of them for a 1990s game, each needing a number, a
+board and a pin. All of that is already written down in three tables in the
+operator manual: the switch matrix, the lamp matrix and the solenoid/flashlamp
+table.
+
+**Create Game from Manual** (`/game/wizard`) takes those tables as a JSON
+document and builds the game, its I/O boards, switches, PWM devices and LED
+stripes. It shows the board allocation before creating anything.
+
+The JSON is the input format on purpose, rather than the manual pages
+themselves. It is a contract: the pages can be transcribed by hand, extracted
+by an AI, or produced by another tool entirely, and what the wizard does with
+the result is the same either way.
+
+### Numbers come from the manual
+
+Switches, coils and lamps use the numbers printed in the manual - a matrix
+switch is column x 10 + row, a coil is its solenoid number, a lamp is its lamp
+matrix number. The wizard does not renumber anything.
+
+Switches *outside* the matrix are the exception, because the ROM only reads
+them at numbers the platform defines. For WPC:
+
+| Switch | Number |
+|---|---|
+| Coin chutes 1-4 | 1, 2, 3, 4 |
+| Service credit / escape | 5 |
+| Volume down, volume up | 6, 7 |
+| Begin test | 8 |
+| Flipper buttons (Fliptronic) | 112 lower right, 114 lower left, 116 upper right, 118 upper left |
+| Flipper EOS | 200 upwards - PinMAME does not read these |
+
+A platform the wizard has no table for is refused rather than given WPC's
+numbers: a switch on a number nothing polls behaves exactly like a broken one.
+
+### Format
+
+```json
+{
+  "game":     { "title": "Dirty Harry", "platform": "WPC", "rom": "dh_lx2" },
+  "switches": [
+    { "number": 11, "description": "Gun Handle Trigger" },
+    { "number": 31, "description": "Trough Jam", "opto": true },
+    { "number": 24, "description": "Plumb Bob Tilt", "location": "cabinet" },
+    { "number": 5,  "description": "Service Credit/Escape", "direct": true }
+  ],
+  "coils":    [
+    { "number": 1, "description": "Ball Release", "class": "highPower" },
+    { "number": 7, "description": "Knocker", "class": "highPower", "location": "backbox" },
+    { "number": 9, "description": "Left Sling", "class": "lowPower", "fastFlipSwitch": 61 },
+    { "number": 20, "description": "Gun Motor", "class": "lowPower", "type": "motor" }
+  ],
+  "flippers": [
+    { "name": "Lower Right", "position": "lowerRight", "powerCoil": 29, "holdCoil": 30 }
+  ],
+  "flashers": [ { "number": 17, "description": "Headquarters" } ],
+  "lamps":    [ { "number": 11, "description": "Left Rollover" } ],
+  "gi":       [ { "number": 1,  "description": "Right String" } ]
+}
+```
+
+| Key | Meaning |
+|---|---|
+| `class` | The manual's SOLENOID TYPE column: `highPower`, `lowPower` or `genPurpose`. It sets the drive power, so it is required and never guessed. |
+| `type` | PWM device type: `coil` (default), `lamp`, `motor`, `shaker`. Not `flasher` - a flasher is an LED. |
+| `opto` | Puts the switch on an `Opto_16` board. |
+| `direct` | A D-column switch. Its number must be one the platform defines. |
+| `location` | `playfield` (default), `cabinet` or `backbox`. Backbox devices share the cabinet board. |
+| `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
+| `position` | Which flipper this is, which selects the button number. |
+
+Rows the manual marks "Not Used" are simply left out. The flipper column beside
+the switch matrix is a generic Fliptronic template - on Dirty Harry it lists an
+upper left flipper the game does not have - so the wizard ignores it and takes
+the flippers from the solenoid table instead.
+
+### What it decides for you
+
+Coil power comes from the solenoid type: High Power 255, Low Power and
+Gen. Purpose 128. Every coil gets a maximum pulse time, so a wizard-built game
+loads without unprotected-coil warnings. The exception is a flipper hold
+winding, which is wound to sit energised and is marked `holdWinding` instead -
+bounding one would drop the flipper mid-game.
+
+Boards are allocated automatically under three rules:
+
+1. A coil with a fast-flip switch goes on the same board as that switch. The
+   board only reacts without waiting for the host when it owns both, which is
+   why **flipper buttons land on a playfield board** even though they are
+   cabinet hardware.
+2. Everything else stays where it is wired: cabinet devices (and backbox ones)
+   on the cabinet board, the rest on boards under the playfield.
+3. One LED stripe per board, on the LED connector.
+
+Two things are worth checking afterwards. **LED string positions** are filled in
+matrix order, which is a starting point rather than a claim about how the string
+runs around the playfield. And the **flipper power winding** pulse time is a
+conservative default, not something the manual states - check it on a bench.
+
 ## Game YAML export
 
 The generated game YAML includes optional switch and coil roles used by the
@@ -25,6 +127,14 @@ runtime safety features:
   checked, the exported switch entry contains `button: true`.
 - PWM device nodes can be marked as `Ball search`. When checked, the exported
   PWM output entry contains `ballSearch: true`.
+- PWM device nodes can be marked as `Dual-wound coil`, exported as
+  `dualWinding: true`, for a coil whose EOS contact transfers to its own hold
+  winding mechanically. An `End-of-stroke switch` can be referenced alongside
+  it and is exported as `eosSwitch: <number>`.
+- PWM device nodes can be marked as `Hold winding`, exported as
+  `holdWinding: true`, for the hold half of a flipper whose windings are driven
+  as two separate outputs, as on WPC Fliptronic. Both flags tell libppuc the
+  coil bounds itself, so it is not reported as having no thermal protection.
 
 ## Lua rules
 
