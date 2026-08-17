@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.pwm_device.field_dual_winding
     - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
+    - field.field.node.pwm_device.field_game_role
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
     - field.field.node.pwm_device.field_hold_winding
@@ -140,6 +141,12 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_game_role:
+    type: options_select
+    weight: 16
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

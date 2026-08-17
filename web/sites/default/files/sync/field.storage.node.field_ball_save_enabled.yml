@@ -1,0 +1,18 @@
+uuid: 225e2318-f2e6-4518-a07b-94cbd60a057d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ball_save_enabled
+field_name: field_ball_save_enabled
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,23 @@
+uuid: c4b0bb19-59a7-42db-a13a-6b2ae746b67d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ball_save_seconds
+    - node.type.game
+id: node.game.field_ball_save_seconds
+field_name: field_ball_save_seconds
+entity_type: node
+bundle: game
+label: 'Ball save (seconds)'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

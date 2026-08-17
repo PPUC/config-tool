@@ -1,0 +1,23 @@
+uuid: 98fc378b-0cf0-43e1-a405-d7ad4a7897fb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_balls_per_game
+    - node.type.game
+id: node.game.field_em_balls_per_game
+field_name: field_em_balls_per_game
+entity_type: node
+bundle: game
+label: 'Balls per game'
+description: 'GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

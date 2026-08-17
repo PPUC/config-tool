@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.switch_matrix_switch.field_button
     - field.field.node.switch_matrix_switch.field_debounce
+    - field.field.node.switch_matrix_switch.field_game_role
     - field.field.node.switch_matrix_switch.field_number
     - field.field.node.switch_matrix_switch.field_position
     - field.field.node.switch_matrix_switch.field_switch_matrix
@@ -66,6 +67,12 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_game_role:
+    type: options_select
+    weight: 7
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

@@ -1,0 +1,30 @@
+uuid: 25d1e2c7-9995-4f11-a7f0-55b62f5b26a7
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_ball_save_start_on
+field_name: field_ball_save_start_on
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: shooterLane
+      label: 'When the ball leaves the shooter lane'
+    -
+      value: troughExit
+      label: 'When the ball leaves the trough'
+    -
+      value: firstPlayfieldSwitch
+      label: 'On the first playfield switch'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

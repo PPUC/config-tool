@@ -1,0 +1,23 @@
+uuid: 9a16a4a3-7557-416d-a5fc-806e6ebb87a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_warnings
+    - node.type.game
+id: node.game.field_tilt_warnings
+field_name: field_tilt_warnings
+entity_type: node
+bundle: game
+label: 'Tilt warnings'
+description: 'Hits allowed before the machine tilts. 2 means the third hit tilts. Works under BOTH engines.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

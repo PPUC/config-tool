@@ -1,0 +1,27 @@
+uuid: 8e15edfb-4f58-4f23-a21b-ee2307a047d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_engine
+    - node.type.game
+id: node.game.field_engine
+field_name: field_engine
+entity_type: node
+bundle: game
+label: 'Engine'
+description: 'PinMAME runs an original game ROM. GameCore runs the machine from this configuration with no ROM at all, for electro-mechanical and homebrew machines.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_values:
+    -
+      value: pinmame
+      label: 'PinMAME (game ROM)'
+    -
+      value: gamecore
+      label: 'GameCore (ROM-less)'
+  allowed_values_function: ''
+field_type: list_string

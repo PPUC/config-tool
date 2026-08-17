@@ -1,0 +1,21 @@
+uuid: b7f7b3e0-2776-451a-a2e7-46d195b06840
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_ends_ball_only
+    - node.type.game
+id: node.game.field_tilt_ends_ball_only
+field_name: field_tilt_ends_ball_only
+entity_type: node
+bundle: game
+label: 'Tilt ends the ball only'
+description: 'Off means the player stays tilted for the rest of the game. GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

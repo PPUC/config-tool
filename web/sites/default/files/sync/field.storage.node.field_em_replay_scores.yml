@@ -1,0 +1,18 @@
+uuid: e3ce8cf1-ef30-459c-a70d-3a9a495aab82
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_em_replay_scores
+field_name: field_em_replay_scores
+entity_type: node
+type: string_long
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

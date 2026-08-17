@@ -138,6 +138,20 @@ class GamesController extends ControllerBase {
     return max(0, min(255, (int) $node->get($field_name)->value));
   }
 
+  /**
+   * An integer field's value, or NULL when the field is absent or empty.
+   *
+   * Distinguishes "not set" from "set to zero", so a caller can fall back to a
+   * sensible default without a deliberate 0 being overwritten by it.
+   */
+  protected function getIntFieldValue(NodeInterface $node, string $field_name): ?int {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
+
+    return (int) $node->get($field_name)->value;
+  }
+
   protected function getStringFieldValue(NodeInterface $node, string $field_name): ?string {
     if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
       return NULL;
@@ -508,6 +522,11 @@ class GamesController extends ControllerBase {
       'mechs' => [],
     ];
 
+    // Device roles are collected as the devices are walked, so a role can only
+    // ever name a device that was actually exported. This is why roles live on
+    // the device rather than as numbers typed on the game.
+    $roles = [];
+
     $switch_groups = $this->parseSwitchGroups($node);
     if ($switch_groups !== []) {
       $yaml['switchGroups'] = $switch_groups;
@@ -576,6 +595,9 @@ class GamesController extends ControllerBase {
               }
 
               $yaml['switches'][] = $switch;
+              if ($role = $this->gameRoleOf($device, (int) ($device->get('field_number')->value))) {
+                $roles[$role][] = (int) ($device->get('field_number')->value);
+              }
 
               $poll_events = TRUE;
             }
@@ -608,6 +630,9 @@ class GamesController extends ControllerBase {
                 }
 
                 $switches[] = $switch;
+                if ($role = $this->gameRoleOf($switch_matrix_switch, (int) ($switch_matrix_switch->get('field_number')->value))) {
+                $roles[$role][] = (int) ($switch_matrix_switch->get('field_number')->value);
+              }
               }
             }
 
@@ -738,6 +763,9 @@ class GamesController extends ControllerBase {
               }
 
               $yaml['pwmOutput'][] = $pwm_output;
+              if ($role = $this->gameRoleOf($device, (int) ($device->get('field_number')->value))) {
+                $roles[$role][] = (int) ($device->get('field_number')->value);
+              }
             }
             break;
 
@@ -911,11 +939,229 @@ class GamesController extends ControllerBase {
         if ($poll_events && $this->getBooleanFieldValue($i_o_board, 'field_slow_switches')) {
           $board['slowSwitches'] = TRUE;
         }
+        // Declared but not built: the host owns this board's switches and drives
+        // them itself. This is how the tilt inhibit reaches the flipper outputs
+        // without a new frame type.
+        if ($this->getBooleanFieldValue($i_o_board, 'field_virtual')) {
+          $board['virtual'] = TRUE;
+        }
         $yaml['boards'][] = $board;
       }
     }
 
+    // Tilt warnings and ball save work under BOTH engines, so they are emitted
+    // for a PinMAME game too: giving an early-electronic ROM features it was
+    // never written to have is much of why they exist. The emGame block is
+    // GameCore-only.
+    $tilt = $this->buildTiltYaml($node, $roles);
+    if ($tilt !== []) {
+      $yaml['tilt'] = $tilt;
+    }
+
+    $ball_save = $this->buildBallSaveYaml($node, $roles);
+    if ($ball_save !== []) {
+      $yaml['ballSave'] = $ball_save;
+    }
+
+    if ($this->getEngine($node) === 'gamecore') {
+      $yaml['engine'] = 'gamecore';
+      $yaml['emGame'] = $this->buildEmGameYaml($node, $roles);
+    }
+
     return $yaml;
+  }
+
+  /**
+   * The engine this game runs on: 'pinmame' (default) or 'gamecore'.
+   */
+  protected function getEngine(NodeInterface $node): string {
+    $value = $this->getStringFieldValue($node, 'field_engine');
+    return $value === 'gamecore' ? 'gamecore' : 'pinmame';
+  }
+
+  /**
+   * The GameCore role a device was given, or NULL for an ordinary device.
+   *
+   * Device number 0 is refused: it is not a real switch or coil number, and a
+   * role pointing at nothing is worse than no role at all.
+   */
+  protected function gameRoleOf(NodeInterface $device, int $number): ?string {
+    if ($number <= 0 || !$device->hasField('field_game_role') || $device->get('field_game_role')->isEmpty()) {
+      return NULL;
+    }
+    $role = trim((string) $device->get('field_game_role')->value);
+    return $role !== '' ? $role : NULL;
+  }
+
+  /**
+   * All device numbers carrying a role, in export order.
+   */
+  protected function roleNumbers(array $roles, string $role): array {
+    return array_values(array_unique($roles[$role] ?? []));
+  }
+
+  /**
+   * The single device carrying a role, or 0 when none does.
+   *
+   * A role that is meant to be unique but was given to several devices takes the
+   * lowest number rather than an arbitrary one, so the export is deterministic.
+   */
+  protected function roleNumber(array $roles, string $role): int {
+    $numbers = $this->roleNumbers($roles, $role);
+    if ($numbers === []) {
+      return 0;
+    }
+    sort($numbers);
+    return (int) reset($numbers);
+  }
+
+  protected function buildTiltYaml(NodeInterface $node, array $roles): array {
+    $switches = $this->roleNumbers($roles, 'tilt');
+    $slam = $this->roleNumbers($roles, 'slamTilt');
+    if ($switches === [] && $slam === []) {
+      return [];
+    }
+
+    $tilt = [];
+    if ($switches !== []) {
+      $tilt['switches'] = $switches;
+    }
+    if ($slam !== []) {
+      $tilt['slamSwitches'] = $slam;
+    }
+    $tilt['warnings'] = (int) ($this->getIntFieldValue($node, 'field_tilt_warnings') ?? 2);
+    $tilt['debounceMs'] = (int) ($this->getIntFieldValue($node, 'field_tilt_debounce_ms') ?? 500);
+    $tilt['warningBlankingMs'] = (int) ($this->getIntFieldValue($node, 'field_tilt_blanking_ms') ?? 2000);
+
+    $warning_lamp = $this->roleNumber($roles, 'tiltWarning');
+    if ($warning_lamp > 0) {
+      $tilt['warningLamp'] = $warning_lamp;
+    }
+    return $tilt;
+  }
+
+  protected function buildBallSaveYaml(NodeInterface $node, array $roles): array {
+    if (!$this->getBooleanFieldValue($node, 'field_ball_save_enabled')) {
+      return [];
+    }
+
+    $drain = $this->roleNumbers($roles, 'trough');
+    $kick = $this->roleNumber($roles, 'troughKick');
+    // Without somewhere to see the drain and something to kick the ball back
+    // with, the feature cannot work. Emitting it half-configured would fail at
+    // startup instead, which is a worse place to find out.
+    if ($drain === [] || $kick === 0) {
+      return [];
+    }
+
+    $save = [
+      'enabled' => TRUE,
+      'seconds' => (int) ($this->getIntFieldValue($node, 'field_ball_save_seconds') ?? 8),
+      'startOn' => $this->getStringFieldValue($node, 'field_ball_save_start_on') ?: 'shooterLane',
+      'drainSwitches' => $drain,
+      'kickCoil' => $kick,
+      'maxSavesPerBall' => (int) ($this->getIntFieldValue($node, 'field_ball_save_max_ball') ?? 1),
+    ];
+
+    $lane = $this->roleNumber($roles, 'shooterLane');
+    if ($lane > 0) {
+      $save['shooterLaneSwitch'] = $lane;
+    }
+    $playfield = $this->roleNumbers($roles, 'playfield');
+    if ($playfield !== []) {
+      $save['playfieldSwitches'] = $playfield;
+    }
+    $lamp = $this->roleNumber($roles, 'ballSave');
+    if ($lamp > 0) {
+      $save['lamp'] = $lamp;
+    }
+    return $save;
+  }
+
+  protected function buildEmGameYaml(NodeInterface $node, array $roles): array {
+    $em = [
+      'enabled' => TRUE,
+      'ballsPerGame' => (int) ($this->getIntFieldValue($node, 'field_em_balls_per_game') ?? 3),
+      'ballCount' => (int) ($this->getIntFieldValue($node, 'field_em_ball_count') ?? 1),
+      'maxPlayers' => (int) ($this->getIntFieldValue($node, 'field_em_max_players') ?? 4),
+      'addPlayerThroughBall' => (int) ($this->getIntFieldValue($node, 'field_em_add_player_ball') ?? 1),
+      'freePlay' => $this->getBooleanFieldValue($node, 'field_em_free_play'),
+      'creditsPerCoin' => (int) ($this->getIntFieldValue($node, 'field_em_credits_per_coin') ?? 1),
+      'scoreDigits' => (int) ($this->getIntFieldValue($node, 'field_em_score_digits') ?? 6),
+      'bonusTimeoutMs' => (int) ($this->getIntFieldValue($node, 'field_em_bonus_timeout_ms') ?? 30000),
+    ];
+
+    foreach ([
+      'startSwitch' => 'start',
+      'serviceCreditSwitch' => 'serviceCredit',
+      'gameOnCoil' => 'gameOn',
+      'knockerCoil' => 'knocker',
+      'gameOverLamp' => 'gameOver',
+      'tiltLamp' => 'tilt',
+      'ballInPlayLamp' => 'ballInPlay',
+      'shootAgainLamp' => 'shootAgain',
+      'matchLamp' => 'match',
+    ] as $key => $role) {
+      $number = $this->roleNumber($roles, $role);
+      if ($number > 0) {
+        $em[$key] = $number;
+      }
+    }
+
+    $coins = $this->roleNumbers($roles, 'coin');
+    if ($coins !== []) {
+      $em['coinSwitches'] = $coins;
+    }
+    $player_up = $this->roleNumbers($roles, 'playerUp');
+    if ($player_up !== []) {
+      $em['playerUpLamps'] = $player_up;
+    }
+
+    $trough = $this->roleNumbers($roles, 'trough');
+    if ($trough !== []) {
+      $em['trough'] = [
+        'switches' => $trough,
+        'kickCoil' => $this->roleNumber($roles, 'troughKick'),
+        'kickPulseMs' => (int) ($this->getIntFieldValue($node, 'field_em_kick_pulse_ms') ?? 80),
+        'settleMs' => (int) ($this->getIntFieldValue($node, 'field_em_trough_settle_ms') ?? 400),
+      ];
+    }
+
+    $lane = $this->roleNumber($roles, 'shooterLane');
+    if ($lane > 0) {
+      $em['shooterLane'] = ['switch' => $lane];
+    }
+
+    // Only what GameCore does once the machine has already tilted. The switches
+    // and the warning count live in the shared tilt block, because they work
+    // under both engines.
+    $tilt = [
+      'giOff' => $this->getBooleanFieldValue($node, 'field_tilt_gi_off'),
+      'endsBallOnly' => $this->getBooleanFieldValue($node, 'field_tilt_ends_ball_only'),
+      'skipBonus' => $this->getBooleanFieldValue($node, 'field_tilt_skip_bonus'),
+    ];
+    $inhibit = $this->roleNumber($roles, 'tiltInhibit');
+    if ($inhibit > 0) {
+      $tilt['inhibitSwitch'] = $inhibit;
+    }
+    $em['tilt'] = $tilt;
+
+    $thresholds = [];
+    foreach ($this->getLineConfigField($node, 'field_em_replay_scores') as $line) {
+      foreach ($this->parseIntegerList($line) as $score) {
+        if ($score > 0) {
+          $thresholds[] = $score;
+        }
+      }
+    }
+    if ($thresholds !== []) {
+      sort($thresholds);
+      $em['replay'] = ['thresholds' => array_values(array_unique($thresholds)), 'awardCredit' => TRUE];
+    }
+
+    $em['match'] = ['enabled' => $this->getBooleanFieldValue($node, 'field_em_match_enabled')];
+
+    return $em;
   }
 
   /**

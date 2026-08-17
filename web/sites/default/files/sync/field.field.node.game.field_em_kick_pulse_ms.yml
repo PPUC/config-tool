@@ -1,0 +1,23 @@
+uuid: 7445dd6f-23e6-4bff-ae8f-289123832b7a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_kick_pulse_ms
+    - node.type.game
+id: node.game.field_em_kick_pulse_ms
+field_name: field_em_kick_pulse_ms
+entity_type: node
+bundle: game
+label: 'Trough kick pulse (ms)'
+description: 'The board still enforces its own minimum and maximum pulse times.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

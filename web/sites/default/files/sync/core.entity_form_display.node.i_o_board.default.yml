@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.i_o_board.field_io_board_type
     - field.field.node.i_o_board.field_number
     - field.field.node.i_o_board.field_slow_switches
+    - field.field.node.i_o_board.field_virtual
     - node.type.i_o_board
 _core:
   default_config_hash: '-LqMsIWe2IqH7pBB3Le-UbTMVdaBLvPrEQ48pNz5ODk'
@@ -55,6 +56,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_virtual:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   created: true

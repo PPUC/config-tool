@@ -1,0 +1,23 @@
+uuid: 95b34395-214d-45c2-a552-77fab0afc37d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_add_player_ball
+    - node.type.game
+id: node.game.field_em_add_player_ball
+field_name: field_em_add_player_ball
+entity_type: node
+bundle: game
+label: 'Add players through ball'
+description: 'A player may still join while the current player is on this ball or earlier. 1 is the historical default.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

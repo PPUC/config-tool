@@ -1,0 +1,23 @@
+uuid: 4dfff071-1cba-4c83-ad61-7321f1e64b5e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_blanking_ms
+    - node.type.game
+id: node.game.field_tilt_blanking_ms
+field_name: field_tilt_blanking_ms
+entity_type: node
+bundle: game
+label: 'Tilt blanking after a warning (ms)'
+description: 'The tilt switches are ignored entirely for this long after a warning, so a still-swinging bob cannot burn the rest.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

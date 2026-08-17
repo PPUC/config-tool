@@ -1,0 +1,20 @@
+uuid: 9be32947-4b2c-4360-aeaf-026a25e85a80
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_em_score_digits
+field_name: field_em_score_digits
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -4,8 +4,25 @@ status: true
 dependencies:
   config:
     - field.field.node.game.body
+    - field.field.node.game.field_ball_save_enabled
+    - field.field.node.game.field_ball_save_max_ball
+    - field.field.node.game.field_ball_save_seconds
+    - field.field.node.game.field_ball_save_start_on
     - field.field.node.game.field_coil_gi_mappings
     - field.field.node.game.field_coin_door_closed_switch
+    - field.field.node.game.field_em_add_player_ball
+    - field.field.node.game.field_em_ball_count
+    - field.field.node.game.field_em_balls_per_game
+    - field.field.node.game.field_em_bonus_timeout_ms
+    - field.field.node.game.field_em_credits_per_coin
+    - field.field.node.game.field_em_free_play
+    - field.field.node.game.field_em_kick_pulse_ms
+    - field.field.node.game.field_em_match_enabled
+    - field.field.node.game.field_em_max_players
+    - field.field.node.game.field_em_replay_scores
+    - field.field.node.game.field_em_score_digits
+    - field.field.node.game.field_em_trough_settle_ms
+    - field.field.node.game.field_engine
     - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
@@ -15,6 +32,12 @@ dependencies:
     - field.field.node.game.field_switch_group_memberships
     - field.field.node.game.field_switch_groups
     - field.field.node.game.field_switch_locations
+    - field.field.node.game.field_tilt_blanking_ms
+    - field.field.node.game.field_tilt_debounce_ms
+    - field.field.node.game.field_tilt_ends_ball_only
+    - field.field.node.game.field_tilt_gi_off
+    - field.field.node.game.field_tilt_skip_bonus
+    - field.field.node.game.field_tilt_warnings
     - field.field.node.game.field_translite
     - field.field.node.game.field_translite_in_game
     - node.type.game
@@ -143,6 +166,166 @@ content:
     region: content
     settings:
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_engine:
+    type: options_select
+    weight: 16
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_em_balls_per_game:
+    type: number
+    weight: 17
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_max_players:
+    type: number
+    weight: 18
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_ball_count:
+    type: number
+    weight: 19
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_add_player_ball:
+    type: number
+    weight: 20
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_credits_per_coin:
+    type: number
+    weight: 21
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_score_digits:
+    type: number
+    weight: 22
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_trough_settle_ms:
+    type: number
+    weight: 23
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_kick_pulse_ms:
+    type: number
+    weight: 24
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_bonus_timeout_ms:
+    type: number
+    weight: 25
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_tilt_warnings:
+    type: number
+    weight: 26
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_tilt_debounce_ms:
+    type: number
+    weight: 27
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_tilt_blanking_ms:
+    type: number
+    weight: 28
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ball_save_seconds:
+    type: number
+    weight: 29
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ball_save_max_ball:
+    type: number
+    weight: 30
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_em_free_play:
+    type: boolean_checkbox
+    weight: 31
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_em_match_enabled:
+    type: boolean_checkbox
+    weight: 32
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_tilt_gi_off:
+    type: boolean_checkbox
+    weight: 33
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_tilt_ends_ball_only:
+    type: boolean_checkbox
+    weight: 34
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_tilt_skip_bonus:
+    type: boolean_checkbox
+    weight: 35
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_ball_save_enabled:
+    type: boolean_checkbox
+    weight: 36
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_ball_save_start_on:
+    type: options_select
+    weight: 37
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_em_replay_scores:
+    type: string_textarea
+    weight: 38
+    region: content
+    settings:
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
 hidden:

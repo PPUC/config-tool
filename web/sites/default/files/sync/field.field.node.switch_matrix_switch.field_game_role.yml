@@ -1,0 +1,48 @@
+uuid: 6e666564-1a2f-4ed6-aba6-4326e0d68f02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_game_role
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_game_role
+field_name: field_game_role
+entity_type: node
+bundle: switch_matrix_switch
+label: 'Role'
+description: 'What this device is used for by GameCore, tilt warnings and ball save. Leave empty for an ordinary device.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_values:
+    -
+      value: start
+      label: 'Start button'
+    -
+      value: coin
+      label: 'Coin chute'
+    -
+      value: serviceCredit
+      label: 'Service credit'
+    -
+      value: trough
+      label: 'Trough / outhole (ball is home)'
+    -
+      value: shooterLane
+      label: 'Shooter lane'
+    -
+      value: tilt
+      label: 'Tilt (plumb bob, ball roll, playfield)'
+    -
+      value: slamTilt
+      label: 'Slam tilt'
+    -
+      value: tiltInhibit
+      label: 'Tilt inhibit (host-owned, no wiring)'
+    -
+      value: playfield
+      label: 'Playfield (arms ball save)'
+  allowed_values_function: ''
+field_type: list_string

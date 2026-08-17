@@ -1,0 +1,27 @@
+uuid: ca9fb192-be78-4fb6-a24f-6a131ccec350
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_engine
+field_name: field_engine
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: pinmame
+      label: 'PinMAME (game ROM)'
+    -
+      value: gamecore
+      label: 'GameCore (ROM-less)'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

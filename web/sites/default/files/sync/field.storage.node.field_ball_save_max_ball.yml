@@ -1,0 +1,20 @@
+uuid: 22c959c4-4c92-47fc-ae3e-18db796814d9
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ball_save_max_ball
+field_name: field_ball_save_max_ball
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

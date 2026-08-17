@@ -1,0 +1,19 @@
+uuid: b791a5cf-67ec-45b0-a9ab-658761cb869b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_replay_scores
+    - node.type.game
+id: node.game.field_em_replay_scores
+field_name: field_em_replay_scores
+entity_type: node
+bundle: game
+label: 'Replay thresholds'
+description: 'One score per line. Each is awarded once per game.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

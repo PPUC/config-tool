@@ -1,0 +1,21 @@
+uuid: 46000786-d097-4fb4-ad33-2f71fc6dea45
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_gi_off
+    - node.type.game
+id: node.game.field_tilt_gi_off
+field_name: field_tilt_gi_off
+entity_type: node
+bundle: game
+label: 'Darken GI on tilt'
+description: 'GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

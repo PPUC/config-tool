@@ -1,0 +1,23 @@
+uuid: dacd2562-9317-473d-a6a4-7d91698225a0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ball_save_max_ball
+    - node.type.game
+id: node.game.field_ball_save_max_ball
+field_name: field_ball_save_max_ball
+entity_type: node
+bundle: game
+label: 'Maximum saves per ball'
+description: '0 for unlimited within the window.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

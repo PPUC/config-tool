@@ -1,0 +1,23 @@
+uuid: 108c7124-7bfd-4f88-ac71-ae5aaed99492
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_ball_count
+    - node.type.game
+id: node.game.field_em_ball_count
+field_name: field_em_ball_count
+entity_type: node
+bundle: game
+label: 'Physical balls in the machine'
+description: 'Tilt clears when this many balls are back in the trough.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

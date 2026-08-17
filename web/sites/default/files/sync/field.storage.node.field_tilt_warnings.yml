@@ -1,0 +1,20 @@
+uuid: 2dec286b-11ba-4f53-ab91-741ec704b232
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_tilt_warnings
+field_name: field_tilt_warnings
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

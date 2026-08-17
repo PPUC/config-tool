@@ -1,0 +1,21 @@
+uuid: 01bdf355-0634-422d-a61e-80ab6f6b01ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ball_save_enabled
+    - node.type.game
+id: node.game.field_ball_save_enabled
+field_name: field_ball_save_enabled
+entity_type: node
+bundle: game
+label: 'Ball save enabled'
+description: 'Works under BOTH engines, including on an early-electronic ROM that never had one.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

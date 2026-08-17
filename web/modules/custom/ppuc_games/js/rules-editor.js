@@ -364,6 +364,59 @@
     addFunctionStatementBlock(Blockly, lua, 'ppuc_suppress_switch', 'suppress switch', 'suppressSwitch', [numberInput('NUMBER', 'number', '0')], COLOUR_ACTION);
     addFunctionStatementBlock(Blockly, lua, 'ppuc_blink_lamp', 'blink lamp', 'blinkLamp', [numberInput('NUMBER', 'number', '0'), numberInput('ON', 'on ms', '250'), numberInput('OFF', 'off ms', '250')], COLOUR_ACTION);
     addFunctionStatementBlock(Blockly, lua, 'ppuc_stop_blink_lamp', 'stop blink lamp', 'stopBlinkLamp', [numberInput('NUMBER', 'number', '0')], COLOUR_ACTION);
+
+    // Ball save works under both engines, so it sits with the ordinary actions
+    // rather than in the GameCore category.
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_ball_save', 'grant ball save', 'ballSave', [numberInput('DURATION', 'ms', '4000')], COLOUR_ACTION);
+
+    // --- GameCore (engine: script) ---
+    //
+    // These emit ppuc.game.* and only exist under the ROM-less engine. A shared
+    // rules file guards them with `if ppuc.game then ... end`; there is no
+    // no-op stub, because a silent no-op hides a misconfigured machine.
+    addHandlerBlock(Blockly, lua, 'ppuc_on_game_start', 'onGameStart', 'players', 'when a game starts');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_ball_start', 'onBallStart', 'player, ball', 'when a ball starts');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_ball_end', 'onBallEnd', 'player, ball', 'when a ball ends');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_bonus_count', 'onBonusCount', 'player, ball', 'when the bonus is collected');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_score', 'onScore', 'player, points, total', 'when points are scored');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_tilt_warning', 'onTiltWarning', 'player, used, remaining', 'when a tilt warning is given');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_tilt', 'onTilt', 'player, ball', 'when the machine tilts');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_ball_saved', 'onBallSaved', 'player, count', 'when a ball is saved');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_game_end', 'onGameEnd', 'players, highPlayer, highScore', 'when the game ends');
+    addHandlerBlock(Blockly, lua, 'ppuc_on_dmd_frame', 'onDmdFrame', '', 'when the display is drawn');
+
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_score', 'score of player', 'game.score', [numberInput('PLAYER', '', '0')], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_ball', 'current ball', 'game.ball', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_player', 'current player', 'game.player', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_players', 'player count', 'game.players', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_credits', 'credits', 'game.credits', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_in_game', 'game in progress', 'game.inGame', [], 'Boolean', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_tilted', 'player tilted', 'game.tilted', [numberInput('PLAYER', '', '0')], 'Boolean', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_get', 'player value', 'game.get', [stringInput('NAME', '', '""')], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_get_ball', 'ball value', 'game.getBall', [stringInput('NAME', '', '""')], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_switch', 'switch named', 'game.switch', [stringInput('NAME', '', '""')], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_coil', 'coil named', 'game.coil', [stringInput('NAME', '', '""')], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_game_lamp', 'lamp named', 'game.lamp', [stringInput('NAME', '', '""')], 'Number', COLOUR_STATE);
+
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_add_score', 'add score', 'game.addScore', [numberInput('POINTS', 'points', '0')], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_award_extra_ball', 'award extra ball', 'game.awardExtraBall', [], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_add_credits', 'add credits', 'game.addCredits', [numberInput('COUNT', '', '1')], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_knock', 'fire the knocker', 'game.knock', [], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_bonus_done', 'bonus finished', 'game.bonusDone', [], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_end_ball', 'end the ball', 'game.endBall', [], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_set', 'set player value', 'game.set', [stringInput('NAME', '', '""'), numberInput('VALUE', 'to', '0')], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_add', 'add to player value', 'game.add', [stringInput('NAME', '', '""'), numberInput('VALUE', 'by', '1')], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_set_ball', 'set ball value', 'game.setBall', [stringInput('NAME', '', '""'), numberInput('VALUE', 'to', '0')], COLOUR_ACTION);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_game_add_ball', 'add to ball value', 'game.addBall', [stringInput('NAME', '', '""'), numberInput('VALUE', 'by', '1')], COLOUR_ACTION);
+
+    // --- Display ---
+    addFunctionValueBlock(Blockly, lua, 'ppuc_dmd_width', 'display width', 'dmd.width', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_dmd_height', 'display height', 'dmd.height', [], 'Number', COLOUR_STATE);
+    addFunctionValueBlock(Blockly, lua, 'ppuc_dmd_text_width', 'text width', 'dmd.textWidth', [stringInput('TEXT', '', '""')], 'Number', COLOUR_STATE);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_dmd_clear', 'clear the display', 'dmd.clear', [], COLOUR_PARAM);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_dmd_text', 'draw text', 'dmd.text', [numberInput('X', 'at x', '0'), numberInput('Y', 'y', '0'), stringInput('TEXT', '', '""')], COLOUR_PARAM);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_dmd_number', 'draw number', 'dmd.number', [numberInput('X', 'at x', '0'), numberInput('Y', 'y', '0'), numberInput('VALUE', '', '0')], COLOUR_PARAM);
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_dmd_fill', 'fill rectangle', 'dmd.fill', [numberInput('X', 'at x', '0'), numberInput('Y', 'y', '0'), numberInput('W', 'width', '10'), numberInput('H', 'height', '10'), numberInput('LEVEL', 'level', '15')], COLOUR_PARAM);
   }
 
   Drupal.behaviors.ppucRulesEditor = {
@@ -489,6 +542,58 @@
                     block('ppuc_pulse_coil'),
                     block('ppuc_blink_lamp'),
                     block('ppuc_stop_blink_lamp'),
+                    block('ppuc_ball_save'),
+                  ],
+                },
+                {
+                  kind: 'category',
+                  name: 'Game (ROM-less)',
+                  contents: [
+                    block('ppuc_on_game_start'),
+                    block('ppuc_on_ball_start'),
+                    block('ppuc_on_ball_end'),
+                    block('ppuc_on_bonus_count'),
+                    block('ppuc_on_score'),
+                    block('ppuc_on_tilt_warning'),
+                    block('ppuc_on_tilt'),
+                    block('ppuc_on_ball_saved'),
+                    block('ppuc_on_game_end'),
+                    block('ppuc_game_add_score'),
+                    block('ppuc_game_award_extra_ball'),
+                    block('ppuc_game_add_credits'),
+                    block('ppuc_game_knock'),
+                    block('ppuc_game_bonus_done'),
+                    block('ppuc_game_end_ball'),
+                    block('ppuc_game_score'),
+                    block('ppuc_game_ball'),
+                    block('ppuc_game_player'),
+                    block('ppuc_game_players'),
+                    block('ppuc_game_credits'),
+                    block('ppuc_game_in_game'),
+                    block('ppuc_game_tilted'),
+                    block('ppuc_game_set'),
+                    block('ppuc_game_add'),
+                    block('ppuc_game_get'),
+                    block('ppuc_game_set_ball'),
+                    block('ppuc_game_add_ball'),
+                    block('ppuc_game_get_ball'),
+                    block('ppuc_game_switch'),
+                    block('ppuc_game_coil'),
+                    block('ppuc_game_lamp'),
+                  ],
+                },
+                {
+                  kind: 'category',
+                  name: 'Display',
+                  contents: [
+                    block('ppuc_on_dmd_frame'),
+                    block('ppuc_dmd_clear'),
+                    block('ppuc_dmd_text'),
+                    block('ppuc_dmd_number'),
+                    block('ppuc_dmd_fill'),
+                    block('ppuc_dmd_width'),
+                    block('ppuc_dmd_height'),
+                    block('ppuc_dmd_text_width'),
                   ],
                 },
               ],

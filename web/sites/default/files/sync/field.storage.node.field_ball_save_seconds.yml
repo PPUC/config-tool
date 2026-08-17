@@ -1,0 +1,20 @@
+uuid: 9063a2cc-1eb7-431a-a947-a664b56ecc16
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ball_save_seconds
+field_name: field_ball_save_seconds
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

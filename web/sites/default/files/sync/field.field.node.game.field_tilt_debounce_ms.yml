@@ -1,0 +1,23 @@
+uuid: fa22e6a3-f79a-46bf-a970-f52e4fb34ed8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_debounce_ms
+    - node.type.game
+id: node.game.field_tilt_debounce_ms
+field_name: field_tilt_debounce_ms
+entity_type: node
+bundle: game
+label: 'Tilt swing filter (ms)'
+description: 'One shove sends the plumb bob through the ring several times, and that is one warning.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

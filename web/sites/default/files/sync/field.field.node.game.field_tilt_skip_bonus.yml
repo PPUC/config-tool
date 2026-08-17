@@ -1,0 +1,21 @@
+uuid: cb18acd0-3c59-4dad-afb1-66f1b49819ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tilt_skip_bonus
+    - node.type.game
+id: node.game.field_tilt_skip_bonus
+field_name: field_tilt_skip_bonus
+entity_type: node
+bundle: game
+label: 'Forfeit bonus on tilt'
+description: 'The usual behaviour: you lose your bonus when you tilt. GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

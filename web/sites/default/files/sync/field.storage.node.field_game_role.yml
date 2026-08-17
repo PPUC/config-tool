@@ -1,0 +1,81 @@
+uuid: 6ab6bb7b-ee2c-4b43-a529-a94a2cd81441
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_game_role
+field_name: field_game_role
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: start
+      label: 'Start button'
+    -
+      value: coin
+      label: 'Coin chute'
+    -
+      value: serviceCredit
+      label: 'Service credit'
+    -
+      value: trough
+      label: 'Trough / outhole (ball is home)'
+    -
+      value: shooterLane
+      label: 'Shooter lane'
+    -
+      value: tilt
+      label: 'Tilt (plumb bob, ball roll, playfield)'
+    -
+      value: slamTilt
+      label: 'Slam tilt'
+    -
+      value: tiltInhibit
+      label: 'Tilt inhibit (host-owned, no wiring)'
+    -
+      value: playfield
+      label: 'Playfield (arms ball save)'
+    -
+      value: troughKick
+      label: 'Trough kick / outhole kicker'
+    -
+      value: knocker
+      label: 'Knocker'
+    -
+      value: gameOn
+      label: 'Game-on relay'
+    -
+      value: gameOver
+      label: 'Game over'
+    -
+      value: tilt
+      label: 'Tilt'
+    -
+      value: ballInPlay
+      label: 'Ball in play'
+    -
+      value: shootAgain
+      label: 'Shoot again'
+    -
+      value: match
+      label: 'Match'
+    -
+      value: ballSave
+      label: 'Ball save'
+    -
+      value: tiltWarning
+      label: 'Tilt warning'
+    -
+      value: playerUp
+      label: 'Player up'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

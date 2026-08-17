@@ -1,0 +1,31 @@
+name: phpunit
+
+# The exporter now carries genuinely branchy logic -- device roles, engine
+# gating, the emGame/tilt/ballSave blocks -- and that is exactly the shape that
+# drifts away from what ppuc-pinmame reads without anyone noticing. The unit
+# suite has existed for a while with nothing running it; this runs it.
+#
+# No database and no Drupal bootstrap: tests/bootstrap.php registers the
+# namespaces by hand, so the whole thing takes seconds. PHPUnit is deliberately
+# not in composer.json (vendor/ is committed here), so it comes from a phar.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    container: php:8.3-cli
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch PHPUnit
+        run: curl -sL -o /tmp/phpunit.phar https://phar.phpunit.de/phpunit-11.phar
+
+      - name: Run unit tests
+        run: php /tmp/phpunit.phar

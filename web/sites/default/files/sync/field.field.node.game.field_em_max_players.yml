@@ -1,0 +1,23 @@
+uuid: dd6a6a03-5109-4a37-ad89-fbd0bd4d9289
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_max_players
+    - node.type.game
+id: node.game.field_em_max_players
+field_name: field_em_max_players
+entity_type: node
+bundle: game
+label: 'Maximum players'
+description: 'GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

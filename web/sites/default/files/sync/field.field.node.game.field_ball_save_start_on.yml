@@ -1,0 +1,30 @@
+uuid: 6e784ed7-9e55-4c80-a523-0d2e3a996c2d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ball_save_start_on
+    - node.type.game
+id: node.game.field_ball_save_start_on
+field_name: field_ball_save_start_on
+entity_type: node
+bundle: game
+label: 'Ball save starts'
+description: 'The shooter lane is best where the machine has a lane switch, because a slow plunger does not eat the timer. Falls back to trough exit when there is none.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_values:
+    -
+      value: shooterLane
+      label: 'When the ball leaves the shooter lane'
+    -
+      value: troughExit
+      label: 'When the ball leaves the trough'
+    -
+      value: firstPlayfieldSwitch
+      label: 'On the first playfield switch'
+  allowed_values_function: ''
+field_type: list_string

@@ -1,0 +1,21 @@
+uuid: d850f980-7566-444d-a2fe-831f70ae64d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_em_match_enabled
+    - node.type.game
+id: node.game.field_em_match_enabled
+field_name: field_em_match_enabled
+entity_type: node
+bundle: game
+label: 'Match enabled'
+description: 'GameCore only.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
