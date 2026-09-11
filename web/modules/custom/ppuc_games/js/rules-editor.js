@@ -203,6 +203,19 @@
         this.setColour(20);
       },
     };
+    // A colorization scene, not a PUP trigger. The two used to be the same
+    // block because PPUC inferred a scene from any 'D' trigger in the scene
+    // window; Serum now takes scenes on its own message, so a pack that wants
+    // media and a scene asks for both, and one that wants only media is no
+    // longer forced into a scene it never authored.
+    Blockly.Blocks.ppuc_serum_scene = {
+      init() {
+        this.appendValueInput('ID').setCheck('Number').appendField('play Serum scene');
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        this.setColour(20);
+      },
+    };
     Blockly.Blocks.ppuc_speech = {
       init() {
         this.appendValueInput('TEXT').setCheck('String').appendField('speech');
@@ -297,6 +310,10 @@
       const id = generator.valueToCode(block, 'ID', luaOrder(generator, 'NONE')) || '0';
       const value = generator.valueToCode(block, 'VALUE', luaOrder(generator, 'NONE')) || '1';
       return `ppuc.pupTrigger(${source}, ${id}, ${value})\n`;
+    };
+    lua.forBlock.ppuc_serum_scene = function (block, generator) {
+      const id = generator.valueToCode(block, 'ID', luaOrder(generator, 'NONE')) || '0';
+      return `ppuc.serumScene(${id})\n`;
     };
     lua.forBlock.ppuc_speech = function (block, generator) {
       const text = generator.valueToCode(block, 'TEXT', luaOrder(generator, 'NONE')) || '""';
@@ -534,6 +551,7 @@
                   contents: [
                     block('ppuc_comment'),
                     block('ppuc_pup_trigger'),
+                    block('ppuc_serum_scene'),
                     block('ppuc_speech'),
                     block('ppuc_effect_trigger'),
                     block('ppuc_after'),
