@@ -9,19 +9,11 @@ id: node.game.field_engine
 field_name: field_engine
 entity_type: node
 bundle: game
-label: 'Engine'
+label: Engine
 description: 'PinMAME runs an original game ROM. GameCore runs the machine from this configuration with no ROM at all, for electro-mechanical and homebrew machines.'
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  allowed_values:
-    -
-      value: pinmame
-      label: 'PinMAME (game ROM)'
-    -
-      value: gamecore
-      label: 'GameCore (ROM-less)'
-  allowed_values_function: ''
+settings: {  }
 field_type: list_string

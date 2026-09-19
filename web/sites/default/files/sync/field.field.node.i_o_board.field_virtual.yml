@@ -10,7 +10,7 @@ field_name: field_virtual
 entity_type: node
 bundle: i_o_board
 label: 'Virtual (host-owned)'
-description: 'Declared but not built. The host owns this board''s switches and drives them itself; every real board sees them on the bus. This is how the tilt inhibit reaches the flipper outputs.'
+description: "Declared but not built. The host owns this board's switches and drives them itself; every real board sees them on the bus. This is how the tilt inhibit reaches the flipper outputs."
 required: false
 translatable: false
 default_value: {  }

@@ -28,7 +28,7 @@ settings:
       label: 'Shooter lane'
     -
       value: tilt
-      label: 'Tilt (plumb bob, ball roll, playfield)'
+      label: Tilt
     -
       value: slamTilt
       label: 'Slam tilt'
@@ -43,16 +43,13 @@ settings:
       label: 'Trough kick / outhole kicker'
     -
       value: knocker
-      label: 'Knocker'
+      label: Knocker
     -
       value: gameOn
       label: 'Game-on relay'
     -
       value: gameOver
       label: 'Game over'
-    -
-      value: tilt
-      label: 'Tilt'
     -
       value: ballInPlay
       label: 'Ball in play'
@@ -61,7 +58,7 @@ settings:
       label: 'Shoot again'
     -
       value: match
-      label: 'Match'
+      label: Match
     -
       value: ballSave
       label: 'Ball save'

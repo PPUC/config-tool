@@ -15,16 +15,5 @@ required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  allowed_values:
-    -
-      value: shooterLane
-      label: 'When the ball leaves the shooter lane'
-    -
-      value: troughExit
-      label: 'When the ball leaves the trough'
-    -
-      value: firstPlayfieldSwitch
-      label: 'On the first playfield switch'
-  allowed_values_function: ''
+settings: {  }
 field_type: list_string

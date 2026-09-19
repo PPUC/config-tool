@@ -9,46 +9,11 @@ id: node.pwm_device.field_game_role
 field_name: field_game_role
 entity_type: node
 bundle: pwm_device
-label: 'Role'
+label: Role
 description: 'What this device is used for by GameCore, tilt warnings and ball save. Leave empty for an ordinary device.'
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  allowed_values:
-    -
-      value: troughKick
-      label: 'Trough kick / outhole kicker'
-    -
-      value: knocker
-      label: 'Knocker'
-    -
-      value: gameOn
-      label: 'Game-on relay'
-    -
-      value: gameOver
-      label: 'Game over'
-    -
-      value: tilt
-      label: 'Tilt'
-    -
-      value: ballInPlay
-      label: 'Ball in play'
-    -
-      value: shootAgain
-      label: 'Shoot again'
-    -
-      value: match
-      label: 'Match'
-    -
-      value: ballSave
-      label: 'Ball save'
-    -
-      value: tiltWarning
-      label: 'Tilt warning'
-    -
-      value: playerUp
-      label: 'Player up'
-  allowed_values_function: ''
+settings: {  }
 field_type: list_string
