@@ -36,8 +36,18 @@ class GameSettingsLifecycle {
       return;
     }
 
-    // An import brings its own settings record along, so this only creates one
-    // where the archive predates them.
+    // An import is not an authoring action, and it brings its own settings
+    // record along a moment later. default_content_deploy orders an archive by
+    // the source site's node ids, and a game always has a lower id than the
+    // settings record created with it, so the game lands first. Creating one
+    // here would therefore always beat the archive's - and default_content_
+    // deploy skips an entity whose stored copy is newer than the file, so the
+    // record just made would win and the imported values would be dropped
+    // without a word. The archive's record is the authority; wait for it.
+    if ($node->isSyncing()) {
+      return;
+    }
+
     $this->gameSettings->getOrCreate($node);
   }
 

@@ -114,3 +114,80 @@ function ppuc_games_update_11002(): string {
     $created
   );
 }
+
+/**
+ * Give settings records a uuid derived from their game, and drop duplicates.
+ *
+ * Records created by update 11002 got a random uuid, which made them a
+ * different entity from the one an archive carries. Importing a game then
+ * produced two: the one hook_node_insert created while the game was being
+ * imported, and the archive's own a moment later. The lookup takes the newest,
+ * which is the empty one, so importing a game silently discarded every ini
+ * value it had.
+ *
+ * Deduplication keeps whichever record actually holds settings rather than
+ * whichever is newer, because the newer one is exactly the empty placeholder.
+ */
+function ppuc_games_update_11003(): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $settings_service = \Drupal::service('ppuc_games.game_settings');
+
+  $game_ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'game')
+    ->execute();
+
+  if (!$game_ids) {
+    return 'No games, nothing to do.';
+  }
+
+  $renamed = 0;
+  $deleted = 0;
+
+  foreach ($storage->loadMultiple($game_ids) as $game) {
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('type', 'ppuc_settings')
+      ->condition('field_game.target_id', $game->id())
+      ->execute();
+
+    if (!$ids) {
+      continue;
+    }
+
+    $records = $storage->loadMultiple($ids);
+
+    // The one carrying the most settings is the one somebody configured.
+    usort($records, static function ($a, $b): int {
+      $filled = static function ($node): int {
+        $count = 0;
+        foreach ($node->getFields() as $name => $field) {
+          if (str_starts_with($name, 'field_ini_') && !$field->isEmpty()) {
+            $count++;
+          }
+        }
+        return $count;
+      };
+      return [$filled($b), $b->getCreatedTime()] <=> [$filled($a), $a->getCreatedTime()];
+    });
+
+    $keep = array_shift($records);
+    if ($records !== []) {
+      $storage->delete($records);
+      $deleted += count($records);
+    }
+
+    $uuid = $settings_service->uuidFor($game);
+    if ($keep->uuid() !== $uuid) {
+      $keep->set('uuid', $uuid)->save();
+      $renamed++;
+    }
+  }
+
+  return sprintf(
+    '%d game(s) checked, %d settings record(s) given a derived uuid, %d duplicate(s) removed.',
+    count($game_ids),
+    $renamed,
+    $deleted
+  );
+}

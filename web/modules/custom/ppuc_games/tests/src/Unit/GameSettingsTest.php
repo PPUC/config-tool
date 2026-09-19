@@ -36,9 +36,19 @@ class GameSettingsTest extends TestCase {
   private array $found = [];
 
   /**
+   * Node id the uuid lookup will report, or NULL for none.
+   */
+  private ?int $foundByUuid = NULL;
+
+  /**
    * Entities the storage was asked to create.
    */
   private array $created = [];
+
+  /**
+   * The changed time stamped on the record that was created.
+   */
+  private ?int $changedTime = NULL;
 
   private function settings(): GameSettings {
     $query = $this->createMock(QueryInterface::class);
@@ -50,6 +60,9 @@ class GameSettingsTest extends TestCase {
 
     $this->storage = $this->createMock(EntityStorageInterface::class);
     $this->storage->method('getQuery')->willReturn($query);
+    $this->storage->method('loadByProperties')->willReturnCallback(
+      fn(): array => $this->foundByUuid === NULL ? [] : [$this->existing($this->foundByUuid)]
+    );
     $this->storage->method('load')->willReturnCallback(
       fn($id) => $this->existing((int) $id)
     );
@@ -58,6 +71,12 @@ class GameSettingsTest extends TestCase {
         $node = $this->createMock(NodeInterface::class);
         $node->method('id')->willReturn(999);
         $node->method('getTitle')->willReturn((string) $values['title']);
+        $node->method('setChangedTime')->willReturnCallback(
+          function (int $time) use (&$node): NodeInterface {
+            $this->changedTime = $time;
+            return $node;
+          }
+        );
         $this->created[] = $values;
         return $node;
       }
@@ -86,10 +105,11 @@ class GameSettingsTest extends TestCase {
     return $node;
   }
 
-  private function game(string $bundle = 'game', ?int $id = 195): NodeInterface {
+  private function game(string $bundle = 'game', ?int $id = 195, string $uuid = '08f51efc-f25c-4fa9-bef3-ed8451131db4'): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);
     $node->method('id')->willReturn($id);
+    $node->method('uuid')->willReturn($uuid);
     $node->method('getTitle')->willReturn('Flash');
     $node->method('getOwnerId')->willReturn(1);
     return $node;
@@ -153,6 +173,62 @@ class GameSettingsTest extends TestCase {
     $this->found = [42];
 
     $this->assertSame(42, $this->settings()->find($this->game())?->id());
+  }
+
+  // --- identity across sites --------------------------------------------
+
+  public function testTheUuidIsDerivedFromTheGame(): void {
+    $settings = $this->settings();
+    $game = $this->game();
+
+    // Stable, so two sites holding the same game agree on which entity its
+    // settings record is, and an import updates it instead of adding a second.
+    $this->assertSame($settings->uuidFor($game), $settings->uuidFor($game));
+    $this->assertMatchesRegularExpression(
+      '/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
+      $settings->uuidFor($game),
+      'a version 5 uuid'
+    );
+  }
+
+  public function testDifferentGamesGetDifferentUuids(): void {
+    $settings = $this->settings();
+
+    $this->assertNotSame(
+      $settings->uuidFor($this->game('game', 195, '08f51efc-f25c-4fa9-bef3-ed8451131db4')),
+      $settings->uuidFor($this->game('game', 361, 'df0edd82-e3af-4e13-a3f8-606813b39f34'))
+    );
+  }
+
+  public function testANewRecordCarriesTheDerivedUuid(): void {
+    $this->found = [];
+    $settings = $this->settings();
+
+    $settings->getOrCreate($this->game());
+
+    $this->assertSame($settings->uuidFor($this->game()), $this->created[0]['uuid']);
+  }
+
+  public function testARecordFoundByUuidIsNotDuplicated(): void {
+    // An import may have put the record in place while its field_game
+    // reference is still waiting for the correction pass, so the query by
+    // game finds nothing and only the uuid lookup can see it.
+    $this->found = [];
+    $this->foundByUuid = 42;
+
+    $this->assertSame(42, $this->settings()->getOrCreate($this->game())?->id());
+    $this->assertSame([], $this->created);
+  }
+
+  public function testAPlaceholderIsStampedAsNeverModified(): void {
+    // default_content_deploy imports an entity only when the file is newer
+    // than the stored copy. A placeholder stamped with the current time would
+    // make an archive's settings unimportable for that game.
+    $this->found = [];
+
+    $this->settings()->getOrCreate($this->game());
+
+    $this->assertSame(1, $this->changedTime);
   }
 
 }
