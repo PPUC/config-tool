@@ -1,0 +1,18 @@
+uuid: 71825831-9449-4529-be20-5d9d9270bc9e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_allow_dev_fw_update
+field_name: field_ini_allow_dev_fw_update
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

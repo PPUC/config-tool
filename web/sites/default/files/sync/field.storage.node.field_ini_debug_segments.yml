@@ -1,0 +1,18 @@
+uuid: 8f03905d-7702-4753-95dc-7028595628d2
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_debug_segments
+field_name: field_ini_debug_segments
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

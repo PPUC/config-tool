@@ -1,0 +1,18 @@
+uuid: cab6ce3f-d3fb-40c3-af24-46bb952d6c5d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_no_display
+field_name: field_ini_no_display
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

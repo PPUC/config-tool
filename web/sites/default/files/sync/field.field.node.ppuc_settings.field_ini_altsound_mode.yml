@@ -1,0 +1,25 @@
+uuid: 722314f9-2e3d-4b5e-b89e-7bb5dd4d498c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_altsound_mode
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_altsound_mode
+field_name: field_ini_altsound_mode
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: AltSoundMode'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

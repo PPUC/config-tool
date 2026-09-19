@@ -1,0 +1,23 @@
+uuid: 47ef47ed-418c-4217-8ebf-92daf84b8a68
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_allow_fw_update
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_allow_fw_update
+field_name: field_ini_allow_fw_update
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: AllowFirmwareUpdate'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

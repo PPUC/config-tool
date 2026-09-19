@@ -1,0 +1,18 @@
+uuid: 4e92e5f5-7a3b-46a2-9d89-ef6b14197307
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_allow_fw_downgrade
+field_name: field_ini_allow_fw_downgrade
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

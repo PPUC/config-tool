@@ -1,0 +1,19 @@
+uuid: 417bb01f-aa31-45b3-b191-e561ad02a921
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_firmware_path
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_firmware_path
+field_name: field_ini_firmware_path
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: FirmwarePath'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

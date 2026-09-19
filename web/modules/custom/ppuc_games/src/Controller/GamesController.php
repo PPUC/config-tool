@@ -228,11 +228,24 @@ class GamesController extends ControllerBase {
       return $settings instanceof NodeInterface ? $this->getIniBool01Value($settings, $field_name) : $default;
     };
 
-    $rom = $value('field_ini_game_rom', $this->getStringFieldValue($game, 'field_machine_name') ?? $game->getTitle());
-
+    // The one name in the game folder that has to agree with itself. PinMAME
+    // looks up the ROM zip by it, and the folder skeleton names altcolor/,
+    // pupvideos/ and altsound/ subdirectories after it. This used to resolve
+    // separately here -- ini setting, machine name, node title -- while the
+    // skeleton went through getGameRomName(), which also reads the filename of
+    // the uploaded ROM media. A game with a ROM attached but no machine name
+    // therefore got directories called flash_l1 and a ppuc.ini saying
+    // Rom=Flash, and PinMAME found no ROM at all. One resolver, one answer.
     $sections = [
       'Game' => [
-        'Rom' => $rom,
+        'Rom' => $this->getGameRomName($game),
+        // io-boards.yaml carries `engine: gamecore`, but nothing reads it --
+        // ppuc selects its engine from [Game] Engine alone, and a folder that
+        // never wrote the key always started in PinMAME mode, whatever the game
+        // was configured as. It also spells the ROM-less engine "script" and
+        // refuses to start on any other value, so `gamecore` cannot be passed
+        // through as-is.
+        'Engine' => $this->getEngine($game) === 'gamecore' ? 'script' : 'pinmame',
       ],
       'Paths' => [
         'ConfigFile' => $value('field_ini_config_file'),
@@ -251,6 +264,7 @@ class GamesController extends ControllerBase {
       ],
       'Runtime' => [
         'NoSerial' => $value('field_ini_no_serial', 'false'),
+        'NoDisplay' => $value('field_ini_no_display', 'false'),
         'NoSound' => $value('field_ini_no_sound', 'false'),
         'Debug' => $value('field_ini_debug', 'false'),
         'DebugErrors' => $value('field_ini_debug_errors', 'false'),
@@ -258,12 +272,19 @@ class GamesController extends ControllerBase {
         'DebugCoils' => $value('field_ini_debug_coils', 'false'),
         'DebugLamps' => $value('field_ini_debug_lamps', 'false'),
         'DebugEffects' => $value('field_ini_debug_effects', 'false'),
+        'DebugSoundCommands' => $value('field_ini_debug_sound_commands', 'false'),
+        'DebugAudio' => $value('field_ini_debug_audio', 'false'),
+        'DebugSegments' => $value('field_ini_debug_segments', 'false'),
         'Rules' => $value('field_ini_runtime_rules', 'false'),
+        // ppuc accepts Serum and AltColor as two spellings of one option, and
+        // DumpDmdTxt likewise for DumpDisplay, so only one of each is written.
         'AltColor' => $value('field_ini_alt_color', 'false'),
         'SerumTimeout' => $value('field_ini_serum_timeout', '0'),
+        'SerumResolution' => $value('field_ini_serum_resolution', '0'),
         'SerumSkipFrames' => $value('field_ini_serum_skip_frames', '0'),
         'PUP' => $value('field_ini_pup', 'false'),
         'AltSound' => $value('field_ini_alt_sound', 'false'),
+        'AltSoundMode' => $value('field_ini_altsound_mode', '0'),
         'B2S' => $value('field_ini_b2s', 'false'),
         'B2SSegmentAngleDegrees' => $value('field_ini_b2s_angle', '18.0'),
         'B2SSegmentGlow' => $value('field_ini_b2s_glow', '80.0'),
@@ -274,6 +295,13 @@ class GamesController extends ControllerBase {
         'ConsoleDisplay' => $value('field_ini_console_display', 'false'),
         'DumpDisplay' => $value('field_ini_dump_display', 'false'),
         'SkipBoards' => $value('field_ini_skip_boards'),
+        // Firmware updates over the game bus. Every gate defaults to false, so
+        // an exported folder never flashes a board unless it was asked to.
+        'FirmwarePath' => $value('field_ini_firmware_path'),
+        'AllowFirmwareUpdate' => $value('field_ini_allow_fw_update', 'false'),
+        'AllowDevFirmwareUpdate' => $value('field_ini_allow_dev_fw_update', 'false'),
+        'AllowFirmwareDowngrade' => $value('field_ini_allow_fw_downgrade', 'false'),
+        'AllowUnvalidatedFirmwareUpdate' => $value('field_ini_allow_unvalidated_fw', 'false'),
         'SwitchReplyDelayUs' => $value('field_ini_switch_reply_us', '2000'),
         'SwitchRefreshIdleMs' => $value('field_ini_switch_refresh_ms', '15000'),
         'OutputFrameIntervalMs' => $value('field_ini_output_frame_ms', '4'),

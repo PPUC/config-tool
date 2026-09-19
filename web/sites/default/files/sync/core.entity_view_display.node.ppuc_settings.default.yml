@@ -4,9 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.ppuc_settings.field_game
+    - field.field.node.ppuc_settings.field_ini_allow_dev_fw_update
+    - field.field.node.ppuc_settings.field_ini_allow_fw_downgrade
+    - field.field.node.ppuc_settings.field_ini_allow_fw_update
+    - field.field.node.ppuc_settings.field_ini_allow_unvalidated_fw
     - field.field.node.ppuc_settings.field_ini_alt_color
     - field.field.node.ppuc_settings.field_ini_alt_sound
     - field.field.node.ppuc_settings.field_ini_altsound_folder
+    - field.field.node.ppuc_settings.field_ini_altsound_mode
     - field.field.node.ppuc_settings.field_ini_b2s
     - field.field.node.ppuc_settings.field_ini_b2s_angle
     - field.field.node.ppuc_settings.field_ini_b2s_glow
@@ -22,12 +27,16 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_config_file
     - field.field.node.ppuc_settings.field_ini_console_display
     - field.field.node.ppuc_settings.field_ini_debug
+    - field.field.node.ppuc_settings.field_ini_debug_audio
     - field.field.node.ppuc_settings.field_ini_debug_coils
     - field.field.node.ppuc_settings.field_ini_debug_effects
     - field.field.node.ppuc_settings.field_ini_debug_errors
     - field.field.node.ppuc_settings.field_ini_debug_lamps
+    - field.field.node.ppuc_settings.field_ini_debug_segments
+    - field.field.node.ppuc_settings.field_ini_debug_sound_commands
     - field.field.node.ppuc_settings.field_ini_debug_switches
     - field.field.node.ppuc_settings.field_ini_dump_display
+    - field.field.node.ppuc_settings.field_ini_firmware_path
     - field.field.node.ppuc_settings.field_ini_flasher_test
     - field.field.node.ppuc_settings.field_ini_game_rom
     - field.field.node.ppuc_settings.field_ini_gi_test
@@ -36,6 +45,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_lamp_test
     - field.field.node.ppuc_settings.field_ini_music_files
     - field.field.node.ppuc_settings.field_ini_music_gap_ms
+    - field.field.node.ppuc_settings.field_ini_no_display
     - field.field.node.ppuc_settings.field_ini_no_serial
     - field.field.node.ppuc_settings.field_ini_no_sound
     - field.field.node.ppuc_settings.field_ini_output_frame_ms
@@ -51,6 +61,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_rules_path
     - field.field.node.ppuc_settings.field_ini_runtime_rules
     - field.field.node.ppuc_settings.field_ini_serial
+    - field.field.node.ppuc_settings.field_ini_serum_resolution
     - field.field.node.ppuc_settings.field_ini_serum_skip_frames
     - field.field.node.ppuc_settings.field_ini_serum_timeout
     - field.field.node.ppuc_settings.field_ini_skip_boards
@@ -107,6 +118,46 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
+  field_ini_allow_dev_fw_update:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_ini_allow_fw_downgrade:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_ini_allow_fw_update:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_ini_allow_unvalidated_fw:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 111
+    region: content
   field_ini_alt_color:
     type: boolean
     label: above
@@ -135,6 +186,15 @@ content:
       link_rel: canonical
     third_party_settings: {  }
     weight: 33
+    region: content
+  field_ini_altsound_mode:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
     region: content
   field_ini_b2s:
     type: boolean
@@ -282,6 +342,16 @@ content:
     third_party_settings: {  }
     weight: 15
     region: content
+  field_ini_debug_audio:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 103
+    region: content
   field_ini_debug_coils:
     type: boolean
     label: above
@@ -322,6 +392,26 @@ content:
     third_party_settings: {  }
     weight: 19
     region: content
+  field_ini_debug_segments:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_ini_debug_sound_commands:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 102
+    region: content
   field_ini_debug_switches:
     type: boolean
     label: above
@@ -341,6 +431,15 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     weight: 35
+    region: content
+  field_ini_firmware_path:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 107
     region: content
   field_ini_flasher_test:
     type: boolean
@@ -416,6 +515,16 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 8
+    region: content
+  field_ini_no_display:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 101
     region: content
   field_ini_no_serial:
     type: boolean
@@ -557,6 +666,15 @@ content:
       link_rel: canonical
     third_party_settings: {  }
     weight: 4
+    region: content
+  field_ini_serum_resolution:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 106
     region: content
   field_ini_serum_skip_frames:
     type: number_integer

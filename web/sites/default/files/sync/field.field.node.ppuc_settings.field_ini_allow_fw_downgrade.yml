@@ -1,0 +1,23 @@
+uuid: b0b9b1f2-acee-4620-aa8c-f9b86c0b4d9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_allow_fw_downgrade
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_allow_fw_downgrade
+field_name: field_ini_allow_fw_downgrade
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: AllowFirmwareDowngrade'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
