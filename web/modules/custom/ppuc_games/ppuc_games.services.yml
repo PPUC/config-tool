@@ -11,3 +11,8 @@ services:
     class: Drupal\ppuc_games\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  ppuc_games.game_settings:
+    class: Drupal\ppuc_games\GameSettings
+    arguments: ['@entity_type.manager']
+  # Alias by class name so the hook class can be autowired.
+  Drupal\ppuc_games\GameSettings: '@ppuc_games.game_settings'

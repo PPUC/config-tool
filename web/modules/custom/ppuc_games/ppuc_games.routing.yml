@@ -97,15 +97,16 @@ ppuc_games.ini:
       node:
         type: entity:node
 
-ppuc_games.add_settings:
-  path: '/node/{node}/settings/add'
+ppuc_games.settings:
+  path: '/node/{node}/settings'
   defaults:
-    _controller: '\Drupal\ppuc_games\Controller\GamesController::addPpucSettings'
-    _title: 'Add PPUC Settings'
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::editPpucSettings'
+    _title: 'PPUC Settings'
   requirements:
-    _permission: 'create ppuc_settings content'
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameSettings'
     node: \d+
   options:
+    _node_operation_route: TRUE
     parameters:
       node:
         type: entity:node

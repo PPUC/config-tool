@@ -77,3 +77,40 @@ function ppuc_games_update_11001(): string {
 
   return sprintf('Created the Opto_16 board type (term %s).', $term->id());
 }
+
+/**
+ * Give every existing game a PPUC settings record.
+ *
+ * They used to be added by hand from an "Add PPUC Settings" button, so no game
+ * had one and every exported ppuc.ini was built from the exporter's fallbacks -
+ * nothing an operator changed could be stored, and the values did not travel
+ * with the game. New games get theirs on insert; this is the one-off backfill
+ * for the games that already exist.
+ */
+function ppuc_games_update_11002(): string {
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $settings = \Drupal::service('ppuc_games.game_settings');
+
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'game')
+    ->execute();
+
+  if (!$ids) {
+    return 'No games, nothing to do.';
+  }
+
+  $created = 0;
+  foreach ($storage->loadMultiple($ids) as $game) {
+    if ($settings->find($game) === NULL) {
+      $settings->getOrCreate($game);
+      $created++;
+    }
+  }
+
+  return sprintf(
+    '%d game(s) checked, %d settings record(s) created.',
+    count($ids),
+    $created
+  );
+}

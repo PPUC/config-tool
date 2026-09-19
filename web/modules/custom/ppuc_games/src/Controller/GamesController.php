@@ -162,24 +162,7 @@ class GamesController extends ControllerBase {
   }
 
   protected function getIniSettingsNode(NodeInterface $game): ?NodeInterface {
-    if ($game->bundle() !== 'game') {
-      return NULL;
-    }
-
-    $ids = \Drupal::entityQuery('node')
-      ->accessCheck(FALSE)
-      ->condition('type', 'ppuc_settings')
-      ->condition('field_game.target_id', $game->id())
-      ->sort('created', 'DESC')
-      ->range(0, 1)
-      ->execute();
-
-    if ($ids === []) {
-      return NULL;
-    }
-
-    $node = Node::load(reset($ids));
-    return $node instanceof NodeInterface ? $node : NULL;
+    return \Drupal::service('ppuc_games.game_settings')->find($game);
   }
 
   protected function getIniFieldValue(NodeInterface $settings, string $field_name): string {
@@ -1273,17 +1256,34 @@ class GamesController extends ControllerBase {
     return $this->redirect('node.add', ['node_type' => 'rule'], ['query' => ['game' => $node->id()]]);
   }
 
-  public function addPpucSettings(NodeInterface $node): RedirectResponse {
+  /**
+   * Opens the game's ppuc.ini settings for editing.
+   *
+   * Games get their settings record when they are created, so this normally
+   * just redirects to it. It still creates one when there is none, because a
+   * game imported from an archive written before that was true would otherwise
+   * have a settings tab leading nowhere.
+   */
+  public function editPpucSettings(NodeInterface $node): RedirectResponse {
     if ($node->bundle() !== 'game') {
       throw $this->createNotFoundException();
     }
 
-    $settings = $this->getIniSettingsNode($node);
-    if ($settings instanceof NodeInterface) {
-      return $this->redirect('entity.node.edit_form', ['node' => $settings->id()]);
+    $settings = \Drupal::service('ppuc_games.game_settings')->getOrCreate($node);
+    if (!$settings instanceof NodeInterface) {
+      throw $this->createNotFoundException();
     }
 
-    return $this->redirect('node.add', ['node_type' => 'ppuc_settings'], ['query' => ['game' => $node->id()]]);
+    return $this->redirect('entity.node.edit_form', ['node' => $settings->id()]);
+  }
+
+  /**
+   * The settings tab belongs to games, and only to someone who may edit them.
+   */
+  public function accessGameSettings(NodeInterface $node, AccountInterface $account): AccessResult {
+    return AccessResult::allowedIf($node->bundle() === 'game')
+      ->andIf(AccessResult::allowedIfHasPermission($account, 'edit any ppuc_settings content'))
+      ->addCacheableDependency($node);
   }
 
   protected function getRulesLua(NodeInterface $node): string {

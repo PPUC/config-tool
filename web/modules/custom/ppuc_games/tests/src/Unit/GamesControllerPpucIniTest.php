@@ -15,6 +15,7 @@ use Drupal\media\MediaSourceInterface;
 use Drupal\media\MediaTypeInterface;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Controller\GamesController;
+use Drupal\ppuc_games\GameSettings;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -79,6 +80,9 @@ class GamesControllerPpucIniTest extends TestCase {
 
     $container = new ContainerBuilder();
     $container->set('entity_type.manager', $entity_type_manager);
+    // The controller looks the settings record up through the service that also
+    // creates it, so the two can never disagree about which record a game has.
+    $container->set('ppuc_games.game_settings', new GameSettings($entity_type_manager));
     // The name sanitiser dispatches FileUploadSanitizeNameEvent. With no
     // subscribers registered the name passes through as the controller built
     // it, which is what the ROM name assertions below are about.
