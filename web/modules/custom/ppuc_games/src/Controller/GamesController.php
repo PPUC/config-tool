@@ -33,6 +33,17 @@ class GamesController extends ControllerBase {
    */
   protected const GAME_FOLDER_NAME = 'ppuc';
 
+  /**
+   * What the game folder download is called.
+   *
+   * The site hands out two archives per game and they are not interchangeable:
+   * this one is a runnable game folder for a machine, the other is the game's
+   * content for another config-tool. Both were <Game>_<uuid>.tar.gz, which is
+   * one wrong download away from an operator wondering why a stick full of
+   * JSON does not boot.
+   */
+  protected const GAME_FOLDER_ARCHIVE_PREFIX = 'PPUC_Game_Folder_';
+
   public function __construct(protected FileSystemInterface $fileSystem, protected ExporterInterface $exporter) {}
 
   /**
@@ -1766,7 +1777,7 @@ TXT;
     // two downloads never collide. Inside it the game folder itself is always
     // called 'ppuc', because that is the name the runtime looks for: on a
     // Raspberry Pi the whole install is "copy this ppuc folder onto a stick".
-    $folder_name = $this->sanitizeGameFolderName($node) . '_' . $node->uuid();
+    $folder_name = self::GAME_FOLDER_ARCHIVE_PREFIX . $this->sanitizeGameFolderName($node) . '_' . $node->uuid();
     $tmp = $this->fileSystem->getTempDirectory() . '/ppuc-game-folder-' . $node->id();
     $this->fileSystem->deleteRecursive($tmp);
     $this->fileSystem->prepareDirectory($tmp, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
