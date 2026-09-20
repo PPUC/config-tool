@@ -1,0 +1,29 @@
+uuid: 639ff87a-23d3-4600-a93c-8c8a2255681d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_music
+    - media.type.music
+    - node.type.game
+id: node.game.field_music
+field_name: field_music
+entity_type: node
+bundle: game
+label: 'Background music'
+description: 'Audio played as background music. Exported into music/.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      music: music
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

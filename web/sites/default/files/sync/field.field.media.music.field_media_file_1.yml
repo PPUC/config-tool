@@ -1,0 +1,27 @@
+uuid: a4bbd35d-6142-4754-9b38-690cdfdb2a26
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_1
+    - media.type.music
+  module:
+    - file
+id: media.music.field_media_file_1
+field_name: field_media_file_1
+entity_type: media
+bundle: music
+label: File
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: music
+  file_extensions: 'mp3 ogg wav flac opus m4a'
+  max_filesize: ''
+  description_field: true
+field_type: file

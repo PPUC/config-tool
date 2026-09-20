@@ -4,12 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.node.game.body
+    - field.field.node.game.field_altsound
     - field.field.node.game.field_ball_save_enabled
     - field.field.node.game.field_ball_save_max_ball
     - field.field.node.game.field_ball_save_seconds
     - field.field.node.game.field_ball_save_start_on
     - field.field.node.game.field_coil_gi_mappings
     - field.field.node.game.field_coin_door_closed_switch
+    - field.field.node.game.field_colorization
     - field.field.node.game.field_em_add_player_ball
     - field.field.node.game.field_em_ball_count
     - field.field.node.game.field_em_balls_per_game
@@ -26,7 +28,9 @@ dependencies:
     - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
+    - field.field.node.game.field_music
     - field.field.node.game.field_platform
+    - field.field.node.game.field_pup_pack
     - field.field.node.game.field_rom
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_group_memberships
@@ -40,6 +44,7 @@ dependencies:
     - field.field.node.game.field_tilt_warnings
     - field.field.node.game.field_translite
     - field.field.node.game.field_translite_in_game
+    - field.field.node.game.field_wizard_source
     - node.type.game
   module:
     - media_library
@@ -60,6 +65,16 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
+    third_party_settings: {  }
+  field_altsound:
+    type: entity_reference_autocomplete
+    weight: 43
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_ball_save_enabled:
     type: boolean_checkbox
@@ -101,6 +116,16 @@ content:
     weight: 12
     region: content
     settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_colorization:
+    type: entity_reference_autocomplete
+    weight: 39
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
       placeholder: ''
     third_party_settings: {  }
   field_em_add_player_ball:
@@ -215,11 +240,31 @@ content:
     settings:
       media_types: {  }
     third_party_settings: {  }
+  field_music:
+    type: entity_reference_autocomplete
+    weight: 41
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_platform:
     type: options_buttons
     weight: 2
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_pup_pack:
+    type: entity_reference_autocomplete
+    weight: 45
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_rom:
     type: media_library_widget

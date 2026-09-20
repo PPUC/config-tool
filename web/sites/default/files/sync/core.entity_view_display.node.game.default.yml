@@ -4,19 +4,47 @@ status: true
 dependencies:
   config:
     - field.field.node.game.body
+    - field.field.node.game.field_altsound
+    - field.field.node.game.field_ball_save_enabled
+    - field.field.node.game.field_ball_save_max_ball
+    - field.field.node.game.field_ball_save_seconds
+    - field.field.node.game.field_ball_save_start_on
     - field.field.node.game.field_coil_gi_mappings
     - field.field.node.game.field_coin_door_closed_switch
+    - field.field.node.game.field_colorization
+    - field.field.node.game.field_em_add_player_ball
+    - field.field.node.game.field_em_ball_count
+    - field.field.node.game.field_em_balls_per_game
+    - field.field.node.game.field_em_bonus_timeout_ms
+    - field.field.node.game.field_em_credits_per_coin
+    - field.field.node.game.field_em_free_play
+    - field.field.node.game.field_em_kick_pulse_ms
+    - field.field.node.game.field_em_match_enabled
+    - field.field.node.game.field_em_max_players
+    - field.field.node.game.field_em_replay_scores
+    - field.field.node.game.field_em_score_digits
+    - field.field.node.game.field_em_trough_settle_ms
+    - field.field.node.game.field_engine
     - field.field.node.game.field_game_on_solenoid
     - field.field.node.game.field_lamp_locations
     - field.field.node.game.field_manual
+    - field.field.node.game.field_music
     - field.field.node.game.field_platform
+    - field.field.node.game.field_pup_pack
     - field.field.node.game.field_rom
     - field.field.node.game.field_solenoid_locations
     - field.field.node.game.field_switch_group_memberships
     - field.field.node.game.field_switch_groups
     - field.field.node.game.field_switch_locations
+    - field.field.node.game.field_tilt_blanking_ms
+    - field.field.node.game.field_tilt_debounce_ms
+    - field.field.node.game.field_tilt_ends_ball_only
+    - field.field.node.game.field_tilt_gi_off
+    - field.field.node.game.field_tilt_skip_bonus
+    - field.field.node.game.field_tilt_warnings
     - field.field.node.game.field_translite
     - field.field.node.game.field_translite_in_game
+    - field.field.node.game.field_wizard_source
     - node.type.game
   module:
     - text
@@ -35,6 +63,14 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
+  field_altsound:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 44
+    region: content
   field_coil_gi_mappings:
     type: basic_string
     label: above
@@ -51,6 +87,14 @@ content:
     third_party_settings: {  }
     weight: 3
     region: content
+  field_colorization:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 40
+    region: content
   field_game_on_solenoid:
     type: number_integer
     label: above
@@ -60,6 +104,14 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
+  field_music:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 42
+    region: content
   field_platform:
     type: entity_reference_label
     label: above
@@ -67,6 +119,14 @@ content:
       link: true
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_pup_pack:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 46
     region: content
   field_switch_groups:
     type: basic_string
@@ -76,12 +136,36 @@ content:
     weight: 14
     region: content
 hidden:
+  field_ball_save_enabled: true
+  field_ball_save_max_ball: true
+  field_ball_save_seconds: true
+  field_ball_save_start_on: true
+  field_em_add_player_ball: true
+  field_em_ball_count: true
+  field_em_balls_per_game: true
+  field_em_bonus_timeout_ms: true
+  field_em_credits_per_coin: true
+  field_em_free_play: true
+  field_em_kick_pulse_ms: true
+  field_em_match_enabled: true
+  field_em_max_players: true
+  field_em_replay_scores: true
+  field_em_score_digits: true
+  field_em_trough_settle_ms: true
+  field_engine: true
   field_lamp_locations: true
   field_manual: true
   field_rom: true
   field_solenoid_locations: true
   field_switch_group_memberships: true
   field_switch_locations: true
+  field_tilt_blanking_ms: true
+  field_tilt_debounce_ms: true
+  field_tilt_ends_ball_only: true
+  field_tilt_gi_off: true
+  field_tilt_skip_bonus: true
+  field_tilt_warnings: true
   field_translite: true
   field_translite_in_game: true
+  field_wizard_source: true
   links: true

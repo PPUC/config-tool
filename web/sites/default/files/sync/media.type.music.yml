@@ -1,0 +1,14 @@
+uuid: dc633c0b-6073-417c-8b62-d5a2e0a262fc
+langcode: en
+status: true
+dependencies: {  }
+id: music
+label: 'Background music'
+description: 'Audio played as background music during the game.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file_1
+field_map:
+  name: name

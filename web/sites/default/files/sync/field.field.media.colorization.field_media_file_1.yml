@@ -1,0 +1,27 @@
+uuid: 8059a7d2-3248-4b49-8b64-f4d2da29a13a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_1
+    - media.type.colorization
+  module:
+    - file
+id: media.colorization.field_media_file_1
+field_name: field_media_file_1
+entity_type: media
+bundle: colorization
+label: File
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: colorization
+  file_extensions: 'cromc crom crz'
+  max_filesize: ''
+  description_field: true
+field_type: file

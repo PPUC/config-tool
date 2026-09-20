@@ -1,0 +1,27 @@
+uuid: a3a8b93c-65f4-430f-9263-d2a0e5aee685
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_1
+    - media.type.pup_pack
+  module:
+    - file
+id: media.pup_pack.field_media_file_1
+field_name: field_media_file_1
+entity_type: media
+bundle: pup_pack
+label: File
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: puppacks
+  file_extensions: zip
+  max_filesize: ''
+  description_field: true
+field_type: file

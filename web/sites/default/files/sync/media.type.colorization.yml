@@ -1,0 +1,14 @@
+uuid: ae98343d-7ed8-4733-bff6-88d13fe0c061
+langcode: en
+status: true
+dependencies: {  }
+id: colorization
+label: 'ROM colorization'
+description: 'Serum colorization for a ROM: .cROMc, or a .cROM/.cRZ the runtime converts on first start.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file_1
+field_map:
+  name: name

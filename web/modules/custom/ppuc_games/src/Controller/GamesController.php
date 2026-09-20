@@ -15,7 +15,9 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -1487,18 +1489,21 @@ To run it from a computer instead, point ppuc-pinmame at the folder:
 
     ppuc-pinmame --game /path/to/ppuc
 
-Assets the config-tool does not hold go into the 'ppuc' folder by hand:
-- ROM colorization (.cROMc) into pinmame/altcolor/{$rom}/
-- background music into music/
-- PUP packs into pup/pupvideos/
-- AltSound packages into pinmame/altsound/{$rom}/
+Everything attached to the game in the config-tool is already in the folder: the
+ROM, the colorization, background music, the AltSound package and the PUP pack,
+each unpacked into the place the runtime looks for it. Attach them on the game
+and they come with every export, and travel with the game when it is handed to
+someone else.
+
+Anything not held there goes into the 'ppuc' folder by hand:
 - directb2s backglass files into the top level of the folder
 - existing PinMAME nvram, cfg, snapshots or state files into the matching
   pinmame/ subfolders
+- any further colorization or audio into pinmame/altcolor/{$rom}/,
+  pinmame/altsound/{$rom}/, music/ or pup/pupvideos/
 
-Each of those also has a switch in the game's PPUC Settings in the config-tool -
-Serum/AltColor, PUP, AltSound - and dropping the files in does nothing until the
-matching switch is on.
+Having the files is only half of it: Serum/AltColor, PUP and AltSound each have a
+switch in the game's PPUC Settings, and the files do nothing until it is on.
 
 TXT;
     file_put_contents($folder . '/README.txt', $readme);
@@ -1578,10 +1583,175 @@ TXT;
     }
   }
 
-  protected function copyGameFolderAssets(NodeInterface $game, string $game_folder): void {
+  protected function copyGameFolderAssets(NodeInterface $game, string $game_folder, string $rom): void {
     $this->copyReferencedMediaFiles($game, 'field_rom', $game_folder . '/pinmame/roms');
     $this->copyReferencedMediaFiles($game, 'field_translite_in_game', $game_folder, 'translite-on');
     $this->copyReferencedMediaFiles($game, 'field_translite', $game_folder, 'translite-off');
+
+    // Both of these are looked up by the ROM name, which is why the folders
+    // they go into are named after it.
+    $this->copyReferencedMediaFiles($game, 'field_colorization', $game_folder . '/pinmame/altcolor/' . $rom);
+    $this->copyReferencedMediaFiles($game, 'field_music', $game_folder . '/music');
+
+    // AltSound is read from the rom's own folder, so the package's contents go
+    // straight into it. A PUP pack instead sits as a folder among others inside
+    // pupvideos/, and PUP finds it by that folder's name.
+    $this->extractReferencedArchives($game, 'field_altsound', $game_folder . '/pinmame/altsound/' . $rom, NULL);
+    $this->extractReferencedArchives($game, 'field_pup_pack', $game_folder . '/pup/pupvideos', $rom);
+  }
+
+  /**
+   * Unpacks zip archives referenced by a field into the game folder.
+   *
+   * Packs are published in two shapes: some wrap everything in one directory,
+   * some hold the files at the top level. Both are accepted, so that whichever
+   * a pack author chose the result is the layout the runtime expects.
+   *
+   * @param \Drupal\node\NodeInterface $game
+   *   The game node.
+   * @param string $field_name
+   *   The field referencing the archive media.
+   * @param string $target_folder
+   *   Where the contents end up.
+   * @param string|null $wrap_into
+   *   NULL to put the contents directly in the target. A name to put them in a
+   *   directory of that name, unless the archive already wraps them in one, in
+   *   which case the archive's own directory name is kept.
+   */
+  protected function extractReferencedArchives(NodeInterface $game, string $field_name, string $target_folder, ?string $wrap_into): void {
+    if (!$game->hasField($field_name) || $game->get($field_name)->isEmpty()) {
+      return;
+    }
+
+    foreach ($game->get($field_name)->referencedEntities() as $media) {
+      if (!$media instanceof MediaInterface) {
+        continue;
+      }
+
+      foreach ($this->mediaSourceFiles($media) as $file) {
+        $path = $this->fileSystem->realpath($file->getFileUri());
+        if ($path === FALSE || !is_file($path)) {
+          continue;
+        }
+
+        $this->extractArchive($path, $target_folder, $wrap_into);
+      }
+    }
+  }
+
+  /**
+   * Unpacks one zip archive, normalising how it wraps its contents.
+   */
+  protected function extractArchive(string $archive_path, string $target_folder, ?string $wrap_into): void {
+    $zip = new \ZipArchive();
+    if ($zip->open($archive_path) !== TRUE) {
+      $this->getLogger('ppuc_games')->warning('Could not open @file as a zip archive; it was left out of the game folder.', [
+        '@file' => basename($archive_path),
+      ]);
+      return;
+    }
+
+    // Unpacked next to the game folder first, so that a pack which wraps its
+    // contents and one which does not can be told apart before anything lands
+    // in the export.
+    $staging = $this->fileSystem->getTempDirectory() . '/ppuc-archive-' . hash('xxh3', $archive_path . microtime());
+    $this->fileSystem->deleteRecursive($staging);
+    $this->fileSystem->prepareDirectory($staging, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+    // An entry that climbs out of the directory it is extracted into would
+    // write anywhere the web server can, so the archive is rejected whole
+    // rather than partly unpacked.
+    for ($i = 0; $i < $zip->numFiles; $i++) {
+      $name = (string) $zip->getNameIndex($i);
+      if (str_starts_with($name, '/') || str_contains($name, '..')) {
+        $zip->close();
+        $this->fileSystem->deleteRecursive($staging);
+        $this->getLogger('ppuc_games')->warning('@file contains an entry pointing outside the archive (@entry) and was left out of the game folder.', [
+          '@file' => basename($archive_path),
+          '@entry' => $name,
+        ]);
+        return;
+      }
+    }
+
+    $extracted = $zip->extractTo($staging);
+    $zip->close();
+    if (!$extracted) {
+      $this->fileSystem->deleteRecursive($staging);
+      $this->getLogger('ppuc_games')->warning('Could not unpack @file; it was left out of the game folder.', [
+        '@file' => basename($archive_path),
+      ]);
+      return;
+    }
+
+    // Ignore the metadata directories a Mac adds when zipping from Finder.
+    $entries = array_values(array_diff(scandir($staging) ?: [], ['.', '..', '__MACOSX', '.DS_Store']));
+    $wrapper = count($entries) === 1 && is_dir($staging . '/' . $entries[0]) ? $entries[0] : NULL;
+
+    if ($wrap_into === NULL) {
+      // The contents belong in the target itself.
+      $source = $wrapper !== NULL ? $staging . '/' . $wrapper : $staging;
+      $destination = $target_folder;
+    }
+    else {
+      // The contents belong in a directory inside the target. A pack that
+      // brought its own keeps that name: pack authors name it for the rom, and
+      // PUP looks it up by name.
+      $source = $wrapper !== NULL ? $staging . '/' . $wrapper : $staging;
+      $destination = $target_folder . '/' . ($wrapper ?? $wrap_into);
+    }
+
+    $this->fileSystem->prepareDirectory($destination, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    $this->moveDirectoryContents($source, $destination);
+    $this->fileSystem->deleteRecursive($staging);
+  }
+
+  /**
+   * Moves everything in one directory into another, merging what is there.
+   */
+  protected function moveDirectoryContents(string $source, string $destination): void {
+    foreach (array_diff(scandir($source) ?: [], ['.', '..', '__MACOSX', '.DS_Store']) as $entry) {
+      $from = $source . '/' . $entry;
+      $to = $destination . '/' . $entry;
+
+      if (is_dir($from)) {
+        $this->fileSystem->prepareDirectory($to, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+        $this->moveDirectoryContents($from, $to);
+        continue;
+      }
+
+      // Moved rather than copied: the staging directory is ours and a pack can
+      // be gigabytes, so there is no reason to write it twice.
+      $this->fileSystem->move($from, $to, FileSystemInterface::EXISTS_REPLACE);
+    }
+  }
+
+  /**
+   * The files behind a media item's source field.
+   *
+   * @return \Drupal\file\FileInterface[]
+   *   The referenced files, which may be none.
+   */
+  protected function mediaSourceFiles(MediaInterface $media): array {
+    $media_type = \Drupal::entityTypeManager()
+      ->getStorage('media_type')
+      ->load($media->bundle());
+    $source_field = $media_type?->getSource()
+      ->getConfiguration()['source_field'] ?? NULL;
+
+    if ($source_field === NULL || !$media->hasField($source_field)) {
+      return [];
+    }
+
+    $files = [];
+    foreach ($media->get($source_field) as $item) {
+      $file = $item->entity ?? NULL;
+      if ($file instanceof FileInterface) {
+        $files[] = $file;
+      }
+    }
+
+    return $files;
   }
 
   /**
@@ -1609,7 +1779,7 @@ TXT;
     file_put_contents($game_folder . '/io-boards.yaml', Yaml::encode($this->buildYaml($node, $objects)));
     file_put_contents($game_folder . '/ppuc.ini', $this->buildPpucIni($node));
     $this->writeRuleFiles($node, $game_folder . '/rules');
-    $this->copyGameFolderAssets($node, $game_folder);
+    $this->copyGameFolderAssets($node, $game_folder, $rom);
     $this->writeGameFolderReadme($tmp . '/' . $folder_name, $rom);
 
     $tar = $this->fileSystem->getTempDirectory() . '/' . $folder_name . '-' . $node->id() . '.tar';
@@ -1636,14 +1806,17 @@ TXT;
     }
     $archive->compress(\Phar::GZ);
 
-    return new Response(
-      file_get_contents($gz),
-      200,
-      [
-        'Content-Type' => 'application/gzip',
-        'Content-Disposition' => 'attachment; filename=' . $this->sanitizeGeneratedFilename($folder_name . '.tar.gz', 'tar.gz'),
-      ]
+    // Streamed, not read into a string: a game folder carrying a PUP pack runs
+    // to gigabytes and file_get_contents() would need all of it in memory at
+    // once. The file is deleted after it has been sent.
+    $response = new BinaryFileResponse($gz, 200, ['Content-Type' => 'application/gzip']);
+    $response->setContentDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $this->sanitizeGeneratedFilename($folder_name . '.tar.gz', 'tar.gz')
     );
+    $response->deleteFileAfterSend(TRUE);
+
+    return $response;
   }
 
   /**

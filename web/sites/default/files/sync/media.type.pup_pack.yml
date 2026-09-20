@@ -1,0 +1,14 @@
+uuid: 2517f4ad-d0e0-4866-ad62-3fd419d20a4a
+langcode: en
+status: true
+dependencies: {  }
+id: pup_pack
+label: 'PUP pack'
+description: 'PUP video pack as a zip archive. Its contents are unpacked into the game folder on export.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file_1
+field_map:
+  name: name

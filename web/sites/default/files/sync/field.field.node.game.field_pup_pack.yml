@@ -1,0 +1,29 @@
+uuid: b1976830-8c28-4834-8c5d-8c5dd3b8f49b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pup_pack
+    - media.type.pup_pack
+    - node.type.game
+id: node.game.field_pup_pack
+field_name: field_pup_pack
+entity_type: node
+bundle: game
+label: 'PUP pack'
+description: 'PUP video zip, unpacked into pup/pupvideos/ on export.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      pup_pack: pup_pack
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

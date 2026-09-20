@@ -1,0 +1,27 @@
+uuid: ce739f10-a60c-4eb0-b356-2281a762ba49
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_media_file_1
+    - media.type.altsound
+  module:
+    - file
+id: media.altsound.field_media_file_1
+field_name: field_media_file_1
+entity_type: media
+bundle: altsound
+label: File
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: altsound
+  file_extensions: zip
+  max_filesize: ''
+  description_field: true
+field_type: file

@@ -1,0 +1,14 @@
+uuid: 9d46fbf2-139b-40c8-9320-39f8ac71b8ae
+langcode: en
+status: true
+dependencies: {  }
+id: altsound
+label: 'AltSound package'
+description: 'AltSound package as a zip archive. Its contents are unpacked into the game folder on export.'
+source: file
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_file_1
+field_map:
+  name: name
