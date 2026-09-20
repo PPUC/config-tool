@@ -267,6 +267,14 @@ class GamesControllerPpucIniTest extends TestCase {
     }
   }
 
+  public function testTheSwitchReplyDelayDefaultsToNothing(): void {
+    // 0 everywhere else: firmware, libppuc and the ppuc binary. The 2 ms this
+    // used to export was compensating for the 32-byte UART receive buffer on
+    // pre-0.3.0 boards, and firmware 0.3.0 sizes that FIFO to 512 bytes. A
+    // delay of 2 ms per board is dead air on the bus that buys nothing.
+    $this->assertSame('0', $this->iniValue($this->game('Flash'), 'SwitchReplyDelayUs'));
+  }
+
   public function testFirmwareFlashingIsOffUnlessAskedFor(): void {
     $ini = $this->call('buildPpucIni', $this->game('Flash'));
 

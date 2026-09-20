@@ -285,7 +285,13 @@ class GamesController extends ControllerBase {
         'AllowDevFirmwareUpdate' => $value('field_ini_allow_dev_fw_update', 'false'),
         'AllowFirmwareDowngrade' => $value('field_ini_allow_fw_downgrade', 'false'),
         'AllowUnvalidatedFirmwareUpdate' => $value('field_ini_allow_unvalidated_fw', 'false'),
-        'SwitchReplyDelayUs' => $value('field_ini_switch_reply_us', '2000'),
+        // 0 everywhere else -- firmware, libppuc and this binary. The 2 ms
+        // this used to default to was compensating for the 32-byte UART receive
+        // buffer on pre-0.3.0 boards, which drops switch replies the parser
+        // never sees; firmware 0.3.0 sizes that FIFO to 512 bytes and the delay
+        // stops doing that job. It must not be lowered on older firmware.
+        // See ppuc/docs/V2_PROTOCOL.md, "The receive buffer is the one that bites".
+        'SwitchReplyDelayUs' => $value('field_ini_switch_reply_us', '0'),
         'SwitchRefreshIdleMs' => $value('field_ini_switch_refresh_ms', '15000'),
         'OutputFrameIntervalMs' => $value('field_ini_output_frame_ms', '4'),
         'BallSearch' => $value('field_ini_ball_search', 'false'),
