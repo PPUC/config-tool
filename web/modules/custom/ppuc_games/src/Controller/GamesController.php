@@ -23,6 +23,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class GamesController extends ControllerBase {
 
+  /**
+   * What the game folder is called inside the archive.
+   *
+   * Not the game's name: the runtime looks for a folder called 'ppuc' on the
+   * USB stick, so the thing the user copies has to be called that already.
+   */
+  protected const GAME_FOLDER_NAME = 'ppuc';
+
   public function __construct(protected FileSystemInterface $fileSystem, protected ExporterInterface $exporter) {}
 
   /**
@@ -1462,20 +1470,38 @@ class GamesController extends ControllerBase {
     }
   }
 
-  protected function writeGameFolderReadme(string $game_folder): void {
+  protected function writeGameFolderReadme(string $folder, string $rom): void {
     $readme = <<<TXT
-This folder contains the generated PPUC configuration and assets known to the config-tool.
+This is the generated PPUC configuration for this game, in the folder named 'ppuc'
+beside this file.
 
-After extracting it, add optional runtime assets directly into this folder:
-- directb2s backglass files into this top-level game folder
+To run the game on a PPUC machine:
+
+1. Copy the whole 'ppuc' folder to the top level of a USB stick.
+2. Plug the stick into the machine and switch it on.
+
+The folder has to keep its name and has to sit at the top level of the stick, which
+is where the runtime looks for it. Put only one game on a stick.
+
+To run it from a computer instead, point ppuc-pinmame at the folder:
+
+    ppuc-pinmame --game /path/to/ppuc
+
+Assets the config-tool does not hold go into the 'ppuc' folder by hand:
+- ROM colorization (.cROMc) into pinmame/altcolor/{$rom}/
+- background music into music/
 - PUP packs into pup/pupvideos/
-- AltSound packages into pinmame/altsound/<rom-name>/
-- background music files into music/
-- ROM colorization files into pinmame/altcolor/<rom-name>/
-- additional PinMAME files, nvram, cfg, snapshots, or state files into the matching pinmame/ subfolders
+- AltSound packages into pinmame/altsound/{$rom}/
+- directb2s backglass files into the top level of the folder
+- existing PinMAME nvram, cfg, snapshots or state files into the matching
+  pinmame/ subfolders
+
+Each of those also has a switch in the game's PPUC Settings in the config-tool -
+Serum/AltColor, PUP, AltSound - and dropping the files in does nothing until the
+matching switch is on.
 
 TXT;
-    file_put_contents($game_folder . '/README.txt', $readme);
+    file_put_contents($folder . '/README.txt', $readme);
   }
 
   protected function getFirstReferencedMediaSourceFilename(NodeInterface $node, string $field_name): string {
@@ -1566,12 +1592,16 @@ TXT;
       throw $this->createNotFoundException();
     }
 
-    $folder_name = $this->sanitizeGameFolderName($node);
+    // The archive holds one folder per game, named for the game and its uuid so
+    // two downloads never collide. Inside it the game folder itself is always
+    // called 'ppuc', because that is the name the runtime looks for: on a
+    // Raspberry Pi the whole install is "copy this ppuc folder onto a stick".
+    $folder_name = $this->sanitizeGameFolderName($node) . '_' . $node->uuid();
     $tmp = $this->fileSystem->getTempDirectory() . '/ppuc-game-folder-' . $node->id();
     $this->fileSystem->deleteRecursive($tmp);
     $this->fileSystem->prepareDirectory($tmp, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
-    $game_folder = $tmp . '/' . $folder_name;
+    $game_folder = $tmp . '/' . $folder_name . '/' . self::GAME_FOLDER_NAME;
     $rom = $this->getGameRomName($node);
     $this->prepareGameFolderSkeleton($game_folder, $rom);
 
@@ -1580,7 +1610,7 @@ TXT;
     file_put_contents($game_folder . '/ppuc.ini', $this->buildPpucIni($node));
     $this->writeRuleFiles($node, $game_folder . '/rules');
     $this->copyGameFolderAssets($node, $game_folder);
-    $this->writeGameFolderReadme($game_folder);
+    $this->writeGameFolderReadme($tmp . '/' . $folder_name, $rom);
 
     $tar = $this->fileSystem->getTempDirectory() . '/' . $folder_name . '-' . $node->id() . '.tar';
     $gz = $tar . '.gz';
@@ -1598,7 +1628,7 @@ TXT;
         continue;
       }
       try {
-        $archive->addEmptyDir($folder_name . '/' . $folder);
+        $archive->addEmptyDir($folder_name . '/' . self::GAME_FOLDER_NAME . '/' . $folder);
       }
       catch (\Exception) {
         // The directory may already have been added implicitly with files.
