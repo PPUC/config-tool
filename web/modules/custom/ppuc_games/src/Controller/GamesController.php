@@ -84,7 +84,6 @@ class GamesController extends ControllerBase {
 
     return match ($switch->get('field_debounce_mode')->entity?->uuid()) {
       'a95ab8d7-fd1d-4bd1-94df-d00eee01ec62' => 'fastFlip',
-      '01d97733-2522-4b50-aec8-862a7fb4f4c5' => 'slowStable',
       default => 'standard',
     };
   }

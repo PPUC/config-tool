@@ -191,3 +191,63 @@ function ppuc_games_update_11003(): string {
     $deleted
   );
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Removes the slowStable switch debounce mode.
+ *
+ * It was never a debounce mode. Both it and Standard used the same window -
+ * the debounce value in milliseconds - and the firmware treated them
+ * identically everywhere except one line, which kept a slowStable switch off
+ * the interrupt commit path. Such a switch was only ever committed from the
+ * board's poll loop, so it reported late, and on a board whose poll loop was
+ * not running it never reported at all.
+ *
+ * That failure is silent and looks exactly like broken hardware. A machine
+ * spent a day appearing to have a dead coin door switch, which left three of
+ * its four boards refusing high power, and two dead drop target bank
+ * switches, which meant the banks never reset. All three were slowStable; the
+ * individual targets beside them were Standard and worked perfectly.
+ *
+ * Switches are moved to Standard and keep their debounce value, so timing is
+ * unchanged. Only the commit path differs, which is the point.
+ */
+function ppuc_games_update_11004(): string {
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+  $slow = $term_storage->loadByProperties(['uuid' => '01d97733-2522-4b50-aec8-862a7fb4f4c5']);
+  $slow = $slow ? reset($slow) : NULL;
+
+  if (!$slow) {
+    return 'slowStable term is already gone, nothing to do.';
+  }
+
+  $standard = $term_storage->loadByProperties(['uuid' => '0d8d70b5-5c4d-486a-a738-cebe3279f67d']);
+  $standard = $standard ? reset($standard) : NULL;
+
+  if (!$standard) {
+    // Repointing at nothing would leave the field empty, which the exporter
+    // reads as standard anyway - but the editing UI would show a blank mode
+    // and the next person would have to guess. Better to stop than to guess
+    // for them.
+    throw new \RuntimeException('Cannot migrate slowStable switches: the Standard debounce term is missing.');
+  }
+
+  $ids = $node_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('field_debounce_mode.target_id', $slow->id())
+    ->execute();
+
+  $moved = 0;
+  foreach ($node_storage->loadMultiple($ids) as $switch) {
+    $switch->set('field_debounce_mode', ['target_id' => $standard->id()]);
+    $switch->save();
+    $moved++;
+  }
+
+  $slow->delete();
+
+  return sprintf('Moved %d switch(es) from slowStable to Standard and removed the term.', $moved);
+}
