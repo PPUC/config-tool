@@ -276,6 +276,15 @@ class GamesController extends ControllerBase {
         'Translite' => $value('field_ini_translite'),
         'TransliteAttract' => $value('field_ini_translite_attract'),
       ],
+      // Levels, in percent, 100 being unchanged. MusicFiles and MusicGapMs stay
+      // under Paths where ppuc has always read them; only the levels are new,
+      // and a volume is not a path.
+      'Audio' => [
+        'Volume' => $value('field_ini_volume', '100'),
+        'RomVolume' => $value('field_ini_rom_volume', '100'),
+        'SpeechVolume' => $value('field_ini_speech_volume', '100'),
+        'MusicVolume' => $value('field_ini_music_volume', '100'),
+      ],
       'Backbox' => [
         'Address' => $value('field_ini_backbox_address'),
         'Port' => $value('field_ini_backbox_port', '6789'),

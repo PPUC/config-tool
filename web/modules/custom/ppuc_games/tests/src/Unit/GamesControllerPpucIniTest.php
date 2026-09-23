@@ -171,6 +171,55 @@ class GamesControllerPpucIniTest extends TestCase {
     $this->fail(sprintf('ppuc.ini has no %s key', $key));
   }
 
+  /**
+   * Which section a key was written under.
+   */
+  private function iniSectionOf(NodeInterface $game, string $key): string {
+    $ini = $this->call('buildPpucIni', $game);
+    $section = '';
+    foreach (explode("\n", $ini) as $line) {
+      $line = trim($line);
+      if (str_starts_with($line, '[') && str_ends_with($line, ']')) {
+        $section = substr($line, 1, -1);
+      }
+      elseif (str_starts_with($line, $key . '=')) {
+        return $section;
+      }
+    }
+    $this->fail(sprintf('ppuc.ini has no %s key', $key));
+  }
+
+  // --- audio levels -----------------------------------------------------
+
+  public function testTheLevelsDefaultToUnchanged(): void {
+    // A game whose settings nobody has opened must sound exactly as it did
+    // before there were levels at all.
+    $game = $this->game('Flash');
+
+    $this->assertSame('100', $this->iniValue($game, 'Volume'));
+    $this->assertSame('100', $this->iniValue($game, 'RomVolume'));
+    $this->assertSame('100', $this->iniValue($game, 'SpeechVolume'));
+    $this->assertSame('100', $this->iniValue($game, 'MusicVolume'));
+  }
+
+  public function testTheLevelsAreWrittenUnderAudio(): void {
+    // The section is load-bearing, not decoration: ppuc's ini parser matches
+    // keys within a section, so a level written anywhere else is read by
+    // nothing and silently has no effect.
+    $game = $this->game('Flash');
+
+    $this->assertSame('Audio', $this->iniSectionOf($game, 'Volume'));
+    $this->assertSame('Audio', $this->iniSectionOf($game, 'RomVolume'));
+    $this->assertSame('Audio', $this->iniSectionOf($game, 'SpeechVolume'));
+    $this->assertSame('Audio', $this->iniSectionOf($game, 'MusicVolume'));
+  }
+
+  public function testAStoredLevelReachesTheIni(): void {
+    $game = $this->game('Flash', ['field_ini_rom_volume' => '42']);
+
+    $this->assertSame('42', $this->iniValue($game, 'RomVolume'));
+  }
+
   // --- the ROM name -----------------------------------------------------
 
   public function testTheRomNameComesFromTheUploadedRomFile(): void {

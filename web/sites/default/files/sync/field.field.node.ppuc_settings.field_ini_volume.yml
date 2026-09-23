@@ -1,0 +1,25 @@
+uuid: 1fac3285-437a-4aff-8b1e-af245940980a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_volume
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_volume
+field_name: field_ini_volume
+entity_type: node
+bundle: ppuc_settings
+label: 'Audio: Volume'
+description: 'Master level, applied on top of the others. 100 is unchanged; there is no boost above it, so balance is made by turning the louder source down.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 100
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: ' %'
+field_type: integer

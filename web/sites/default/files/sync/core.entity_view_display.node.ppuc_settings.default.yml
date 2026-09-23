@@ -45,6 +45,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_lamp_test
     - field.field.node.ppuc_settings.field_ini_music_files
     - field.field.node.ppuc_settings.field_ini_music_gap_ms
+    - field.field.node.ppuc_settings.field_ini_music_volume
     - field.field.node.ppuc_settings.field_ini_no_display
     - field.field.node.ppuc_settings.field_ini_no_serial
     - field.field.node.ppuc_settings.field_ini_no_sound
@@ -57,6 +58,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_plugin_dir
     - field.field.node.ppuc_settings.field_ini_pup
     - field.field.node.ppuc_settings.field_ini_pup_folder
+    - field.field.node.ppuc_settings.field_ini_rom_volume
     - field.field.node.ppuc_settings.field_ini_rounded_corners
     - field.field.node.ppuc_settings.field_ini_rules_path
     - field.field.node.ppuc_settings.field_ini_runtime_rules
@@ -71,6 +73,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_speech_pitch
     - field.field.node.ppuc_settings.field_ini_speech_rate
     - field.field.node.ppuc_settings.field_ini_speech_voice
+    - field.field.node.ppuc_settings.field_ini_speech_volume
     - field.field.node.ppuc_settings.field_ini_switch_refresh_ms
     - field.field.node.ppuc_settings.field_ini_switch_reply_us
     - field.field.node.ppuc_settings.field_ini_switch_test
@@ -91,6 +94,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_virtual_dmd_window
     - field.field.node.ppuc_settings.field_ini_virtual_dmd_x
     - field.field.node.ppuc_settings.field_ini_virtual_dmd_y
+    - field.field.node.ppuc_settings.field_ini_volume
     - field.field.node.ppuc_settings.field_ini_zedmd_brightness
     - field.field.node.ppuc_settings.field_ini_zedmd_debug
     - field.field.node.ppuc_settings.field_ini_zedmd_device
@@ -515,6 +519,42 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 8
+    region: content
+  field_ini_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_ini_rom_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_ini_speech_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_ini_music_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 12
     region: content
   field_ini_no_display:
     type: boolean

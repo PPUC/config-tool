@@ -1,0 +1,20 @@
+uuid: 0388db40-5f3e-4914-a93f-e69fb75b437d
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_volume
+field_name: field_ini_volume
+entity_type: node
+type: integer
+settings:
+  unsigned: true
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
