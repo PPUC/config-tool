@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '26f2598d49cdded025d7a07b17ba9d05c7cc1fb0',
+        'reference' => 'd9639c008eed5f0b89b74a391b4e3634facf3442',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -137,9 +137,9 @@
             'dev_requirement' => false,
         ),
         'doctrine/lexer' => array(
-            'pretty_version' => '3.0.1',
-            'version' => '3.0.1.0',
-            'reference' => '31ad66abc0fc9e1a1f2d9bc6a42668d2fbbcd6dd',
+            'pretty_version' => '3.0.2',
+            'version' => '3.0.2.0',
+            'reference' => 'e96fe45e92a54233726014a7cc7340abf29bb14c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../doctrine/lexer',
             'aliases' => array(),
@@ -990,7 +990,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '26f2598d49cdded025d7a07b17ba9d05c7cc1fb0',
+            'reference' => 'd9639c008eed5f0b89b74a391b4e3634facf3442',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1117,7 +1117,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'f1dd47da8977aa9dcb913f443ed6c26042da059f',
+            'reference' => 'ad6ba750d65226d4b70890f1cb1055c316d0f57c',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
