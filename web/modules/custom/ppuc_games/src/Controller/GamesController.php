@@ -16,6 +16,7 @@ use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,6 +44,20 @@ class GamesController extends ControllerBase {
    * JSON does not boot.
    */
   protected const GAME_FOLDER_ARCHIVE_PREFIX = 'PPUC_Game_Folder_';
+
+  /**
+   * What the runtime opens, and therefore what the downloads are called.
+   *
+   * ppuc reads these two by name from the game folder -- see ppuc.cpp, which
+   * loads `gameFolder / "io-boards.yaml"`. The names are not a label for the
+   * download, they are the contract with the machine, so the single-file
+   * downloads and the game folder have to agree on them. They did not: the
+   * folder wrote io-boards.yaml while the standalone download produced
+   * <Game>_<uuid>.yml, which has to be renamed by hand before the runtime will
+   * look at it. Both now come from here.
+   */
+  protected const CONFIG_FILENAME = 'io-boards.yaml';
+  protected const PPUC_INI_FILENAME = 'ppuc.ini';
 
   public function __construct(protected FileSystemInterface $fileSystem, protected ExporterInterface $exporter) {}
 
@@ -1210,10 +1225,6 @@ class GamesController extends ControllerBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException|\Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function streamPinMameYaml(NodeInterface $node): Response {
-    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '.yml', 'yml');
-    \Drupal::service('event_dispatcher')->dispatch($event);
-    $sanitized_filename = $event->getFilename();
-
     $objects = [];
 
     return new Response(
@@ -1221,7 +1232,7 @@ class GamesController extends ControllerBase {
       200,
       [
         'Content-Type' => 'application/yaml',
-        'Content-Disposition' => 'attachment; filename=' . $sanitized_filename,
+        'Content-Disposition' => $this->attachment(self::CONFIG_FILENAME),
       ]
     );
   }
@@ -1246,15 +1257,12 @@ class GamesController extends ControllerBase {
       throw $this->createNotFoundException();
     }
 
-    $event = new FileUploadSanitizeNameEvent(str_replace(' ', '_', $node->getTitle()) . '_' . $node->uuid() . '_ppuc.ini', 'ini');
-    \Drupal::service('event_dispatcher')->dispatch($event);
-
     return new Response(
       $this->buildPpucIni($node),
       200,
       [
         'Content-Type' => 'text/plain',
-        'Content-Disposition' => 'attachment; filename=' . $event->getFilename(),
+        'Content-Disposition' => $this->attachment(self::PPUC_INI_FILENAME),
       ]
     );
   }
@@ -1356,6 +1364,23 @@ class GamesController extends ControllerBase {
     return $rule->hasField('field_rules_editor_mode') && !$rule->get('field_rules_editor_mode')->isEmpty()
       ? (string) $rule->get('field_rules_editor_mode')->value
       : 'blockly';
+  }
+
+  /**
+   * A Content-Disposition header for a filename the runtime dictates.
+   *
+   * Quoted, via Symfony, rather than concatenated: the header was built as
+   * 'attachment; filename=' . $name, which a name containing a space or a
+   * semicolon turns into a malformed header and a differently named download.
+   *
+   * These names are also not put through FileUploadSanitizeNameEvent. That
+   * exists to make a name a user supplied safe to store, and it is free to
+   * rewrite what it is given -- transliterating, or appending an extension for
+   * sites that munge them. Applied to a fixed name the runtime requires, it
+   * could only break it.
+   */
+  protected function attachment(string $filename): string {
+    return HeaderUtils::makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
   }
 
   protected function buildRuleFilename(NodeInterface $rule, string $extension, bool $include_weight = true): string {
@@ -1786,8 +1811,8 @@ TXT;
     $this->prepareGameFolderSkeleton($game_folder, $rom);
 
     $objects = [];
-    file_put_contents($game_folder . '/io-boards.yaml', Yaml::encode($this->buildYaml($node, $objects)));
-    file_put_contents($game_folder . '/ppuc.ini', $this->buildPpucIni($node));
+    file_put_contents($game_folder . '/' . self::CONFIG_FILENAME, Yaml::encode($this->buildYaml($node, $objects)));
+    file_put_contents($game_folder . '/' . self::PPUC_INI_FILENAME, $this->buildPpucIni($node));
     $this->writeRuleFiles($node, $game_folder . '/rules');
     $this->copyGameFolderAssets($node, $game_folder, $rom);
     $this->writeGameFolderReadme($tmp . '/' . $folder_name, $rom);
