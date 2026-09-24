@@ -148,36 +148,42 @@ $slides = [
     'duration' => 11000,
   ],
 
-  // The flyers the operators saw in 1978.
+  // The 1978 Williams flyer, four pages, in the order an operator would have
+  // opened it. Titles say what is on the page rather than numbering it: the
+  // page order of a folded flyer is a guess unless you are holding it.
   [
-    'title' => 'High voltage action',
-    'text' => 'How Williams sold it: thunder, lightning, and a sound nobody had heard in an arcade before.',
+    'title' => 'The flyer, 1978',
+    'text' => 'This is how Flash arrived: a cover claiming record earnings on location, before anybody outside Williams had played it.',
     'weight' => 2200,
-    'image' => 'flyer-high-voltage.jpg',
-  ],
-  [
-    'title' => 'Record breaking earnings',
-    'text' => 'The flyer that went to operators. On location, it out-earned everything Williams had built.',
-    'weight' => 2300,
     'image' => 'flyer-backglass.jpg',
   ],
   [
-    'title' => 'The playfield in 1978',
-    'text' => 'Three flippers, two banks of drop targets, a spinner and a kick-out hole. Nothing here has changed.',
-    'weight' => 2400,
-    'image' => 'flyer-us-playfield.jpg',
+    'title' => 'Electrifying',
+    'text' => '"Thunder and Lightning sounds never before experienced in pinball." The background sound that built as you played was sold as the headline feature.',
+    'weight' => 2300,
+    'image' => 'flyer-high-voltage.jpg',
   ],
   [
-    'title' => 'The Hot One',
-    'text' => 'Williams called itself the Hot One that year, and Flash was the reason.',
-    'weight' => 2500,
+    'title' => 'More per square inch',
+    'text' => '"From the first pull of the plunger, FLASH packs more lights and action per square inch of playfield than any other game of its kind."',
+    'weight' => 2400,
     'image' => 'flyer-cabinet.jpg',
   ],
+  [
+    'title' => 'New thunder and lightning playfield',
+    'text' => 'Three flippers, two banks of drop targets, a spinner and a kick-out hole. Nothing on this playfield has changed since.',
+    'weight' => 2500,
+    'image' => 'flyer-us-playfield.jpg',
+  ],
+
+  // One slide for the Japanese flyer, and only the two lines a reader would
+  // look at first. Translating all of it would be a page of text on a screen
+  // somebody walks past.
   [
     'title' => 'Sega brought it to Japan',
     // No Japanese in the text: the font PPUC draws with has no CJK glyphs and
     // renders it as empty boxes. The flyer says it in Japanese anyway.
-    'text' => 'Sega Enterprises distributed Williams games in Japan. Their flyer led with a new sales record, from Sega\'s own location test.',
+    'text' => 'The headline reads: thunder rolls, the field flashes, a new flipper game has arrived. The pink arrow claims a new sales record, from Sega\'s own location test.',
     'weight' => 2600,
     'image' => 'flyer-japan-sega.jpg',
   ],

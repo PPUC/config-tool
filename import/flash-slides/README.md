@@ -17,23 +17,22 @@ The slides with no image are the rules and the tips. Photographs of this
 machine's own playfield go on those later, with markers pointing at the shots
 being described.
 
-## The flyer scans are not in git
+## The images
 
-`images/` holds five 1978 flyer and press scans, and is deliberately ignored.
-They are Williams and Sega material, reproduced from scans that are not freely
-licensed, and this repository is public. Showing them on the machine they are
-about is one thing; redistributing them in a git repository is another, and it
-cannot be undone once pushed.
-
-Put the files back under `images/` before running the script:
+`images/` holds the scans the script uploads:
 
 | file | what it is |
 |---|---|
+| `flyer-backglass.jpg` | the flyer cover: backglass, "On location RECORD BREAKING earnings" |
 | `flyer-high-voltage.jpg` | "Electrifying... high voltage action!" |
-| `flyer-backglass.jpg` | backglass, "On location RECORD BREAKING earnings" |
-| `flyer-us-playfield.jpg` | US flyer, playfield photograph with callouts |
-| `flyer-cabinet.jpg` | cabinet photograph, a player at the machine |
+| `flyer-cabinet.jpg` | the cabinet, a player at the machine |
+| `flyer-us-playfield.jpg` | the playfield page, with the feature list |
 | `flyer-japan-sega.jpg` | Sega Enterprises' Japanese flyer |
+
+Once uploaded they are file entities like any other, so `/node/195/zip` carries
+them into the game archive the same way it carries the translite, the ROM and
+the manual: base64 inside the file entity, not a path that has to exist on the
+other machine.
 
 A slide whose image is missing is still created, with its words and no
 photograph.

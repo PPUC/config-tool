@@ -1417,18 +1417,37 @@ class GamesController extends ControllerBase {
    * was still writing.
    */
   protected function getSlideNodes(NodeInterface $game): array {
+    return $this->querySlideNodes($game, TRUE);
+  }
+
+  /**
+   * Every slide of a game, published or not.
+   *
+   * The game folder a machine runs gets published slides only: an unpublished
+   * slide is one somebody is still writing, and it has no business appearing
+   * on a machine in a bar. A game archive is the opposite case -- it is the
+   * whole game moving to another instance, and leaving the drafts behind would
+   * lose work that only exists here.
+   */
+  protected function getAllSlideNodes(NodeInterface $game): array {
+    return $this->querySlideNodes($game, FALSE);
+  }
+
+  protected function querySlideNodes(NodeInterface $game, bool $published_only): array {
     if ($game->bundle() !== 'game') {
       return [];
     }
 
-    $ids = \Drupal::entityQuery('node')
+    $query = \Drupal::entityQuery('node')
       ->accessCheck(FALSE)
       ->condition('type', 'slide')
       ->condition('field_game.target_id', $game->id())
-      ->condition('status', 1)
       ->sort('field_weight.value', 'ASC')
-      ->sort('title', 'ASC')
-      ->execute();
+      ->sort('title', 'ASC');
+    if ($published_only) {
+      $query->condition('status', 1);
+    }
+    $ids = $query->execute();
 
     return $ids ? Node::loadMultiple($ids) : [];
   }
@@ -2043,6 +2062,12 @@ TXT;
 
     foreach ($this->getRuleNodes($node) as $rule) {
       $this->exporter->exportEntity($rule, TRUE);
+    }
+    // With dependencies, which is what carries the photographs: a slide's
+    // image is a file entity the slide references, exactly as the translite,
+    // the ROM and the manual are files the game references.
+    foreach ($this->getAllSlideNodes($node) as $slide) {
+      $this->exporter->exportEntity($slide, TRUE);
     }
     $settings = $this->getIniSettingsNode($node);
     if ($settings instanceof NodeInterface) {
