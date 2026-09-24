@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.slide.field_duration
     - field.field.node.slide.field_game
     - field.field.node.slide.field_image
+    - field.field.node.slide.field_slide_markers
     - field.field.node.slide.field_slide_text
     - field.field.node.slide.field_weight
     - node.type.slide
@@ -44,6 +45,13 @@ content:
         attribute: lazy
     third_party_settings: {  }
     weight: 3
+    region: content
+  field_slide_markers:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
     region: content
   field_slide_text:
     type: text_default

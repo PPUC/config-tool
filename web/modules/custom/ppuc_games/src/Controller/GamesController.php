@@ -1373,7 +1373,7 @@ class GamesController extends ControllerBase {
     return !$rule->hasField('field_enabled') || $rule->get('field_enabled')->isEmpty() || (bool) $rule->get('field_enabled')->value;
   }
 
-  protected function getRuleWeight(NodeInterface $rule): int {
+  protected function getNodeWeight(NodeInterface $rule): int {
     return $rule->hasField('field_weight') && !$rule->get('field_weight')->isEmpty() ? (int) $rule->get('field_weight')->value : 0;
   }
 
@@ -1403,10 +1403,152 @@ class GamesController extends ControllerBase {
   protected function buildRuleFilename(NodeInterface $rule, string $extension, bool $include_weight = true): string {
     $base = preg_replace('/[^a-z0-9]+/', '-', strtolower($rule->getTitle()));
     $base = trim($base ?: 'rule', '-');
-    $filename = ($include_weight ? sprintf('%04d-', $this->getRuleWeight($rule)) : '') . $base . '.' . $extension;
+    $filename = ($include_weight ? sprintf('%04d-', $this->getNodeWeight($rule)) : '') . $base . '.' . $extension;
     $event = new FileUploadSanitizeNameEvent($filename, $extension);
     \Drupal::service('event_dispatcher')->dispatch($event);
     return $event->getFilename();
+  }
+
+  /**
+   * The slides of a game, in the order they play.
+   *
+   * Published is the switch, as it is for switches: an unpublished slide is
+   * not written to the folder at all, so a machine cannot show one somebody
+   * was still writing.
+   */
+  protected function getSlideNodes(NodeInterface $game): array {
+    if ($game->bundle() !== 'game') {
+      return [];
+    }
+
+    $ids = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
+      ->condition('type', 'slide')
+      ->condition('field_game.target_id', $game->id())
+      ->condition('status', 1)
+      ->sort('field_weight.value', 'ASC')
+      ->sort('title', 'ASC')
+      ->execute();
+
+    return $ids ? Node::loadMultiple($ids) : [];
+  }
+
+  protected function buildSlideFilename(NodeInterface $slide, string $extension): string {
+    $base = preg_replace('/[^a-z0-9]+/', '-', strtolower($slide->getTitle()));
+    $base = trim($base ?: 'slide', '-');
+    return sprintf('%04d-', $this->getNodeWeight($slide)) . $base . '.' . $extension;
+  }
+
+  /**
+   * The text of a slide as the machine will draw it: plain, unwrapped.
+   *
+   * The field has a text format behind it, so it can hold markup that means
+   * nothing to a renderer drawing a line of words over a photograph.
+   */
+  protected function slidePlainText(NodeInterface $slide, string $field): string {
+    if (!$slide->hasField($field) || $slide->get($field)->isEmpty()) {
+      return '';
+    }
+    $value = (string) $slide->get($field)->value;
+    $value = str_replace(['<br />', '<br/>', '<br>', '</p>'], "\n", $value);
+    return trim(html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5));
+  }
+
+  /**
+   * The markers of a slide, validated.
+   *
+   * Coordinates run 0 to 1 across the picture rather than in pixels, so they
+   * survive it being scaled to whatever screen the machine has. A marker
+   * outside the picture, or without a position, is dropped rather than
+   * exported: a machine drawing an arrow off the edge helps nobody, and the
+   * export must not fail over a typo in a slide.
+   */
+  protected function parseSlideMarkers(NodeInterface $slide): array {
+    $raw = $this->slidePlainText($slide, 'field_slide_markers');
+    if ($raw === '') {
+      return [];
+    }
+
+    try {
+      $decoded = Yaml::decode($raw);
+    }
+    catch (\Throwable $e) {
+      return [];
+    }
+    if (!is_array($decoded)) {
+      return [];
+    }
+
+    $markers = [];
+    foreach ($decoded as $entry) {
+      if (!is_array($entry) || !isset($entry['x'], $entry['y'])) {
+        continue;
+      }
+      $x = (float) $entry['x'];
+      $y = (float) $entry['y'];
+      if ($x < 0 || $x > 1 || $y < 0 || $y > 1) {
+        continue;
+      }
+      $marker = ['x' => round($x, 4), 'y' => round($y, 4)];
+      if (isset($entry['number'])) {
+        $marker['number'] = (int) $entry['number'];
+      }
+      $pointer = isset($entry['pointer']) ? (string) $entry['pointer'] : '';
+      if (in_array($pointer, ['left', 'right', 'above', 'below'], TRUE)) {
+        $marker['pointer'] = $pointer;
+      }
+      $markers[] = $marker;
+    }
+
+    return $markers;
+  }
+
+  /**
+   * Writes the slides folder: the photographs, and slides.yaml beside them.
+   */
+  protected function writeSlideFiles(NodeInterface $game, string $slides_folder): void {
+    $slides = $this->getSlideNodes($game);
+    if (!$slides) {
+      return;
+    }
+
+    $this->fileSystem->prepareDirectory($slides_folder,
+      FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+    $entries = [];
+    foreach ($slides as $slide) {
+      $entry = ['title' => trim($slide->label())];
+
+      if ($slide->hasField('field_image') && !$slide->get('field_image')->isEmpty()) {
+        $file = $slide->get('field_image')->entity ?? NULL;
+        if ($file instanceof FileInterface) {
+          $extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION) ?: 'png';
+          $filename = $this->buildSlideFilename($slide, strtolower($extension));
+          $this->fileSystem->copy($file->getFileUri(), $slides_folder . '/' . $filename,
+            FileSystemInterface::EXISTS_REPLACE);
+          $entry['image'] = $filename;
+        }
+      }
+
+      if ($text = $this->slidePlainText($slide, 'field_slide_text')) {
+        $entry['text'] = $text;
+      }
+      if ($slide->hasField('field_duration') && !$slide->get('field_duration')->isEmpty()) {
+        $entry['durationMs'] = (int) $slide->get('field_duration')->value;
+      }
+      if ($markers = $this->parseSlideMarkers($slide)) {
+        $entry['markers'] = $markers;
+      }
+
+      // A slide with neither a picture nor words would be a blank screen.
+      if (isset($entry['image']) || isset($entry['text'])) {
+        $entries[] = $entry;
+      }
+    }
+
+    if ($entries) {
+      file_put_contents($slides_folder . '/slides.yaml', Yaml::encode(['slides' => $entries]));
+    }
   }
 
   protected function writeRuleFiles(NodeInterface $game, string $rules_folder): void {
@@ -1831,6 +1973,7 @@ TXT;
     file_put_contents($game_folder . '/' . self::CONFIG_FILENAME, Yaml::encode($this->buildYaml($node, $objects)));
     file_put_contents($game_folder . '/' . self::PPUC_INI_FILENAME, $this->buildPpucIni($node));
     $this->writeRuleFiles($node, $game_folder . '/rules');
+    $this->writeSlideFiles($node, $game_folder . '/slides');
     $this->copyGameFolderAssets($node, $game_folder, $rom);
     $this->writeGameFolderReadme($tmp . '/' . $folder_name, $rom);
 

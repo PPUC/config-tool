@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.slide.field_duration
     - field.field.node.slide.field_game
     - field.field.node.slide.field_image
+    - field.field.node.slide.field_slide_markers
     - field.field.node.slide.field_slide_text
     - field.field.node.slide.field_weight
     - node.type.slide
@@ -19,7 +20,7 @@ mode: default
 content:
   field_duration:
     type: number
-    weight: 5
+    weight: 6
     region: content
     settings:
       placeholder: ''
@@ -41,6 +42,14 @@ content:
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_slide_markers:
+    type: text_textarea
+    weight: 5
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
     third_party_settings: {  }
   field_slide_text:
     type: text_textarea

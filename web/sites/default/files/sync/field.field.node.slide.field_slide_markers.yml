@@ -1,0 +1,22 @@
+uuid: 0f005df1-f7b5-4071-8af4-e7cabb89d039
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_slide_markers
+    - node.type.slide
+  module:
+    - text
+id: node.slide.field_slide_markers
+field_name: field_slide_markers
+entity_type: node
+bundle: slide
+label: Markers
+description: 'Points on the photograph, as YAML. x and y run from 0 to 1 across the picture, so they survive it being scaled. pointer is the side the arrow comes in from - left, right, above or below - so it never covers what it points at. Numbered markers pulse in order, which is what makes a sequence readable. Example:<br /><code>- number: 1<br />&nbsp;&nbsp;x: 0.31<br />&nbsp;&nbsp;y: 0.62<br />&nbsp;&nbsp;pointer: left<br />- number: 2<br />&nbsp;&nbsp;x: 0.68<br />&nbsp;&nbsp;y: 0.44<br />&nbsp;&nbsp;pointer: below</code>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long
