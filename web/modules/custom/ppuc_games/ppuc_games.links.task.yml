@@ -18,6 +18,11 @@ ppuc_games.rules:
   base_route: entity.node.canonical
   title: 'Rules'
 
+ppuc_games.slides_add:
+  route_name: ppuc_games.slides.add
+  base_route: entity.node.canonical
+  title: 'Add Slide'
+
 ppuc_games.rules_download:
   route_name: ppuc_games.rules_download
   base_route: entity.node.canonical

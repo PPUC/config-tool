@@ -55,6 +55,19 @@ ppuc_games.add_rule:
       node:
         type: entity:node
 
+ppuc_games.slides.add:
+  path: '/node/{node}/slides/add'
+  defaults:
+    _controller: '\Drupal\ppuc_games\Controller\GamesController::addSlide'
+    _title: 'Add Slide'
+  requirements:
+    _permission: 'create slide content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 ppuc_games.rules_download:
   path: '/node/{node}/rules.tar.gz'
   defaults:

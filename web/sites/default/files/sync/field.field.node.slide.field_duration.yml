@@ -1,0 +1,25 @@
+uuid: bd87145e-43db-4efa-9494-c9531c1e433f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_duration
+    - node.type.slide
+id: node.slide.field_duration
+field_name: field_duration
+entity_type: node
+bundle: slide
+label: Duration
+description: 'How long this slide stays on screen, in milliseconds. Empty uses the value from ppuc.ini.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 8000
+default_value_callback: ''
+settings:
+  min: 500
+  max: null
+  prefix: ''
+  suffix: ' ms'
+field_type: integer

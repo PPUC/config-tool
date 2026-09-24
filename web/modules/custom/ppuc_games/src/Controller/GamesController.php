@@ -1299,6 +1299,14 @@ class GamesController extends ControllerBase {
     return $this->redirect('node.add', ['node_type' => 'rule'], ['query' => ['game' => $node->id()]]);
   }
 
+  public function addSlide(NodeInterface $node): RedirectResponse {
+    if ($node->bundle() !== 'game') {
+      throw $this->createNotFoundException();
+    }
+
+    return $this->redirect('node.add', ['node_type' => 'slide'], ['query' => ['game' => $node->id()]]);
+  }
+
   /**
    * Opens the game's ppuc.ini settings for editing.
    *

@@ -1,0 +1,25 @@
+uuid: 28b785ce-76a2-43ae-bf55-e89a045f94eb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_weight
+    - node.type.slide
+id: node.slide.field_weight
+field_name: field_weight
+entity_type: node
+bundle: slide
+label: Weight
+description: 'Slides are shown in this order, and the number becomes the filename prefix.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -1,0 +1,18 @@
+uuid: 15d64e85-5439-41be-ae92-24765583e7ae
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: Slide
+type: slide
+description: 'A how-to-play slide shown on the backbox screen while the machine sits in attract.'
+help: null
+new_revision: false
+preview_mode: 1
+display_submitted: false
