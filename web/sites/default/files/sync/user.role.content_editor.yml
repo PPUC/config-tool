@@ -40,6 +40,7 @@ permissions:
   - 'access files overview'
   - 'access help pages'
   - 'access toolbar'
+  - 'administer node published status'
   - 'clone addressable_led content'
   - 'clone addressable_leds content'
   - 'clone dip_switch content'

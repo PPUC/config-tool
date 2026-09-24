@@ -423,27 +423,6 @@ content:
     settings:
       placeholder: ''
     third_party_settings: {  }
-  field_ini_volume:
-    type: number
-    weight: 9
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_ini_rom_volume:
-    type: number
-    weight: 10
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_ini_speech_volume:
-    type: number
-    weight: 11
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
   field_ini_music_volume:
     type: number
     weight: 12
@@ -538,6 +517,13 @@ content:
     region: content
     settings:
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_rom_volume:
+    type: number
+    weight: 10
+    region: content
+    settings:
       placeholder: ''
     third_party_settings: {  }
   field_ini_rounded_corners:
@@ -641,6 +627,13 @@ content:
     region: content
     settings:
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_speech_volume:
+    type: number
+    weight: 11
+    region: content
+    settings:
       placeholder: ''
     third_party_settings: {  }
   field_ini_switch_refresh_ms:
@@ -782,6 +775,13 @@ content:
   field_ini_virtual_dmd_y:
     type: number
     weight: 85
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_volume:
+    type: number
+    weight: 9
     region: content
     settings:
       placeholder: ''

@@ -520,33 +520,6 @@ content:
     third_party_settings: {  }
     weight: 8
     region: content
-  field_ini_volume:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 9
-    region: content
-  field_ini_rom_volume:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 10
-    region: content
-  field_ini_speech_volume:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 11
-    region: content
   field_ini_music_volume:
     type: number_integer
     label: above
@@ -669,6 +642,15 @@ content:
       link_rel: canonical
     third_party_settings: {  }
     weight: 32
+    region: content
+  field_ini_rom_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 10
     region: content
   field_ini_rounded_corners:
     type: number_integer
@@ -798,6 +780,15 @@ content:
       link_rel: canonical
     third_party_settings: {  }
     weight: 64
+    region: content
+  field_ini_speech_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 11
     region: content
   field_ini_switch_refresh_ms:
     type: number_integer
@@ -983,6 +974,15 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 85
+    region: content
+  field_ini_volume:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 9
     region: content
   field_ini_zedmd_brightness:
     type: number_integer
