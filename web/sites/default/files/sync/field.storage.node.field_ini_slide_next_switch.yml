@@ -1,0 +1,20 @@
+uuid: 68c18036-14e2-4df6-bdab-eb19b4d97013
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_slide_next_switch
+field_name: field_ini_slide_next_switch
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

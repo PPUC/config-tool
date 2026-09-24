@@ -285,6 +285,16 @@ class GamesController extends ControllerBase {
         'SpeechVolume' => $value('field_ini_speech_volume', '100'),
         'MusicVolume' => $value('field_ini_music_volume', '100'),
       ],
+      // The two buttons that page through the how-to-play slides, normally the
+      // flipper buttons. Only written when one of them is set: an [Attract]
+      // section of nothing but zeroes would be a section saying "no buttons"
+      // where saying nothing says the same thing, and every other key in this
+      // section has a default in ppuc that a game folder should not have to
+      // repeat.
+      'Attract' => array_filter([
+        'SlideNextSwitch' => $value('field_ini_slide_next_switch', '0'),
+        'SlidePreviousSwitch' => $value('field_ini_slide_prev_switch', '0'),
+      ], static fn($v) => $v !== '' && $v !== '0'),
       'Backbox' => [
         'Address' => $value('field_ini_backbox_address'),
         'Port' => $value('field_ini_backbox_port', '6789'),
@@ -411,6 +421,10 @@ class GamesController extends ControllerBase {
 
     $lines = [];
     foreach ($sections as $section => $pairs) {
+      // A section with nothing in it says nothing that leaving it out does not.
+      if (!$pairs) {
+        continue;
+      }
       $lines[] = '[' . $section . ']';
       foreach ($pairs as $key => $field_value) {
         $lines[] = $key . '=' . $field_value;

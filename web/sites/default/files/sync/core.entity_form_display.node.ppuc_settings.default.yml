@@ -67,6 +67,8 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_serum_skip_frames
     - field.field.node.ppuc_settings.field_ini_serum_timeout
     - field.field.node.ppuc_settings.field_ini_skip_boards
+    - field.field.node.ppuc_settings.field_ini_slide_next_switch
+    - field.field.node.ppuc_settings.field_ini_slide_prev_switch
     - field.field.node.ppuc_settings.field_ini_speech_backend
     - field.field.node.ppuc_settings.field_ini_speech_enabled
     - field.field.node.ppuc_settings.field_ini_speech_greeting
@@ -583,6 +585,20 @@ content:
     region: content
     settings:
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_slide_next_switch:
+    type: number
+    weight: 100
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_slide_prev_switch:
+    type: number
+    weight: 101
+    region: content
+    settings:
       placeholder: ''
     third_party_settings: {  }
   field_ini_speech_backend:

@@ -1,0 +1,25 @@
+uuid: d0bcaa4d-dcd5-4735-9a62-9c45b8513cb5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_slide_next_switch
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_slide_next_switch
+field_name: field_ini_slide_next_switch
+entity_type: node
+bundle: ppuc_settings
+label: 'Attract: SlideNextSwitch'
+description: 'Switch number of the button that steps forward through the attract slides, normally the right flipper button. 0 for none. Pressing both buttons together holds the current slide.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
