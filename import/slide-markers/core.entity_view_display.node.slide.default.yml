@@ -1,0 +1,74 @@
+uuid: 159daf08-2a9a-4645-ab1f-5db0b7999a20
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.slide.field_duration
+    - field.field.node.slide.field_game
+    - field.field.node.slide.field_image
+    - field.field.node.slide.field_slide_markers
+    - field.field.node.slide.field_slide_text
+    - field.field.node.slide.field_weight
+    - node.type.slide
+  module:
+    - image
+    - text
+id: node.slide.default
+targetEntityType: node
+bundle: slide
+mode: default
+content:
+  field_slide_markers:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_duration:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_game:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_slide_text:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_weight:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  links: true
+  search_api_excerpt: true

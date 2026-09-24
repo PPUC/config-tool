@@ -1,0 +1,94 @@
+uuid: ee51222a-e0b1-4be4-91b9-de2b44988716
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.slide.field_duration
+    - field.field.node.slide.field_game
+    - field.field.node.slide.field_image
+    - field.field.node.slide.field_slide_markers
+    - field.field.node.slide.field_slide_text
+    - field.field.node.slide.field_weight
+    - node.type.slide
+  module:
+    - image
+    - text
+id: node.slide.default
+targetEntityType: node
+bundle: slide
+mode: default
+content:
+  field_slide_markers:
+    type: text_textarea
+    weight: 5
+    region: content
+    settings:
+      rows: 8
+      placeholder: ''
+    third_party_settings: {  }
+  field_duration:
+    type: number
+    weight: 6
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_game:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 3
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_slide_text:
+    type: text_textarea
+    weight: 4
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_weight:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 10
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  promote: true
+  sticky: true
+  uid: true

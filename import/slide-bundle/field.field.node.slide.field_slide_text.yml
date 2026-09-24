@@ -1,0 +1,21 @@
+uuid: 0b1db972-6c4b-40ef-bfe2-925135ec7876
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_slide_text
+    - node.type.slide
+  module:
+    - text
+id: node.slide.field_slide_text
+field_name: field_slide_text
+entity_type: node
+bundle: slide
+label: Text
+description: 'A line or two under the heading. Keep it short: it is read from across a room.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

@@ -1,0 +1,190 @@
+{
+    "_links": {
+        "type": {
+            "href": "node/led_effect"
+        },
+        "self": {
+            "href": "_dcd/node/900001"
+        }
+    },
+    "nid": [
+        {
+            "value": 900001
+        }
+    ],
+    "uuid": [
+        {
+            "value": "56ddbf08-0928-4405-b0c6-683fc4688acb"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "led_effect"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "_embedded": {
+        "relation/node/led_effect/revision_uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ]
+            }
+        ],
+        "relation/node/led_effect/uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "relation/node/led_effect/field_effect": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "taxonomy_term/fx_modes"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "dbe3f057-cb60-4c68-80d6-b06d7de7f3b0"
+                    }
+                ]
+            }
+        ],
+        "relation/node/led_effect/field_string": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "node/addressable_leds"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "ba4cd7e3-b1de-487a-b08c-766fdbc9d544"
+                    }
+                ]
+            }
+        ]
+    },
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "title": [
+        {
+            "value": "Multiball Ready",
+            "lang": "en"
+        }
+    ],
+    "created": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "sticky": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "field_color": [
+        {
+            "color": "FFFFFF",
+            "opacity": null
+        }
+    ],
+    "field_duration": [
+        {
+            "value": 0
+        }
+    ],
+    "field_machine_name": [
+        {
+            "value": "multiball-ready"
+        }
+    ],
+    "field_priority": [
+        {
+            "value": 9
+        }
+    ],
+    "field_repeat": [
+        {
+            "value": -1
+        }
+    ],
+    "field_reverse": [
+        {
+            "value": false
+        }
+    ],
+    "field_segment": [
+        {
+            "value": 1
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1790262651
+    },
+    "field_speed": [
+        {
+            "value": 1500
+        }
+    ]
+}

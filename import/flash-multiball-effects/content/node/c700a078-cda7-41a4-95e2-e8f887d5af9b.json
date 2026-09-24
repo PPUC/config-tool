@@ -1,0 +1,185 @@
+{
+    "_links": {
+        "type": {
+            "href": "node/led_effect"
+        },
+        "self": {
+            "href": "_dcd/node/900002"
+        }
+    },
+    "nid": [
+        {
+            "value": 900002
+        }
+    ],
+    "uuid": [
+        {
+            "value": "c700a078-cda7-41a4-95e2-e8f887d5af9b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "led_effect"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "_embedded": {
+        "relation/node/led_effect/revision_uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ]
+            }
+        ],
+        "relation/node/led_effect/uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "relation/node/led_effect/field_effect": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "taxonomy_term/fx_modes"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "62a159b2-b1bc-4d1d-b198-f47a0840eed9"
+                    }
+                ]
+            }
+        ],
+        "relation/node/led_effect/field_string": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "node/addressable_leds"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "ba4cd7e3-b1de-487a-b08c-766fdbc9d544"
+                    }
+                ]
+            }
+        ]
+    },
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "title": [
+        {
+            "value": "Multiball Start",
+            "lang": "en"
+        }
+    ],
+    "created": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2026-09-24T15:10:51+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "sticky": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "field_color": [
+        {
+            "color": "FFFFFF",
+            "opacity": null
+        }
+    ],
+    "field_duration": [
+        {
+            "value": 1000
+        }
+    ],
+    "field_machine_name": [
+        {
+            "value": "multiball-start"
+        }
+    ],
+    "field_priority": [
+        {
+            "value": 10
+        }
+    ],
+    "field_repeat": [
+        {
+            "value": 0
+        }
+    ],
+    "field_reverse": [
+        {
+            "value": false
+        }
+    ],
+    "field_segment": [
+        {
+            "value": 1
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1790262651
+    }
+}

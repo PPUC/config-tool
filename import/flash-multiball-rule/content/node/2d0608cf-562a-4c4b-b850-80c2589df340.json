@@ -1,0 +1,147 @@
+{
+    "_links": {
+        "type": {
+            "href": "node/rule"
+        }
+    },
+    "uuid": [
+        {
+            "value": "2d0608cf-562a-4c4b-b850-80c2589df340"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "rule"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2026-09-24T15:45:16+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "_embedded": {
+        "relation/node/rule/revision_uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ]
+            }
+        ],
+        "relation/node/rule/uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "relation/node/rule/field_game": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "node/game"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "877888bc-06a9-428a-91ab-6d821e104107"
+                    }
+                ]
+            }
+        ]
+    },
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "title": [
+        {
+            "value": "Multiball",
+            "lang": "en"
+        }
+    ],
+    "created": [
+        {
+            "value": "2026-09-24T15:45:16+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2026-09-24T15:45:16+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "sticky": [
+        {
+            "value": false,
+            "lang": "en"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "field_enabled": [
+        {
+            "value": true
+        }
+    ],
+    "field_rules_editor_mode": [
+        {
+            "value": "lua"
+        }
+    ],
+    "field_rules_lua": [
+        {
+            "value": "-- Flash multiball. See ../MULTIBALL_TECHNICAL.md for the whole design.\n--\n-- Two things live here. The virtual outhole, which is what makes a second ball\n-- possible at all, and the multiball itself. The ROM is never told that either\n-- exists.\n\nlocal SW_THREE_BANK_SERIES = 31   -- closes when the whole three-bank is down\nlocal SW_FIVE_BANK_SERIES = 37    -- closes when the whole five-bank is down\nlocal SW_EJECT_HOLE = 27\nlocal SW_TROUGH_REST = 210        -- where a ball comes to rest\nlocal SW_TROUGH_SECOND = 211      -- the position behind it\nlocal SW_PLAYFIELD_TILT = 47\nlocal SW_OUTHOLE_TO_ROM = 48      -- virtual: no board has this switch\n\nlocal COIL_BALL_RELEASE = 1\nlocal COIL_EJECT_HOLE = 5\n\nlocal SCENE_MULTIBALL = 60011\nlocal EFFECT_READY = \"multiball-ready\"    -- endless rainbow while it waits\nlocal EFFECT_START = \"multiball-start\"    -- one second of strobe, and the rainbow is gone\nlocal EFFECT_LOST = \"multiball-lost\"      -- a moment of nothing, same job\n\n-- A ball entering an empty trough touches the second switch on its way to the\n-- resting one. Both may read closed for an instant if the spacing allows it,\n-- and reporting the outhole then would end a multiball that is still running.\n-- So closing is confirmed, and opening is not: a ball leaving the trough is\n-- never ambiguous.\nlocal OUTHOLE_CONFIRM_MS = 150\n\nlocal PHASE_IDLE = 0\nlocal PHASE_READY = 1\nlocal PHASE_WAIT_PLUNGE = 2\nlocal PHASE_RUNNING = 3\n\nlocal phase = PHASE_IDLE\nlocal threeBankDown = false\nlocal fiveBankDown = false\nlocal troughRest = false\nlocal troughSecond = false\nlocal reportedOuthole = nil\nlocal confirmToken = 0\n\nlocal function reportOuthole(state)\n  if reportedOuthole ~= state then\n    reportedOuthole = state\n    ppuc.sendSwitchToCpu(SW_OUTHOLE_TO_ROM, state)\n  end\nend\n\nlocal function troughChanged()\n  -- Bumping the token cancels any confirmation still in flight, so a ball that\n  -- rolls through does not report an outhole a moment after it has left.\n  confirmToken = confirmToken + 1\n  if troughRest and troughSecond then\n    local token = confirmToken\n    ppuc.after(OUTHOLE_CONFIRM_MS, function()\n      if token == confirmToken and troughRest and troughSecond then\n        reportOuthole(1)\n      end\n    end)\n  else\n    reportOuthole(0)\n  end\nend\n\nlocal function armIfBothBanksDown()\n  if phase == PHASE_IDLE and threeBankDown and fiveBankDown then\n    phase = PHASE_READY\n    ppuc.effectTrigger(EFFECT_READY, 1)\n    ppuc.speech(\"Multiball ready\")\n  end\nend\n\n-- Flash numbers its cabinet switches 1 to 8 -- tilts, coin, credit, high score\n-- -- and its playfield from 9 up. The button flag catches the flipper buttons\n-- wherever they are numbered, and the playfield tilt is on the playfield but is\n-- not a player putting a ball into play.\nlocal function isPlayfieldHit(number)\n  return number >= 9 and number < 200 and number ~= SW_PLAYFIELD_TILT and not ppuc.isButtonSwitch(number)\nend\n\nlocal function startMultiball()\n  phase = PHASE_WAIT_PLUNGE\n  -- The ball the player just shot stays in the eject hole. Its neighbour goes\n  -- to the shooter lane instead, which is the whole trick.\n  ppuc.pulseCoil(COIL_BALL_RELEASE, 120)\n  ppuc.serumScene(SCENE_MULTIBALL)\n  ppuc.speech(\"Multiball\")\n  -- Not a \"stop\": the firmware has no such thing. A higher-priority effect\n  -- terminates the endless one, so the thing that ends the waiting rainbow is\n  -- the flourish that announces the multiball. See MULTIBALL_TECHNICAL.md.\n  ppuc.effectTrigger(EFFECT_START, 1)\n  -- One ball waits in the shooter lane and one in the eject hole. Nothing is\n  -- lost and a search would fire coils under both of them.\n  ppuc.holdBallSearch(true)\nend\n\nlocal function secondBallIsInPlay()\n  phase = PHASE_RUNNING\n  ppuc.holdBallSearch(false)\n  ppuc.pulseCoil(COIL_EJECT_HOLE, 120)\nend\n\nfunction ppuc.onCoilChanged(number, state)\n  if number ~= COIL_EJECT_HOLE or state ~= 1 then\n    return\n  end\n\n  if phase == PHASE_READY then\n    -- The ROM fires the eject hole the instant the ball lands in it. Not this\n    -- time.\n    ppuc.suppressCoil(COIL_EJECT_HOLE)\n    startMultiball()\n  elseif phase == PHASE_WAIT_PLUNGE then\n    -- The ball is still sitting there, so the ROM keeps asking. It stays ours\n    -- until the player puts the second ball into play.\n    ppuc.suppressCoil(COIL_EJECT_HOLE)\n  end\nend\n\nfunction ppuc.onSwitchChanged(number, state)\n  if number == SW_TROUGH_REST then\n    troughRest = state == 1\n    troughChanged()\n  elseif number == SW_TROUGH_SECOND then\n    troughSecond = state == 1\n    troughChanged()\n  end\n\n  if state ~= 1 then\n    return\n  end\n\n  if not ppuc.attractMode() then\n    if number == SW_THREE_BANK_SERIES then\n      threeBankDown = true\n      armIfBothBanksDown()\n    elseif number == SW_FIVE_BANK_SERIES then\n      fiveBankDown = true\n      armIfBothBanksDown()\n    end\n  end\n\n  if phase == PHASE_WAIT_PLUNGE then\n    -- Either the player plunged and hit something, or they plunged into a\n    -- drain. Both mean the second ball is no longer waiting.\n    if isPlayfieldHit(number) or number == SW_TROUGH_REST or number == SW_TROUGH_SECOND then\n      secondBallIsInPlay()\n    end\n  end\nend\n\nfunction ppuc.onBallChanged(ball)\n  -- The opportunity lasts one ball. Both banks have to go down again on the\n  -- next one, which is what the player is told.\n  threeBankDown = false\n  fiveBankDown = false\n\n  if phase == PHASE_READY then\n    -- Drained without shooting the eject hole. The rainbow has to go, and\n    -- nothing else should be announced, so this one shows nothing.\n    ppuc.effectTrigger(EFFECT_LOST, 1)\n  end\n  if phase ~= PHASE_IDLE then\n    ppuc.holdBallSearch(false)\n  end\n  phase = PHASE_IDLE\nend\n"
+        }
+    ],
+    "field_weight": [
+        {
+            "value": 400
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1790264716
+    }
+}
