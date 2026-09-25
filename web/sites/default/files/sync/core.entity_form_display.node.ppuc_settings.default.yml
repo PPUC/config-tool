@@ -43,6 +43,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_hard_reset
     - field.field.node.ppuc_settings.field_ini_interactive_test
     - field.field.node.ppuc_settings.field_ini_lamp_test
+    - field.field.node.ppuc_settings.field_ini_music_duck_percent
     - field.field.node.ppuc_settings.field_ini_music_files
     - field.field.node.ppuc_settings.field_ini_music_gap_ms
     - field.field.node.ppuc_settings.field_ini_music_volume
@@ -69,6 +70,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_skip_boards
     - field.field.node.ppuc_settings.field_ini_slide_next_switch
     - field.field.node.ppuc_settings.field_ini_slide_prev_switch
+    - field.field.node.ppuc_settings.field_ini_song_select
     - field.field.node.ppuc_settings.field_ini_speech_backend
     - field.field.node.ppuc_settings.field_ini_speech_enabled
     - field.field.node.ppuc_settings.field_ini_speech_greeting
@@ -410,6 +412,13 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  field_ini_music_duck_percent:
+    type: number
+    weight: 110
+    region: content
+    settings:
+      placeholder: '29'
+    third_party_settings: {  }
   field_ini_music_files:
     type: string_textarea
     weight: 7
@@ -600,6 +609,13 @@ content:
     region: content
     settings:
       placeholder: ''
+    third_party_settings: {  }
+  field_ini_song_select:
+    type: boolean_checkbox
+    weight: 111
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_ini_speech_backend:
     type: string_textfield

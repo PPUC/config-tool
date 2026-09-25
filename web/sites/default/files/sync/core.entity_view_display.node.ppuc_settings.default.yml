@@ -43,6 +43,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_hard_reset
     - field.field.node.ppuc_settings.field_ini_interactive_test
     - field.field.node.ppuc_settings.field_ini_lamp_test
+    - field.field.node.ppuc_settings.field_ini_music_duck_percent
     - field.field.node.ppuc_settings.field_ini_music_files
     - field.field.node.ppuc_settings.field_ini_music_gap_ms
     - field.field.node.ppuc_settings.field_ini_music_volume
@@ -69,6 +70,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_skip_boards
     - field.field.node.ppuc_settings.field_ini_slide_next_switch
     - field.field.node.ppuc_settings.field_ini_slide_prev_switch
+    - field.field.node.ppuc_settings.field_ini_song_select
     - field.field.node.ppuc_settings.field_ini_speech_backend
     - field.field.node.ppuc_settings.field_ini_speech_enabled
     - field.field.node.ppuc_settings.field_ini_speech_greeting
@@ -506,6 +508,15 @@ content:
     third_party_settings: {  }
     weight: 69
     region: content
+  field_ini_music_duck_percent:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 110
+    region: content
   field_ini_music_files:
     type: basic_string
     label: above
@@ -744,6 +755,16 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 101
+    region: content
+  field_ini_song_select:
+    type: boolean
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 111
     region: content
   field_ini_speech_backend:
     type: string

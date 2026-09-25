@@ -1,0 +1,20 @@
+uuid: e11169bd-a5af-40f3-9539-02c823f236b2
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ini_music_duck_percent
+field_name: field_ini_music_duck_percent
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

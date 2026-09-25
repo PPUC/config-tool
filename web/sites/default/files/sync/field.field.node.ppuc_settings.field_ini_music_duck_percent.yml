@@ -1,0 +1,23 @@
+uuid: c793cff1-6e90-4851-a67e-2df8cf72d2cc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_music_duck_percent
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_music_duck_percent
+field_name: field_ini_music_duck_percent
+entity_type: node
+bundle: ppuc_settings
+label: 'Audio: MusicDuckPercent'
+description: 'How loud the background music is while a ball is in play, in percent of its normal level. Leave empty for the built-in default of 29. Raise it if the music disappears under the ROM sounds on this cabinet; lower it if it fights them.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 100
+  prefix: ''
+  suffix: '%'
+field_type: integer

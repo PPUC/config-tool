@@ -1,0 +1,23 @@
+uuid: 90a846ad-bc1b-402e-9e48-4dfc91ddcb32
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_song_select
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_song_select
+field_name: field_ini_song_select
+entity_type: node
+bundle: ppuc_settings
+label: 'Audio: SongSelect'
+description: 'Offer the music playlist on the backbox screen at the start of a game. The player walks it with the two buttons set under Attract, hears each track as it is highlighted, and both buttons together gets on with the game. The first playfield switch dismisses it as well. Needs at least two tracks.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
