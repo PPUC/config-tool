@@ -189,6 +189,19 @@ class GamesControllerPpucIniTest extends TestCase {
     $this->fail(sprintf('ppuc.ini has no %s key', $key));
   }
 
+  /**
+   * Whether the key was written at all.
+   */
+  private function iniHasKey(NodeInterface $game, string $key): bool {
+    $ini = $this->call('buildPpucIni', $game);
+    foreach (explode("\n", $ini) as $line) {
+      if (str_starts_with(trim($line), $key . '=')) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
   // --- audio levels -----------------------------------------------------
 
   public function testTheLevelsDefaultToUnchanged(): void {
@@ -218,6 +231,17 @@ class GamesControllerPpucIniTest extends TestCase {
     $game = $this->game('Flash', ['field_ini_rom_volume' => '42']);
 
     $this->assertSame('42', $this->iniValue($game, 'RomVolume'));
+  }
+
+  public function testTheOptionalAudioKeysAreLeftOutWhenNobodySetThem(): void {
+    // These two have no default here, only in ppuc, so an empty field has to
+    // produce no key. Writing `MusicDuckPercent=` says nought percent, which is
+    // music that cannot be heard at all while a ball is in play - a machine
+    // silenced by exporting it.
+    $game = $this->game('Flash');
+
+    $this->assertFalse($this->iniHasKey($game, 'MusicDuckPercent'));
+    $this->assertFalse($this->iniHasKey($game, 'SongSelect'));
   }
 
   // --- the ROM name -----------------------------------------------------

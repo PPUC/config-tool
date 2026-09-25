@@ -279,12 +279,19 @@ class GamesController extends ControllerBase {
       // Levels, in percent, 100 being unchanged. MusicFiles and MusicGapMs stay
       // under Paths where ppuc has always read them; only the levels are new,
       // and a volume is not a path.
-      'Audio' => [
+      // Filtered, unlike the sections above it, because two of these keys have
+      // no default here. ppuc has its own, and an empty field means "whatever
+      // ppuc thinks" -- but writing `MusicDuckPercent=` says 0 percent, which is
+      // music that cannot be heard at all during a game. A key with nothing
+      // after it is worse than no key.
+      'Audio' => array_filter([
         'Volume' => $value('field_ini_volume', '100'),
         'RomVolume' => $value('field_ini_rom_volume', '100'),
         'SpeechVolume' => $value('field_ini_speech_volume', '100'),
         'MusicVolume' => $value('field_ini_music_volume', '100'),
-      ],
+        'MusicDuckPercent' => $value('field_ini_music_duck_percent'),
+        'SongSelect' => $value('field_ini_song_select'),
+      ], static fn($v) => $v !== ''),
       // The two buttons that page through the how-to-play slides, normally the
       // flipper buttons. Only written when one of them is set: an [Attract]
       // section of nothing but zeroes would be a section saying "no buttons"
