@@ -87,6 +87,8 @@ YAML,
   y: 0.285
   number: 2
   pointer: below-left
+  fromX: 0.735
+  fromY: 0.395
 - x: 0.113
   y: 0.699
   number: 3

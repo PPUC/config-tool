@@ -1538,6 +1538,20 @@ class GamesController extends ControllerBase {
       ], TRUE)) {
         $marker['pointer'] = $pointer;
       }
+
+      // Optionally where the arrow starts, which turns it from a mark beside
+      // the target into the line the ball takes to reach it. Held to the same
+      // 0..1 as the marker: a start point off the picture would draw an arrow
+      // from nowhere.
+      if (isset($entry['fromX'], $entry['fromY'])) {
+        $fx = (float) $entry['fromX'];
+        $fy = (float) $entry['fromY'];
+        if ($fx >= 0 && $fx <= 1 && $fy >= 0 && $fy <= 1) {
+          $marker['fromX'] = round($fx, 4);
+          $marker['fromY'] = round($fy, 4);
+        }
+      }
+
       $markers[] = $marker;
     }
 
