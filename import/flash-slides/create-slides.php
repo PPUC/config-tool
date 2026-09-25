@@ -42,21 +42,58 @@ $slides = [
     'title' => 'Top lanes',
     'text' => 'Making 1-2-3 lights double bonus. Making all four lights triple. There is no lane change on this game: plunge well, or nudge.',
     'weight' => 200,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.388
+  y: 0.107
+  number: 1
+  pointer: below
+- x: 0.466
+  y: 0.093
+  number: 2
+  pointer: below
+- x: 0.546
+  y: 0.085
+  number: 3
+  pointer: below
+- x: 0.625
+  y: 0.085
+  number: 4
+  pointer: below
+YAML,
   ],
   [
     'title' => 'The three-bank',
     'text' => 'Clear the centre targets four times: Thunder, then Lightning, then Tempest, then Super Flash for 50,000.',
     'weight' => 300,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.519
+  y: 0.32
+  pointer: right
+YAML,
   ],
   [
     'title' => 'The five-bank',
     'text' => 'First clear raises the hole kicker. Second lights extra ball. Third lights the outlane specials.',
     'weight' => 400,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.161
+  y: 0.373
+  pointer: right
+YAML,
   ],
   [
     'title' => 'The spinner',
     'text' => 'Completing the left bank lights the spinner. On a long ball it out-scores everything else on the playfield.',
     'weight' => 500,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.830
+  y: 0.286
+  pointer: left
+YAML,
   ],
 
   // Multiball: the thing this machine could not do when it was built.
@@ -86,6 +123,17 @@ $slides = [
     'title' => 'Use the third flipper',
     'text' => 'From the upper right flipper you can take all three centre drops at once, and often catch part of the five-bank on the way.',
     'weight' => 1000,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.769
+  y: 0.133
+  number: 1
+  pointer: below
+- x: 0.519
+  y: 0.32
+  number: 2
+  pointer: right
+YAML,
   ],
   [
     'title' => 'The loop repeats',
@@ -201,10 +249,23 @@ $load_image = function (string $filename): ?FileInterface {
     return NULL;
   }
   $directory = 'public://slides/' . date('Y-m');
+  $uri = $directory . '/' . $filename;
+
+  // One file entity, however many slides point at it. The playfield
+  // photograph is on several slides with different markers over it, and that
+  // is the whole reason markers are coordinates rather than something drawn
+  // into the picture: re-uploading the same 800KB photograph once per slide
+  // would throw that away.
+  $existing = \Drupal::entityTypeManager()->getStorage('file')
+    ->loadByProperties(['uri' => $uri]);
+  if ($existing) {
+    return reset($existing);
+  }
+
   \Drupal::service('file_system')->prepareDirectory($directory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY);
   return \Drupal::service('file.repository')->writeData(
     file_get_contents($source),
-    $directory . '/' . $filename,
+    $uri,
     \Drupal\Core\File\FileExists::Replace
   );
 };
@@ -235,6 +296,12 @@ foreach ($slides as $slide) {
     if ($file = $load_image($slide['image'])) {
       $node->set('field_image', ['target_id' => $file->id()]);
     }
+  }
+  if (isset($slide['markers'])) {
+    $node->set('field_slide_markers', [
+      'value' => $slide['markers'],
+      'format' => 'plain_text',
+    ]);
   }
   // Published, so they are exported and shown. Anything still being worked on
   // is unpublished instead of deleted.
