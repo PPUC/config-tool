@@ -30,6 +30,12 @@ ppuc_games.add_slide:
     - view.game_slides.all_slides
   title: 'Add Slide'
 
+ppuc_games.order_slides:
+  route_name: ppuc_games.slides.order
+  appears_on:
+    - view.game_slides.all_slides
+  title: 'Reorder Slides'
+
 ppuc_games.add_i_o_board:
   route_name: node.add
   route_parameters:

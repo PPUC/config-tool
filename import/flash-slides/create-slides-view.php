@@ -135,6 +135,19 @@ foreach (array_keys($view['display']) as $key) {
   unset($view['display'][$key]['cache_metadata']);
 }
 
+// The bulk actions came from the switch table and are about debounce, which a
+// slide does not have. What a slide has is a published flag, and publishing or
+// putting away a set of them together is the reason to tick several boxes.
+if (isset($default['fields']['views_bulk_operations_bulk_form'])) {
+  $default['fields']['views_bulk_operations_bulk_form']['selected_actions'] = [
+    // The plugin id, not the action config entity's id: VBO lists these as
+    // entity:publish_action:node, and an id it does not know is dropped
+    // silently, leaving a bulk form with no actions at all.
+    ['action_id' => 'entity:publish_action:node', 'preconfiguration' => ['add_confirmation' => FALSE]],
+    ['action_id' => 'entity:unpublish_action:node', 'preconfiguration' => ['add_confirmation' => FALSE]],
+  ];
+}
+
 // Fields, sorts, filters and the argument all carry the relationship they were
 // cloned with.
 foreach (['fields', 'sorts', 'filters', 'arguments'] as $section) {

@@ -87,11 +87,11 @@ display:
           show_select_all: default
           selected_actions:
             -
-              action_id: ppuc_games_change_switch_debounce
+              action_id: 'entity:publish_action:node'
               preconfiguration:
                 add_confirmation: false
             -
-              action_id: ppuc_games_change_switch_debounce_mode
+              action_id: 'entity:unpublish_action:node'
               preconfiguration:
                 add_confirmation: false
         field_weight:
@@ -661,3 +661,4 @@ display:
       tags:
         - 'config:field.storage.node.field_slide_text'
         - 'config:field.storage.node.field_weight'
+

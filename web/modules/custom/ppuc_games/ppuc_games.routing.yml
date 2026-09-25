@@ -55,6 +55,19 @@ ppuc_games.add_rule:
       node:
         type: entity:node
 
+ppuc_games.slides.order:
+  path: '/node/{node}/slides/order'
+  defaults:
+    _form: '\Drupal\ppuc_games\Form\SlideOrderForm'
+    _title: 'Reorder slides'
+  requirements:
+    _permission: 'edit any slide content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 ppuc_games.slides.add:
   path: '/node/{node}/slides/add'
   defaults:
