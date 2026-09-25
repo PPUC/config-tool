@@ -1526,8 +1526,16 @@ class GamesController extends ControllerBase {
       if (isset($entry['number'])) {
         $marker['number'] = (int) $entry['number'];
       }
+      // The eight sides an arrow can come in from. The diagonals matter: an
+      // arrow coming from the lower left is the line a ball takes off the left
+      // flipper, and one coming straight down is a ball draining. A pointer
+      // that is not on this list is dropped rather than exported, and the
+      // machine falls back to an arrow from the left.
       $pointer = isset($entry['pointer']) ? (string) $entry['pointer'] : '';
-      if (in_array($pointer, ['left', 'right', 'above', 'below'], TRUE)) {
+      if (in_array($pointer, [
+        'left', 'right', 'above', 'below',
+        'above-left', 'above-right', 'below-left', 'below-right',
+      ], TRUE)) {
         $marker['pointer'] = $pointer;
       }
       $markers[] = $marker;

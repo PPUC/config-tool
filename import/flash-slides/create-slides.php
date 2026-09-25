@@ -75,25 +75,32 @@ YAML,
   ],
   [
     'title' => 'The five-bank',
-    'text' => 'First clear raises the hole kicker. Second lights extra ball. Third lights the outlane specials.',
+    'text' => 'First clear raises the hole kicker (2). Second lights extra ball. Third lights the outlane specials (3 and 4), which is where a ball goes to die.',
     'weight' => 400,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
 - x: 0.161
   y: 0.373
+  number: 1
   pointer: right
+- x: 0.829
+  y: 0.285
+  number: 2
+  pointer: below-left
+- x: 0.113
+  y: 0.699
+  number: 3
+  pointer: above
+- x: 0.816
+  y: 0.685
+  number: 4
+  pointer: above
 YAML,
   ],
   [
     'title' => 'The spinner',
     'text' => 'Completing the left bank lights the spinner. On a long ball it out-scores everything else on the playfield.',
     'weight' => 500,
-    'image' => 'playfield.jpg',
-    'markers' => <<<'YAML'
-- x: 0.830
-  y: 0.286
-  pointer: left
-YAML,
   ],
 
   // Multiball: the thing this machine could not do when it was built.
@@ -101,11 +108,28 @@ YAML,
     'title' => 'Multiball',
     'text' => 'Something this machine could not do in 1978. Clear both banks of drop targets in the same ball.',
     'weight' => 600,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.161
+  y: 0.373
+  number: 1
+  pointer: right
+- x: 0.519
+  y: 0.32
+  number: 2
+  pointer: right
+YAML,
   ],
   [
     'title' => 'Multiball is ready',
     'text' => 'Both banks down, and the cabinet turns rainbow. Now shoot the eject hole.',
     'weight' => 700,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.829
+  y: 0.285
+  pointer: below-left
+YAML,
   ],
   [
     'title' => 'Two balls',
@@ -147,8 +171,14 @@ YAML,
   ],
   [
     'title' => 'Ten thousand, again and again',
-    'text' => 'With the first five-bank down, the lit right saucer can be backhanded over and over.',
+    'text' => 'With the first five-bank down, the eject hole can be backhanded over and over.',
     'weight' => 1300,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.829
+  y: 0.285
+  pointer: below-left
+YAML,
   ],
   [
     'title' => 'Soft plunge',
@@ -157,8 +187,27 @@ YAML,
   ],
   [
     'title' => 'What will drain you',
-    'text' => 'The two bullseye standups are drain bait. Leaving the bumpers to the left is far riskier than leaving them to the right.',
+    'text' => 'The two bullseye standups (1 and 2) are drain bait. The outlanes (3 and 4) are unforgiving, and leaving the bumpers to the left is far riskier than to the right.',
     'weight' => 1500,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.129
+  y: 0.507
+  number: 1
+  pointer: below-right
+- x: 0.796
+  y: 0.502
+  number: 2
+  pointer: below-left
+- x: 0.113
+  y: 0.699
+  number: 3
+  pointer: above
+- x: 0.816
+  y: 0.685
+  number: 4
+  pointer: above
+YAML,
   ],
 
   // Trivia. Two firsts for the whole industry, on this machine.
