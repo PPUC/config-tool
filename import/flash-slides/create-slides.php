@@ -107,8 +107,8 @@ YAML,
   y: 0.380
   number: 1
   pointer: right
-- x: 0.797
-  y: 0.141
+- x: 0.794
+  y: 0.142
   number: 2
   pointer: left
 YAML,
@@ -156,19 +156,39 @@ YAML,
   // Tips, from people who play it well.
   [
     'title' => 'Use the third flipper',
-    'text' => 'From the upper right flipper you can take all three centre drops at once, and often catch part of the five-bank on the way.',
+    'text' => 'From the upper right flipper (1) you can take all three centre drops (2) at once, and often catch part of the five-bank on the way.',
     'weight' => 1000,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
+- x: 0.700
+  y: 0.421
+  number: 1
+  pointer: left
 - x: 0.520
   y: 0.330
-  pointer: above-right
+  number: 2
+  pointer: below-right
 YAML,
   ],
   [
     'title' => 'The loop repeats',
-    'text' => 'The upper loop feeds itself. With the spinner lit it is the best shot in the game.',
+    'text' => 'Shoot the entrance (2) from the upper flipper (1). The ball runs the loop, over the spinner (3), and comes back down to that same flipper - so the next one is already there for the taking.',
     'weight' => 1100,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.700
+  y: 0.421
+  number: 1
+  pointer: left
+- x: 0.158
+  y: 0.225
+  number: 2
+  pointer: right
+- x: 0.794
+  y: 0.142
+  number: 3
+  pointer: left
+YAML,
   ],
   [
     'title' => 'Backhand the drops',
@@ -202,8 +222,8 @@ YAML,
   y: 0.380
   number: 1
   pointer: right
-- x: 0.797
-  y: 0.141
+- x: 0.794
+  y: 0.142
   number: 2
   pointer: left
 YAML,
