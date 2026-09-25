@@ -1466,6 +1466,30 @@ class GamesController extends ControllerBase {
     return $ids ? Node::loadMultiple($ids) : [];
   }
 
+  /**
+   * What a slide photograph is called in the game folder.
+   *
+   * Named after the file rather than after a slide, because a picture several
+   * slides share belongs to none of them: calling the playfield photograph
+   * 0200-top-lanes.jpg and then pointing nine other slides at that name would
+   * read as a mistake in the folder even though it is not.
+   *
+   * `$used` carries the names already taken, so two files that happen to be
+   * called the same thing do not overwrite one another.
+   */
+  protected function slideImageFilename(FileInterface $file, array $used): string {
+    $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION) ?: 'png');
+    $base = preg_replace('/[^a-z0-9]+/', '-', strtolower(pathinfo($file->getFilename(), PATHINFO_FILENAME)));
+    $base = trim($base ?: 'slide', '-');
+
+    $name = $base . '.' . $extension;
+    $suffix = 2;
+    while (isset($used[$name])) {
+      $name = $base . '-' . $suffix++ . '.' . $extension;
+    }
+    return $name;
+  }
+
   protected function buildSlideFilename(NodeInterface $slide, string $extension): string {
     $base = preg_replace('/[^a-z0-9]+/', '-', strtolower($slide->getTitle()));
     $base = trim($base ?: 'slide', '-');
@@ -1570,6 +1594,16 @@ class GamesController extends ControllerBase {
     $this->fileSystem->prepareDirectory($slides_folder,
       FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
 
+    // One copy per photograph, not one per slide.
+    //
+    // Ten slides point at the same playfield photograph, which is the whole
+    // reason markers are coordinates: one picture, re-marked. Exporting it once
+    // per slide would have thrown that away again -- ten copies of the same
+    // 800KB in the game folder, in the archive, and over the wire to the
+    // machine. Drupal already knows it is one file, so the export says so too.
+    $written = [];
+    $used = [];
+
     $entries = [];
     foreach ($slides as $slide) {
       $entry = ['title' => trim($slide->label())];
@@ -1577,11 +1611,14 @@ class GamesController extends ControllerBase {
       if ($slide->hasField('field_image') && !$slide->get('field_image')->isEmpty()) {
         $file = $slide->get('field_image')->entity ?? NULL;
         if ($file instanceof FileInterface) {
-          $extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION) ?: 'png';
-          $filename = $this->buildSlideFilename($slide, strtolower($extension));
-          $this->fileSystem->copy($file->getFileUri(), $slides_folder . '/' . $filename,
-            FileSystemInterface::EXISTS_REPLACE);
-          $entry['image'] = $filename;
+          $uri = $file->getFileUri();
+          if (!isset($written[$uri])) {
+            $written[$uri] = $this->slideImageFilename($file, $used);
+            $used[$written[$uri]] = TRUE;
+            $this->fileSystem->copy($uri, $slides_folder . '/' . $written[$uri],
+              FileSystemInterface::EXISTS_REPLACE);
+          }
+          $entry['image'] = $written[$uri];
         }
       }
 
