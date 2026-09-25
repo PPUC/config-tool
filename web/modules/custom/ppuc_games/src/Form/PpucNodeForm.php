@@ -22,6 +22,7 @@ class PpucNodeForm extends NodeForm {
     $this->configureWhiteChannelFields($form, $form_state);
     $this->configureGameFields($form);
     $this->configureRulesFields($form);
+    $this->configureSlideFields($form);
     $this->configurePpucSettingsFields($form);
     $this->configureSwitchGroupMembershipFields($form);
 
@@ -179,6 +180,53 @@ class PpucNodeForm extends NodeForm {
         'data-ppuc-rules-blockly' => '',
       ],
     ];
+  }
+
+  /**
+   * Turns the slide's markers field into a drawing surface.
+   *
+   * Markers are coordinates over the slide's own photograph, and typing
+   * coordinates into a textarea is a poor way to say "this target, from that
+   * flipper". So the photograph is put on the form and the arrows are drawn on
+   * it, in the same shape the machine will draw them.
+   *
+   * The textarea stays, visible and authoritative. The editor parses it on the
+   * way in and writes it on the way out, so nothing new has to be saved and a
+   * slide can still be edited by hand -- or by a browser where the editor never
+   * loaded.
+   */
+  protected function configureSlideFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if ($entity->bundle() !== 'slide' || !isset($form['field_slide_markers'])) {
+      return;
+    }
+
+    // The photograph the markers sit on. Only one that has been saved: a file
+    // still sitting in the upload widget has no URL to draw with yet, and
+    // saying so is better than an editor that silently does nothing.
+    $image_url = '';
+    if ($entity->hasField('field_image') && !$entity->get('field_image')->isEmpty()) {
+      $file = $entity->get('field_image')->entity;
+      if ($file !== NULL) {
+        $image_url = $file->createFileUrl();
+      }
+    }
+
+    $form['#attached']['library'][] = 'ppuc_games/marker_editor';
+    $form['#attributes']['class'][] = 'ppuc-slide-form';
+    $form['#attributes']['data-ppuc-slide-image'] = $image_url;
+
+    // The markers are YAML, so the format selector on a long text field is
+    // noise at best: the exporter reads the raw value and a rich text editor
+    // would mangle the indentation. One allowed format also means Drupal hides
+    // the selector, and nothing can attach CKEditor to it.
+    // The text_format element is the widget delta itself; its 'value' child is
+    // built later during processing, so anything set on that child is lost.
+    if (isset($form['field_slide_markers']['widget'][0])) {
+      $form['field_slide_markers']['widget'][0]['#allowed_formats'] = ['plain_text'];
+      $form['field_slide_markers']['widget'][0]['#format'] = 'plain_text';
+    }
   }
 
   protected function configurePpucSettingsFields(array &$form): void {

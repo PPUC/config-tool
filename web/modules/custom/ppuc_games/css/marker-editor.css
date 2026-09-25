@@ -1,0 +1,180 @@
+/**
+ * @file
+ * The marker drawing surface on the slide form.
+ *
+ * Amber throughout, because that is the colour the machine draws markers in:
+ * what is on this form should look like what ends up on the backbox screen.
+ */
+
+.ppuc-marker-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 800px) {
+  .ppuc-marker-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ppuc-marker-stage {
+  position: relative;
+  line-height: 0;
+  background: #000;
+  border: 1px solid #b8b8b8;
+  border-radius: 4px;
+  overflow: hidden;
+  /* The pointer events are the whole interaction, so the browser must not
+     claim them for scrolling or text selection. */
+  touch-action: none;
+  user-select: none;
+}
+
+.ppuc-marker-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.ppuc-marker-stage svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.ppuc-marker-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.ppuc-marker-help {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.ppuc-marker-tools {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ppuc-marker-editor button {
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #b8b8b8;
+  border-radius: 4px;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ppuc-marker-editor button:hover {
+  border-color: #c98a00;
+}
+
+.ppuc-marker-editor button[aria-pressed="true"] {
+  background: #ffc400;
+  border-color: #c98a00;
+  font-weight: 600;
+}
+
+.ppuc-marker-editor button.ppuc-marker-danger {
+  color: #a5341f;
+}
+
+.ppuc-marker-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 28rem;
+  overflow-y: auto;
+}
+
+.ppuc-marker-list li {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.ppuc-marker-list li.is-selected {
+  border-color: #c98a00;
+}
+
+.ppuc-marker-list li.ppuc-marker-empty {
+  display: block;
+  color: #666;
+  font-size: 0.875rem;
+  background: none;
+  border-style: dashed;
+}
+
+.ppuc-marker-badge {
+  width: 1.625rem;
+  height: 1.625rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #ffc400;
+  color: #191400;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  font-family: monospace;
+}
+
+.ppuc-marker-badge.is-plain {
+  background: none;
+  border: 2px solid #c98a00;
+  color: #c98a00;
+}
+
+.ppuc-marker-coords {
+  font-family: monospace;
+  font-size: 0.78125rem;
+  font-variant-numeric: tabular-nums;
+  color: #555;
+  word-break: break-word;
+}
+
+.ppuc-marker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+}
+
+.ppuc-marker-kind {
+  font-family: monospace;
+  font-size: 0.6875rem;
+  color: #8a5e00;
+  border: 1px solid #c98a00;
+  border-radius: 999px;
+  padding: 0 0.4rem;
+  align-self: center;
+}
+
+.ppuc-marker-note {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid #ffc400;
+  background: #fffaf0;
+  font-size: 0.875rem;
+}
