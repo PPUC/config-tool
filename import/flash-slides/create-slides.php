@@ -178,24 +178,21 @@ YAML,
     'weight' => 1100,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
-- x: 0.700
-  y: 0.421
+- x: 0.662
+  y: 0.415
   number: 1
-  pointer: left
-  fromX: 0.794
-  fromY: 0.142
-- x: 0.158
-  y: 0.225
+  fromX: 0.758
+  fromY: 0.214
+- x: 0.178
+  y: 0.255
   number: 2
-  pointer: right
-  fromX: 0.700
-  fromY: 0.421
-- x: 0.794
-  y: 0.142
+  fromX: 0.578
+  fromY: 0.394
+- x: 0.784
+  y: 0.158
   number: 3
-  pointer: left
-  fromX: 0.790
-  fromY: 0.070
+  fromX: 0.797
+  fromY: 0.084
 YAML,
   ],
   [
