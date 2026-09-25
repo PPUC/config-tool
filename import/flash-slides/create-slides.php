@@ -182,14 +182,20 @@ YAML,
   y: 0.421
   number: 1
   pointer: left
+  fromX: 0.794
+  fromY: 0.142
 - x: 0.158
   y: 0.225
   number: 2
   pointer: right
+  fromX: 0.700
+  fromY: 0.421
 - x: 0.794
   y: 0.142
   number: 3
   pointer: left
+  fromX: 0.790
+  fromY: 0.070
 YAML,
   ],
   [
