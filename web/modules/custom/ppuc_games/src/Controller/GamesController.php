@@ -1638,9 +1638,64 @@ class GamesController extends ControllerBase {
       }
     }
 
+    foreach ($this->musicAttributionSlides($game) as $credit) {
+      $entries[] = $credit;
+    }
+
     if ($entries) {
       file_put_contents($slides_folder . '/slides.yaml', Yaml::encode(['slides' => $entries]));
     }
+  }
+
+  /**
+   * The music credits, as slides, at the end of the loop.
+   *
+   * Royalty-free music is free on a condition: that it is credited. The machine
+   * is where the music is heard, so the machine is where the credit belongs,
+   * and leaving that to whoever remembers to write a slide is how it stops
+   * happening. These are generated from the tracks the game actually carries,
+   * so a track added without a credit is visible as a gap and a track removed
+   * takes its credit with it.
+   *
+   * They are not slide nodes: there is nothing to edit here that is not already
+   * on the music item, and an editable copy would drift from the obligation it
+   * exists to meet.
+   */
+  protected function musicAttributionSlides(NodeInterface $game): array {
+    if (!$game->hasField('field_music') || $game->get('field_music')->isEmpty()) {
+      return [];
+    }
+
+    $credits = [];
+    foreach ($game->get('field_music')->referencedEntities() as $media) {
+      if (!$media instanceof MediaInterface || !$media->hasField('field_attribution')) {
+        continue;
+      }
+      $text = trim((string) $media->get('field_attribution')->value);
+      if ($text !== '') {
+        // Normalised to single newlines: the machine draws this as wrapped
+        // text, and a blank line in the middle is a gap it cannot use.
+        $credits[] = preg_replace("/\n{2,}/", "\n", str_replace("\r\n", "\n", $text));
+      }
+    }
+
+    if (!$credits) {
+      return [];
+    }
+
+    // Two tracks to a slide. One wastes the screen; four is a wall of small
+    // text nobody reads from across a room, which credits nobody.
+    $slides = [];
+    foreach (array_chunk($credits, 2) as $index => $chunk) {
+      $slides[] = [
+        'title' => count($slides) === 0 && count($credits) <= 2 ? 'Music' : 'Music ' . ($index + 1),
+        'text' => implode("\n\n", $chunk),
+        // Longer than a rules slide: a credit has a name and a URL in it, and
+        // both are worth reading once.
+        'durationMs' => 12000,
+      ];
+    }
+    return $slides;
   }
 
   protected function writeRuleFiles(NodeInterface $game, string $rules_folder): void {

@@ -1,0 +1,19 @@
+uuid: ed308134-aae9-4db6-bf46-3636b6e85d8e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_attribution
+    - media.type.music
+id: media.music.field_attribution
+field_name: field_attribution
+entity_type: media
+bundle: music
+label: Attribution
+description: 'The credit this track has to carry, exactly as the source asks for it. It is shown on the backbox screen at the end of the attract loop. For example:<br><code>Music track: In Flight by Alegend<br>Source: https://freetouse.com/music<br>Royalty Free Background Music</code>'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

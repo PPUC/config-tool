@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.media.music.field_attribution
     - field.field.media.music.field_media_file_1
     - media.type.music
   module:
@@ -18,6 +19,14 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_attribution:
+    type: string_textarea
+    weight: 10
+    region: content
+    settings:
+      rows: 4
+      placeholder: ''
     third_party_settings: {  }
   field_media_file_1:
     type: file_generic
