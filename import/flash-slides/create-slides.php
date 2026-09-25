@@ -68,9 +68,9 @@ YAML,
     'weight' => 300,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
-- x: 0.519
-  y: 0.32
-  pointer: right
+- x: 0.520
+  y: 0.330
+  pointer: left
 YAML,
   ],
   [
@@ -79,8 +79,8 @@ YAML,
     'weight' => 400,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
-- x: 0.161
-  y: 0.373
+- x: 0.163
+  y: 0.380
   number: 1
   pointer: right
 - x: 0.829
@@ -99,8 +99,19 @@ YAML,
   ],
   [
     'title' => 'The spinner',
-    'text' => 'Completing the left bank lights the spinner. On a long ball it out-scores everything else on the playfield.',
+    'text' => 'Completing the left bank (1) lights the spinner (2). On a long ball it out-scores everything else on the playfield.',
     'weight' => 500,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.163
+  y: 0.380
+  number: 1
+  pointer: right
+- x: 0.797
+  y: 0.141
+  number: 2
+  pointer: left
+YAML,
   ],
 
   // Multiball: the thing this machine could not do when it was built.
@@ -110,14 +121,14 @@ YAML,
     'weight' => 600,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
-- x: 0.161
-  y: 0.373
+- x: 0.163
+  y: 0.380
   number: 1
   pointer: right
-- x: 0.519
-  y: 0.32
+- x: 0.520
+  y: 0.330
   number: 2
-  pointer: right
+  pointer: left
 YAML,
   ],
   [
@@ -149,14 +160,9 @@ YAML,
     'weight' => 1000,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
-- x: 0.769
-  y: 0.133
-  number: 1
-  pointer: below
-- x: 0.519
-  y: 0.32
-  number: 2
-  pointer: right
+- x: 0.520
+  y: 0.330
+  pointer: above-right
 YAML,
   ],
   [
@@ -168,10 +174,16 @@ YAML,
     'title' => 'Backhand the drops',
     'text' => 'Let the ball roll out to the tip of the flipper and shoot as it rolls back. The five-bank returns safely that way.',
     'weight' => 1200,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.163
+  y: 0.380
+  pointer: below-right
+YAML,
   ],
   [
     'title' => 'Ten thousand, again and again',
-    'text' => 'With the first five-bank down, the eject hole can be backhanded over and over.',
+    'text' => 'With the first five-bank down, the lit eject hole - the right saucer - can be backhanded over and over.',
     'weight' => 1300,
     'image' => 'playfield.jpg',
     'markers' => <<<'YAML'
@@ -182,8 +194,19 @@ YAML,
   ],
   [
     'title' => 'Soft plunge',
-    'text' => 'A soft plunge gives you a head start on the five-bank. Unless the spinner is already lit, in which case go and hit it.',
+    'text' => 'A soft plunge gives you a head start on the five-bank (1). Unless the spinner (2) is already lit, in which case go and hit it.',
     'weight' => 1400,
+    'image' => 'playfield.jpg',
+    'markers' => <<<'YAML'
+- x: 0.163
+  y: 0.380
+  number: 1
+  pointer: right
+- x: 0.797
+  y: 0.141
+  number: 2
+  pointer: left
+YAML,
   ],
   [
     'title' => 'What will drain you',
