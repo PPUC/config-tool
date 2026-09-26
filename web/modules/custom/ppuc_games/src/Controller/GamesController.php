@@ -1674,6 +1674,86 @@ class GamesController extends ControllerBase {
    * on the music item, and an editable copy would drift from the obligation it
    * exists to meet.
    */
+  /**
+   * The titles and credits of the music, beside the music itself.
+   *
+   * The machine otherwise knows a track only by its filename, which is whatever
+   * the file happened to be called when it was uploaded -- a track number, an
+   * artist suffix, underscores. The tool already holds a proper title on the
+   * media item, and the credit the track has to carry, so both are written next
+   * to the files for the song chooser to show.
+   *
+   * YAML because ppuc already links yaml-cpp for the slides, and because a
+   * credit is several lines of free text that no delimiter-separated format
+   * survives intact.
+   */
+  protected function writeMusicTrackInfo(NodeInterface $game, string $music_folder): void {
+    if (!$game->hasField('field_music') || $game->get('field_music')->isEmpty()) {
+      return;
+    }
+
+    $tracks = [];
+    foreach ($game->get('field_music')->referencedEntities() as $media) {
+      if (!$media instanceof MediaInterface) {
+        continue;
+      }
+      $filename = $this->mediaFileName($media);
+      if ($filename === NULL) {
+        continue;
+      }
+      $attribution = $media->hasField('field_attribution') && !$media->get('field_attribution')->isEmpty()
+        ? trim((string) $media->get('field_attribution')->value)
+        : '';
+      $tracks[] = [
+        'file' => $filename,
+        'title' => $media->label(),
+        'attribution' => preg_replace("/\n{2,}/", "\n", str_replace("\r\n", "\n", $attribution)),
+      ];
+    }
+
+    if (!$tracks) {
+      return;
+    }
+
+    $lines = [
+      '# Titles and credits for the files in this folder, written by the config',
+      '# tool. The machine reads it to name tracks in the song chooser; the audio',
+      '# itself is found by scanning the folder, so a missing entry costs a title',
+      '# rather than a track.',
+      'tracks:',
+    ];
+    foreach ($tracks as $track) {
+      $lines[] = '  - file: ' . Yaml::encode($track['file']);
+      $lines[] = '    title: ' . Yaml::encode($track['title']);
+      if ($track['attribution'] !== '') {
+        $lines[] = '    attribution: |-';
+        foreach (explode("\n", $track['attribution']) as $line) {
+          $lines[] = '      ' . $line;
+        }
+      }
+    }
+
+    $this->fileSystem->prepareDirectory($music_folder, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+    file_put_contents($music_folder . '/tracks.yaml', implode("\n", $lines) . "\n");
+  }
+
+  /**
+   * The filename a media item's source file is exported under.
+   */
+  protected function mediaFileName(MediaInterface $media): ?string {
+    $media_type = \Drupal::entityTypeManager()->getStorage('media_type')->load($media->bundle());
+    $source_field = $media_type?->getSource()->getConfiguration()['source_field'] ?? NULL;
+    if ($source_field === NULL || !$media->hasField($source_field) || $media->get($source_field)->isEmpty()) {
+      return NULL;
+    }
+    $file = $media->get($source_field)->entity ?? NULL;
+    if (!$file instanceof FileInterface) {
+      return NULL;
+    }
+    $extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
+    return $this->sanitizeGeneratedFilename($file->getFilename(), $extension);
+  }
+
   protected function musicAttributionSlides(NodeInterface $game): array {
     if (!$game->hasField('field_music') || $game->get('field_music')->isEmpty()) {
       return [];
@@ -1946,6 +2026,7 @@ TXT;
     // they go into are named after it.
     $this->copyReferencedMediaFiles($game, 'field_colorization', $game_folder . '/pinmame/altcolor/' . $rom);
     $this->copyReferencedMediaFiles($game, 'field_music', $game_folder . '/music');
+    $this->writeMusicTrackInfo($game, $game_folder . '/music');
 
     // AltSound is read from the rom's own folder, so the package's contents go
     // straight into it. A PUP pack instead sits as a folder among others inside
