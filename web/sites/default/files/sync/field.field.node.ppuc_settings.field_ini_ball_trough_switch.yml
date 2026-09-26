@@ -1,0 +1,25 @@
+uuid: 85b03137-4cda-4a2c-b1f1-27c9bcbd77a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_ball_trough_switch
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_ball_trough_switch
+field_name: field_ini_ball_trough_switch
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: BallTroughSwitch'
+description: 'Switch number of the trough or outhole a ball rests on while it waits to be served. When that switch stays closed during a game for longer than the grace period below, the machine presents the switch to the ROM again so it serves the ball. 0 turns the safety net off, which is the default: a machine whose trough has not been named here must not have switches synthesised into it.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

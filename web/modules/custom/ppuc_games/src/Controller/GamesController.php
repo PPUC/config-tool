@@ -358,6 +358,12 @@ class GamesController extends ControllerBase {
         'BallSearch' => $value('field_ini_ball_search', 'false'),
         'BallSearchDelayMs' => $value('field_ini_ball_search_delay', '15000'),
         'BallSearchRoundDelayMs' => $value('field_ini_ball_search_round', '5000'),
+        // The ball-trough safety net. Separate from the ball search on purpose:
+        // that one hunts a ball lost somewhere on the playfield by firing coils,
+        // this one deals with a ball that has been found and is sitting in the
+        // trough while the ROM does nothing, and it fires no coils at all.
+        'BallTroughSwitch' => $value('field_ini_ball_trough_switch', '0'),
+        'BallTroughGraceMs' => $value('field_ini_ball_trough_grace', '5000'),
         'CoilHoldFrames' => $value('field_ini_coil_hold_frames', '3'),
         'CloseCoinDoor' => $value('field_ini_close_coin_door', 'false'),
         'HardReset' => $value('field_ini_hard_reset', 'false'),

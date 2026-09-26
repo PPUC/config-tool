@@ -21,6 +21,8 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_ball_search
     - field.field.node.ppuc_settings.field_ini_ball_search_delay
     - field.field.node.ppuc_settings.field_ini_ball_search_round
+    - field.field.node.ppuc_settings.field_ini_ball_trough_grace
+    - field.field.node.ppuc_settings.field_ini_ball_trough_switch
     - field.field.node.ppuc_settings.field_ini_close_coin_door
     - field.field.node.ppuc_settings.field_ini_coil_hold_frames
     - field.field.node.ppuc_settings.field_ini_coil_test
@@ -251,6 +253,20 @@ content:
   field_ini_ball_search_round:
     type: number
     weight: 42
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_ball_trough_grace:
+    type: number
+    weight: 121
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_ball_trough_switch:
+    type: number
+    weight: 120
     region: content
     settings:
       placeholder: ''

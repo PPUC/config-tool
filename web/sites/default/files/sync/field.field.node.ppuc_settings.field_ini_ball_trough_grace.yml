@@ -1,0 +1,25 @@
+uuid: 768adc44-e413-4a4d-85e2-91324197efdc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_ball_trough_grace
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_ball_trough_grace
+field_name: field_ini_ball_trough_grace
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: BallTroughGraceMs'
+description: 'How long a ball may sit on that switch during a game before the ROM is told about it again, in milliseconds. 5000 by default: far longer than a normal serve takes, short enough that nobody watching decides the machine has died.'
+required: false
+translatable: true
+default_value:
+  -
+    value: 5000
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
