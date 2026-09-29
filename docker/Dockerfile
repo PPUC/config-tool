@@ -57,6 +57,11 @@ RUN apt-get update && apt-get install -y \
     update-ca-certificates && \
     echo "allow_url_fopen = On" >> /usr/local/etc/php/conf.d/drupal.ini && \
     echo "openssl.cafile = /etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/drupal.ini && \
+    # Game archives carry the audio files, so they outgrow the production defaults
+    echo "post_max_size = 512M" >> /usr/local/etc/php/conf.d/drupal.ini && \
+    echo "upload_max_filesize = 512M" >> /usr/local/etc/php/conf.d/drupal.ini && \
+    echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/drupal.ini && \
+    echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/drupal.ini && \
     \
     # Apache configuration
     a2enmod rewrite && \
