@@ -75,9 +75,12 @@ drush dcdi --folder=sites/default/files/default_content --preserve-ids --yes
 Under DDEV, prefix both with `ddev`. The Docker image runs them on start, so a
 container restart is enough there.
 
-If the wizard reports that no `Opto_16` board type exists, `drush deploy` is what
-adds it - the default content import cannot, on a site whose taxonomy already
-uses the term id in the file.
+Note that `default_content_deploy` builds its import list from the `_thumbs`
+index beside the entity folders, not from the folders themselves. Default
+content added by hand without its `_thumbs` entry is invisible to the importer
+and never arrives - which is how this board type went missing in the first
+place. Export with `drush dcde` and both halves are written; a unit test checks
+that they still agree.
 
 ### Numbers come from the manual
 
