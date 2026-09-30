@@ -25,8 +25,10 @@ content:
     weight: 100
     region: content
 hidden:
+  field_button: true
   field_debounce: true
   field_debounce_mode: true
+  field_game_role: true
   field_i_o_board: true
   field_number: true
   field_pin: true

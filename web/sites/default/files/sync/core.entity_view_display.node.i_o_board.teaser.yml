@@ -26,3 +26,5 @@ hidden:
   field_game: true
   field_io_board_type: true
   field_number: true
+  field_slow_switches: true
+  field_virtual: true
