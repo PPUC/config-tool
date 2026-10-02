@@ -294,6 +294,8 @@
           }
         });
 
+        vboSelection.toggleButtonsState();
+
         // Clear the selection information if exists.
         $vboForm.find('.vbo-info-list-wrapper').each(function () {
           $(this).html('');

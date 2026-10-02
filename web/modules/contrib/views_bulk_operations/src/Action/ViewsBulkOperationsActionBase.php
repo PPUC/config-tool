@@ -7,7 +7,6 @@ namespace Drupal\views_bulk_operations\Action;
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views_bulk_operations\Traits\ReturnTypeDeprecationTrait;
 use Drupal\views_bulk_operations\Traits\ViewsBulkOperationsActionCompletedTrait;
@@ -133,21 +132,6 @@ abstract class ViewsBulkOperationsActionBase extends ActionBase implements Views
    */
   public function setConfiguration(array $configuration): void {
     $this->configuration = $configuration;
-  }
-
-  /**
-   * Default custom access callback.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user the access check needs to be preformed against.
-   * @param \Drupal\views\ViewExecutable $view
-   *   The View Bulk Operations view data.
-   *
-   * @return bool
-   *   Has access.
-   */
-  public static function customAccess(AccountInterface $account, ViewExecutable $view): bool {
-    return TRUE;
   }
 
 }

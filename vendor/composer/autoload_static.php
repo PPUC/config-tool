@@ -30,6 +30,7 @@ class ComposerStaticInite0e6be606b7485a320a735325593597c
         '2c2415ec15363ede1bff13a287462ba1' => __DIR__ . '/..' . '/symfony/polyfill-php86/bootstrap.php',
         '1052008401d4a2a5be02f7b4e274d051' => __DIR__ . '/..' . '/twig/html-extra/Resources/functions.php',
         '2f69d3914119f042cca9e44442d5ce95' => __DIR__ . '/../..' . '/web/core/includes/bootstrap.inc',
+        '38a4a83ee9437fa4c0c7a481bbf0d2a0' => __DIR__ . '/../..' . '/web/core/includes/guzzle_file_cookie_jar_shim.php',
         '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '2191cedbacc400f3030e0b51d4e2aaf1' => __DIR__ . '/..' . '/rogervila/array-diff-multidimensional/src/helpers.php',

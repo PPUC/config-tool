@@ -302,6 +302,10 @@ final class ViewsBulkOperationsBulkFormTest extends WebDriverTestBase {
     self::assertCount($itemCount, $rowCheckboxes);
     $this->assertRowsUnchecked($rowCheckboxes);
 
+    $this->page->selectFieldOption('action', 'Simple test action');
+    $applyButton = $this->assertSession->buttonExists('Apply to selected items');
+    self::assertTrue($applyButton->hasAttribute('disabled'));
+
     $selectAll = $this->page->find('css', '.vbo-select-all');
     self::assertNotNull($selectAll);
     $selectAll->click();
@@ -309,6 +313,7 @@ final class ViewsBulkOperationsBulkFormTest extends WebDriverTestBase {
     $this->assertRowsChecked(
       $this->page->findAll('css', '.js-vbo-checkbox'),
     );
+    self::assertFalse($applyButton->hasAttribute('disabled'));
 
     // Test select-all on multiple pages with a non-default VBO field ID.
     $this->configureNonDefaultFieldIdSelectAllTestView();
