@@ -6,9 +6,12 @@ dependencies:
     - field.field.node.switch.field_button
     - field.field.node.switch.field_debounce
     - field.field.node.switch.field_debounce_mode
+    - field.field.node.switch.field_game_role
     - field.field.node.switch.field_i_o_board
     - field.field.node.switch.field_number
     - field.field.node.switch.field_pin
+    - field.field.node.switch.field_playfield_x
+    - field.field.node.switch.field_playfield_y
     - node.type.switch
   module:
     - user
@@ -71,6 +74,28 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 103
+    region: content
+  field_playfield_x:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 4
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 40
+    region: content
+  field_playfield_y:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 4
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 41
     region: content
   links:
     settings: {  }

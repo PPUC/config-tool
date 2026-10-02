@@ -35,11 +35,13 @@ final class GameBuilder {
    * @param string $sourceJson
    *   The document this was built from, kept on the game so the wizard can be
    *   run again against a corrected version instead of starting over.
+   * @param array<string, int> $diagramFiles
+   *   Uploaded location pages: PlayfieldDiagram kind to file id. Optional.
    *
    * @return array
    *   ['game' => NodeInterface, 'counts' => [...], 'warnings' => [...]]
    */
-  public function build(array $devices, array $plan, string $sourceJson): array {
+  public function build(array $devices, array $plan, string $sourceJson, array $diagramFiles = []): array {
     $warnings = [];
 
     $game = $this->createGame($devices['game'], $sourceJson, $warnings);
@@ -64,6 +66,8 @@ final class GameBuilder {
       $ledCount += $this->createStripe($boardsByIndex[$stripe['board']], $stripe);
       $stripeCount++;
     }
+
+    $this->attachDiagrams($game, $devices['diagrams'] ?? [], $diagramFiles, $warnings);
 
     return [
       'game' => $game,
@@ -158,7 +162,7 @@ final class GameBuilder {
       }
     }
 
-    $node = Node::create($values);
+    $node = Node::create($values + $this->playfieldValues($switch['position'] ?? NULL));
     $node->save();
     return $node;
   }
@@ -208,7 +212,7 @@ final class GameBuilder {
       $values['field_stop_switches'] = $stops;
     }
 
-    $node = Node::create($values);
+    $node = Node::create($values + $this->playfieldValues($coil['position'] ?? NULL));
     $node->save();
     return $node;
   }
@@ -251,10 +255,92 @@ final class GameBuilder {
       if ($roles[$led['role']] !== NULL) {
         $ledValues['field_role'] = ['target_id' => $roles[$led['role']]];
       }
-      Node::create($ledValues)->save();
+      Node::create($ledValues + $this->playfieldValues($led['playfield'] ?? NULL))->save();
     }
 
     return count($stripe['leds']);
+  }
+
+  /**
+   * Stores the uploaded location pages on the game, each with its corners.
+   *
+   * The image and the corners arrive separately - one uploaded, the other in
+   * the JSON - and only together can a position be drawn on the page. An image
+   * without corners is still worth keeping, and is said to be incomplete;
+   * corners without an image are left in the stored source, where they can be
+   * picked up once the image exists.
+   *
+   * @param array<string, array> $corners
+   *   Kind to corners, as parsed.
+   * @param array<string, int> $files
+   *   Kind to file id.
+   */
+  private function attachDiagrams(NodeInterface $game, array $corners, array $files, array &$warnings): void {
+    $attached = FALSE;
+    foreach (PlayfieldDiagram::KINDS as $kind => $definition) {
+      if (empty($files[$kind])) {
+        continue;
+      }
+
+      $type = $this->entityTypeManager->getStorage('media_type')->load($definition['mediaType']);
+      if ($type === NULL || !$game->hasField($definition['gameField'])) {
+        $warnings[] = sprintf(
+          'The %s image was not stored: this site has no "%s" media type or no field for it on a game.',
+          $definition['page'],
+          $definition['mediaType']
+        );
+        continue;
+      }
+
+      $values = [
+        'bundle' => $definition['mediaType'],
+        'name' => sprintf('%s - %s', $game->label(), $definition['page']),
+        $type->getSource()->getSourceFieldDefinition($type)->getName() => [
+          'target_id' => $files[$kind],
+          'alt' => sprintf('%s of %s', $definition['page'], $game->label()),
+        ],
+      ];
+      if (isset($corners[$kind])) {
+        $values[PlayfieldDiagram::CORNERS_FIELD] = [
+          'value' => json_encode($corners[$kind], JSON_PRETTY_PRINT),
+        ];
+      }
+      else {
+        $warnings[] = sprintf(
+          'The %s image was stored without the corners of its playfield, because the '
+          . 'JSON has no diagrams.%s. Positions cannot be drawn on it until they are '
+          . 'filled in on the image.',
+          $definition['page'],
+          $kind
+        );
+      }
+
+      $media = $this->entityTypeManager->getStorage('media')->create($values);
+      $media->save();
+      $game->set($definition['gameField'], ['target_id' => $media->id()]);
+      $attached = TRUE;
+    }
+
+    if ($attached) {
+      $game->save();
+    }
+  }
+
+  /**
+   * The field values that record where a device sits, or none.
+   *
+   * The allocator has already used the position to choose a board. It is kept
+   * as well because it is the only thing that says where the part physically
+   * is, which a switch test or a tutorial slide can point at later.
+   */
+  private function playfieldValues(mixed $position): array {
+    if (!$position instanceof Position) {
+      return [];
+    }
+    return [
+      'field_playfield_x' => ['value' => round($position->x, 4)],
+      'field_playfield_y' => ['value' => round($position->y, 4)],
+    ];
   }
 
   /**

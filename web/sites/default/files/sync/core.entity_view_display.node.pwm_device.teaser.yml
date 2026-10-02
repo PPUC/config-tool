@@ -4,16 +4,24 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.pwm_device.field_ball_search
+    - field.field.node.pwm_device.field_dual_winding
+    - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
+    - field.field.node.pwm_device.field_game_role
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
+    - field.field.node.pwm_device.field_hold_winding
     - field.field.node.pwm_device.field_i_o_board
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
     - field.field.node.pwm_device.field_number
     - field.field.node.pwm_device.field_pin
+    - field.field.node.pwm_device.field_playfield_x
+    - field.field.node.pwm_device.field_playfield_y
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
+    - field.field.node.pwm_device.field_stop_switches
     - node.type.pwm_device
   module:
     - user
@@ -43,6 +51,8 @@ hidden:
   field_min_pulse_time: true
   field_number: true
   field_pin: true
+  field_playfield_x: true
+  field_playfield_y: true
   field_power: true
   field_pwm_type: true
   field_stop_switches: true

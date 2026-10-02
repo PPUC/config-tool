@@ -10,6 +10,8 @@ dependencies:
     - field.field.node.switch.field_i_o_board
     - field.field.node.switch.field_number
     - field.field.node.switch.field_pin
+    - field.field.node.switch.field_playfield_x
+    - field.field.node.switch.field_playfield_y
     - node.type.switch
 _core:
   default_config_hash: 7Yush3NBXBqI8avW0PNQRiwl6bSQ7F6ly5aOJSo2EE8
@@ -60,6 +62,20 @@ content:
   field_pin:
     type: number
     weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_playfield_x:
+    type: number
+    weight: 40
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_playfield_y:
+    type: number
+    weight: 41
     region: content
     settings:
       placeholder: ''

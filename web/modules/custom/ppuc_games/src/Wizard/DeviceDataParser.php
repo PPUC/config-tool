@@ -78,7 +78,7 @@ final class DeviceDataParser {
       return NULL;
     }
 
-    $unknown = array_diff(array_keys($data), ['game', 'switches', 'coils', 'flippers', 'flashers', 'lamps', 'gi']);
+    $unknown = array_diff(array_keys($data), ['game', 'switches', 'coils', 'flippers', 'flashers', 'lamps', 'gi', 'diagrams']);
     foreach ($unknown as $key) {
       $this->errors[] = sprintf('Unknown top-level section "%s".', $key);
     }
@@ -97,6 +97,7 @@ final class DeviceDataParser {
       'flashers' => $this->parseLeds($data['flashers'] ?? [], 'flashers'),
       'lamps' => $this->parseLeds($data['lamps'] ?? [], 'lamps'),
       'gi' => $this->parseLeds($data['gi'] ?? [], 'gi'),
+      'diagrams' => $this->parseDiagrams($data['diagrams'] ?? []),
     ];
 
     $this->checkFlipperCoilsExist($result);
@@ -501,6 +502,37 @@ final class DeviceDataParser {
       return NULL;
     }
     return $location;
+  }
+
+  /**
+   * Reads where the playfield is on each location page.
+   *
+   * Optional as a whole and per page: a manual may have no location pages, or
+   * only some of them.
+   *
+   * @return array<string, array<string, array{x: float, y: float}>>
+   *   Kind of page to its corners.
+   */
+  private function parseDiagrams(mixed $diagrams): array {
+    if (!is_array($diagrams)) {
+      $this->errors[] = '"diagrams" must be an object keyed by ' . implode(', ', array_keys(PlayfieldDiagram::KINDS)) . '.';
+      return [];
+    }
+    $this->rejectUnknownKeys($diagrams, array_keys(PlayfieldDiagram::KINDS), 'diagrams');
+
+    $parsed = [];
+    foreach (array_keys(PlayfieldDiagram::KINDS) as $kind) {
+      if (!array_key_exists($kind, $diagrams)) {
+        continue;
+      }
+      try {
+        $parsed[$kind] = PlayfieldDiagram::cornersFromArray($diagrams[$kind]);
+      }
+      catch (\InvalidArgumentException $e) {
+        $this->errors[] = sprintf('diagrams.%s has bad corners: %s.', $kind, $e->getMessage());
+      }
+    }
+    return $parsed;
   }
 
   private function rejectUnknownKeys(array $item, array $allowed, string $path): void {

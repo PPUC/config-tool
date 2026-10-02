@@ -6,6 +6,8 @@ dependencies:
     - field.field.node.addressable_led.field_color
     - field.field.node.addressable_led.field_led_type
     - field.field.node.addressable_led.field_number
+    - field.field.node.addressable_led.field_playfield_x
+    - field.field.node.addressable_led.field_playfield_y
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
@@ -35,6 +37,20 @@ content:
   field_number:
     type: number
     weight: 7
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_playfield_x:
+    type: number
+    weight: 40
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_playfield_y:
+    type: number
+    weight: 41
     region: content
     settings:
       placeholder: ''

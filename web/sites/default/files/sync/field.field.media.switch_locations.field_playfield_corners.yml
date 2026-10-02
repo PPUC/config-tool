@@ -1,0 +1,19 @@
+uuid: e262dadc-8888-400f-bffc-9c39f4203a2f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.media.field_playfield_corners
+    - media.type.switch_locations
+id: media.switch_locations.field_playfield_corners
+field_name: field_playfield_corners
+entity_type: media
+bundle: switch_locations
+label: 'Playfield corners'
+description: 'Where the four corners of the playfield are on this image, as JSON: <code>flipperLeft</code>, <code>flipperRight</code>, <code>farRight</code> and <code>farLeft</code>, each <code>{ "x", "y" }</code> as a fraction of the image from its top left. Device positions are drawn on the image from these.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

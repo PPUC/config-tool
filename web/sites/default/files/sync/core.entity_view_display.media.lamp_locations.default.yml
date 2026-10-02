@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.media.lamp_locations.field_media_image_1
+    - field.field.media.lamp_locations.field_playfield_corners
     - image.style.large
     - media.type.lamp_locations
   module:
@@ -26,6 +27,7 @@ content:
     region: content
 hidden:
   created: true
+  field_playfield_corners: true
   name: true
   thumbnail: true
   uid: true

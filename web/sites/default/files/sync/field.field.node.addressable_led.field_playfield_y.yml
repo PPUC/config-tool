@@ -1,0 +1,23 @@
+uuid: 2fea5579-c166-4f56-a5f7-be3389ee5822
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_playfield_y
+    - node.type.addressable_led
+id: node.addressable_led.field_playfield_y
+field_name: field_playfield_y
+entity_type: node
+bundle: addressable_led
+label: 'Playfield Y'
+description: 'Where this sits along the playfield, as a fraction from 0 (flipper end) to 1 (top). Leave empty if unknown.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.0
+  max: 1.0
+  prefix: ''
+  suffix: ''
+field_type: decimal

@@ -1,0 +1,23 @@
+uuid: 48937bfa-c9cf-44e2-821e-fb557f69922e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_playfield_y
+    - node.type.switch
+id: node.switch.field_playfield_y
+field_name: field_playfield_y
+entity_type: node
+bundle: switch
+label: 'Playfield Y'
+description: 'Where this sits along the playfield, as a fraction from 0 (flipper end) to 1 (top). Leave empty if unknown.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.0
+  max: 1.0
+  prefix: ''
+  suffix: ''
+field_type: decimal

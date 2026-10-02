@@ -525,6 +525,9 @@ final class HardwareAllocator {
         'description' => $led['description'],
         'role' => $led['role'],
         'position' => $index++,
+        // Where it is on the playfield, as opposed to where it is in the
+        // string above. Carried through so the builder can keep it.
+        'playfield' => $led['position'] ?? NULL,
       ];
     }
 

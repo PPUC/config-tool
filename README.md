@@ -265,6 +265,40 @@ Positions buy two things:
   positions keeps the listed order - half a path and half a matrix is worse than
   either - and the wizard says which strings got which.
 
+The position is also kept on each switch, PWM device and LED, as **Playfield X**
+and **Playfield Y**, so it can be corrected by hand and used to point at the
+part later - in a switch or lamp test, or on a tutorial slide.
+
+#### Showing positions on the scanned pages
+
+A position is a fraction of the playfield; a scan is a page with the playfield
+somewhere on it, between a title and a legend, possibly sideways. The prompt
+therefore also asks where the playfield is on each location page, as four
+corners:
+
+```json
+"diagrams": {
+  "switches": {
+    "flipperLeft":  { "x": 0.21, "y": 0.93 },
+    "flipperRight": { "x": 0.78, "y": 0.93 },
+    "farRight":     { "x": 0.79, "y": 0.08 },
+    "farLeft":      { "x": 0.22, "y": 0.08 }
+  }
+}
+```
+
+The keys are `switches`, `lamps` and `coils`, one per location page (flashers
+are on the solenoid page). Corners are fractions of the *image*, from its top
+left, and are named by where they are on the playfield rather than on the page,
+so a sideways scan needs no separate orientation. All four are required for a
+page that is listed; the section and each page in it are optional.
+
+The wizard's **Location pages** section takes the same three images. Each is
+stored on the game as its Switch, Lamp or Solenoid Locations image, with the
+corners in its **Playfield corners** field, where they can be adjusted - an AI's
+idea of where an outline ends is good to a few percent, not to the pixel.
+`PlayfieldDiagram::toImage()` turns a position into a point on the image.
+
 **Proximity never overrides the capacitor rule.** Three jet bumpers are inches
 apart, so nearest-board would put all three together, which is exactly the
 arrangement to avoid. Coils with a fast-flip switch are spread across boards

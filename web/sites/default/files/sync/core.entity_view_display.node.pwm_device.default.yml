@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.pwm_device.field_dual_winding
     - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
+    - field.field.node.pwm_device.field_game_role
     - field.field.node.pwm_device.field_hold_power
     - field.field.node.pwm_device.field_hold_power_activation_time
     - field.field.node.pwm_device.field_hold_winding
@@ -15,6 +16,8 @@ dependencies:
     - field.field.node.pwm_device.field_min_pulse_time
     - field.field.node.pwm_device.field_number
     - field.field.node.pwm_device.field_pin
+    - field.field.node.pwm_device.field_playfield_x
+    - field.field.node.pwm_device.field_playfield_y
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
     - field.field.node.pwm_device.field_stop_switches
@@ -135,6 +138,28 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     weight: 8
+    region: content
+  field_playfield_x:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 4
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 40
+    region: content
+  field_playfield_y:
+    type: number_decimal
+    label: inline
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 4
+      prefix_suffix: false
+    third_party_settings: {  }
+    weight: 41
     region: content
   field_power:
     type: number_integer

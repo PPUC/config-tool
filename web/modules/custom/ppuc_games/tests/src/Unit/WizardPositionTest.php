@@ -232,6 +232,23 @@ class WizardPositionTest extends TestCase {
   }
 
   /**
+   * Ordering a string consumes the positions; the builder still needs them.
+   */
+  public function testAnLedKeepsWhereItSitsOnThePlayfield(): void {
+    $plan = $this->allocate([
+      'lamps' => [
+        ['number' => 11, 'description' => 'Placed', 'position' => ['x' => 0.5, 'y' => 0.9]],
+        ['number' => 12, 'description' => 'Unplaced'],
+      ],
+    ]);
+
+    $lamps = array_values(array_filter($plan['stripes'], static fn ($s) => $s['label'] === 'Lamps'));
+    $byNumber = array_column($lamps[0]['leds'], 'playfield', 'number');
+    $this->assertSame(['x' => 0.5, 'y' => 0.9], $byNumber[11]->toArray());
+    $this->assertNull($byNumber[12]);
+  }
+
+  /**
    * Half a path and half a matrix would be worse than either.
    */
   public function testTheListedOrderIsKeptWhenOnlySomeLedsArePositioned(): void {

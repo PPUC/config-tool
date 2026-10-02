@@ -1,0 +1,23 @@
+uuid: 75343d3e-9c93-45a9-a8c9-4ff8a47ec45f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_playfield_y
+    - node.type.pwm_device
+id: node.pwm_device.field_playfield_y
+field_name: field_playfield_y
+entity_type: node
+bundle: pwm_device
+label: 'Playfield Y'
+description: 'Where this sits along the playfield, as a fraction from 0 (flipper end) to 1 (top). Leave empty if unknown.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0.0
+  max: 1.0
+  prefix: ''
+  suffix: ''
+field_type: decimal

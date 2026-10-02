@@ -1,0 +1,20 @@
+uuid: bedbe4a1-a63f-48eb-8048-d31ff542dc3b
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_playfield_x
+field_name: field_playfield_x
+entity_type: node
+type: decimal
+settings:
+  precision: 5
+  scale: 4
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

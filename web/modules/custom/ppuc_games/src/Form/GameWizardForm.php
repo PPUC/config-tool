@@ -13,6 +13,7 @@ use Drupal\ppuc_games\Wizard\DeviceDefaults;
 use Drupal\ppuc_games\Wizard\ExtractionPrompt;
 use Drupal\ppuc_games\Wizard\GameBuilder;
 use Drupal\ppuc_games\Wizard\HardwareAllocator;
+use Drupal\ppuc_games\Wizard\PlayfieldDiagram;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -96,7 +97,9 @@ final class GameWizardForm extends FormBase {
         'Scan or photograph these pages of the operator manual: <em>@required</em>. '
         . 'If the manual also has the location pages - <em>@optional</em> - include '
         . 'those and every device will get a position, which the wizard uses to keep '
-        . 'wire runs short and to order the LED strings sensibly.',
+        . 'wire runs short and to order the LED strings sensibly. The answer then also '
+        . 'says where the playfield is on each of those pages; upload the same images '
+        . 'below and the positions can be shown on them.',
         [
           '@required' => implode(', ', ExtractionPrompt::REQUIRED_PAGES),
           '@optional' => implode(', ', ExtractionPrompt::OPTIONAL_PAGES),
@@ -137,6 +140,30 @@ final class GameWizardForm extends FormBase {
       ),
     ];
 
+    // The JSON says where the playfield is on each location page; these are the
+    // pages themselves. Kept apart from the JSON because the JSON is still the
+    // whole contract for building the hardware, and none of this is needed for
+    // that.
+    $form['diagrams'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Location pages (optional)'),
+      '#open' => (bool) array_filter($form_state->get('diagramFiles') ?? []),
+      '#description' => $this->t(
+        'The same location pages that were given to the AI. They are stored on the '
+        . 'game, each with the corners of its playfield from the "diagrams" section '
+        . 'of the JSON, so that a device\'s position can be pointed at on the scan.'
+      ),
+    ];
+    foreach (PlayfieldDiagram::KINDS as $kind => $definition) {
+      $form['diagrams']['diagram_' . $kind] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('@page', ['@page' => $definition['page']]),
+        '#upload_location' => 'public://' . $definition['mediaType'],
+        '#upload_validators' => ['FileExtension' => ['extensions' => 'png gif jpg jpeg webp']],
+        '#default_value' => array_filter([$form_state->get('diagramFiles')[$kind] ?? NULL]),
+      ];
+    }
+
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [
@@ -165,6 +192,12 @@ final class GameWizardForm extends FormBase {
         $this->formatPlural(count($plan['stripes']), '1 LED stripe', '@count LED stripes'),
       ],
     ];
+
+    foreach (array_keys($form_state->get('diagramFiles') ?? []) as $kind) {
+      $form['summary']['#items'][] = isset($devices['diagrams'][$kind])
+        ? $this->t('the @page image, with its playfield corners', ['@page' => PlayfieldDiagram::KINDS[$kind]['page']])
+        : $this->t('the @page image, without playfield corners', ['@page' => PlayfieldDiagram::KINDS[$kind]['page']]);
+    }
 
     $rows = [];
     foreach ($plan['boards'] as $board) {
@@ -293,7 +326,16 @@ final class GameWizardForm extends FormBase {
       }
     }
 
+    $diagramFiles = [];
+    foreach (array_keys(PlayfieldDiagram::KINDS) as $kind) {
+      $fids = (array) $form_state->getValue('diagram_' . $kind);
+      if ($fids) {
+        $diagramFiles[$kind] = (int) reset($fids);
+      }
+    }
+
     $form_state->set('json', $json);
+    $form_state->set('diagramFiles', $diagramFiles);
     $form_state->set('devices', $devices);
     $form_state->set('skipped', $parser->skipped());
     $form_state->set('plan', (new HardwareAllocator(
@@ -314,7 +356,8 @@ final class GameWizardForm extends FormBase {
     $result = $this->gameBuilder->build(
       $form_state->get('devices'),
       $form_state->get('plan'),
-      $form_state->get('json')
+      $form_state->get('json'),
+      $form_state->get('diagramFiles') ?? []
     );
 
     $counts = $result['counts'];

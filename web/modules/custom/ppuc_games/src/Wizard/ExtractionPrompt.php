@@ -64,7 +64,8 @@ final class ExtractionPrompt {
       . "\n"
       . "The first three carry the numbers and are what you need. The location pages are\n"
       . "playfield diagrams with numbered callouts; they only add positions, and plenty of\n"
-      . "manuals do not have them.\n"
+      . "manuals do not have them. When they are attached I also need to know where the\n"
+      . "playfield is on each of them, so that the positions can be drawn on the scan.\n"
       . "\n"
       . "Reply with the JSON document and nothing else - no explanation, no code fence.",
       $platform,
@@ -86,7 +87,9 @@ final class ExtractionPrompt {
       . "  \"flippers\": [ { \"name\", \"position\", \"powerCoil\", \"holdCoil\" } ],\n"
       . "  \"flashers\": [ { \"number\", \"description\", and optionally \"location\", \"position\" } ],\n"
       . "  \"lamps\":    [ { \"number\", \"description\", and optionally \"location\", \"position\" } ],\n"
-      . "  \"gi\":       [ { \"number\", \"description\", and optionally \"location\", \"position\" } ]\n"
+      . "  \"gi\":       [ { \"number\", \"description\", and optionally \"location\", \"position\" } ],\n"
+      . "  \"diagrams\": { optionally \"" . implode('", "', array_keys(PlayfieldDiagram::KINDS)) . "\", each with the corners\n"
+      . "                \"" . implode('", "', array_keys(PlayfieldDiagram::CORNERS)) . "\" }\n"
       . "}\n"
       . "\n"
       . "Use no keys other than these. An unknown key is rejected rather than ignored.";
@@ -158,6 +161,25 @@ final class ExtractionPrompt {
       . "the playfield from 0 to 1. Read them off the callout on the diagram; approximate\n"
       . "is fine, and omit the position for anything you cannot place. Do not guess a\n"
       . "position from a device's name.",
+
+      "The playfield, for positions, is the rectangular board itself: inside the cabinet\n"
+      . "side rails, from the edge below the flippers and outhole to the edge behind the\n"
+      . "top arch. Not the page: margins, title, legend, callout numbers and any cabinet\n"
+      . "or backbox drawing are outside it. Use the same outline on every location page.",
+
+      "\"diagrams\", only if the location pages are attached: for each page, where the\n"
+      . "four corners of that playfield outline are on the scan.\n"
+      . self::diagramKeys()
+      . "Each corner is { \"x\", \"y\" } as a fraction of the image, 0,0 at the image's top\n"
+      . "left and 1,1 at its bottom right. The corners are named by playfield position,\n"
+      . "not by where they are on the page:\n"
+      . self::cornerNames()
+      . "Give all four independently - a scan may be skewed, rotated or printed sideways,\n"
+      . "so do not assume an upright rectangle. If an edge is cut off by the page,\n"
+      . "estimate where it would be. Leave a page out if it shows no playfield outline.\n"
+      . "Check yourself before answering: take three devices spread across a page, work\n"
+      . "out where their positions land between your corners, and correct the corners if\n"
+      . "any lands visibly off its callout.",
     ];
 
     // Hanging indent, so a rule that wraps still reads as one rule.
@@ -170,6 +192,28 @@ final class ExtractionPrompt {
     }
 
     return "RULES\n\n" . implode("\n\n", $numbered);
+  }
+
+  /**
+   * Which "diagrams" key belongs to which page, one per line.
+   */
+  private static function diagramKeys(): string {
+    $lines = '';
+    foreach (PlayfieldDiagram::KINDS as $kind => $definition) {
+      $lines .= sprintf("  %-10s = %s\n", '"' . $kind . '"', $definition['page']);
+    }
+    return $lines;
+  }
+
+  /**
+   * Which playfield position each corner is, one per line.
+   */
+  private static function cornerNames(): string {
+    $lines = '';
+    foreach (PlayfieldDiagram::CORNERS as $name => [$x, $y]) {
+      $lines .= sprintf("  %-14s = playfield x %d, y %d\n", '"' . $name . '"', $x, $y);
+    }
+    return $lines;
   }
 
   private static function example(): string {
@@ -204,7 +248,15 @@ final class ExtractionPrompt {
       . "    { \"number\": 11, \"description\": \"Left Rollover\", \"position\": { \"x\": 0.36, \"y\": 0.88 } },\n"
       . "    { \"number\": 88, \"description\": \"Start Button\", \"location\": \"cabinet\" }\n"
       . "  ],\n"
-      . "  \"gi\": [ { \"number\": 1, \"description\": \"Right String\" } ]\n"
+      . "  \"gi\": [ { \"number\": 1, \"description\": \"Right String\" } ],\n"
+      . "  \"diagrams\": {\n"
+      . "    \"switches\": {\n"
+      . "      \"flipperLeft\":  { \"x\": 0.21, \"y\": 0.93 },\n"
+      . "      \"flipperRight\": { \"x\": 0.78, \"y\": 0.93 },\n"
+      . "      \"farRight\":     { \"x\": 0.79, \"y\": 0.08 },\n"
+      . "      \"farLeft\":      { \"x\": 0.22, \"y\": 0.08 }\n"
+      . "    }\n"
+      . "  }\n"
       . "}";
   }
 

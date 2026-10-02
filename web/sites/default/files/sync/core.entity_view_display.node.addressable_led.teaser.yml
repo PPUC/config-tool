@@ -7,6 +7,8 @@ dependencies:
     - field.field.node.addressable_led.field_color
     - field.field.node.addressable_led.field_led_type
     - field.field.node.addressable_led.field_number
+    - field.field.node.addressable_led.field_playfield_x
+    - field.field.node.addressable_led.field_playfield_y
     - field.field.node.addressable_led.field_role
     - field.field.node.addressable_led.field_string
     - field.field.node.addressable_led.field_string_position
@@ -30,6 +32,8 @@ hidden:
   field_color: true
   field_led_type: true
   field_number: true
+  field_playfield_x: true
+  field_playfield_y: true
   field_role: true
   field_string: true
   field_string_position: true
