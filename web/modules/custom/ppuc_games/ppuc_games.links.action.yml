@@ -100,6 +100,12 @@ ppuc_games.add_addresable_led:
     - entity.node.canonical
   title: 'Add LED'
 
+ppuc_games.add_gi_string:
+  route_name: ppuc_games.gi_string.add
+  appears_on:
+    - entity.node.canonical
+  title: 'Add GI String'
+
 ppuc_games.add_pwm_effect:
   route_name: node.add
   route_parameters:

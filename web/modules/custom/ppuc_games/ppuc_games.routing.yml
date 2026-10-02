@@ -6,6 +6,19 @@ ppuc_games.wizard:
   requirements:
     _permission: 'create game content'
 
+ppuc_games.gi_string.add:
+  path: '/node/{node}/gi-string/add'
+  defaults:
+    _form: '\Drupal\ppuc_games\Form\GiStringForm'
+    _title: 'Add GI String'
+  requirements:
+    _permission: 'create addressable_led content'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 ppuc_games.zip:
   path: '/node/{node}/zip'
   defaults:
