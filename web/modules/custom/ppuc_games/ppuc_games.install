@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-use Drupal\Core\Serialization\Yaml;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -251,43 +250,4 @@ function ppuc_games_update_11004(): string {
   $slow->delete();
 
   return sprintf('Moved %d switch(es) from slowStable to Standard and removed the term.', $moved);
-}
-
-/**
- * Install the ppuc_slide image style, so exported slides are screen-sized.
- *
- * The slide exporter used to copy the operator's upload untouched. That is
- * fine until somebody uploads a photograph off a phone: Flash's playfield shot
- * went out at 1467x2560, and the machine decodes the picture on the thread
- * that also drives the audio device every time the photograph changes. On a
- * Pi 4 that decode was long enough to make the audio callback late, which came
- * out of the speakers as a click whenever a slide carrying the big picture
- * came up.
- *
- * Exported through this style the same picture is 630x1100 -- about a fifth of
- * the pixels, for a panel that could never show more. Nothing about authoring
- * changes; operators go on uploading whatever their camera produced.
- *
- * The style is installed rather than imported wholesale, because
- * installDefaultConfig() would reinstall every other config object this module
- * ships and overwrite whatever a site has since changed about them.
- */
-function ppuc_games_update_11005(): string {
-  $storage = \Drupal::entityTypeManager()->getStorage('image_style');
-
-  if ($storage->load('ppuc_slide')) {
-    return 'The ppuc_slide image style already exists, nothing to do.';
-  }
-
-  $file = \Drupal::service('extension.list.module')->getPath('ppuc_games')
-    . '/config/install/image.style.ppuc_slide.yml';
-
-  $values = is_file($file) ? Yaml::decode((string) file_get_contents($file)) : NULL;
-  if (!is_array($values)) {
-    throw new \RuntimeException('Cannot install the ppuc_slide image style: ' . $file . ' is missing or unreadable.');
-  }
-
-  $storage->create($values)->save();
-
-  return 'Installed the ppuc_slide image style; exported slide photographs are now capped at 1100px on the long edge.';
 }
