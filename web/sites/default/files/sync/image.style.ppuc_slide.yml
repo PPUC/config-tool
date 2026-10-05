@@ -1,0 +1,15 @@
+uuid: bf3b9fe1-e445-4cbe-bcee-8f5425df0ab1
+langcode: en
+status: true
+dependencies: {  }
+name: ppuc_slide
+label: 'PPUC slide (for the machine)'
+effects:
+  87a52b7f-35ed-4afe-b295-366ad7c70794:
+    uuid: 87a52b7f-35ed-4afe-b295-366ad7c70794
+    id: image_scale
+    weight: 1
+    data:
+      width: 1100
+      height: 1100
+      upscale: false

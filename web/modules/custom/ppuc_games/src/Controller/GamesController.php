@@ -10,6 +10,7 @@ use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\default_content_deploy\ExporterInterface;
 use Drupal\file\FileInterface;
+use Drupal\image\ImageStyleInterface;
 use Drupal\media\MediaInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
@@ -56,6 +57,23 @@ class GamesController extends ControllerBase {
    * <Game>_<uuid>.yml, which has to be renamed by hand before the runtime will
    * look at it. Both now come from here.
    */
+  /**
+   * The image style every exported slide photograph goes through.
+   *
+   * A slide panel is at most a backbox screen wide, and the machine decodes
+   * the picture on its main thread every time the photograph changes. Flash's
+   * playfield shot was uploaded at 1467x2560 -- 3.76 megapixels, of which a
+   * 1080-high panel shows well under a fifth -- and decoding it cost enough on
+   * a Pi 4 to make the audio callback late, which is audible as a click in the
+   * speakers when the slide comes up. Exporting it at screen size is about
+   * five times less work for pixels nobody could see.
+   *
+   * Operators upload photographs straight off a phone, and should be able to:
+   * the scaling belongs here, once, rather than as an instruction nobody
+   * reads.
+   */
+  protected const SLIDE_IMAGE_STYLE = 'ppuc_slide';
+
   protected const CONFIG_FILENAME = 'io-boards.yaml';
   protected const PPUC_INI_FILENAME = 'ppuc.ini';
 
@@ -1490,6 +1508,52 @@ class GamesController extends ControllerBase {
    * `$used` carries the names already taken, so two files that happen to be
    * called the same thing do not overwrite one another.
    */
+  /**
+   * The file to export for a slide: a screen-sized derivative, or the original.
+   *
+   * Falls back to the original on every failure rather than refusing to
+   * export. A missing image style, a toolkit that cannot read the file, a
+   * derivative that is not actually smaller -- none of those is a reason to
+   * hand the machine no picture, and the original has always worked.
+   *
+   * Markers are unaffected: they are coordinates from 0 to 1 across the
+   * picture rather than pixels, which is exactly so that scaling it cannot
+   * move them.
+   */
+  protected function slideImageSource(FileInterface $file): string {
+    $uri = $file->getFileUri();
+
+    $style = $this->entityTypeManager()->getStorage('image_style')->load(self::SLIDE_IMAGE_STYLE);
+    if (!$style instanceof ImageStyleInterface) {
+      return $uri;
+    }
+
+    $derivative = $style->buildUri($uri);
+
+    // Rebuilt when the picture behind it has been replaced. Drupal flushes
+    // derivatives when a file entity is updated, but an operator who
+    // overwrites the file in place leaves the entity untouched, and exporting
+    // a stale picture is worse than re-scaling one unnecessarily.
+    $source_time = @filemtime($uri);
+    $derivative_time = file_exists($derivative) ? @filemtime($derivative) : FALSE;
+    if ($derivative_time === FALSE || ($source_time !== FALSE && $derivative_time < $source_time)) {
+      if (!$style->createDerivative($uri, $derivative)) {
+        return $uri;
+      }
+    }
+
+    // A picture already smaller than the cap comes back the same size, and
+    // re-encoding it can make the file bigger than what was uploaded. Nothing
+    // is gained by putting that in the game folder.
+    $original_size = @filesize($uri);
+    $derivative_size = @filesize($derivative);
+    if ($derivative_size === FALSE || ($original_size !== FALSE && $derivative_size >= $original_size)) {
+      return $uri;
+    }
+
+    return $derivative;
+  }
+
   protected function slideImageFilename(FileInterface $file, array $used): string {
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION) ?: 'png');
     $base = preg_replace('/[^a-z0-9]+/', '-', strtolower(pathinfo($file->getFilename(), PATHINFO_FILENAME)));
@@ -1628,7 +1692,7 @@ class GamesController extends ControllerBase {
           if (!isset($written[$uri])) {
             $written[$uri] = $this->slideImageFilename($file, $used);
             $used[$written[$uri]] = TRUE;
-            $this->fileSystem->copy($uri, $slides_folder . '/' . $written[$uri],
+            $this->fileSystem->copy($this->slideImageSource($file), $slides_folder . '/' . $written[$uri],
               FileSystemInterface::EXISTS_REPLACE);
           }
           $entry['image'] = $written[$uri];
