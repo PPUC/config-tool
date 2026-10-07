@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Form\NodeForm;
 use Drupal\taxonomy\TermInterface;
+use Drupal\ppuc_games\Wizard\BoardCapacity;
 
 /**
  * PPUC form handler for the node edit forms.
@@ -910,12 +911,82 @@ class PpucNodeForm extends NodeForm {
       $i_o_board = $entity->field_i_o_board->entity;
       $i_o_board_type = $i_o_board->field_io_board_type->entity;
       $i_o_board_gpio_mapping = unserialize($i_o_board_type->field_gpio_mapping->value, ['allowed_classes' => FALSE]);
-      if (!array_key_exists((int) ($entity->field_pin->value), $i_o_board_gpio_mapping)) {
+      $pin = (int) ($entity->field_pin->value);
+      if (!array_key_exists($pin, $i_o_board_gpio_mapping)) {
         $form_state->setErrorByName('field_pin[0][value]', $this->t('The selected board has no port %pin.', ['%pin' => $entity->field_pin->value]));
+      }
+      elseif (BoardCapacity::knows((string) $i_o_board_type->label())) {
+        // The pin exists; whether this kind of device can go on it is a
+        // different question, and one the exporter never asked.
+        $isLamp = $entity->hasField('field_pwm_type')
+          && $entity->field_pwm_type->entity
+          && $entity->field_pwm_type->entity->uuid() === BoardCapacity::PWM_TYPE_LAMP_UUID;
+        $refusal = (new BoardCapacity((string) $i_o_board_type->label(), $i_o_board_gpio_mapping))
+          ->refusal($entity->bundle(), $pin, $isLamp);
+        if ($refusal !== NULL) {
+          $form_state->setErrorByName('field_pin[0][value]', $refusal);
+        }
       }
     }
 
+    $this->validateMatrix($entity, $form_state);
+
     return $entity;
+  }
+
+  /**
+   * Checks a matrix against its board, and a matrix member against its matrix.
+   *
+   * A switch matrix and a lamp matrix are each tied to particular hardware,
+   * and how many positions one has depends on the board and the row count.
+   * libppuc refuses a game that gets either wrong; this says so while the
+   * person who can fix it is still looking at the form.
+   */
+  protected function validateMatrix(NodeInterface $entity, FormStateInterface $form_state): void {
+    $kinds = [
+      'switch_matrix' => ['switch', NULL],
+      'lamp_matrix' => ['lamp', NULL],
+      'switch_matrix_switch' => ['switch', 'field_switch_matrix'],
+      'lamp_matrix_lamp' => ['lamp', 'field_lamp_matrix'],
+    ];
+    if (!isset($kinds[$entity->bundle()])) {
+      return;
+    }
+    [$kind, $parentField] = $kinds[$entity->bundle()];
+
+    $matrix = $entity;
+    if ($parentField !== NULL) {
+      $matrix = $entity->hasField($parentField) ? $entity->get($parentField)->entity : NULL;
+    }
+    if (!$matrix instanceof NodeInterface || !$matrix->hasField('field_i_o_board') || !$matrix->hasField('field_rows')) {
+      return;
+    }
+    $board = $matrix->get('field_i_o_board')->entity;
+    $boardType = $board instanceof NodeInterface && $board->hasField('field_io_board_type')
+      ? $board->get('field_io_board_type')->entity
+      : NULL;
+    if (!$boardType || !BoardCapacity::knows((string) $boardType->label())) {
+      return;
+    }
+    $type = (string) $boardType->label();
+    $rows = (int) $matrix->get('field_rows')->value;
+
+    if ($parentField === NULL) {
+      $refusal = BoardCapacity::matrixRefusal($type, $kind, $rows);
+      if ($refusal !== NULL) {
+        $form_state->setErrorByName(str_contains($refusal, 'rows') ? 'field_rows' : 'field_i_o_board', $refusal);
+      }
+      return;
+    }
+
+    $positions = BoardCapacity::matrixPositions($type, $kind, $rows);
+    $position = (int) $entity->get('field_position')->value;
+    if ($positions > 0 && ($position < 0 || $position >= $positions)) {
+      $form_state->setErrorByName('field_position', $this->t(
+        'Position %position is outside the matrix: with %rows rows on %type the positions are 0 to %last.',
+        ['%position' => $position, '%rows' => $rows, '%type' => $type, '%last' => $positions - 1]
+      ));
+    }
   }
 
 }

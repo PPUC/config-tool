@@ -1,0 +1,29 @@
+uuid: 934a69ca-20bd-405d-9d94-f368b92a89af
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_lamp_matrix
+    - node.type.lamp_matrix
+    - node.type.lamp_matrix_lamp
+id: node.lamp_matrix_lamp.field_lamp_matrix
+field_name: field_lamp_matrix
+entity_type: node
+bundle: lamp_matrix_lamp
+label: 'Lamp Matrix'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      lamp_matrix: lamp_matrix
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

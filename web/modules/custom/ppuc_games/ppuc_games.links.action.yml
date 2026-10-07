@@ -76,6 +76,22 @@ ppuc_games.add_switch_matrix_switch:
     - entity.node.canonical
   title: 'Add Switch Matrix Switch'
 
+ppuc_games.add_lamp_matrix:
+  route_name: node.add
+  route_parameters:
+    node_type: 'lamp_matrix'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Lamp Matrix'
+
+ppuc_games.add_lamp_matrix_lamp:
+  route_name: node.add
+  route_parameters:
+    node_type: 'lamp_matrix_lamp'
+  appears_on:
+    - entity.node.canonical
+  title: 'Add Lamp Matrix Lamp'
+
 ppuc_games.add_pwm_device:
   route_name: node.add
   route_parameters:

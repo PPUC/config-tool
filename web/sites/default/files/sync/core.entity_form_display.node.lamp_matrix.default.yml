@@ -1,0 +1,47 @@
+uuid: 916330a6-ed00-4992-9714-52c7ee2939e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.lamp_matrix.field_i_o_board
+    - field.field.node.lamp_matrix.field_rows
+    - node.type.lamp_matrix
+id: node.lamp_matrix.default
+targetEntityType: node
+bundle: lamp_matrix
+mode: default
+content:
+  field_i_o_board:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_rows:
+    type: number
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

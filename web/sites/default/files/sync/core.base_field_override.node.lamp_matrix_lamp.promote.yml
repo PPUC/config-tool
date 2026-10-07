@@ -1,0 +1,22 @@
+uuid: 85f76f95-754a-4bf3-ab0c-24e94be75126
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.lamp_matrix_lamp
+id: node.lamp_matrix_lamp.promote
+field_name: promote
+entity_type: node
+bundle: lamp_matrix_lamp
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

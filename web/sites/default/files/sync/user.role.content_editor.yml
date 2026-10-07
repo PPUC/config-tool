@@ -9,11 +9,14 @@ dependencies:
     - node.type.dip_switch
     - node.type.game
     - node.type.i_o_board
+    - node.type.lamp_matrix
+    - node.type.lamp_matrix_lamp
     - node.type.led_effect
     - node.type.ppuc_settings
     - node.type.pwm_device
     - node.type.pwm_effect
     - node.type.rule
+    - node.type.slide
     - node.type.switch
     - node.type.switch_matrix
     - node.type.switch_matrix_switch
@@ -46,12 +49,16 @@ permissions:
   - 'clone dip_switch content'
   - 'clone game content'
   - 'clone i_o_board content'
+  - 'clone lamp_matrix content'
+  - 'clone lamp_matrix_lamp content'
   - 'clone led_effect content'
   - 'clone own addressable_led content'
   - 'clone own addressable_leds content'
   - 'clone own dip_switch content'
   - 'clone own game content'
   - 'clone own i_o_board content'
+  - 'clone own lamp_matrix content'
+  - 'clone own lamp_matrix_lamp content'
   - 'clone own led_effect content'
   - 'clone own ppuc_settings content'
   - 'clone own pwm_device content'
@@ -73,6 +80,8 @@ permissions:
   - 'create dip_switch content'
   - 'create game content'
   - 'create i_o_board content'
+  - 'create lamp_matrix content'
+  - 'create lamp_matrix_lamp content'
   - 'create led_effect content'
   - 'create media'
   - 'create ppuc_settings content'
@@ -91,6 +100,8 @@ permissions:
   - 'delete any dip_switch content'
   - 'delete any game content'
   - 'delete any i_o_board content'
+  - 'delete any lamp_matrix content'
+  - 'delete any lamp_matrix_lamp content'
   - 'delete any led_effect content'
   - 'delete any media'
   - 'delete any ppuc_settings content'
@@ -104,6 +115,8 @@ permissions:
   - 'delete dip_switch revisions'
   - 'delete game revisions'
   - 'delete i_o_board revisions'
+  - 'delete lamp_matrix revisions'
+  - 'delete lamp_matrix_lamp revisions'
   - 'delete led_effect revisions'
   - 'delete media'
   - 'delete own addressable_led content'
@@ -112,6 +125,8 @@ permissions:
   - 'delete own files'
   - 'delete own game content'
   - 'delete own i_o_board content'
+  - 'delete own lamp_matrix content'
+  - 'delete own lamp_matrix_lamp content'
   - 'delete own led_effect content'
   - 'delete own ppuc_settings content'
   - 'delete own pwm_device content'
@@ -133,6 +148,8 @@ permissions:
   - 'edit any dip_switch content'
   - 'edit any game content'
   - 'edit any i_o_board content'
+  - 'edit any lamp_matrix content'
+  - 'edit any lamp_matrix_lamp content'
   - 'edit any led_effect content'
   - 'edit any ppuc_settings content'
   - 'edit any pwm_device content'
@@ -147,6 +164,8 @@ permissions:
   - 'edit own dip_switch content'
   - 'edit own game content'
   - 'edit own i_o_board content'
+  - 'edit own lamp_matrix content'
+  - 'edit own lamp_matrix_lamp content'
   - 'edit own led_effect content'
   - 'edit own ppuc_settings content'
   - 'edit own pwm_device content'
@@ -162,6 +181,8 @@ permissions:
   - 'revert dip_switch revisions'
   - 'revert game revisions'
   - 'revert i_o_board revisions'
+  - 'revert lamp_matrix revisions'
+  - 'revert lamp_matrix_lamp revisions'
   - 'revert led_effect revisions'
   - 'revert ppuc_settings revisions'
   - 'revert pwm_device revisions'
@@ -180,6 +201,8 @@ permissions:
   - 'view dip_switch revisions'
   - 'view game revisions'
   - 'view i_o_board revisions'
+  - 'view lamp_matrix revisions'
+  - 'view lamp_matrix_lamp revisions'
   - 'view led_effect revisions'
   - 'view own unpublished content'
   - 'view own unpublished media'

@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\ppuc_games\Wizard\BoardCapacity;
 
 /**
  * ConfigDownloadController.
@@ -584,6 +585,27 @@ class GamesController extends ControllerBase {
     return strtoupper($red . $green . $blue);
   }
 
+  /**
+   * The lampMatrix section of a game: the lamps of an Out_8x10's matrix.
+   *
+   * Lamps are ordered by position, then number, so an export does not change
+   * because the database returned them in a different order. `port` is the
+   * zero-based position column * rows + row, the name libppuc uses for it in
+   * switchMatrix too.
+   *
+   * @param array<int, array{description: string, number: int, port: int}> $lamps
+   */
+  protected function buildLampMatrixYaml(string $description, int $board, int $rows, array $lamps): array {
+    usort($lamps, static fn (array $a, array $b): int => ($a['port'] <=> $b['port']) ?: ($a['number'] <=> $b['number']));
+
+    return [
+      'description' => $description,
+      'board' => $board,
+      'rows' => $rows,
+      'lamps' => $lamps,
+    ];
+  }
+
   public function accessAddSwitchMatrixSwitch(NodeInterface $node, AccountInterface $account): AccessResult {
     return AccessResult::allowedIf($node->bundle() === 'switch_matrix')
       ->andIf(AccessResult::allowedIfHasPermission($account, 'create switch_matrix_switch content'))
@@ -736,6 +758,11 @@ class GamesController extends ControllerBase {
                 }
 
                 $switches[] = $switch;
+                // A matrix switch is a switch: its board has to be polled.
+                // Only direct switches used to set this, so a board whose
+                // switches were all in a matrix was never asked for them - and
+                // on an IO_16x8_matrix they always are.
+                $poll_events = TRUE;
                 if ($role = $this->gameRoleOf($switch_matrix_switch, (int) ($switch_matrix_switch->get('field_number')->value))) {
                 $roles[$role][] = (int) ($switch_matrix_switch->get('field_number')->value);
               }
@@ -750,6 +777,37 @@ class GamesController extends ControllerBase {
                 'rows' => (int) ($device->get('field_rows')->value),
                 'switches' => $switches,
               ];
+            }
+
+            break;
+
+          case 'lamp_matrix':
+            $lamp_matrix_lamps = $storage->loadByProperties([
+              'field_lamp_matrix' => $device->id(),
+              $node->getEntityType()
+                ->getKey('bundle') => 'lamp_matrix_lamp',
+            ]);
+
+            $lamps = [];
+            /** @var NodeInterface $lamp_matrix_lamp */
+            foreach ($lamp_matrix_lamps as $lamp_matrix_lamp) {
+              $objects[] = $lamp_matrix_lamp;
+              if ($lamp_matrix_lamp->isPublished()) {
+                $lamps[] = [
+                  'description' => trim($lamp_matrix_lamp->label()),
+                  'number' => (int) ($lamp_matrix_lamp->get('field_number')->value),
+                  'port' => (int) ($lamp_matrix_lamp->get('field_position')->value),
+                ];
+              }
+            }
+
+            if ($i_o_board->isPublished() && $device->isPublished()) {
+              $yaml['lampMatrix'] = $this->buildLampMatrixYaml(
+                trim($device->label()),
+                $i_o_board_number,
+                (int) ($device->get('field_rows')->value),
+                $lamps
+              );
             }
 
             break;
@@ -1038,6 +1096,15 @@ class GamesController extends ControllerBase {
           'number' => $i_o_board_number,
           'pollEvents' => $poll_events,
         ];
+        // Which hardware the board is. A port is a GPIO number, and libppuc
+        // checks every device against what that GPIO is on this board type.
+        // Only for the types it knows: a board type a site added by hand is
+        // left out, and libppuc then judges it as an IO_16_8_1 as it always
+        // did.
+        $board_type_name = (string) $i_o_board_type->label();
+        if (BoardCapacity::knows($board_type_name)) {
+          $board['type'] = $board_type_name;
+        }
         // Only emitted when set. A board with no latency-critical switches is
         // polled every eighth cycle instead of every one, so the boards that
         // drive flipper coils get their replies back sooner. Pointless on a

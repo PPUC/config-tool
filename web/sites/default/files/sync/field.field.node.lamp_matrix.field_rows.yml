@@ -1,0 +1,23 @@
+uuid: d7e5596b-3c8a-4cb9-af64-5b61abd10ae2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rows
+    - node.type.lamp_matrix
+id: node.lamp_matrix.field_rows
+field_name: field_rows
+entity_type: node
+bundle: lamp_matrix
+label: Rows
+description: 'Amount of rows in use, 1 to 10. The 8 high-side outputs of an Out_8x10 are the columns (Hi_1 is column 0) and its low-side outputs the rows (Lo_1 is row 0). A WPC lamp matrix has 8 rows.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 4
+  max: 16
+  prefix: ''
+  suffix: ''
+field_type: integer

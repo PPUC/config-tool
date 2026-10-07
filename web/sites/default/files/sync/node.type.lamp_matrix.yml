@@ -1,0 +1,17 @@
+uuid: 93f0483e-272b-4c8c-a8ae-57b7b7f17c3a
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Lamp Matrix'
+type: lamp_matrix
+description: 'A lamp matrix driven by an Out_8x10 board'
+help: null
+new_revision: false
+preview_mode: 1
+display_submitted: false

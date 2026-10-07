@@ -1,0 +1,24 @@
+uuid: 63c18da4-5d3b-48d6-88e7-98837c072f6e
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.lamp_matrix.field_i_o_board
+    - field.field.node.lamp_matrix.field_rows
+    - node.type.lamp_matrix
+  module:
+    - user
+id: node.lamp_matrix.teaser
+targetEntityType: node
+bundle: lamp_matrix
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_i_o_board: true
+  field_rows: true

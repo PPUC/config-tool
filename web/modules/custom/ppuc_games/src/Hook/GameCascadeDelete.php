@@ -42,6 +42,7 @@ class GameCascadeDelete {
     'addressable_leds' => 'field_string',
     'pwm_device' => 'field_pwm_device',
     'switch_matrix' => 'field_switch_matrix',
+    'lamp_matrix' => 'field_lamp_matrix',
   ];
 
   public function __construct(

@@ -1,0 +1,23 @@
+uuid: f1f3d4c1-a9ff-4dee-90f7-7149001172a5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_number
+    - node.type.lamp_matrix_lamp
+id: node.lamp_matrix_lamp.field_number
+field_name: field_number
+entity_type: node
+bundle: lamp_matrix_lamp
+label: Number
+description: 'The lamp number the game uses.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

@@ -10,7 +10,7 @@ field_name: field_rows
 entity_type: node
 bundle: switch_matrix
 label: Rows
-description: "Amount of rows. A switch matrix on IO_16_8_1 has always 4 columns (ports 13-16). On IO_16_8_1 4x4 and 4x8 are supported. So you can select 4 or 8 here.\r\nThe dedicted matrix supports 16."
+description: "Amount of rows.\r\nOn IO_16_8_1 the matrix always has 4 columns (ports 13-16) and 4 or 8 rows.\r\nOn IO_16x8_matrix the 8 outputs are the columns and the inputs the rows: any number from 1 to 16. A matrix takes that whole board - none of its inputs or outputs can be used for anything else."
 required: true
 translatable: false
 default_value: {  }

@@ -1,0 +1,59 @@
+uuid: 85b58a66-0c19-40e2-8fa3-c21ae03c31e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.lamp_matrix_lamp.field_lamp_matrix
+    - field.field.node.lamp_matrix_lamp.field_number
+    - field.field.node.lamp_matrix_lamp.field_position
+    - node.type.lamp_matrix_lamp
+id: node.lamp_matrix_lamp.default
+targetEntityType: node
+bundle: lamp_matrix_lamp
+mode: default
+content:
+  field_lamp_matrix:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_number:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_position:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

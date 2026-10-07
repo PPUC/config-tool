@@ -1,0 +1,38 @@
+uuid: db2eab12-f5ea-4e5f-aada-8e1bc2a5b0df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.lamp_matrix.field_i_o_board
+    - field.field.node.lamp_matrix.field_rows
+    - node.type.lamp_matrix
+  module:
+    - user
+id: node.lamp_matrix.default
+targetEntityType: node
+bundle: lamp_matrix
+mode: default
+content:
+  field_i_o_board:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_rows:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

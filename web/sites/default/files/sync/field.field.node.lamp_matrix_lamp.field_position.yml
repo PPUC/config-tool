@@ -1,0 +1,23 @@
+uuid: 87bb094c-c4e8-4ad3-8254-3b2f394d320f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_position
+    - node.type.lamp_matrix_lamp
+id: node.lamp_matrix_lamp.field_position
+field_name: field_position
+entity_type: node
+bundle: lamp_matrix_lamp
+label: Position
+description: 'Zero-based matrix position: column * rows + row. Example with 8 rows: positions 0-7 are column 0 with rows 0-7, 8-15 are column 1 with rows 0-7.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: 128
+  prefix: ''
+  suffix: ''
+field_type: integer

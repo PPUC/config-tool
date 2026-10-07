@@ -1,7 +1,10 @@
 <?php
 // port => GPIO
+//
+// Checked against Hardware_Out_8x10/Out_8x10/Out_8x10.kicad_sch with
+// trace_kicad_gpio.py. Both groups run downwards: Lo_1 is GPIO12, Hi_1 GPIO24.
 $mapping = [
-  // Low
+  // Low side switches (Lo_1 .. Lo_10)
   1 => 12,
   2 => 11,
   3 => 10,
@@ -12,7 +15,7 @@ $mapping = [
   8 => 5,
   9 => 4,
   10 => 3,
-  // High Power Output
+  // High side switches (Hi_1 .. Hi_8)
   11 => 24,
   12 => 23,
   13 => 22,
@@ -21,13 +24,9 @@ $mapping = [
   16 => 19,
   17 => 18,
   18 => 17,
-  // Test Points
-  19 => 26, // TP1
-  20 => 26, // TP2
-  21 => 15, // TP3
-  22 => 14, // TP6
-  23 => 13, // TP7
-  24 => 16, // TP8
+  // Pins 19-24 used to map the test points TP1-TP8 here. They are not
+  // outputs - the schematic connects nothing to them - and two of them were
+  // given the same GPIO.
   // Special Output
   25 => 29,
 ];
