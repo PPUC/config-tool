@@ -178,3 +178,17 @@
   background: #fffaf0;
   font-size: 0.875rem;
 }
+
+/* Shown only while the drawing differs from the saved slide. */
+.ppuc-marker-unsaved {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 4px solid #ffc400;
+  background: #fff8dc;
+  color: #191400;
+  font-size: 0.875rem;
+}
+
+.ppuc-marker-unsaved[hidden] {
+  display: none;
+}

@@ -12,6 +12,13 @@
  * on the way out, which means the normal node form saves the result, a slide
  * can still be edited by hand, and a browser where this never ran still shows
  * a working field.
+ *
+ * Nothing here talks to the server: a drawing exists only in the form until
+ * the form is saved. Browsers work against that. They put back what a form
+ * held when a page is reloaded or returned to, so markers that were drawn and
+ * never saved would reappear as if they had been. The editor therefore starts
+ * from what the server sent, not from what the browser remembers, and says so
+ * for as long as the drawing differs from the saved slide.
  */
 (function (Drupal, once) {
   'use strict';
@@ -110,7 +117,12 @@
   }
 
   function Editor(form, textarea, imageUrl) {
-    this.markers = parse(textarea.value);
+    // defaultValue is the text the server rendered: the saved slide, or what
+    // was submitted when the form came back with a validation error. value may
+    // already be something the browser restored from before a reload.
+    this.saved = textarea.defaultValue;
+    this.savedMarkers = serialise(parse(this.saved));
+    this.markers = parse(this.saved);
     this.textarea = textarea;
     this.selected = -1;
     this.grid = true;
@@ -150,14 +162,24 @@
     clearButton.type = 'button';
     clearButton.className = 'ppuc-marker-danger';
     clearButton.textContent = Drupal.t('Clear all');
+    var revertButton = document.createElement('button');
+    revertButton.type = 'button';
+    revertButton.textContent = Drupal.t('Undo changes');
     tools.appendChild(gridButton);
     tools.appendChild(clearButton);
+    tools.appendChild(revertButton);
+
+    var status = document.createElement('p');
+    status.className = 'ppuc-marker-unsaved';
+    status.setAttribute('role', 'status');
+    status.textContent = Drupal.t('The markers have changed and are not saved yet. Save the slide to keep them.');
 
     var list = document.createElement('ol');
     list.className = 'ppuc-marker-list';
 
     side.appendChild(help);
     side.appendChild(tools);
+    side.appendChild(status);
     side.appendChild(list);
     wrapper.appendChild(stage);
     wrapper.appendChild(side);
@@ -168,6 +190,8 @@
     this.svg = svg;
     this.stage = stage;
     this.list = list;
+    this.status = status;
+    this.revertButton = revertButton;
 
     img.addEventListener('load', function () {
       self.width = img.naturalWidth || 1000;
@@ -185,6 +209,9 @@
       self.markers = [];
       self.selected = -1;
       self.sync();
+    });
+    revertButton.addEventListener('click', function () {
+      self.revert();
     });
 
     stage.addEventListener('pointerdown', function (event) {
@@ -231,12 +258,46 @@
     // Someone may prefer to type. Take whatever they typed as the new truth.
     this.textarea.addEventListener('change', function () {
       self.markers = parse(self.textarea.value);
+      self.written = self.textarea.value;
       self.selected = -1;
       self.draw();
       self.renderList();
+      self.renderStatus();
+    });
+
+    // Some browsers restore a form only after the scripts have run, and a page
+    // brought back from the back/forward cache never runs them again. Either
+    // way the field then holds something this editor did not write. Only on a
+    // reload or a return, though: on a first visit a difference here is
+    // somebody already typing while the photograph is still loading.
+    window.addEventListener('pageshow', function (event) {
+      if ((event.persisted || restoredByBrowser()) && self.textarea.value !== self.written) {
+        self.revert();
+      }
     });
 
     this.sync();
+  };
+
+  function restoredByBrowser() {
+    var entries = window.performance && performance.getEntriesByType
+      ? performance.getEntriesByType('navigation')
+      : [];
+    return entries.length > 0 && (entries[0].type === 'reload' || entries[0].type === 'back_forward');
+  }
+
+  // Back to the saved slide, dropping whatever was drawn or restored since.
+  Editor.prototype.revert = function () {
+    this.markers = parse(this.saved);
+    this.selected = -1;
+    this.drag = null;
+    this.sync();
+  };
+
+  Editor.prototype.renderStatus = function () {
+    var changed = serialise(this.markers) !== this.savedMarkers;
+    this.status.hidden = !changed;
+    this.revertButton.disabled = !changed;
   };
 
   function textareaWrapper(textarea) {
@@ -471,7 +532,9 @@
   Editor.prototype.sync = function () {
     this.draw();
     this.renderList();
-    this.textarea.value = serialise(this.markers);
+    this.written = serialise(this.markers);
+    this.textarea.value = this.written;
+    this.renderStatus();
   };
 
   Drupal.behaviors.ppucMarkerEditor = {
