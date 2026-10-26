@@ -102,6 +102,10 @@ display:
               action_id: ppuc_games_change_addressable_led_role
               preconfiguration:
                 add_confirmation: false
+            -
+              action_id: ppuc_games_shift_addressable_led_string_position
+              preconfiguration:
+                add_confirmation: false
         field_number:
           id: field_number
           table: node__field_number
@@ -887,6 +891,56 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        field_string_target_id:
+          id: field_string_target_id
+          table: node__field_string
+          field: field_string_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: entity_reference
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_string_target_id_op
+            label: String
+            description: ''
+            use_operator: false
+            operator: field_string_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: string
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          sub_handler: 'default:node'
+          widget: select
+          sub_handler_settings:
+            target_bundles:
+              addressable_leds: addressable_leds
+            sort:
+              field: title
+              direction: ASC
+            auto_create: false
+            auto_create_bundle: ''
       filter_groups:
         operator: AND
         groups:
