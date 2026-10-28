@@ -153,7 +153,9 @@ final class HardwareAllocator {
       $assignedCoils[$coil['number']] = $this->placeCoil($board, $coil);
     }
 
-    // 5. Opto switches, on their own board type.
+    // 5. Opto switches, on their own board type. Matrix optos go where the
+    // original opto board's harness puts them; see placeOptoColumns().
+    $this->placeOptoColumns($switches, $assignedSwitches);
     foreach ($switches as $switch) {
       if (isset($assignedSwitches[$switch['number']]) || !$switch['opto']) {
         continue;
@@ -609,8 +611,80 @@ final class HardwareAllocator {
     }
   }
 
+  /**
+   * Places matrix opto switches by column and row, as the original board does.
+   *
+   * Opto_16 takes the connectors of the WPC 16-opto board (A-16998.1), so the
+   * original harness plugs straight in. That board serves two matrix columns:
+   * row n of the first column arrives on input n, row n of the second on input
+   * 8 + n. Packed in list order instead, every opto lands on an input its
+   * harness wire does not reach.
+   *
+   * So each column gets one half of an Opto_16 to itself, lower column first,
+   * and each switch the input of its row. Optos without a matrix number are
+   * left for the packing that follows.
+   */
+  private function placeOptoColumns(array $switches, array &$assigned): void {
+    // Only with both halves in the mapping. Otherwise packing, which never
+    // hands out a pin the mapping does not define.
+    $inputs = (new BoardCapacity(BoardCapacity::OPTO_16, $this->optoGpioMapping))->inputPins();
+    if (array_diff(range(1, 16), $inputs)) {
+      return;
+    }
+
+    $columns = [];
+    foreach ($switches as $switch) {
+      if (isset($assigned[$switch['number']]) || !$switch['opto']) {
+        continue;
+      }
+      $column = intdiv($switch['number'], 10);
+      $row = $switch['number'] % 10;
+      if ($column < 1 || $column > 8 || $row < 1 || $row > 8) {
+        continue;
+      }
+      $columns[$this->groupOf($switch['location'])][$column][$row] = $switch;
+    }
+
+    foreach ($columns as $group => $byColumn) {
+      ksort($byColumn);
+      foreach ($byColumn as $byRow) {
+        [$index, $firstPin] = $this->freeOptoHalf($group);
+        foreach ($byRow as $row => $switch) {
+          $assigned[$switch['number']] = $this->placeSwitchAt($this->boards[$index], $switch, $firstPin + $row - 1);
+        }
+      }
+    }
+  }
+
+  /**
+   * An Opto_16 in this group with eight consecutive free inputs, or a new one.
+   *
+   * @return array{0: int, 1: int}
+   *   The board index and the first pin of the free half.
+   */
+  private function freeOptoHalf(string $group): array {
+    foreach ($this->boards as $index => $board) {
+      if ($board['group'] !== $group || $board['type'] !== BoardCapacity::OPTO_16) {
+        continue;
+      }
+      foreach ([1, 9] as $firstPin) {
+        if (!array_diff(range($firstPin, $firstPin + 7), $board['freeInputs'])) {
+          return [$index, $firstPin];
+        }
+      }
+    }
+    return [$this->addBoard($group, BoardCapacity::OPTO_16), 1];
+  }
+
   private function placeSwitch(array &$board, array $switch): array {
     $pin = array_shift($board['freeInputs']);
+    $this->rememberPosition($board, $switch);
+    $this->boards[$board['index']] = $board;
+    return $switch + ['board' => $board['index'], 'pin' => $pin];
+  }
+
+  private function placeSwitchAt(array &$board, array $switch, int $pin): array {
+    $board['freeInputs'] = array_values(array_diff($board['freeInputs'], [$pin]));
     $this->rememberPosition($board, $switch);
     $this->boards[$board['index']] = $board;
     return $switch + ['board' => $board['index'], 'pin' => $pin];

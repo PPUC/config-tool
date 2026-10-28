@@ -368,6 +368,57 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
+   * Dirty Harry's 16-opto board, A-16998.1: column 3 on inputs 1-8 and column
+   * 4 on 9-16, each switch on the input of its row. That is where the original
+   * harness lands on an Opto_16, whatever order the manual lists them in.
+   */
+  public function testOptoSwitchesSitOnTheirHarnessPositions(): void {
+    $optos = [
+      47 => 'Left Popper', 38 => 'Right Ramp Make', 31 => 'Trough Jam',
+      32 => 'Trough 1', 33 => 'Trough 2', 34 => 'Trough 3', 35 => 'Trough 4',
+      41 => 'Left Ramp Enter', 42 => 'Right Loop', 43 => 'Left Ramp Make',
+      44 => 'Gun Chamber', 45 => 'Gun Popper', 46 => 'Warehouse Popper',
+    ];
+    $switches = [];
+    foreach ($optos as $number => $description) {
+      $switches[] = ['number' => $number, 'description' => $description, 'opto' => TRUE];
+    }
+    [, $plan] = $this->allocate(self::document(['switches' => $switches]));
+
+    $pins = [];
+    foreach ($plan['switches'] as $switch) {
+      $pins[$switch['number']] = $switch['pin'];
+    }
+    ksort($pins);
+    $this->assertSame([
+      31 => 1, 32 => 2, 33 => 3, 34 => 4, 35 => 5, 38 => 8,
+      41 => 9, 42 => 10, 43 => 11, 44 => 12, 45 => 13, 46 => 14, 47 => 15,
+    ], $pins);
+    $this->assertSame(self::boardOfSwitch($plan, 31), self::boardOfSwitch($plan, 47));
+  }
+
+  /**
+   * A third opto column needs a second board; it does not squeeze into the
+   * free inputs of the first.
+   */
+  public function testAThirdOptoColumnStartsAnotherBoard(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [
+        ['number' => 31, 'description' => 'A', 'opto' => TRUE],
+        ['number' => 41, 'description' => 'B', 'opto' => TRUE],
+        ['number' => 52, 'description' => 'C', 'opto' => TRUE],
+      ],
+    ]));
+
+    $this->assertNotSame(self::boardOfSwitch($plan, 31), self::boardOfSwitch($plan, 52));
+    foreach ($plan['switches'] as $switch) {
+      if ($switch['number'] === 52) {
+        $this->assertSame(2, $switch['pin']);
+      }
+    }
+  }
+
+  /**
    * Each board has one LED connector, so each string needs its own board.
    */
   public function testEachStripeGetsItsOwnBoardAndTheLedPin(): void {
