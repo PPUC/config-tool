@@ -35,3 +35,8 @@ header {
   color: #0f0f0f;
   background-color: yellow;
 }
+
+/* A white LED would vanish on the white page without an outline. */
+.color_field__swatch {
+  border: 1px solid #000;
+}
