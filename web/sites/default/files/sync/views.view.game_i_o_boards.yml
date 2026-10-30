@@ -1035,55 +1035,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        wires:
-          id: wires
-          table: views
-          field: nothing
-          relationship: none
-          group_type: group
-          admin_label: Wires
-          plugin_id: custom
-          label: Wires
-          exclude: false
-          alter:
-            alter_text: true
-            text: "{% set a = field_cable_color_1|striptags|trim %}{% set b = field_cable_color_2|striptags|trim %}{% if a or b %}{% if type|striptags|trim == 'PWM Device' %}+ {{ a ?: '?' }} &minus; {{ b ?: '?' }}{% else %}{{ a ?: '?' }} / {{ b ?: '?' }}{% endif %}{% endif %}{% set c = field_cable_color_3|striptags|trim %}{% set d = field_cable_color_4|striptags|trim %}{% if c or d %}{{ c ?: '?' }} / {{ d ?: '?' }}{% endif %}"
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: true
-          empty_zero: false
-          hide_alter_empty: true
         field_string_position:
           id: field_string_position
           table: node__field_string_position
@@ -1093,7 +1044,7 @@ display:
           admin_label: ''
           plugin_id: field
           label: 'String Position'
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: '<div  style="background-color: {{ field_color }};"><strong>{{ field_string_position }}</strong></div>'
@@ -1148,6 +1099,55 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        wires:
+          id: wires
+          table: views
+          field: nothing
+          relationship: none
+          group_type: group
+          admin_label: Wires
+          plugin_id: custom
+          label: 'Wires / String Position'
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{% set a = field_cable_color_1|striptags|trim %}{% set b = field_cable_color_2|striptags|trim %}{% if a or b %}{% if type|striptags|trim == 'PWM Device' %}+ {{ a ?: '?' }} &minus; {{ b ?: '?' }}{% else %}{{ a ?: '?' }} / {{ b ?: '?' }}{% endif %}{% endif %}{% set c = field_cable_color_3|striptags|trim %}{% set d = field_cable_color_4|striptags|trim %}{% if c or d %}{{ c ?: '?' }} / {{ d ?: '?' }}{% endif %}{% set p = field_string_position|striptags|trim %}{% if p != '' %}{{ p }}{% endif %}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: true
+          empty_zero: false
+          hide_alter_empty: true
         field_color:
           id: field_color
           table: node__field_color
@@ -1663,8 +1663,8 @@ display:
             field_cable_color_2: field_cable_color_2
             field_cable_color_3: field_cable_color_3
             field_cable_color_4: field_cable_color_4
-            wires: wires
             field_string_position: field_string_position
+            wires: wires
             field_number_2: field_number_2
             title_2: title_2
             field_matrix_part: field_matrix_part

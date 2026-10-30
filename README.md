@@ -403,9 +403,9 @@ For a PWM device the polarity matters: the coil's diode has its banded end on
 the + side, so swapped wires put the diode across the supply and the driver. On
 a WPC manual, the − wire is the solenoid table's DRIVE WIRE column.
 
-The I/O board overview on the game page shows them in its Wires column, next to
-the device on each port: `+ Red-Brn − Vio-Brn` for a PWM device, `A / B` for a
-switch or a matrix part.
+The I/O board overview on the game page shows them next to the device on each
+port, in the column it shares with an LED's string position: `+ Red-Brn −
+Vio-Brn` for a PWM device, `A / B` for a switch or a matrix part.
 
 ## Game YAML export
 
