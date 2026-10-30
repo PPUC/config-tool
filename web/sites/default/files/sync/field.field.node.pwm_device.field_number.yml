@@ -12,7 +12,7 @@ field_name: field_number
 entity_type: node
 bundle: pwm_device
 label: Number
-description: "The number of the coil according to the manual.\r\nFor custom coils, use numbers greater than 100."
+description: "The number of the coil according to the manual's solenoid table.<br>\r\nWPC Fliptronic flippers are the exception. PinMAME drives the lower flipper windings on other numbers than the manual prints: lower right power 45 and hold 46 (manual 29 and 30), lower left power 47 and hold 48 (manual 31 and 32). The upper flippers keep the manual's 33 to 36. PinMAME uses 29 to 31 itself - 31 is the game-on solenoid - so a lower flipper left on its manual number never hears from the ROM, and fires whenever those change.<br>\r\nFor custom coils, use numbers greater than 100."
 required: false
 translatable: true
 default_value: {  }

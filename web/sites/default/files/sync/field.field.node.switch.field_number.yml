@@ -12,7 +12,7 @@ field_name: field_number
 entity_type: node
 bundle: switch
 label: Number
-description: "The switch number within original switch matrix  according to the manual.<br>\r\nNumbers greater than 200 are custom switches.<br>\r\nNumbers greater than 240 are treated as negative numbers. (243 becomes -3, 251 becomes -11)."
+description: "The switch number within the original switch matrix according to the manual: column x 10 + row.<br>\r\nWPC Fliptronic flipper switches are not in the matrix. They have the numbers PinMAME gives them: buttons 112 lower right, 114 lower left, 116 upper right, 118 upper left; end-of-stroke switches 111 lower right, 113 lower left, 115 upper right, 117 upper left. The ROM reads the end-of-stroke switches too, so do not give them custom numbers.<br>\r\nNumbers greater than 200 are custom switches, which the ROM never sees.<br>\r\nNumbers greater than 240 are treated as negative numbers. (243 becomes -3, 251 becomes -11)."
 required: true
 translatable: true
 default_value: {  }

@@ -351,7 +351,41 @@ One behaviour worth knowing, because it is the reason the EOS is read rather
 than just recorded. If a ball heavy enough pushes the finger back down, the EOS
 opens; the hold winding alone cannot lift it, so the board fires the power
 winding again while the button is still held. Without that the flipper stays
-down until the player releases and presses again.
+down until the player releases and presses again. The board does that at most
+five times per press, so a chattering or misadjusted EOS cannot keep the power
+winding going; after that it waits for the button to be released.
+
+### Fliptronic by hand
+
+Without the wizard, one flipper is six nodes. For a WPC Fliptronic game, with
+the lower right flipper as the example:
+
+| Node | Number | Settings |
+|---|---|---|
+| Switch: button | 112 | Button, debounce mode `fastFlip` |
+| Switch: EOS | 111 | on the same board as the windings |
+| PWM device: power winding | **45**, not the manual's 29 | Coil, power 255, max pulse time 30-40 ms, fast activation switch 112, stop switch 111 |
+| PWM device: hold winding | **46**, not the manual's 30 | Coil, Hold winding, max pulse time 0, fast activation switch 112, no stop switch |
+
+The numbers that differ from the manual:
+
+| Flipper | Button | EOS | Power | Hold |
+|---|---|---|---|---|
+| Lower right | 112 | 111 | 45 (manual 29) | 46 (manual 30) |
+| Lower left | 114 | 113 | 47 (manual 31) | 48 (manual 32) |
+| Upper right | 116 | 115 | 33 | 34 |
+| Upper left | 118 | 117 | 35 | 36 |
+
+PinMAME uses 29-31 itself, and 31 is the game's **Game On Solenoid**: a lower
+flipper left on its manual number never hears from the ROM, and fires whenever
+the game starts.
+
+Saving a PWM device is refused when nothing would stop it. A coil needs a
+maximum pulse time unless it is a hold winding, is dual-wound, or drops to a
+hold power; a flipper power winding - a coil with both a fast activation switch
+and a stop switch - needs one of 1 to 40 ms; and a hold winding must not have
+the EOS as a stop switch. The firmware backs this up: a coil with a stop switch
+and no maximum pulse time is run with 40 ms anyway.
 
 ## Game YAML export
 

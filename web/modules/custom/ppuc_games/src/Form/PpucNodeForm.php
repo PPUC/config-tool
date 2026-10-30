@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Form\NodeForm;
 use Drupal\taxonomy\TermInterface;
+use Drupal\ppuc_games\CoilProtection;
 use Drupal\ppuc_games\Wizard\BoardCapacity;
 
 /**
@@ -930,8 +931,33 @@ class PpucNodeForm extends NodeForm {
     }
 
     $this->validateMatrix($entity, $form_state);
+    $this->validateCoilProtection($entity, $form_state);
 
     return $entity;
+  }
+
+  /**
+   * Refuses a coil that nothing would stop, while it can still be fixed.
+   */
+  protected function validateCoilProtection(NodeInterface $entity, FormStateInterface $form_state): void {
+    if ($entity->bundle() !== 'pwm_device') {
+      return;
+    }
+    $type = $entity->get('field_pwm_type')->entity;
+    $refusal = CoilProtection::refusal([
+      'coil' => $type !== NULL && $type->uuid() === CoilProtection::PWM_TYPE_COIL_UUID,
+      'maxPulseTime' => (int) $entity->get('field_max_pulse_time')->value,
+      'holdPower' => (int) $entity->get('field_hold_power')->value,
+      'holdPowerActivationTime' => (int) $entity->get('field_hold_power_activation_time')->value,
+      'holdWinding' => (bool) $entity->get('field_hold_winding')->value,
+      'dualWinding' => (bool) $entity->get('field_dual_winding')->value,
+      'fastSwitch' => !$entity->get('field_fast_activation_switch')->isEmpty(),
+      'stopSwitches' => count($entity->get('field_stop_switches')->referencedEntities()),
+    ]);
+    if ($refusal !== NULL) {
+      [$field, $message] = $refusal;
+      $form_state->setErrorByName($field, $message);
+    }
   }
 
   /**
