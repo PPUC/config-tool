@@ -387,6 +387,26 @@ and a stop switch - needs one of 1 to 40 ms; and a hold winding must not have
 the EOS as a stop switch. The firmware backs this up: a coil with a stop switch
 and no maximum pulse time is run with 40 ms anyway.
 
+### Cable colors
+
+Switches, switch matrix switches and PWM devices have two cable color fields,
+to note which wire goes where when a machine is rewired. Write them the way the
+manual does, base color first: `Gry-Yel` is a gray wire with a yellow stripe.
+
+| Node | Cable color 1 | Cable color 2 |
+|---|---|---|
+| PWM device | **+**, the supply side | **−**, the driver side, switched by the board |
+| Switch | input, to the I/O board | ground |
+| Switch matrix switch | row | column |
+
+For a PWM device the polarity matters: the coil's diode has its banded end on
+the + side, so swapped wires put the diode across the supply and the driver. On
+a WPC manual, the − wire is the solenoid table's DRIVE WIRE column.
+
+The I/O board overview on the game page shows them in its Wires column, next to
+the device on each port: `+ Red-Brn − Vio-Brn` for a PWM device, `A / B` for a
+switch or a matrix part.
+
 ## Game YAML export
 
 The generated game YAML includes optional switch and coil roles used by the

@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.pwm_device.field_ball_search
+    - field.field.node.pwm_device.field_cable_color_1
+    - field.field.node.pwm_device.field_cable_color_2
     - field.field.node.pwm_device.field_dual_winding
     - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
@@ -39,6 +41,8 @@ content:
     region: content
 hidden:
   field_ball_search: true
+  field_cable_color_1: true
+  field_cable_color_2: true
   field_dual_winding: true
   field_eos_switch: true
   field_fast_activation_switch: true

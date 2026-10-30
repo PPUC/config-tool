@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.pwm_device.field_ball_search
+    - field.field.node.pwm_device.field_cable_color_1
+    - field.field.node.pwm_device.field_cable_color_2
     - field.field.node.pwm_device.field_dual_winding
     - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
@@ -35,6 +37,22 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  field_cable_color_1:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 20
+      placeholder: ''
+    third_party_settings: {  }
+  field_cable_color_2:
+    type: string_textfield
+    weight: 31
+    region: content
+    settings:
+      size: 20
+      placeholder: ''
     third_party_settings: {  }
   field_dual_winding:
     type: boolean_checkbox

@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.switch_matrix_switch.field_button
+    - field.field.node.switch_matrix_switch.field_cable_color_1
+    - field.field.node.switch_matrix_switch.field_cable_color_2
     - field.field.node.switch_matrix_switch.field_debounce
     - field.field.node.switch_matrix_switch.field_game_role
     - field.field.node.switch_matrix_switch.field_number
@@ -21,6 +23,22 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  field_cable_color_1:
+    type: string_textfield
+    weight: 30
+    region: content
+    settings:
+      size: 20
+      placeholder: ''
+    third_party_settings: {  }
+  field_cable_color_2:
+    type: string_textfield
+    weight: 31
+    region: content
+    settings:
+      size: 20
+      placeholder: ''
     third_party_settings: {  }
   field_debounce:
     type: number

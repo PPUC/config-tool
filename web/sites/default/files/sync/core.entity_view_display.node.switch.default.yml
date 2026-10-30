@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.switch.field_button
+    - field.field.node.switch.field_cable_color_1
+    - field.field.node.switch.field_cable_color_2
     - field.field.node.switch.field_debounce
     - field.field.node.switch.field_debounce_mode
     - field.field.node.switch.field_game_role
@@ -31,6 +33,24 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     weight: 107
+    region: content
+  field_cable_color_1:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 30
+    region: content
+  field_cable_color_2:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 31
     region: content
   field_debounce:
     type: number_integer

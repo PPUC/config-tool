@@ -1,0 +1,19 @@
+uuid: a796aa27-4160-4f9e-9dec-be1e0976cd4e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cable_color_1
+    - node.type.pwm_device
+id: node.pwm_device.field_cable_color_1
+field_name: field_cable_color_1
+entity_type: node
+bundle: pwm_device
+label: 'Cable color (+)'
+description: "The wire on the supply side of the device, carrying the positive voltage. A coil's diode has its banded end on this side, so swapping the two wires puts the diode across the supply and the driver. Write it the way the manual does, base color first: Gry-Yel is a gray wire with a yellow stripe."
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,19 @@
+uuid: d799d871-f38a-4d1a-84e0-b371239274ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cable_color_2
+    - node.type.switch_matrix_switch
+id: node.switch_matrix_switch.field_cable_color_2
+field_name: field_cable_color_2
+entity_type: node
+bundle: switch_matrix_switch
+label: 'Cable color (column)'
+description: 'The wire to the matrix column, the strobe the board drives. Write it the way the manual does, base color first: Gry-Yel is a gray wire with a yellow stripe.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
