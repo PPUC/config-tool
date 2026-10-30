@@ -169,6 +169,40 @@ class WizardDeviceDataParserTest extends TestCase {
     $result = $this->parse(self::document());
 
     $this->assertSame(112, $result['flippers'][0]['buttonSwitch']);
+    $this->assertSame(111, $result['flippers'][0]['eosSwitch']);
+  }
+
+  /**
+   * The manual prints the lower flippers as 29-32; PinMAME drives 45-48.
+   *
+   * Seen on Dirty Harry: the ROM fired 45/46 for the lower right flipper and
+   * never 29/30, and raised 31 - the lower left power winding's manual number -
+   * as game-on at every game start.
+   */
+  public function testLowerFlipperWindingsMoveToThePinmameNumbers(): void {
+    $document = self::document();
+    $document['coils'][] = ['number' => 33, 'description' => 'Upper Right Power', 'class' => 'highPower'];
+    $document['coils'][] = ['number' => 34, 'description' => 'Upper Right Hold', 'class' => 'lowPower'];
+    $document['flippers'][] = [
+      'name' => 'Upper Right', 'position' => 'upperRight', 'powerCoil' => 33, 'holdCoil' => 34,
+    ];
+
+    $result = $this->parse($document);
+
+    $this->assertNotNull($result, implode("\n", $this->parser->errors()));
+    $this->assertSame([1, 45, 46, 33, 34], array_column($result['coils'], 'number'));
+    $this->assertSame([45, 33], array_column($result['flippers'], 'powerCoil'));
+    $this->assertSame([46, 34], array_column($result['flippers'], 'holdCoil'));
+  }
+
+  /**
+   * Only a flipper's windings move; a coil already on 45 stays put and clashes.
+   */
+  public function testAFlipperWindingMovedOntoAnotherCoilIsRejected(): void {
+    $document = self::document();
+    $document['coils'][] = ['number' => 45, 'description' => 'Extra Kicker', 'class' => 'lowPower'];
+
+    $this->assertRejectedMentioning($document, 'Extra Kicker');
   }
 
   public function testAFlipperNamingACoilThatDoesNotExistIsRejected(): void {

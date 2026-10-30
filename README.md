@@ -98,10 +98,16 @@ them at numbers the platform defines. For WPC:
 | Volume down, volume up | 6, 7 |
 | Begin test | 8 |
 | Flipper buttons (Fliptronic) | 112 lower right, 114 lower left, 116 upper right, 118 upper left |
-| Flipper EOS | 200 upwards - PinMAME does not read these |
+| Flipper EOS (Fliptronic) | 111 lower right, 113 lower left, 115 upper right, 117 upper left |
 
 A platform the wizard has no table for is refused rather than given WPC's
 numbers: a switch on a number nothing polls behaves exactly like a broken one.
+
+The lower flipper windings are the one coil exception. A WPC manual prints the
+Fliptronic block as solenoids 29-36, but PinMAME drives the lower flippers as
+45-48 - it uses 29-31 itself, 31 being the game-on solenoid. Give the manual's
+numbers in `flippers` and `coils`; the wizard moves 29, 30, 31, 32 to 45, 46,
+47, 48. The upper flippers keep 33-36.
 
 ### Format
 
@@ -139,7 +145,7 @@ numbers: a switch on a number nothing polls behaves exactly like a broken one.
 | `fastFlipSwitch` | The switch this coil reacts to locally. The wizard puts both on one board. |
 | `holdWinding` | This output is the hold half of a pair driven as two outputs. Flippers are declared in `flippers` instead; use this for anything else, such as a trap door driven as "high" and "hold". |
 | `position` | Optional. Where the device is, as `{"x": 0.5, "y": 0.2}`. See below. |
-| `endSwitches` | The switches at an assembly's end positions, as `[76, 77]`. They become stop switches and go on the coil's board. See motors below. |
+| `endSwitches` | Switches that stop this output on the board, as `[76, 77]`. Not for anything a ROM drives. See motors below. |
 | `position` | Which flipper this is, which selects the button number. |
 
 Rows the manual marks "Not Used" are simply left out. So are switches called
@@ -157,22 +163,27 @@ machine whose driver rail is 48 V. `"type": "motor"` therefore drives it at 64
 of 255, about a quarter, whatever solenoid type the table gives its driver. The
 type describes the transistor; this is about what is on the end of it.
 
-**End positions.** A motor normally has two switches marking the ends of its
-travel, and those should cut it the instant it arrives, or the assembly drives
-into its own stop. List them:
+**Position switches.** On a machine with a ROM, leave them to the ROM. Dirty
+Harry's gun is driven through a crank: the motor only ever turns one way, the
+gun swings back and forth, and the ROM watches "Gun Position" to decide when to
+stop it. List such switches as ordinary switches and give the motor no
+`endSwitches`.
+
+`endSwitches` become the output's **stop switches**: the board cuts the output
+the moment one closes, and refuses to start it while one is closed. That is
+right for a motor nothing else stops, driving into a hard end of travel. For a
+ROM-driven motor it is a trap - parked on its home switch, it can never be
+started again.
 
 ```json
-{ "number": 20, "description": "Gun Motor", "class": "lowPower",
-  "type": "motor", "endSwitches": [76, 77] }
+{ "number": 20, "description": "Gun Motor", "class": "lowPower", "type": "motor" }
 ```
 
-These become the output's **stop switches**: the board cuts the motor the moment
-one closes, without waiting for the host. That only works from the board that
-owns the output, so the wizard puts them there.
-
-The maximum pulse time stays as the backstop for a switch that never closes, and
-its default is shorter than a traverse - time the travel and set it, or the
-assembly stops part way. The wizard says so in its summary.
+A motor gets no maximum pulse time, unlike a coil's 150 ms: the ROM decides how
+long a run is, and a run can be long - Dirty Harry searches for its gun for
+about twenty seconds. libppuc reports such an output as having no thermal
+protection; if you want a guard against a stalled motor, time the longest run
+and set a maximum pulse time above it. The wizard says so in its summary.
 
 Do not put an end switch in `fastFlipSwitch`. The polarity is the other way
 round: a fast-flip switch runs the coil *while* it is closed, so that would
@@ -183,8 +194,14 @@ the flippers from the solenoid table instead.
 
 ### What it decides for you
 
-Coil power comes from the solenoid type: High Power 255, Low Power and
-Gen. Purpose 128. Every coil gets a maximum pulse time, so a wizard-built game
+Coil power is 255 for every solenoid type. On WPC, High Power, Low Power and
+Gen. Purpose name the driver transistor, not the voltage: all three are +50 V
+coils (Dirty Harry's fuse list: F105, F104 and F103 on J107-2, -3 and -1). Only
+the flashlamps run from 20 V, and they are LEDs here. Flipper hold windings get
+255 too - the original fed them the same 50 V, and their resistance is what lets
+them sit on. A motor gets 64, a quarter, for a 12 V motor. The solenoid type is
+still required, because it tells the wizard which rows are coils at all. Every
+coil gets a maximum pulse time, so a wizard-built game
 loads without unprotected-coil warnings. The exception is a flipper hold
 winding, which is wound to sit energised and is marked `holdWinding` instead -
 bounding one would drop the flipper mid-game.
@@ -319,9 +336,10 @@ ended by whichever comes first:
   it loses strength: a heavy ball can push the finger down, and the hold winding
   alone cannot raise it again until the button is released and pressed.
 
-PPUC now does both. The wizard creates the EOS as a switch, makes it a **stop
-switch** of the power winding, and puts it on the same board so the board acts
-on it itself. The maximum pulse time is set to **40 ms** as the backstop for a
+PPUC now does both. The wizard creates the EOS as a switch, at the number the
+ROM reads it on, makes it a **stop switch** of the power winding, and puts it on
+the same board so the board acts on it itself. The ROM still sees it as well, as
+the original Fliptronic board reported it. The maximum pulse time is set to **40 ms** as the backstop for a
 contact that never closes - it clears the slowest stroke, so no flip is cut
 short, and stays inside the range WPC itself considered safe for the winding.
 Below 30 ms it would cut the flip off before the finger arrives.

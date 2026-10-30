@@ -52,21 +52,39 @@ final class PlatformNumbers {
   ];
 
   /**
-   * Where custom switch numbers start.
+   * Flipper end-of-stroke switches, by flipper position.
    *
-   * The switch field help defines numbers above 200 as custom, and above 240 as
-   * negative. Flipper EOS contacts live here: PinMAME does not read them, they
-   * exist for the board to act on locally.
+   * WPC Fliptronic: swLREOS 111, swLLEOS 113, swUREOS 115, swULEOS 117. The ROM
+   * reads them, as the original Fliptronic board reported them: to cut the
+   * power winding early, and to fire it again when a ball knocks a held finger
+   * down. The board uses the same switch to cut the winding itself.
    */
-  public const CUSTOM_NUMBER_BASE = 200;
+  private const FLIPPER_EOS = [
+    'WPC' => [
+      'lowerRight' => 111,
+      'lowerLeft' => 113,
+      'upperRight' => 115,
+      'upperLeft' => 117,
+    ],
+  ];
 
   /**
-   * The highest custom number that still means what it says.
+   * Flipper winding numbers from the manual to the numbers PinMAME drives.
    *
-   * 240 and up are read as negative numbers, so allocating into that range
-   * would silently produce a switch number that is not the one written down.
+   * A WPC manual prints the Fliptronic block as solenoids 29-36. PinMAME keeps
+   * the upper flippers there, 33-36, but moves the lower ones to 45-48: it uses
+   * 29-31 itself, for state bits and the game-on solenoid. A lower flipper left
+   * on its manual number never hears from the ROM, and fires whenever those
+   * state bits change - the left flipper at every game start, through 31.
    */
-  public const CUSTOM_NUMBER_LIMIT = 239;
+  private const FLIPPER_COILS = [
+    'WPC' => [
+      29 => 45,
+      30 => 46,
+      31 => 47,
+      32 => 48,
+    ],
+  ];
 
   /**
    * Whether anything is known about this platform's non-matrix switches.
@@ -108,6 +126,22 @@ final class PlatformNumbers {
    */
   public static function flipperButtonNumber(string $platform, string $position): ?int {
     return self::FLIPPER_BUTTONS[$platform][$position] ?? NULL;
+  }
+
+  /**
+   * The EOS switch number for one flipper position, or NULL if unknown.
+   */
+  public static function flipperEosNumber(string $platform, string $position): ?int {
+    return self::FLIPPER_EOS[$platform][$position] ?? NULL;
+  }
+
+  /**
+   * The number PinMAME drives a flipper winding on, given the manual's.
+   *
+   * A number the platform does not move is returned as it is.
+   */
+  public static function flipperCoilNumber(string $platform, int $number): int {
+    return self::FLIPPER_COILS[$platform][$number] ?? $number;
   }
 
   /**

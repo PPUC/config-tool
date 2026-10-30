@@ -46,6 +46,28 @@ class WizardPlatformNumbersTest extends TestCase {
   }
 
   /**
+   * From PinMAME: swLREOS 111, swLLEOS 113, swUREOS 115, swULEOS 117.
+   */
+  public function testWpcFliptronicEosSwitches(): void {
+    $this->assertSame(111, PlatformNumbers::flipperEosNumber('WPC', 'lowerRight'));
+    $this->assertSame(113, PlatformNumbers::flipperEosNumber('WPC', 'lowerLeft'));
+    $this->assertSame(115, PlatformNumbers::flipperEosNumber('WPC', 'upperRight'));
+    $this->assertSame(117, PlatformNumbers::flipperEosNumber('WPC', 'upperLeft'));
+  }
+
+  /**
+   * From PinMAME: sLRFlipPow 45 .. sLLFlip 48, and sURFlipPow 33 .. sULFlip 36.
+   */
+  public function testWpcFlipperWindingsGetPinmameNumbers(): void {
+    $this->assertSame(
+      [45, 46, 47, 48, 33, 34, 35, 36],
+      array_map(static fn ($n) => PlatformNumbers::flipperCoilNumber('WPC', $n), range(29, 36))
+    );
+    // Another platform's numbers are not WPC's to move.
+    $this->assertSame(29, PlatformNumbers::flipperCoilNumber('SYS11', 29));
+  }
+
+  /**
    * An unknown platform must not inherit WPC's numbers.
    */
   public function testAnUnknownPlatformHasNoNumbers(): void {
@@ -67,26 +89,15 @@ class WizardPlatformNumbersTest extends TestCase {
   }
 
   /**
-   * The custom range has to sit clear of both the matrix and the negatives.
+   * On WPC every solenoid type is a +50 V coil; the type names the driver.
    *
-   * Above 240 a switch number is read as negative - 243 means -3 - so an EOS
-   * allocated up there is not the switch that was written down.
+   * Low Power at 128 once gave Dirty Harry's slingshots and jets a quarter of
+   * their force.
    */
-  public function testTheCustomRangeIsClearOfMatrixAndNegativeNumbers(): void {
-    $this->assertGreaterThan(88, PlatformNumbers::CUSTOM_NUMBER_BASE);
-    $this->assertGreaterThan(118, PlatformNumbers::CUSTOM_NUMBER_BASE);
-    // 240 is the first number read as negative, so the last usable one is 239.
-    $this->assertLessThan(240, PlatformNumbers::CUSTOM_NUMBER_LIMIT);
-    $this->assertGreaterThan(PlatformNumbers::CUSTOM_NUMBER_BASE, PlatformNumbers::CUSTOM_NUMBER_LIMIT);
-  }
-
-  /**
-   * High Power and Low Power are what the manual's own column means.
-   */
-  public function testSolenoidTypesSetThePower(): void {
+  public function testEverySolenoidTypeRunsAtFullPower(): void {
     $this->assertSame(255, DeviceDefaults::power(DeviceDefaults::CLASS_HIGH_POWER));
-    $this->assertSame(128, DeviceDefaults::power(DeviceDefaults::CLASS_LOW_POWER));
-    $this->assertSame(128, DeviceDefaults::power(DeviceDefaults::CLASS_GENERAL_PURPOSE));
+    $this->assertSame(255, DeviceDefaults::power(DeviceDefaults::CLASS_LOW_POWER));
+    $this->assertSame(255, DeviceDefaults::power(DeviceDefaults::CLASS_GENERAL_PURPOSE));
   }
 
   /**
@@ -117,11 +128,11 @@ class WizardPlatformNumbersTest extends TestCase {
   }
 
   /**
-   * The hold winding holds; the power winding throws. Reversing them would
-   * cook the hold winding and give a weak flip.
+   * The hold output drives both windings in series, which Fliptronic fed the
+   * same +50 V as the power winding. Its resistance is what lets it sit on.
    */
-  public function testTheFlipperHoldWindingIsWeakerThanThePowerWinding(): void {
-    $this->assertLessThan(DeviceDefaults::FLIPPER_POWER, DeviceDefaults::FLIPPER_HOLD);
+  public function testTheFlipperHoldWindingGetsTheSameVoltageAsThePowerWinding(): void {
+    $this->assertSame(DeviceDefaults::FLIPPER_POWER, DeviceDefaults::FLIPPER_HOLD);
   }
 
   public function testOrdinaryCoilsAreBoundedAndFlipperPowerIsBoundedHarder(): void {
@@ -137,9 +148,7 @@ class WizardPlatformNumbersTest extends TestCase {
    * The power winding must outlast the stroke and stay inside WPC's own timeout.
    *
    * Below the stroke time the flip is cut off before the finger arrives; above
-   * 40 ms it is longer than the timeout WPC used to stop the winding burning,
-   * and with no EOS cutoff yet this runs on every flip rather than only when
-   * the EOS has failed.
+   * 40 ms it is longer than the timeout WPC used to stop the winding burning.
    */
   public function testTheFlipperTimeoutClearsTheStrokeAndStaysInsideWpcRange(): void {
     $timeout = DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS;

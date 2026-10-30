@@ -82,7 +82,9 @@ class WizardExtractionPromptTest extends TestCase {
 
     $this->assertContains('motor', array_column($devices['coils'], 'type'));
     $this->assertNotEmpty(array_filter($devices['coils'], static fn ($c) => $c['holdWinding']));
-    $this->assertNotEmpty(array_filter($devices['coils'], static fn ($c) => $c['endSwitches'] !== []));
+    // A motor the ROM drives must not be stopped by the board as well; the
+    // example once taught Dirty Harry's gun motor to stop on 76 and 77.
+    $this->assertEmpty(array_filter($devices['coils'], static fn ($c) => $c['endSwitches'] !== []));
     $this->assertNotEmpty(array_filter($devices['coils'], static fn ($c) => $c['fastFlipSwitch'] !== NULL));
     $this->assertNotEmpty(array_filter($devices['coils'],
       static fn ($c) => $c['location'] === DeviceDataParser::LOCATION_BACKBOX));

@@ -41,14 +41,17 @@ final class DeviceDefaults {
   /**
    * Drive power per solenoid type.
    *
-   * High and Low Power are what the manual's own column means. Gen. Purpose is
-   * treated as Low Power - the manual does not say, and the lower of the two is
-   * the safe direction to be wrong in.
+   * On WPC the type names the driver transistor and the current it can take,
+   * not the voltage: all three run their coils from +50 V. Dirty Harry's fuse
+   * list has F105 "Solenoid #1-#8", F104 "#9-#16" and F103 "#25-#28" on the
+   * +50 V lines J107-2, -3 and -1. The 20 V rail on J107-6 is for flashlamps
+   * only, which are LEDs here. On a 48 V rail that is full power for all three;
+   * 128 would give a slingshot a quarter of its original force.
    */
   private const POWER = [
     self::CLASS_HIGH_POWER => 255,
-    self::CLASS_LOW_POWER => 128,
-    self::CLASS_GENERAL_PURPOSE => 128,
+    self::CLASS_LOW_POWER => 255,
+    self::CLASS_GENERAL_PURPOSE => 255,
   ];
 
   /**
@@ -82,13 +85,11 @@ final class DeviceDefaults {
    *    EOS that is broken, misadjusted or unplugged. Without it the winding
    *    burns.
    *
-   * PPUC has no EOS cutoff yet - that is the separate Fliptronic feature - so
-   * maxPulseTime is the *only* thing ending the pulse, and it therefore runs on
-   * every flip rather than only when the EOS fails. 40 ms is used because it
-   * clears the 15-30 ms mechanical travel with margin, so no flip is cut short,
-   * and because it is the top of the range WPC itself considered safe for the
-   * winding. Once the EOS cutoff exists this becomes the safety net it is on a
-   * real machine, and the normal flip will end sooner.
+   * PPUC does the same on the board: the EOS is the power winding's stop
+   * switch, and maxPulseTime is the safety net. 40 ms is used because it clears
+   * the 15-30 ms mechanical travel with margin, so a flip whose EOS never
+   * closes is not cut short, and because it is the top of the range WPC itself
+   * considered safe for the winding.
    */
   public const FLIPPER_POWER = 255;
   public const FLIPPER_POWER_MAX_PULSE_TIME_MS = 40;
@@ -110,8 +111,13 @@ final class DeviceDefaults {
    * drop the flipper mid-game. It is declared with holdWinding instead, which
    * is what tells libppuc's coil validator that this is correct and not an
    * unprotected coil.
+   *
+   * Full power, as on the original: the hold output drives both windings in
+   * series, and that resistance - not a lower voltage - is what lets it sit on.
+   * Fliptronic fed it the same +50 V as the power winding. Less makes a finger
+   * sag under a cradled ball.
    */
-  public const FLIPPER_HOLD = 128;
+  public const FLIPPER_HOLD = 255;
 
   /**
    * Drive power for a coil of this class.

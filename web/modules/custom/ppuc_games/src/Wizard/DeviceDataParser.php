@@ -102,6 +102,9 @@ final class DeviceDataParser {
 
     $this->checkFlipperCoilsExist($result);
     $this->checkFastFlipSwitchesExist($result);
+    if (!$this->errors) {
+      $result = $this->renumberFlipperCoils($result, $platform);
+    }
 
     return $this->errors ? NULL : $result;
   }
@@ -374,6 +377,8 @@ final class DeviceDataParser {
         'name' => $name,
         'position' => $position,
         'buttonSwitch' => $button,
+        // Known whenever the button is: both come from the same platform table.
+        'eosSwitch' => PlatformNumbers::flipperEosNumber($platform, $position),
         'powerCoil' => $power,
         'holdCoil' => $hold,
       ];
@@ -441,6 +446,52 @@ final class DeviceDataParser {
         }
       }
     }
+  }
+
+  /**
+   * Moves the flipper windings from the manual's numbers to PinMAME's.
+   *
+   * The input carries the manual's numbers, because that is what can be
+   * checked against the page. Only the windings a flipper names are moved: on
+   * a Fliptronic game nothing else sits in the flipper block.
+   */
+  private function renumberFlipperCoils(array $result, string $platform): array {
+    $moved = [];
+    foreach ($result['flippers'] as &$flipper) {
+      foreach (['powerCoil', 'holdCoil'] as $key) {
+        $number = PlatformNumbers::flipperCoilNumber($platform, $flipper[$key]);
+        if ($number !== $flipper[$key]) {
+          $moved[$flipper[$key]] = $number;
+          $flipper[$key] = $number;
+        }
+      }
+    }
+    unset($flipper);
+    if (!$moved) {
+      return $result;
+    }
+
+    $kept = [];
+    foreach ($result['coils'] as $coil) {
+      if (!isset($moved[$coil['number']])) {
+        $kept[$coil['number']] = $coil['description'];
+      }
+    }
+    foreach ($result['coils'] as &$coil) {
+      $number = $moved[$coil['number']] ?? NULL;
+      if ($number === NULL) {
+        continue;
+      }
+      if (isset($kept[$number])) {
+        $this->errors[] = sprintf(
+          'Coil %d ("%s") is a flipper winding PinMAME drives as %d, which "%s" already uses.',
+          $coil['number'], $coil['description'], $number, $kept[$number]
+        );
+      }
+      $coil['number'] = $number;
+    }
+    unset($coil);
+    return $result;
   }
 
   /**

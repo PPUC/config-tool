@@ -8,7 +8,6 @@ use Drupal\ppuc_games\Wizard\BoardCapacity;
 use Drupal\ppuc_games\Wizard\DeviceDataParser;
 use Drupal\ppuc_games\Wizard\DeviceDefaults;
 use Drupal\ppuc_games\Wizard\HardwareAllocator;
-use Drupal\ppuc_games\Wizard\PlatformNumbers;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -258,13 +257,13 @@ class WizardHardwareAllocatorTest extends TestCase {
     [, $plan] = $this->allocate(self::document(['coils' => $coils, 'flippers' => $flippers]));
 
     $boards = [];
-    foreach ([29, 31, 33] as $power) {
+    foreach ([45, 47, 33] as $power) {
       $boards[] = self::coil($plan, $power)['board'];
     }
     $this->assertCount(3, array_unique($boards), 'two flippers share a board');
 
     // Each flipper's own four devices still travel together.
-    foreach ([[29, 30], [31, 32], [33, 34]] as [$power, $hold]) {
+    foreach ([[45, 46], [47, 48], [33, 34]] as [$power, $hold]) {
       $this->assertSame(self::coil($plan, $power)['board'], self::coil($plan, $hold)['board']);
     }
   }
@@ -534,9 +533,9 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
-   * Power and pulse time come from the manual's solenoid type.
+   * Every WPC solenoid type is a +50 V coil, so all of them get full power.
    */
-  public function testCoilPowerFollowsTheSolenoidType(): void {
+  public function testCoilPowerIsFullForEverySolenoidType(): void {
     [, $plan] = $this->allocate(self::document([
       'coils' => [
         ['number' => 1, 'description' => 'Ball Release', 'class' => 'highPower'],
@@ -546,8 +545,8 @@ class WizardHardwareAllocatorTest extends TestCase {
     ]));
 
     $this->assertSame(255, self::coil($plan, 1)['power']);
-    $this->assertSame(128, self::coil($plan, 9)['power']);
-    $this->assertSame(128, self::coil($plan, 26)['power']);
+    $this->assertSame(255, self::coil($plan, 9)['power']);
+    $this->assertSame(255, self::coil($plan, 26)['power']);
   }
 
   /**
@@ -575,9 +574,9 @@ class WizardHardwareAllocatorTest extends TestCase {
       ));
     }
 
-    $this->assertTrue(self::coil($plan, 30)['holdWinding']);
-    $this->assertFalse(self::coil($plan, 29)['holdWinding']);
-    $this->assertSame(DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS, self::coil($plan, 29)['maxPulseTime']);
+    $this->assertTrue(self::coil($plan, 46)['holdWinding']);
+    $this->assertFalse(self::coil($plan, 45)['holdWinding']);
+    $this->assertSame(DeviceDefaults::FLIPPER_POWER_MAX_PULSE_TIME_MS, self::coil($plan, 45)['maxPulseTime']);
   }
 
   // --- motors ----------------------------------------------------------------
@@ -656,13 +655,9 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
-   * What is left to do by hand has to be said, not left to be discovered.
-   *
-   * The end switches stop the motor now, so what remains is the travel time:
-   * the default pulse time is shorter than a traverse, and left alone the
-   * assembly stops part way.
+   * End switches on a motor are a warning, not a feature to advertise.
    */
-  public function testAMotorIsReportedWithWhatItStillNeeds(): void {
+  public function testAMotorWithEndSwitchesIsWarnedAboutThem(): void {
     [, $plan] = $this->allocate(self::document([
       'switches' => [['number' => 76, 'description' => 'Gun Position']],
       'coils' => [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower',
@@ -671,17 +666,24 @@ class WizardHardwareAllocatorTest extends TestCase {
 
     $notes = implode("\n", array_map('strval', $plan['notes']));
     $this->assertStringContainsString('Gun Motor', $notes);
-    $this->assertStringContainsString('stop it the moment it reaches either end', $notes);
-    $this->assertStringContainsString('time the travel and set it', $notes);
+    $this->assertStringContainsString('keep it from starting while one is closed', $notes);
+    $this->assertStringContainsString('could never leave a closed switch', $notes);
   }
 
-  public function testAMotorWithoutEndSwitchesSaysSo(): void {
+  /**
+   * The ROM decides how long a motor runs, so the board must not cut it short.
+   *
+   * Dirty Harry's gun motor, at a coil's 150 ms, stopped every run part way.
+   */
+  public function testAMotorIsLeftToTheRomToStop(): void {
     [, $plan] = $this->allocate(self::document([
       'coils' => [['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower', 'type' => 'motor']],
     ]));
 
+    $this->assertSame(0, self::coil($plan, 20)['maxPulseTime']);
+    $this->assertSame([], self::coil($plan, 20)['stopSwitches']);
     $this->assertStringContainsString(
-      'no end-position switches',
+      'time the longest run',
       implode("\n", array_map('strval', $plan['notes']))
     );
   }
@@ -751,11 +753,11 @@ class WizardHardwareAllocatorTest extends TestCase {
         $eos = $switch['number'];
       }
     }
-    $this->assertNotNull($eos);
+    $this->assertSame(111, $eos);
 
-    $this->assertSame([$eos], self::coil($plan, 29)['stopSwitches']);
+    $this->assertSame([$eos], self::coil($plan, 45)['stopSwitches']);
     // Cutting the hold winding would drop the finger the moment it arrived.
-    $this->assertSame([], self::coil($plan, 30)['stopSwitches']);
+    $this->assertSame([], self::coil($plan, 46)['stopSwitches']);
   }
 
   /**
@@ -806,11 +808,14 @@ class WizardHardwareAllocatorTest extends TestCase {
       ],
     ]));
 
-    $this->assertSame(112, self::coil($plan, 29)['fastFlipSwitch']);
-    $this->assertSame(112, self::coil($plan, 30)['fastFlipSwitch']);
+    $this->assertSame(112, self::coil($plan, 45)['fastFlipSwitch']);
+    $this->assertSame(112, self::coil($plan, 46)['fastFlipSwitch']);
   }
 
-  public function testFlipperEosSwitchesUseTheCustomRange(): void {
+  /**
+   * The EOS is a switch the ROM reads, so it carries the ROM's number.
+   */
+  public function testFlipperEosSwitchesAreTheOnesTheRomReads(): void {
     [, $plan] = $this->allocate(self::document([
       'coils' => [
         ['number' => 29, 'description' => 'LR Power', 'class' => 'highPower'],
@@ -831,11 +836,7 @@ class WizardHardwareAllocatorTest extends TestCase {
       }
     }
 
-    $this->assertSame([200, 201], $eos);
-    foreach ($eos as $number) {
-      $this->assertLessThanOrEqual(PlatformNumbers::CUSTOM_NUMBER_LIMIT, $number,
-        'numbers from 240 up are read as negative');
-    }
+    $this->assertSame([111, 113], $eos);
   }
 
   /**
@@ -1132,7 +1133,7 @@ class WizardHardwareAllocatorTest extends TestCase {
       ],
     ]));
 
-    foreach ([29, 30] as $number) {
+    foreach ([45, 46] as $number) {
       $this->assertSame(
         HardwareAllocator::GROUP_PLAYFIELD,
         self::boardGroup($plan, self::coil($plan, $number)['board']),

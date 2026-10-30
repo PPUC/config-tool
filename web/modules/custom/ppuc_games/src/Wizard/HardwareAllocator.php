@@ -205,9 +205,8 @@ final class HardwareAllocator {
   /**
    * Every switch the wizard will create, including the ones it invents.
    *
-   * A flipper contributes two switches that are in no manual table: the button,
-   * at the number PinMAME reads, and the EOS, in the custom range because
-   * PinMAME does not read it at all.
+   * A flipper contributes two switches that are in no manual table: the button
+   * and the EOS, both at the numbers PinMAME reads.
    */
   private function expandSwitches(array $devices): array {
     $switches = [];
@@ -215,7 +214,6 @@ final class HardwareAllocator {
       $switches[] = $switch + ['role' => 'switch'];
     }
 
-    $nextCustom = PlatformNumbers::CUSTOM_NUMBER_BASE;
     foreach ($devices['flippers'] as $flipper) {
       // The button belongs to the cabinet but is allocated to a playfield
       // board, so it shares one with the coils it fast-flips.
@@ -230,16 +228,8 @@ final class HardwareAllocator {
         'flipper' => $flipper['name'],
       ];
 
-      if ($nextCustom > PlatformNumbers::CUSTOM_NUMBER_LIMIT) {
-        $this->notes[] = sprintf(
-          'Ran out of custom switch numbers below %d; the EOS switch for "%s" was not created.',
-          PlatformNumbers::CUSTOM_NUMBER_LIMIT + 1,
-          $flipper['name']
-        );
-        continue;
-      }
       $switches[] = [
-        'number' => $nextCustom++,
+        'number' => $flipper['eosSwitch'],
         'description' => $flipper['name'] . ' Flipper EOS',
         'opto' => FALSE,
         'direct' => FALSE,
@@ -257,8 +247,6 @@ final class HardwareAllocator {
    * Every coil, with the flipper windings resolved into settings.
    */
   private function expandCoils(array $devices): array {
-    // The EOS numbers are assigned while expanding the switches; this walks the
-    // same order to find them again.
     $flipperByCoil = [];
     foreach ($devices['flippers'] as $flipper) {
       $flipperByCoil[$flipper['powerCoil']] = ['flipper' => $flipper, 'winding' => 'power'];
@@ -272,12 +260,15 @@ final class HardwareAllocator {
         // A hold winding declared on its own - a trap door, say, rather than a
         // flipper - gets no bound for the same reason a flipper's does not: it
         // is wound to sit energised, and cutting it drops whatever it holds.
+        // A motor is unbounded too: a ROM runs it until its position switch
+        // says it has arrived, which on Dirty Harry's gun search takes about
+        // twenty seconds. A coil's 150 ms would stop every run part way.
         $holdWinding = !empty($coil['holdWinding']);
+        $unbounded = $holdWinding || $coil['type'] === 'motor';
         $coils[] = array_merge($coil, [
           'power' => DeviceDefaults::powerFor($coil['class'], $coil['type']),
-          'maxPulseTime' => $holdWinding ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
+          'maxPulseTime' => $unbounded ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
           'holdWinding' => $holdWinding,
-          // A motor's end-position switches are what cut it when it arrives.
           'stopSwitches' => $coil['endSwitches'] ?? [],
           'role' => $holdWinding ? 'holdWinding' : 'coil',
         ]);
@@ -289,9 +280,8 @@ final class HardwareAllocator {
       // The EOS cuts the power winding once the finger has arrived. Not the
       // hold winding: that is what keeps the finger up afterwards, and cutting
       // it would drop the flipper the moment it got there.
-      $eos = $isHold ? [] : [$this->eosNumberFor($devices, $flipper['name'])];
       $coils[] = array_merge($coil, [
-        'stopSwitches' => array_values(array_filter($eos)),
+        'stopSwitches' => $isHold ? [] : [$flipper['eosSwitch']],
         'power' => $isHold ? DeviceDefaults::FLIPPER_HOLD : DeviceDefaults::FLIPPER_POWER,
         // The hold winding is wound to sit energised, so it gets no bound and
         // says so with holdWinding instead.
@@ -304,26 +294,6 @@ final class HardwareAllocator {
       ]);
     }
     return $coils;
-  }
-
-  /**
-   * The custom switch number given to a flipper's EOS, or NULL.
-   *
-   * Assigned in expandSwitches() in the order the flippers are listed, so this
-   * walks the same order rather than guessing.
-   */
-  private function eosNumberFor(array $devices, string $flipperName): ?int {
-    $next = PlatformNumbers::CUSTOM_NUMBER_BASE;
-    foreach ($devices['flippers'] as $flipper) {
-      if ($next > PlatformNumbers::CUSTOM_NUMBER_LIMIT) {
-        return NULL;
-      }
-      if ($flipper['name'] === $flipperName) {
-        return $next;
-      }
-      $next++;
-    }
-    return NULL;
   }
 
   /**
@@ -355,9 +325,9 @@ final class HardwareAllocator {
         $wanted[] = $number;
       }
 
-      // A flipper's EOS belongs to the same finger. Nothing acts on it yet, but
-      // it is the switch the Fliptronic work will read, and it costs nothing to
-      // put it where it will be needed.
+      // A flipper's EOS belongs to the same finger. The power winding already
+      // names it as its stop switch; this keeps the hold winding, which does
+      // not, on the same board as well.
       if (($coil['flipper'] ?? NULL) !== NULL) {
         foreach ($switches as $switch) {
           if (($switch['role'] ?? '') === 'flipperEos' && ($switch['flipper'] ?? NULL) === $coil['flipper']) {
@@ -543,16 +513,16 @@ final class HardwareAllocator {
   }
 
   /**
-   * Says what still has to be done by hand for each motor.
+   * Says what still has to be decided by hand for each motor.
    *
-   * A motor drives an assembly - a gun, a cannon - between two end positions,
-   * and the switches at those positions cut it the instant it arrives. That is
-   * board-local, which is why they are on the motor's board.
+   * A motor gets no maximum pulse time, because whatever drives it decides how
+   * long a run is. Whether it needs a stall guard on top is only known once the
+   * longest run has been timed on the machine.
    *
-   * What is still left to do is the travel time. The maximum pulse time is the
-   * backstop for a switch that never closes, and at its default the motor stops
-   * short of a normal traverse - the safe way round to be wrong, but it has to
-   * be set to the real travel or the assembly never gets there.
+   * End switches are worth a word of their own: they stop the motor on the
+   * board and keep it from starting while one is closed. Right for a motor that
+   * drives into an end stop, a trap for one a ROM drives - parked on its home
+   * switch, it never starts again.
    */
   private function reportMotors(array $coils): void {
     foreach ($coils as $coil) {
@@ -564,20 +534,19 @@ final class HardwareAllocator {
       $this->notes[] = $ends
         ? sprintf(
           '"%s" (coil %d) is a motor, driven at %d of 255 for a low-voltage motor on a '
-          . 'high-voltage rail. Switches %s stop it the moment it reaches either end of its '
-          . 'travel, and are on board %d with it so the board can act on them itself. Its '
-          . 'maximum pulse time is the backstop for a switch that never closes, and %d ms is '
-          . 'shorter than a traverse - time the travel and set it, or the assembly will stop '
-          . 'part way.',
+          . 'high-voltage rail. Switches %s stop it on board %d and keep it from starting '
+          . 'while one is closed. That is right only if nothing else stops it: a motor the '
+          . 'ROM drives could never leave a closed switch again.',
           $coil['description'], $coil['number'], $coil['power'],
-          implode(' and ', $ends), $coil['board'], $coil['maxPulseTime']
+          implode(' and ', $ends), $coil['board']
         )
         : sprintf(
-          '"%s" (coil %d) is a motor, driven at %d of 255. It has no end-position switches: '
-          . 'if the assembly has any, name them in endSwitches so they stop it when it '
-          . 'arrives. Without them the maximum pulse time (%d ms) is the only thing ending '
-          . 'the run.',
-          $coil['description'], $coil['number'], $coil['power'], $coil['maxPulseTime']
+          '"%s" (coil %d) is a motor, driven at %d of 255 for a low-voltage motor on a '
+          . 'high-voltage rail. It has no maximum pulse time, because the ROM ends each run '
+          . 'from its position switches, and a run can be long: Dirty Harry\'s gun search '
+          . 'takes about twenty seconds. For a guard against a stalled motor, time the '
+          . 'longest run and set a maximum pulse time above it.',
+          $coil['description'], $coil['number'], $coil['power']
         );
     }
   }

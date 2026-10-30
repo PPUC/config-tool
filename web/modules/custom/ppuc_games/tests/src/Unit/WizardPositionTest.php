@@ -205,7 +205,7 @@ class WizardPositionTest extends TestCase {
       ],
     ]);
 
-    $this->assertSame(self::boardOfCoil($plan, 29), self::boardOfCoil($plan, 30));
+    $this->assertSame(self::boardOfCoil($plan, 45), self::boardOfCoil($plan, 46));
   }
 
   // --- LED string order ------------------------------------------------------

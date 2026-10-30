@@ -129,8 +129,10 @@ final class ExtractionPrompt {
       . "PWM outputs.",
 
       "A motor - a gun, a cannon, a rotating assembly - is a coil with \"type\": \"motor\".\n"
-      . "If the switch list has switches at the ends of its travel (\"Gun Position\",\n"
-      . "\"Gun Lockup\" and the like), list their numbers in \"endSwitches\".",
+      . "Do not give it \"endSwitches\". Its position switches (\"Gun Position\" and the\n"
+      . "like) belong in the switch list like any other: the ROM reads them and stops the\n"
+      . "motor itself. An end switch would stop it on the board as well, and a motor\n"
+      . "parked on that switch could then never be started again.",
 
       "If two solenoid rows drive one device as a power and a hold winding - the same\n"
       . "coil part number, named \"... High\" and \"... Hold\" - put \"holdWinding\": true on\n"
@@ -139,6 +141,8 @@ final class ExtractionPrompt {
       "Flippers come from the solenoid table's flipper block, which lists them as pairs.\n"
       . "Each entry names its two coil numbers and a position, one of:\n"
       . "  lowerRight, lowerLeft, upperRight, upperLeft\n"
+      . "Use the numbers printed in the table, as everywhere else. Where the ROM drives a\n"
+      . "winding on a different number, the tool converts it.\n"
       . "Do not create flipper button or end-of-stroke switches - the tool creates those\n"
       . "itself, with the numbers the ROM expects. Be careful here: the flipper column\n"
       . "printed beside the switch matrix is often a generic template listing flippers the\n"
@@ -235,8 +239,7 @@ final class ExtractionPrompt {
       . "    { \"number\": 7,  \"description\": \"Knocker\", \"class\": \"highPower\", \"location\": \"backbox\" },\n"
       . "    { \"number\": 9,  \"description\": \"Left Slingshot\", \"class\": \"lowPower\", \"fastFlipSwitch\": 61 },\n"
       . "    { \"number\": 16, \"description\": \"Trap Door Hold\", \"class\": \"lowPower\", \"holdWinding\": true },\n"
-      . "    { \"number\": 20, \"description\": \"Gun Motor\", \"class\": \"lowPower\", \"type\": \"motor\",\n"
-      . "      \"endSwitches\": [76, 77] },\n"
+      . "    { \"number\": 20, \"description\": \"Gun Motor\", \"class\": \"lowPower\", \"type\": \"motor\" },\n"
       . "    { \"number\": 29, \"description\": \"Lower Right Flipper Power\", \"class\": \"highPower\" },\n"
       . "    { \"number\": 30, \"description\": \"Lower Right Flipper Hold\", \"class\": \"lowPower\" }\n"
       . "  ],\n"
