@@ -182,6 +182,10 @@ final class GameBuilder {
       $values['field_hold_winding'] = ['value' => 1];
     }
 
+    if (!empty($coil['ignoreGameOn'])) {
+      $values['field_ignore_game_on'] = ['value' => 1];
+    }
+
     $type = $this->term('pwm_device', $this->pwmTypeName($coil['type']));
     if ($type !== NULL) {
       $values['field_pwm_type'] = ['target_id' => $type];

@@ -1,0 +1,23 @@
+uuid: 9606ae11-b865-419d-b9a9-8736579fe367
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_rom_speed
+    - node.type.pwm_device
+id: node.pwm_device.field_rom_speed
+field_name: field_rom_speed
+entity_type: node
+bundle: pwm_device
+label: 'Speed set by the ROM'
+description: "Set this on a motor whose speed the ROM varies by pulsing its driver, such as Dirty Harry's gun, which gets faster as a game progresses. ppuc measures the pulses and the board runs the motor at that share of its power, after a short start at full power, so set the power to what the motor's supply was on the original: 64 for 12 V on a 48 V rail. Only for a motor. Leave it off for a motor that runs at one speed, such as T2's gun."
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

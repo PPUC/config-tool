@@ -185,6 +185,21 @@ about twenty seconds. libppuc reports such an output as having no thermal
 protection; if you want a guard against a stalled motor, time the longest run
 and set a maximum pulse time above it. The wizard says so in its summary.
 
+**Game on.** A board discards coil commands while the game-on solenoid is off,
+but a ROM moves its motors with no game running: Dirty Harry searches for its
+gun at boot and waits for the result. The wizard therefore ticks "Runs without
+game on" for every motor, exported as `ignoreGameOn`. It lifts that one gate for
+that one output. The coin door still cuts it.
+
+**Speed.** A ROM may vary a motor's speed by pulsing its driver, and the on/off
+coil state hides that. Dirty Harry's gun gets faster as a game progresses; T2's
+runs at one speed. Tick "Speed set by the ROM", exported as `romSpeed`, for a
+motor like Dirty Harry's: ppuc then measures the ROM's pulses and the board runs
+the motor at that share of its power, after a short start at full power. Set the
+power to what the motor's supply was on the original, 64 for 12 V, because the
+ROM's pulses were switching that voltage. It is off by default, the wizard does
+not set it, and PinMAME can measure at most five motors in a game.
+
 Do not put an end switch in `fastFlipSwitch`. The polarity is the other way
 round: a fast-flip switch runs the coil *while* it is closed, so that would
 drive the motor whenever it had already arrived. The flipper column beside

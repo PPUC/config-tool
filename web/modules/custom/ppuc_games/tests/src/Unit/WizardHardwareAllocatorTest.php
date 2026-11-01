@@ -602,6 +602,21 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
+   * A ROM moves its motors with no game running, a coil stays behind game-on.
+   */
+  public function testOnlyAMotorRunsWithoutGameOn(): void {
+    [, $plan] = $this->allocate(self::document([
+      'coils' => [
+        ['number' => 20, 'description' => 'Gun Motor', 'class' => 'lowPower', 'type' => 'motor'],
+        ['number' => 9, 'description' => 'Left Sling', 'class' => 'lowPower'],
+      ],
+    ]));
+
+    $this->assertTrue(self::coil($plan, 20)['ignoreGameOn']);
+    $this->assertFalse(self::coil($plan, 9)['ignoreGameOn']);
+  }
+
+  /**
    * High Power on the driver does not make the motor a high-power device.
    */
   public function testAMotorsPowerIgnoresTheSolenoidType(): void {

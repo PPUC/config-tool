@@ -1,0 +1,23 @@
+uuid: 09d01783-0799-4fb9-9978-20182ff86836
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ignore_game_on
+    - node.type.pwm_device
+id: node.pwm_device.field_ignore_game_on
+field_name: field_ignore_game_on
+entity_type: node
+bundle: pwm_device
+label: 'Runs without game on'
+description: 'Set this if the ROM has to drive this output with no game running. A board discards coil commands while the game-on solenoid is off, but a ROM may still move an assembly then: Dirty Harry searches for its gun at boot and waits for the result. Only this one gate is lifted: opening the coin door still cuts the output. Leave it off for ordinary coils.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

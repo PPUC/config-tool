@@ -918,6 +918,16 @@ class GamesController extends ControllerBase {
               if ($this->getBooleanFieldValue($device, 'field_hold_winding')) {
                 $pwm_output['holdWinding'] = TRUE;
               }
+              // Driven by the ROM with no game running, such as a gun search
+              // at boot. The board's game-on gate does not apply to it.
+              if ($this->getBooleanFieldValue($device, 'field_ignore_game_on')) {
+                $pwm_output['ignoreGameOn'] = TRUE;
+              }
+              // A motor whose speed the ROM varies. ppuc measures it and has
+              // the board scale the motor's power to match.
+              if ($this->getBooleanFieldValue($device, 'field_rom_speed')) {
+                $pwm_output['romSpeed'] = TRUE;
+              }
               // Switches that cut this output when they close - a flipper's
               // EOS, or the ends of a motor's travel. The board acts on them
               // itself, which is why they have to be on its own I/O board.

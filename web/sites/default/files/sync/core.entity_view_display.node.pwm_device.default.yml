@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.pwm_device.field_hold_power_activation_time
     - field.field.node.pwm_device.field_hold_winding
     - field.field.node.pwm_device.field_i_o_board
+    - field.field.node.pwm_device.field_ignore_game_on
     - field.field.node.pwm_device.field_max_pulse_time
     - field.field.node.pwm_device.field_min_pulse_time
     - field.field.node.pwm_device.field_number
@@ -22,6 +23,7 @@ dependencies:
     - field.field.node.pwm_device.field_playfield_y
     - field.field.node.pwm_device.field_power
     - field.field.node.pwm_device.field_pwm_type
+    - field.field.node.pwm_device.field_rom_speed
     - field.field.node.pwm_device.field_stop_switches
     - node.type.pwm_device
   module:
@@ -123,6 +125,16 @@ content:
     third_party_settings: {  }
     weight: 2
     region: content
+  field_ignore_game_on:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 14
+    region: content
   field_max_pulse_time:
     type: number_integer
     label: above
@@ -197,6 +209,16 @@ content:
       link: true
     third_party_settings: {  }
     weight: 7
+    region: content
+  field_rom_speed:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 14
     region: content
   field_stop_switches:
     type: entity_reference_label

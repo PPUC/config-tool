@@ -264,11 +264,15 @@ final class HardwareAllocator {
         // says it has arrived, which on Dirty Harry's gun search takes about
         // twenty seconds. A coil's 150 ms would stop every run part way.
         $holdWinding = !empty($coil['holdWinding']);
-        $unbounded = $holdWinding || $coil['type'] === 'motor';
+        $isMotor = $coil['type'] === 'motor';
+        $unbounded = $holdWinding || $isMotor;
         $coils[] = array_merge($coil, [
           'power' => DeviceDefaults::powerFor($coil['class'], $coil['type']),
           'maxPulseTime' => $unbounded ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
           'holdWinding' => $holdWinding,
+          // A ROM moves its motors with no game running: Dirty Harry searches
+          // for its gun at boot, and waits for the result.
+          'ignoreGameOn' => $isMotor,
           'stopSwitches' => $coil['endSwitches'] ?? [],
           'role' => $holdWinding ? 'holdWinding' : 'coil',
         ]);
