@@ -436,6 +436,13 @@ class PpucNodeForm extends NodeForm {
           'field_ini_pin2dmd_enabled',
         ],
       ],
+      'ppuc_ini_pindmd3' => [
+        'title' => $this->t('PinDMD3'),
+        'description' => $this->t('PinDMD3 display settings.'),
+        'fields' => [
+          'field_ini_pindmd3_enabled',
+        ],
+      ],
       'ppuc_ini_speech' => [
         'title' => $this->t('Speech'),
         'description' => $this->t('Speech callout and startup greeting settings.'),
@@ -563,6 +570,7 @@ class PpucNodeForm extends NodeForm {
       'field_ini_pixelcade_enabled' => $this->t('Enable Pixelcade output.'),
       'field_ini_pixelcade_device' => $this->t('Optional fixed Pixelcade serial device. Leave empty for auto-detection.'),
       'field_ini_pin2dmd_enabled' => $this->t('Enable PIN2DMD output.'),
+      'field_ini_pindmd3_enabled' => $this->t('Enable PinDMD3 output.'),
       'field_ini_speech_enabled' => $this->t('Enable speech callouts.'),
       'field_ini_speech_greeting' => $this->t('Speak a startup greeting for speech debugging.'),
       'field_ini_speech_backend' => $this->t('Speech backend: auto, flite, or espeak-ng.'),

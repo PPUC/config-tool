@@ -414,6 +414,9 @@ class GamesController extends ControllerBase {
       'PIN2DMD' => [
         'Enabled' => $bool01('field_ini_pin2dmd_enabled', '0'),
       ],
+      'PinDMD3' => [
+        'Enabled' => $bool01('field_ini_pindmd3_enabled', '0'),
+      ],
       'Speech' => [
         'Enabled' => $value('field_ini_speech_enabled', 'false'),
         'Greeting' => $value('field_ini_speech_greeting', 'false'),
