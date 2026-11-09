@@ -81,6 +81,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_speech_rate
     - field.field.node.ppuc_settings.field_ini_speech_voice
     - field.field.node.ppuc_settings.field_ini_speech_volume
+    - field.field.node.ppuc_settings.field_ini_switch_min_hold_ms
     - field.field.node.ppuc_settings.field_ini_switch_refresh_ms
     - field.field.node.ppuc_settings.field_ini_switch_reply_us
     - field.field.node.ppuc_settings.field_ini_switch_test
@@ -688,6 +689,13 @@ content:
   field_ini_speech_volume:
     type: number
     weight: 11
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ini_switch_min_hold_ms:
+    type: number
+    weight: 38
     region: content
     settings:
       placeholder: ''

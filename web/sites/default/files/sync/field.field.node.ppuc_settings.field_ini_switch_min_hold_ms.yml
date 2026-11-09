@@ -1,0 +1,25 @@
+uuid: 669c80df-5a50-4f54-8d63-aaeb322fc0bf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ini_switch_min_hold_ms
+    - node.type.ppuc_settings
+id: node.ppuc_settings.field_ini_switch_min_hold_ms
+field_name: field_ini_switch_min_hold_ms
+entity_type: node
+bundle: ppuc_settings
+label: 'Runtime: SwitchMinHoldMs'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 10
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer
