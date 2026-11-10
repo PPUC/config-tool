@@ -1129,6 +1129,13 @@ class GamesController extends ControllerBase {
         if ($poll_events && $this->getBooleanFieldValue($i_o_board, 'field_slow_switches')) {
           $board['slowSwitches'] = TRUE;
         }
+        // Only emitted when set, and only on a polled board. It answers first
+        // among the boards polled every cycle, so a switch the ROM answers with
+        // a coil -- an opto in front of a diverter -- reaches it early enough
+        // for that coil to leave with the next output frame.
+        if ($poll_events && $this->getBooleanFieldValue($i_o_board, 'field_first_in_chain')) {
+          $board['firstInChain'] = TRUE;
+        }
         // Declared but not built: the host owns this board's switches and drives
         // them itself. This is how the tilt inhibit reaches the flipper outputs
         // without a new frame type.

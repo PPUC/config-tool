@@ -4,9 +4,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.i_o_board.field_first_in_chain
     - field.field.node.i_o_board.field_game
     - field.field.node.i_o_board.field_io_board_type
     - field.field.node.i_o_board.field_number
+    - field.field.node.i_o_board.field_slow_switches
+    - field.field.node.i_o_board.field_virtual
     - node.type.i_o_board
   module:
     - user
@@ -23,6 +26,7 @@ content:
     weight: 100
     region: content
 hidden:
+  field_first_in_chain: true
   field_game: true
   field_io_board_type: true
   field_number: true
