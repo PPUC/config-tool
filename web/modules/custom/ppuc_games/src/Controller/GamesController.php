@@ -330,6 +330,7 @@ class GamesController extends ControllerBase {
         'NoSerial' => $value('field_ini_no_serial', 'false'),
         'NoDisplay' => $value('field_ini_no_display', 'false'),
         'NoSound' => $value('field_ini_no_sound', 'false'),
+        'NoTimeFence' => $value('field_ini_no_time_fence', 'false'),
         'Debug' => $value('field_ini_debug', 'false'),
         'DebugErrors' => $value('field_ini_debug_errors', 'false'),
         'DebugSwitches' => $value('field_ini_debug_switches', 'false'),

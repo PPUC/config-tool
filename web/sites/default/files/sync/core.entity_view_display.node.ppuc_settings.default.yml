@@ -52,6 +52,7 @@ dependencies:
     - field.field.node.ppuc_settings.field_ini_no_display
     - field.field.node.ppuc_settings.field_ini_no_serial
     - field.field.node.ppuc_settings.field_ini_no_sound
+    - field.field.node.ppuc_settings.field_ini_no_time_fence
     - field.field.node.ppuc_settings.field_ini_output_frame_ms
     - field.field.node.ppuc_settings.field_ini_paths_rom
     - field.field.node.ppuc_settings.field_ini_pin2dmd_enabled
@@ -585,6 +586,16 @@ content:
     weight: 13
     region: content
   field_ini_no_sound:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_ini_no_time_fence:
     type: boolean
     label: above
     settings:
