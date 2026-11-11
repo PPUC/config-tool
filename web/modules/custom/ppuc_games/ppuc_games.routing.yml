@@ -25,6 +25,7 @@ ppuc_games.zip:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::streamGameZip'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'edit any game content'
     node: \d+
   options:
@@ -47,6 +48,7 @@ ppuc_games.yaml:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::streamPinMameYaml'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'access content'
     node: \d+
   options:
@@ -61,6 +63,7 @@ ppuc_games.add_rule:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::addRule'
     _title: 'Add Rule'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'create rule content'
     node: \d+
   options:
@@ -87,6 +90,7 @@ ppuc_games.slides.add:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::addSlide'
     _title: 'Add Slide'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'create slide content'
     node: \d+
   options:
@@ -100,6 +104,7 @@ ppuc_games.rules_download:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::streamRulesArchive'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'access content'
     node: \d+
   options:
@@ -114,6 +119,7 @@ ppuc_games.game_folder:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::streamGameFolderArchive'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'access content'
     node: \d+
   options:
@@ -128,6 +134,7 @@ ppuc_games.ini:
     _controller: '\Drupal\ppuc_games\Controller\GamesController::streamPpucIni'
     _title_callback: '\Drupal\ppuc_games\Controller\GamesController::title'
   requirements:
+    _custom_access: '\Drupal\ppuc_games\Controller\GamesController::accessGameNode'
     _permission: 'access content'
     node: \d+
   options:

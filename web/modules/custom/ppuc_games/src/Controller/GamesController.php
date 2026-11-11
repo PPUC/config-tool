@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\ppuc_games\Wizard\BoardCapacity;
 
 /**
@@ -1399,7 +1400,7 @@ class GamesController extends ControllerBase {
 
   public function streamPpucIni(NodeInterface $node): Response {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     return new Response(
@@ -1414,7 +1415,7 @@ class GamesController extends ControllerBase {
 
   public function streamRuleLua(NodeInterface $node): Response {
     if ($node->bundle() !== 'rule') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     return new Response(
@@ -1429,7 +1430,7 @@ class GamesController extends ControllerBase {
 
   public function addRule(NodeInterface $node): RedirectResponse {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     return $this->redirect('node.add', ['node_type' => 'rule'], ['query' => ['game' => $node->id()]]);
@@ -1437,7 +1438,7 @@ class GamesController extends ControllerBase {
 
   public function addSlide(NodeInterface $node): RedirectResponse {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     return $this->redirect('node.add', ['node_type' => 'slide'], ['query' => ['game' => $node->id()]]);
@@ -1453,15 +1454,27 @@ class GamesController extends ControllerBase {
    */
   public function editPpucSettings(NodeInterface $node): RedirectResponse {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     $settings = \Drupal::service('ppuc_games.game_settings')->getOrCreate($node);
     if (!$settings instanceof NodeInterface) {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     return $this->redirect('entity.node.edit_form', ['node' => $settings->id()]);
+  }
+
+  /**
+   * Routes that act on a game exist only on games.
+   *
+   * Their tabs are attached to every node's page, so without this a rule or a
+   * switch showed "Download Game Folder" and the rest, and following one ended
+   * in an error.
+   */
+  public function accessGameNode(NodeInterface $node): AccessResult {
+    return AccessResult::allowedIf($node->bundle() === 'game')
+      ->addCacheableDependency($node);
   }
 
   /**
@@ -1962,7 +1975,7 @@ class GamesController extends ControllerBase {
 
   public function streamRulesArchive(NodeInterface $node): Response {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     $tmp = $this->fileSystem->getTempDirectory() . '/ppuc-rules-' . $node->id();
@@ -2349,7 +2362,7 @@ TXT;
    */
   public function streamGameFolderArchive(NodeInterface $node): Response {
     if ($node->bundle() !== 'game') {
-      throw $this->createNotFoundException();
+      throw new NotFoundHttpException();
     }
 
     // The archive holds one folder per game, named for the game and its uuid so
