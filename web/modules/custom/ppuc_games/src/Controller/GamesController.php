@@ -374,6 +374,7 @@ class GamesController extends ControllerBase {
         // stops doing that job. It must not be lowered on older firmware.
         // See ppuc/docs/V2_PROTOCOL.md, "The receive buffer is the one that bites".
         'SwitchReplyDelayUs' => $value('field_ini_switch_reply_us', '0'),
+        'SwitchIdleRefreshPolls' => $value('field_ini_switch_idle_refresh', '100'),
         'SwitchRefreshIdleMs' => $value('field_ini_switch_refresh_ms', '15000'),
         // How long the ROM is shown each switch state before the next change
         // of that switch follows. 10 ms is ppuc's default and was measured on
