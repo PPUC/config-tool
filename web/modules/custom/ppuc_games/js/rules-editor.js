@@ -381,6 +381,9 @@
     addFunctionStatementBlock(Blockly, lua, 'ppuc_suppress_switch', 'suppress switch', 'suppressSwitch', [numberInput('NUMBER', 'number', '0')], COLOUR_ACTION);
     addFunctionStatementBlock(Blockly, lua, 'ppuc_blink_lamp', 'blink lamp', 'blinkLamp', [numberInput('NUMBER', 'number', '0'), numberInput('ON', 'on ms', '250'), numberInput('OFF', 'off ms', '250')], COLOUR_ACTION);
     addFunctionStatementBlock(Blockly, lua, 'ppuc_stop_blink_lamp', 'stop blink lamp', 'stopBlinkLamp', [numberInput('NUMBER', 'number', '0')], COLOUR_ACTION);
+    // A file in the game folder, such as "sounds/intro.mp3". ppuc refuses a
+    // path that leaves the folder.
+    addFunctionStatementBlock(Blockly, lua, 'ppuc_play_sound', 'play sound', 'playSound', [stringInput('FILE', 'file', '""')], COLOUR_ACTION);
 
     // Ball save works under both engines, so it sits with the ordinary actions
     // rather than in the GameCore category.
@@ -553,6 +556,7 @@
                     block('ppuc_pup_trigger'),
                     block('ppuc_serum_scene'),
                     block('ppuc_speech'),
+                    block('ppuc_play_sound'),
                     block('ppuc_effect_trigger'),
                     block('ppuc_after'),
                     block('ppuc_suppress_switch'),
