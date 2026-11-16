@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ppuc_games\Unit;
 
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Controller\GamesController;
@@ -90,24 +91,24 @@ class GamesControllerBoardFlagsTest extends TestCase {
 
   // --- referenced switch numbers ---------------------------------------------
   //
-  // eosSwitch is exported from a reference to a switch node. A dangling or
-  // absent reference has to come out as "no switch", not as switch 0, which is
-  // a switch a game can really have.
+  // stopSwitches is exported from references to switch nodes. A dangling
+  // reference, or a switch without a number, has to be left out rather than
+  // exported as switch 0, which is a switch a game can really have.
 
-  private function readSwitchNumber(NodeInterface $node, string $field): ?int {
+  private function readSwitchNumbers(NodeInterface $node, string $field): array {
     $method = (new ReflectionClass(GamesController::class))
-      ->getMethod('getSwitchNumberFieldValue');
+      ->getMethod('getSwitchNumbersFieldValue');
     $method->setAccessible(TRUE);
     return $method->invoke($this->controller, $node, $field);
   }
 
-  private function nodeReferencing(bool $hasField, bool $isEmpty, mixed $target): NodeInterface {
+  private function nodeReferencing(bool $hasField, bool $isEmpty, array $targets): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('hasField')->willReturn($hasField);
 
-    $item = $this->createMock(FieldItemListInterface::class);
+    $item = $this->createMock(EntityReferenceFieldItemListInterface::class);
     $item->method('isEmpty')->willReturn($isEmpty);
-    $item->method('__get')->with('entity')->willReturn($target);
+    $item->method('referencedEntities')->willReturn($targets);
     $node->method('get')->willReturn($item);
 
     return $node;
@@ -125,41 +126,33 @@ class GamesControllerBoardFlagsTest extends TestCase {
   }
 
   public function testAnAbsentReferenceFieldIsNoSwitch(): void {
-    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(FALSE, FALSE, NULL), 'field_eos_switch'));
+    $this->assertSame([], $this->readSwitchNumbers($this->nodeReferencing(FALSE, FALSE, []), 'field_stop_switches'));
   }
 
   public function testAnEmptyReferenceIsNoSwitch(): void {
-    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, TRUE, NULL), 'field_eos_switch'));
+    $this->assertSame([], $this->readSwitchNumbers($this->nodeReferencing(TRUE, TRUE, []), 'field_stop_switches'));
   }
 
   /**
-   * The referenced node was deleted. Exporting 0 here would name a real switch.
+   * A switch without a number, or a node that is not a switch, is left out.
    */
-  public function testADanglingReferenceIsNoSwitch(): void {
-    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, NULL), 'field_eos_switch'));
-  }
-
-  /**
-   * The field exists but was never filled in.
-   */
-  public function testAReferencedSwitchWithAnEmptyNumberIsNoSwitch(): void {
-    $target = $this->switchNumbered(NULL);
-    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, $target), 'field_eos_switch'));
-  }
-
-  public function testAReferencedSwitchWithoutANumberIsNoSwitch(): void {
-    $target = $this->switchNumbered('7', FALSE);
-    $this->assertNull($this->readSwitchNumber($this->nodeReferencing(TRUE, FALSE, $target), 'field_eos_switch'));
+  public function testASwitchWithoutANumberIsLeftOut(): void {
+    $targets = [
+      $this->switchNumbered(NULL),
+      $this->switchNumbered('7', FALSE),
+      $this->switchNumbered('113'),
+    ];
+    $this->assertSame([113], $this->readSwitchNumbers(
+      $this->nodeReferencing(TRUE, FALSE, $targets), 'field_stop_switches'));
   }
 
   /**
    * Numbers arrive from the database as strings.
    */
-  public function testAReferencedSwitchExportsItsNumber(): void {
-    $this->assertSame(7, $this->readSwitchNumber(
-      $this->nodeReferencing(TRUE, FALSE, $this->switchNumbered('7')), 'field_eos_switch'));
-    $this->assertSame(0, $this->readSwitchNumber(
-      $this->nodeReferencing(TRUE, FALSE, $this->switchNumbered(0)), 'field_eos_switch'));
+  public function testReferencedSwitchesExportTheirNumbers(): void {
+    $targets = [$this->switchNumbered('111'), $this->switchNumbered(0)];
+    $this->assertSame([111, 0], $this->readSwitchNumbers(
+      $this->nodeReferencing(TRUE, FALSE, $targets), 'field_stop_switches'));
   }
 
 }

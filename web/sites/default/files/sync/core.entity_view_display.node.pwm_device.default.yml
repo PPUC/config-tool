@@ -7,7 +7,6 @@ dependencies:
     - field.field.node.pwm_device.field_cable_color_1
     - field.field.node.pwm_device.field_cable_color_2
     - field.field.node.pwm_device.field_dual_winding
-    - field.field.node.pwm_device.field_eos_switch
     - field.field.node.pwm_device.field_fast_activation_switch
     - field.field.node.pwm_device.field_game_role
     - field.field.node.pwm_device.field_hold_power
@@ -72,14 +71,6 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     weight: 12
-    region: content
-  field_eos_switch:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 13
     region: content
   field_fast_activation_switch:
     type: entity_reference_label

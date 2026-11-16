@@ -49,6 +49,15 @@ final class CoilProtection {
         . 'the switch has closed. Set the stop switch on the power winding instead.',
       ];
     }
+    if (!empty($coil['dualWinding']) && $coil['stopSwitches'] > 0) {
+      return [
+        'field_stop_switches',
+        'A dual-wound coil is not stopped by its end-of-stroke switch: the contact already hands over to the '
+        . 'hold winding inside the coil, and cutting the one output it has would drop the flipper. A WPC '
+        . 'Fliptronic flipper is not dual-wound in this sense - it is a power winding with this stop switch '
+        . 'and a separate hold winding.',
+      ];
+    }
     if (!empty($coil['holdWinding']) || !empty($coil['dualWinding'])) {
       return NULL;
     }

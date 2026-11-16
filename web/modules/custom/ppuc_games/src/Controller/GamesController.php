@@ -128,32 +128,10 @@ class GamesController extends ControllerBase {
   }
 
   /**
-   * The number of the switch an entity reference field points at.
-   *
-   * NULL when the field is absent, empty, or references a node that has been
-   * deleted - a dangling reference must not export as switch 0, which is a
-   * real switch number.
-   */
-  protected function getSwitchNumberFieldValue(NodeInterface $node, string $field_name): ?int {
-    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
-      return NULL;
-    }
-
-    $switch = $node->get($field_name)->entity;
-    if (!$switch instanceof NodeInterface || !$switch->hasField('field_number')) {
-      return NULL;
-    }
-
-    $number = $switch->get('field_number')->value;
-    return $number === NULL ? NULL : (int) $number;
-  }
-
-  /**
    * The numbers of every switch a multi-value reference field points at.
    *
-   * Skips anything dangling for the same reason getSwitchNumberFieldValue()
-   * returns NULL for one: exporting 0 would name switch 0, which a game can
-   * really have.
+   * Skips anything dangling, or a referenced switch without a number:
+   * exporting 0 would name switch 0, which a game can really have.
    *
    * @return int[]
    */
@@ -912,14 +890,6 @@ class GamesController extends ControllerBase {
               // nothing then stops the ROM leaving it energised.
               if ($this->getBooleanFieldValue($device, 'field_dual_winding')) {
                 $pwm_output['dualWinding'] = TRUE;
-              }
-              // Only when the contact is wired back to an input. Referenced as
-              // a switch node so it cannot name a switch that does not exist,
-              // and exported as that switch's number, which is what the
-              // firmware addresses.
-              $eos_switch = $this->getSwitchNumberFieldValue($device, 'field_eos_switch');
-              if ($eos_switch !== NULL) {
-                $pwm_output['eosSwitch'] = $eos_switch;
               }
               // A separately driven hold winding, as on WPC Fliptronic. It is
               // wound to sit energised, so libppuc accepts it with no maximum

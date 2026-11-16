@@ -99,4 +99,20 @@ class CoilProtectionTest extends TestCase {
     ]))));
   }
 
+  /**
+   * A dual-wound coil with a stop switch: the board would cut the one output
+   * it has at the end of every stroke, drop the flipper, and fire it again.
+   */
+  public function testADualWoundCoilWithAStopSwitchIsRefused(): void {
+    $this->assertSame('field_stop_switches', self::field(CoilProtection::refusal(self::flipperPower([
+      'dualWinding' => TRUE, 'maxPulseTime' => 0,
+    ]))));
+  }
+
+  public function testADualWoundCoilWithoutAStopSwitchIsAccepted(): void {
+    $this->assertNull(CoilProtection::refusal(self::coil([
+      'dualWinding' => TRUE, 'maxPulseTime' => 0, 'fastSwitch' => TRUE,
+    ])));
+  }
+
 }
