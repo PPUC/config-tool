@@ -177,6 +177,9 @@ final class GameBuilder {
       'field_power' => ['value' => $coil['power']],
       'field_max_pulse_time' => ['value' => $coil['maxPulseTime']],
     ];
+    if (!empty($coil['minPulseTime'])) {
+      $values['field_min_pulse_time'] = ['value' => $coil['minPulseTime']];
+    }
 
     if (!empty($coil['holdWinding'])) {
       $values['field_hold_winding'] = ['value' => 1];

@@ -269,6 +269,9 @@ final class HardwareAllocator {
         $coils[] = array_merge($coil, [
           'power' => DeviceDefaults::powerFor($coil['class'], $coil['type']),
           'maxPulseTime' => $unbounded ? 0 : DeviceDefaults::MAX_PULSE_TIME_MS,
+          // A sling or a jet: its switch fires it on the board, for this long.
+          'minPulseTime' => (!$unbounded && ($coil['fastFlipSwitch'] ?? NULL) !== NULL)
+            ? DeviceDefaults::KICK_PULSE_TIME_MS : 0,
           'holdWinding' => $holdWinding,
           // A ROM moves its motors with no game running: Dirty Harry searches
           // for its gun at boot, and waits for the result.

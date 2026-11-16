@@ -116,6 +116,23 @@ class WizardHardwareAllocatorTest extends TestCase {
   }
 
   /**
+   * A sling's minimum pulse time is its kick: the board fires it for exactly
+   * that long. A coil the ROM alone drives keeps no minimum.
+   */
+  public function testASlingKicksForTheDefaultKickLength(): void {
+    [, $plan] = $this->allocate(self::document([
+      'switches' => [['number' => 61, 'description' => 'Left Sling']],
+      'coils' => [
+        ['number' => 9, 'description' => 'Left Sling', 'class' => 'lowPower', 'fastFlipSwitch' => 61],
+        ['number' => 1, 'description' => 'Ball Release', 'class' => 'highPower'],
+      ],
+    ]));
+
+    $this->assertSame(DeviceDefaults::KICK_PULSE_TIME_MS, self::coil($plan, 9)['minPulseTime']);
+    $this->assertSame(0, self::coil($plan, 1)['minPulseTime']);
+  }
+
+  /**
    * Still true when packing alone would put them on different boards.
    *
    * Arranged so plain capacity packing splits the pair: the coil is first of

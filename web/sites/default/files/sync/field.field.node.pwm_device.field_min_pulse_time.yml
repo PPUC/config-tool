@@ -12,7 +12,7 @@ field_name: field_min_pulse_time
 entity_type: node
 bundle: pwm_device
 label: 'Min Pulse Time'
-description: 'Minimum pulse time in milliseconds. 0 means no minimum pulse time, the CPU has full control.'
+description: 'Minimum pulse time in milliseconds. 0 means no minimum pulse time, the CPU has full control. For a slingshot or a pop bumper - a coil with a fast activation switch that is not a flipper winding - this is the length of its kick: the board fires it for exactly this long when the switch closes, whatever the leaf does meanwhile, and uses 30 ms when it is 0. 20 to 40 ms is the usual range; tune the force with the power.'
 required: false
 translatable: false
 default_value:

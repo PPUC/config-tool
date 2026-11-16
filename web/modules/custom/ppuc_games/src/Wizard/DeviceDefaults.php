@@ -60,6 +60,16 @@ final class DeviceDefaults {
   public const MAX_PULSE_TIME_MS = 150;
 
   /**
+   * How long a slingshot or a pop bumper kicks, in milliseconds.
+   *
+   * Exported as the coil's minimum pulse time. A coil its own switch fires
+   * on the board kicks for exactly that long from the moment the switch
+   * closes, whatever the leaf does meanwhile; with 0 the board uses 30 ms.
+   * A starting point, to be tuned on the machine together with the power.
+   */
+  public const KICK_PULSE_TIME_MS = 30;
+
+  /**
    * Drive power for a motor, whatever the solenoid table calls its driver.
    *
    * A gun or cannon assembly is turned by a small motor - 12 V is typical - on
