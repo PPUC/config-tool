@@ -1,0 +1,10 @@
+{
+  "name": "drupal/sequences",
+  "description": "Provides a low-level named ID generator using native database auto-increment.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/core": "^10 || ^11",
+    "ext-mbstring": "*"
+  }
+}

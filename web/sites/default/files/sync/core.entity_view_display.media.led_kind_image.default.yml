@@ -1,0 +1,31 @@
+uuid: 36182564-bff9-4f20-b840-fee43e205c88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.media.led_kind_image.field_media_image
+    - image.style.medium
+    - media.type.led_kind_image
+  module:
+    - image
+id: media.led_kind_image.default
+targetEntityType: media
+bundle: led_kind_image
+mode: default
+content:
+  field_media_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: medium
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  name: true
+  thumbnail: true
+  uid: true

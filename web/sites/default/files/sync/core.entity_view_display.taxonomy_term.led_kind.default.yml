@@ -1,0 +1,31 @@
+uuid: b97188d5-303a-4677-a351-7d9314d8ae61
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.led_kind.field_image_media
+    - taxonomy.vocabulary.led_kind
+  module:
+    - text
+id: taxonomy_term.led_kind.default
+targetEntityType: taxonomy_term
+bundle: led_kind
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_image_media:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

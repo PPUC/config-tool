@@ -1653,6 +1653,55 @@
             "install-path": "../../web/modules/contrib/range"
         },
         {
+            "name": "drupal/sequences",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/sequences.git",
+                "reference": "1.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/sequences-1.0.1.zip",
+                "reference": "1.0.1",
+                "shasum": "70e28533f1aec3e73f75615c994ce206ade99c5d"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "ext-mbstring": "*"
+            },
+            "published-time": "2025-10-10T16:11:47+00:00",
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.1",
+                    "datestamp": "1760112711",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "mkalkbrenner",
+                    "homepage": "https://www.drupal.org/user/124705"
+                }
+            ],
+            "description": "Provides a low-level named ID generator using native database auto-increment.",
+            "homepage": "https://www.drupal.org/project/sequences",
+            "support": {
+                "source": "https://git.drupalcode.org/project/sequences"
+            },
+            "install-path": "../../web/modules/contrib/sequences"
+        },
+        {
             "name": "drupal/views_bulk_operations",
             "version": "4.4.9",
             "version_normalized": "4.4.9.0",

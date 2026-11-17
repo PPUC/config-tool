@@ -1,0 +1,15 @@
+name: 'Sequences'
+type: module
+description: 'Provides a low-level named ID generator using native database auto-increment.'
+core_version_requirement: ^10.3 || ^11
+package: Custom
+
+# Information added by Drupal.org packaging script on 2025-05-20
+# version: '1.0.0'
+# project: 'sequences'
+# datestamp: 1747752016
+
+# Information added by Drupal.org packaging script on 2025-10-10
+version: '1.0.1'
+project: 'sequences'
+datestamp: 1760112713

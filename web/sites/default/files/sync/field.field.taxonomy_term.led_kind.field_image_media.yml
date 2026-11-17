@@ -1,0 +1,29 @@
+uuid: 9536099e-c8b7-454c-8063-9a6c55cf4a58
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_image_media
+    - media.type.led_kind_image
+    - taxonomy.vocabulary.led_kind
+id: taxonomy_term.led_kind.field_image_media
+field_name: field_image_media
+entity_type: taxonomy_term
+bundle: led_kind
+label: Image
+description: 'A picture of this kind of LED.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      led_kind_image: led_kind_image
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

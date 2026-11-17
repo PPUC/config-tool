@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6188e257278b637c0e01a95d8a7f49b7",
+    "content-hash": "121b92039c53c6a974ab39cdf145bf5a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1602,6 +1602,52 @@
                 "source": "https://git.drupalcode.org/project/range"
             },
             "published-time": "2024-08-13T21:28:31+00:00"
+        },
+        {
+            "name": "drupal/sequences",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/sequences.git",
+                "reference": "1.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/sequences-1.0.1.zip",
+                "reference": "1.0.1",
+                "shasum": "70e28533f1aec3e73f75615c994ce206ade99c5d"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "ext-mbstring": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.1",
+                    "datestamp": "1760112711",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "mkalkbrenner",
+                    "homepage": "https://www.drupal.org/user/124705"
+                }
+            ],
+            "description": "Provides a low-level named ID generator using native database auto-increment.",
+            "homepage": "https://www.drupal.org/project/sequences",
+            "support": {
+                "source": "https://git.drupalcode.org/project/sequences"
+            },
+            "published-time": "2025-10-10T16:11:47+00:00"
         },
         {
             "name": "drupal/views_bulk_operations",

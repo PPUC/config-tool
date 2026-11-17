@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.addressable_led.field_color
+    - field.field.node.addressable_led.field_led_kind
     - field.field.node.addressable_led.field_led_type
     - field.field.node.addressable_led.field_number
     - field.field.node.addressable_led.field_playfield_x
@@ -30,6 +31,7 @@ content:
     region: content
 hidden:
   field_color: true
+  field_led_kind: true
   field_led_type: true
   field_number: true
   field_playfield_x: true

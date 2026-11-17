@@ -1,0 +1,6 @@
+sequences.settings:
+  title: 'Sequences'
+  description: 'Configure ID offset values for entity types.'
+  route_name: sequences.settings
+  parent: system.admin_config_system
+  weight: 100

@@ -1,0 +1,47 @@
+uuid: f5ec2685-5eaf-418a-84a7-69c32b883db0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.led_kind.field_image_media
+    - taxonomy.vocabulary.led_kind
+  module:
+    - media_library
+    - text
+id: taxonomy_term.led_kind.default
+targetEntityType: taxonomy_term
+bundle: led_kind
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_image_media:
+    type: media_library_widget
+    weight: 1
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  path: true

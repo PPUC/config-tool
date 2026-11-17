@@ -1,0 +1,7 @@
+sequences.settings:
+  path: '/admin/config/system/sequences'
+  defaults:
+    _form: 'Drupal\sequences\Form\SettingsForm'
+    _title: 'Sequences settings'
+  requirements:
+    _permission: 'administer site configuration'

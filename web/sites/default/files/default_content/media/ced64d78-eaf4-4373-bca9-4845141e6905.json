@@ -1,0 +1,143 @@
+{
+    "_links": {
+        "type": {
+            "href": "media\/led_kind_image"
+        },
+        "self": {
+            "href": "_dcd\/media\/10002"
+        }
+    },
+    "mid": [
+        {
+            "value": 10002
+        }
+    ],
+    "uuid": [
+        {
+            "value": "ced64d78-eaf4-4373-bca9-4845141e6905"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "led_kind_image"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2026-11-17T09:24:18+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "status": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "_embedded": {
+        "relation\/media\/led_kind_image\/uid": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "user\/user"
+                    },
+                    "self": {
+                        "href": "_dcd\/user\/2"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "f7760c1e-2497-482d-8e95-dd7f4f5e02e3"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "relation\/media\/led_kind_image\/thumbnail": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "file\/file"
+                    },
+                    "self": {
+                        "href": "_dcd\/file\/10002"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "1a1b4546-9854-44b9-b4e1-1adc6e50eeaf"
+                    }
+                ],
+                "lang": "en",
+                "alt": "Ring (3 LEDs)",
+                "title": null,
+                "width": "412",
+                "height": "405"
+            }
+        ],
+        "relation\/media\/led_kind_image\/field_media_image": [
+            {
+                "_links": {
+                    "type": {
+                        "href": "file\/file"
+                    },
+                    "self": {
+                        "href": "_dcd\/file\/10002"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "1a1b4546-9854-44b9-b4e1-1adc6e50eeaf"
+                    }
+                ],
+                "lang": "en",
+                "alt": "Ring (3 LEDs)",
+                "title": null,
+                "width": "412",
+                "height": "405"
+            }
+        ]
+    },
+    "name": [
+        {
+            "value": "Ring (3 LEDs)",
+            "lang": "en"
+        }
+    ],
+    "created": [
+        {
+            "value": "2026-11-17T09:24:18+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2026-11-17T09:26:52+00:00",
+            "lang": "en",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true,
+            "lang": "en"
+        }
+    ],
+    "_dcd_metadata": {
+        "export_timestamp": 1794907613,
+        "sort_key": 10002
+    }
+}

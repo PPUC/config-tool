@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.addressable_led.field_color
+    - field.field.node.addressable_led.field_led_kind
     - field.field.node.addressable_led.field_led_type
     - field.field.node.addressable_led.field_number
     - field.field.node.addressable_led.field_playfield_x
@@ -25,6 +26,12 @@ content:
   field_color:
     type: color_field_widget_html5
     weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_led_kind:
+    type: options_select
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }

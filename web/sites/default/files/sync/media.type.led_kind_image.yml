@@ -1,0 +1,13 @@
+uuid: 076dbe90-b16c-4a8f-8405-b6a68b83c529
+langcode: en
+status: true
+dependencies: {  }
+id: led_kind_image
+label: 'LED Kind Image'
+description: 'A picture of a kind of addressable LED.'
+source: image
+queue_thumbnail_downloads: false
+new_revision: false
+source_configuration:
+  source_field: field_media_image
+field_map: {  }

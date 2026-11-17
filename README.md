@@ -514,3 +514,21 @@ ddev drush dcdi --folder=sites/default/files/default_content --preserve-ids --fo
 ```
 
 TODO: import/update ppuc profile default content after drush deploy
+
+#### Entity IDs of shipped content
+Default content is imported with `--preserve-ids`, and the importer skips an
+entity whose ID is already taken by a different one. Shipped content therefore
+needs IDs that no installation can have used for its own entities:
+
+- Taxonomy terms are only ever shipped, never created by users, so they simply
+  continue the existing numbering.
+- Media and files are also uploaded by users (ROMs, manuals, translites, ...).
+  The range **10000 to 99999** is reserved for media and files that ship with
+  the config-tool, like the LED kind images. The
+  [Sequences](https://www.drupal.org/project/sequences) module adds an offset
+  of 99999 to every new media and file ID (`sequences.settings`), so anything
+  uploaded on an installation starts at 100000.
+
+When adding shipped media or files, give them a free ID from the reserved range
+before exporting them with `drush dcde`. Media and files a site uploaded before
+the Sequences module was enabled keep their old, lower IDs.

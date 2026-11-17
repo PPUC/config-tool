@@ -1,0 +1,9 @@
+uuid: a59e7245-0bcd-4ccb-947a-b256a431d468
+langcode: en
+status: true
+dependencies: {  }
+name: 'LED Kind'
+vid: led_kind
+description: 'The physical kind of an addressable LED: a bullet pixel, a ring, a strip segment.'
+weight: 0
+new_revision: false

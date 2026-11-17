@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Sequences update and uninstall functions.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function sequences_uninstall() {
+  $connection = \Drupal::database();
+  $schema = $connection->schema();
+
+  // Look for all tables that start with 'sequence_'.
+  $all_tables = $connection->schema()->findTables('%');
+  foreach ($all_tables as $table) {
+    $table_name = (string) $table;
+    if (str_starts_with($table_name, 'sequence_')) {
+      $schema->dropTable($table_name);
+    }
+  }
+}

@@ -3,7 +3,7 @@
         'name' => 'ppuc/web',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6c3e3298c92d04e92cad6fb898e5e6969794e8ef',
+        'reference' => '45360a975c34c37eefc4cf11271e04fe2d79b124',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -368,6 +368,15 @@
             'replaced' => array(
                 0 => '*',
             ),
+        ),
+        'drupal/sequences' => array(
+            'pretty_version' => '1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => '1.0.1',
+            'type' => 'drupal-module',
+            'install_path' => __DIR__ . '/../../web/modules/contrib/sequences',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'drupal/settings_tray' => array(
             'dev_requirement' => false,
@@ -990,7 +999,7 @@
         'ppuc/web' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6c3e3298c92d04e92cad6fb898e5e6969794e8ef',
+            'reference' => '45360a975c34c37eefc4cf11271e04fe2d79b124',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

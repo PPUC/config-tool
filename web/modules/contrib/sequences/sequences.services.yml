@@ -1,0 +1,13 @@
+services:
+  sequences.generator:
+    class: Drupal\sequences\Generator
+    autowire: true
+  Drupal\sequences\Generator: '@sequences.generator'
+
+  sequences.entity_hooks:
+    class: Drupal\sequences\Hook\SequencesEntityHooks
+    arguments:
+      - '@sequences.generator'
+      - '@config.factory'
+    tags:
+      - { name: 'hook' }

@@ -1,0 +1,8 @@
+sequences.settings:
+  type: config_object
+  label: 'Sequences settings'
+  mapping:
+    entity_offsets:
+      type: mapping
+      label: 'Entity type offsets'
+      mapping: {}
