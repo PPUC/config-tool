@@ -7,6 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\node\Form\NodeForm;
 use Drupal\taxonomy\TermInterface;
 use Drupal\ppuc_games\CoilProtection;
+use Drupal\ppuc_games\Hook\SegmentLeds;
 use Drupal\ppuc_games\Wizard\BoardCapacity;
 
 /**
@@ -22,6 +23,7 @@ class PpucNodeForm extends NodeForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $this->configureWhiteChannelFields($form, $form_state);
+    $this->configureSegmentLedFields($form);
     $this->configureGameFields($form);
     $this->configureRulesFields($form);
     $this->configureSlideFields($form);
@@ -59,6 +61,27 @@ class PpucNodeForm extends NodeForm {
     }
 
     return $element;
+  }
+
+  /**
+   * Hides what has no meaning on an LED that belongs to a string segment.
+   *
+   * Segment LEDs are created from the segments of their string and driven by
+   * LED effects: they have no lamp number for the ROM, and an effect sets
+   * their color. Position and string are kept visible but are what the string
+   * says; changing them here is undone on the next save of the string.
+   */
+  protected function configureSegmentLedFields(array &$form): void {
+    /** @var \Drupal\node\NodeInterface $entity */
+    $entity = $this->getEntity();
+    if ($entity->bundle() !== 'addressable_led' || !SegmentLeds::isSegmentLed($entity)) {
+      return;
+    }
+    foreach (['field_number', 'field_color', 'field_white', 'field_led_type'] as $field_name) {
+      if (isset($form[$field_name])) {
+        $form[$field_name]['#access'] = FALSE;
+      }
+    }
   }
 
   protected function configureWhiteChannelFields(array &$form, FormStateInterface $form_state): void {

@@ -15,6 +15,7 @@ use Drupal\media\MediaInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ppuc_games\Form\GameImportForm;
+use Drupal\ppuc_games\Hook\SegmentLeds;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -939,7 +940,9 @@ class GamesController extends ControllerBase {
             /** @var NodeInterface $addressable_led */
             foreach ($addressable_leds as $addressable_led) {
               $objects[] = $addressable_led;
-              if (!$addressable_led->isPublished()) {
+              // Segment LEDs stay in the archive, for their kind and such, but
+              // the string's segments already describe them to the controller.
+              if (!$addressable_led->isPublished() || SegmentLeds::isSegmentLed($addressable_led)) {
                 continue;
               }
               $role = '';
