@@ -1,0 +1,15 @@
+uuid: 7150b843-2e7f-4313-b165-ec003981bd28
+langcode: en
+status: true
+dependencies: {  }
+name: ppuc_led_kind_thumbnail
+label: 'LED kind thumbnail (40×40)'
+effects:
+  0aad5d6a-20db-4df8-a0ce-33c061c3fc4f:
+    uuid: 0aad5d6a-20db-4df8-a0ce-33c061c3fc4f
+    id: image_scale
+    weight: 0
+    data:
+      width: 40
+      height: 40
+      upscale: false
