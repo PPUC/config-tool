@@ -1,0 +1,14 @@
+/* "LEDs per kind" above Game: All Lamps: a short table, not a full-width one. */
+.ppuc-led-kind-summary {
+  width: auto;
+  min-width: 20rem;
+  margin-block-end: 2rem;
+}
+.ppuc-led-kind-summary caption {
+  text-align: start;
+  font-weight: bold;
+}
+.ppuc-led-kind-summary .ppuc-led-kind-summary__count {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}

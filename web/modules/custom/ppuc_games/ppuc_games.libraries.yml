@@ -26,3 +26,9 @@ marker_editor:
   dependencies:
     - core/drupal
     - core/once
+
+led_kind_summary:
+  version: 2026.11.17.01
+  css:
+    theme:
+      css/led-kind-summary.css: {}

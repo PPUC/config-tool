@@ -20,6 +20,7 @@ dependencies:
     - color_field
     - media
     - node
+    - ppuc_games
     - taxonomy
     - user
     - views_bulk_operations
@@ -1231,7 +1232,16 @@ display:
           admin_label: 'LED kind'
           plugin_id: standard
           required: false
-      header: {  }
+      header:
+        ppuc_led_kind_summary:
+          id: ppuc_led_kind_summary
+          table: views
+          field: ppuc_led_kind_summary
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: ppuc_led_kind_summary
+          empty: false
       footer: {  }
       display_extenders: {  }
     cache_metadata:
